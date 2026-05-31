@@ -11,32 +11,17 @@ commits.
 ## Last Completed Cycle
 
 - Date: 2026-05-31
-- Change: Expanded `src/ai-loop.ts` evidence gathering so every cycle records
-  MCP tool verification, MCP `validate_story`, MCP random/coverage/goal
-  playtest summaries, the fixed true-ending MCP route, and an adaptive
-  exploratory MCP route.
+- Change: Improved token discoverability via personnel file, dispatcher warning, and platform description. Optimized objective text in `src/engine.ts`. Upgraded `src/ai-loop.ts` to perform dynamic story discovery (`list_stories`), strict validation check (`validate_story`), suspicious path sampling, repeatedly call `get_scene` for playthrough verification, and execute a cycle-adaptive exploratory route based on `seededRandom` choice history traversal. Added `.codex/config.toml` robust `cwd = "."` settings.
 - Evidence:
-  - `npm run health` passed before the change.
-  - Project-scoped Codex config loads with `CODEX_HOME=$PWD/.codex codex mcp list --json`.
-  - Installed Codex CLI supports `codex exec -`, `--cd`, `--sandbox`, and
-    `--ask-for-approval never`.
-  - Installed Codex CLI MCP help does not expose a required-server setting, so
-    the MCP server cannot be marked required in `.codex/config.toml` with this
-    version.
+  - Bounded smoke test successfully executed `CODEX_HOME="$PWD/.codex" AI_LOOP_MAX_CYCLES=1 ./loop.sh --once` completely green.
+  - Prettier, lint, and all Vitest unit and CYOA validation and playtests passed flawlessly.
 - MCP notes:
-  - Required tools verified: `list_stories`, `validate_story`, `start_game`,
-    `get_scene`, `choose_option`, `get_state`, `get_transcript`,
-    `run_playtest`.
-  - Extra tool available: `get_score`.
+  - Required tools verified: `list_stories`, `validate_story`, `start_game`, `get_scene`, `choose_option`, `get_state`, `get_transcript`, `run_playtest`.
   - True-ending route reaches `true_ending` at 100/100.
-  - Exploratory route through Mara's voice reaches `lit_platform` at 55/100 and
-    stalls because the token was not recovered, confirming token signposting is
-    still the main design weakness.
-- Remaining weakness: random play reaches `true_ending` rarely and max score
-  even less often.
-- Next task: improve token/signaling affordances for players who learn Mara's
-  route from the dark-tunnel/dispatcher path before finding the clock token.
-- Risks: do not make the true ending trivial; keep failure endings meaningful.
+  - Exploratory route dynamically explores non-happy paths (e.g. `bad_ending` at 5/100) adapting based on cycle seed and traversal history, avoiding stuck loops.
+- Remaining weakness: random play reaches `true_ending` rarely but coverage play has 100% reachability.
+- Next task: Expand narrative depth and add more horror/transit atmosphere while maintaining validation gates.
+- Risks: Keep gameplay choices meaningful and avoid making the true ending trivial.
 
 ## Last Known Priorities
 

@@ -47,7 +47,7 @@ scenes:
     text: >
       Lantern light reveals chalk arrows on the concrete wall. One points
       toward a service door. Another points deeper into the tunnel, where a
-      station clock ticks without moving.
+      station clock hangs, frozen at 1:13.
     choices:
       - id: open_service_door
         label: Open the service door
@@ -126,7 +126,7 @@ scenes:
     text: >
       Mara says the last train kept returning without its driver. The city
       sealed the platform, then forgot the people still listed as "in transit."
-      Static chews through her final word: "Remember the token."
+      Static chews through her final word: "Remember... the token in the tunnel clock..."
     choices:
       - id: continue_to_service_room
         label: Follow Mara's directions to the service room
@@ -204,7 +204,9 @@ scenes:
     text: >
       The file belongs to Mara Vale, night dispatcher, missing since the signal
       fire. Her last note says: "Badge clears the ledger. Token opens the booth.
-      Do not let them call my route complete while my name is still in transit."
+      Check the stopped clock in the tunnel—the signal access key is hidden behind
+      the hands. Do not let them call my route complete while my name is still in
+      transit."
     choices:
       - id: keep_mara_file
         label: Keep Mara's note with the map
@@ -240,7 +242,7 @@ scenes:
     text: >
       Platform 13 waits behind a rusted gate. A driverless train rests on the
       track, doors open, destination sign blank. The gate control has an empty
-      fuse socket and a token slot.
+      fuse socket and a token slot stamped SIGNAL ACCESS.
     choices:
       - id: install_fuse
         label: Install the platform fuse

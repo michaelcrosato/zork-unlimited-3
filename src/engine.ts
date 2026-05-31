@@ -164,7 +164,7 @@ function getObjectives(state: GameState): string[] {
       flag("read_mara_file")) &&
     !has("token")
   ) {
-    objectives.push("Investigate anything marked with the time 1:13 or signal access.");
+    objectives.push("Search the stopped tunnel clock for the signal booth token.");
   }
 
   if (flag("knows_platform") && !has("fuse")) {

@@ -86,7 +86,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.state.flags.read_mara_file).toBe(true);
     expect(observation.objectives).toContain(
-      "Investigate anything marked with the time 1:13 or signal access."
+      "Search the stopped tunnel clock for the signal booth token."
     );
     expect(observation.objectives).toContain(
       "Find proof of Mara Vale's identity before clearing her name."
