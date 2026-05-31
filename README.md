@@ -54,6 +54,10 @@ Available tools:
 6. Read `transcript` output for playtest feedback.
 7. Run `playtest` to sample paths automatically and inspect ending/scene coverage.
 
+Observations include a derived `objectives` array. These are not stored in saves;
+they are generated from the current flags and inventory so agents have lightweight
+guidance without the story needing a separate quest log.
+
 ## Story Format
 
 Each story is a graph of scenes. Choices can have conditions and effects.

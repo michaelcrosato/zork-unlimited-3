@@ -55,6 +55,9 @@ scenes:
       - id: follow_arrows
         label: Follow the arrows deeper
         to: platform
+        effects:
+          set:
+            knows_platform: true
       - id: inspect_clock
         label: Inspect the stopped station clock
         to: clock
@@ -166,6 +169,9 @@ scenes:
           any:
             - flag: has_light
             - flag: lights_on
+        effects:
+          set:
+            knows_platform: true
 
   radio:
     text: >

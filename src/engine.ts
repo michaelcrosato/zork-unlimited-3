@@ -19,6 +19,7 @@ export interface Observation {
     flags: Record<string, boolean>;
     inventory: string[];
   };
+  objectives: string[];
 }
 
 export function initialState(story: Story): GameState {
@@ -52,7 +53,8 @@ export function observe(story: Story, state: GameState): Observation {
     state: {
       flags: { ...state.flags },
       inventory: [...state.inventory]
-    }
+    },
+    objectives: getObjectives(state)
   };
 }
 
@@ -128,4 +130,50 @@ export function applyEffects(state: GameState, effects: Effects | undefined): Ga
 function asArray(value: string | string[] | undefined): string[] {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+function getObjectives(state: GameState): string[] {
+  const objectives: string[] = [];
+  const has = (item: string) => state.inventory.includes(item);
+  const flag = (name: string) => state.flags[name] === true;
+
+  if (!has("lantern") && !flag("lights_on")) {
+    objectives.push("Find a reliable way to see in the underpass.");
+  }
+
+  if (!flag("knows_platform")) {
+    objectives.push("Find out where the chalk arrows and old line are leading.");
+  }
+
+  if (flag("knows_platform") && !flag("knows_release")) {
+    objectives.push("Learn how to survive the driverless train before boarding it.");
+  }
+
+  if ((flag("knows_shutdown") || flag("met_mara") || flag("knows_release")) && !has("token")) {
+    objectives.push("Investigate anything marked with the time 1:13 or signal access.");
+  }
+
+  if (flag("knows_platform") && !has("fuse")) {
+    objectives.push("Find a way to power the platform gate control.");
+  }
+
+  if ((has("fuse") || flag("met_mara")) && !has("badge")) {
+    objectives.push("Find proof of Mara Vale's identity before clearing her name.");
+  }
+
+  if (has("token") && has("fuse") && !flag("platform_lit")) {
+    objectives.push("Restore power at Platform 13 and try the token slot.");
+  }
+
+  if (flag("platform_lit") && has("token") && !flag("freed_mara")) {
+    objectives.push("Use the signal booth to resolve Mara's ledger entry.");
+  }
+
+  if (flag("freed_mara") && flag("knows_release")) {
+    objectives.push("Pull the emergency release in the third car.");
+  } else if (has("map")) {
+    objectives.push("Use the marked map if you need a safe way out.");
+  }
+
+  return objectives.slice(0, 4);
 }

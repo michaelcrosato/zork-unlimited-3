@@ -1,5 +1,5 @@
 import { choose, initialState, observe } from "./engine.js";
-import { Choice, GameState, Story } from "./schema.js";
+import { GameState, Story } from "./schema.js";
 
 export type PlaytestStrategy = "random" | "coverage";
 
@@ -29,17 +29,98 @@ export function runRandomPlaytests(
   maxSteps = 50,
   strategy: PlaytestStrategy = "random"
 ): PlaytestReport {
-  const coverageMemory = {
-    scenes: new Set<string>(),
-    choices: new Set<string>()
-  };
-  const playtestRuns = Array.from({ length: runs }, (_, index) =>
-    runOne(story, index + 1, maxSteps, strategy, coverageMemory)
-  );
+  if (strategy === "coverage") {
+    const playtestRuns = runCoveragePlaytests(story, runs, maxSteps);
+    return {
+      summary: summarizePlaytests(story, playtestRuns),
+      runs: playtestRuns
+    };
+  }
+
+  const playtestRuns = Array.from({ length: runs }, (_, index) => runOne(story, index + 1, maxSteps));
   return {
     summary: summarizePlaytests(story, playtestRuns),
     runs: playtestRuns
   };
+}
+
+function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): PlaytestRun[] {
+  const queue: Array<{ state: GameState; path: string[]; steps: number }> = [
+    { state: initialState(story), path: [story.start], steps: 0 }
+  ];
+  const seen = new Set<string>();
+  const expandedScenes = new Set<string>();
+  const reportedScenes = new Set<string>();
+  const runs: PlaytestRun[] = [];
+
+  while (queue.length > 0 && (runs.length < maxRuns || expandedScenes.size < Object.keys(story.scenes).length)) {
+    const current = queue.shift()!;
+    const signature = stateSignature(current.state);
+    if (seen.has(signature)) continue;
+    seen.add(signature);
+
+    const observation = observe(story, current.state);
+    expandedScenes.add(observation.scene.id);
+    if (!reportedScenes.has(observation.scene.id) && !observation.scene.ending) {
+      reportedScenes.add(observation.scene.id);
+      runs.push({
+        run: runs.length + 1,
+        ended: false,
+        finalScene: observation.scene.id,
+        steps: current.steps,
+        path: current.path
+      });
+    }
+
+    if (observation.scene.ending || observation.choices.length === 0 || current.steps >= maxSteps) {
+      reportedScenes.add(observation.scene.id);
+      runs.push({
+        run: runs.length + 1,
+        ended: observation.scene.ending,
+        finalScene: observation.scene.id,
+        steps: current.steps,
+        path: current.path
+      });
+      continue;
+    }
+
+    const nextEntries = observation.choices.map((choice) => {
+      const next = choose(story, current.state, choice.id);
+      const destination = story.scenes[next.currentScene];
+      let score = 0;
+      if (!destination.ending) score += 20;
+      if (!expandedScenes.has(next.currentScene)) score += 40;
+      if (!current.path.includes(next.currentScene)) score += 10;
+      score += countNewItems(current.state.inventory, next.inventory) * 8;
+      score += countNewFlags(current.state.flags, next.flags) * 6;
+      if (choice.id.includes("token") || choice.id.includes("fuse") || choice.id.includes("badge")) score += 5;
+      if (choice.id.includes("force") || choice.id.includes("flee") || choice.id.includes("stare")) score -= 8;
+      return {
+        score,
+        state: next,
+        path: [...current.path, choice.id, next.currentScene],
+        steps: current.steps + 1
+      };
+    });
+
+    nextEntries.sort((left, right) => right.score - left.score);
+
+    for (const entry of nextEntries.reverse()) {
+      queue.unshift(entry);
+    }
+  }
+
+  return runs;
+}
+
+function stateSignature(state: GameState): string {
+  return JSON.stringify({
+    scene: state.currentScene,
+    flags: Object.keys(state.flags)
+      .filter((key) => state.flags[key])
+      .sort(),
+    inventory: [...state.inventory].sort()
+  });
 }
 
 export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestReport["summary"] {
@@ -74,19 +155,14 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
 function runOne(
   story: Story,
   run: number,
-  maxSteps: number,
-  strategy: PlaytestStrategy,
-  coverageMemory: { scenes: Set<string>; choices: Set<string> }
+  maxSteps: number
 ): PlaytestRun {
   let state: GameState = initialState(story);
   const path: string[] = [state.currentScene];
   const random = seededRandom(run);
-  const localVisits = new Map<string, number>();
 
   for (let step = 0; step < maxSteps; step += 1) {
     const observation = observe(story, state);
-    coverageMemory.scenes.add(observation.scene.id);
-    localVisits.set(observation.scene.id, (localVisits.get(observation.scene.id) ?? 0) + 1);
 
     if (observation.scene.ending || observation.choices.length === 0) {
       return {
@@ -98,12 +174,8 @@ function runOne(
       };
     }
 
-    const choice =
-      strategy === "coverage"
-        ? pickCoverageChoice(story, state, observation.scene.id, random, coverageMemory, localVisits)
-        : observation.choices[Math.floor(random() * observation.choices.length)];
+    const choice = observation.choices[Math.floor(random() * observation.choices.length)];
 
-    coverageMemory.choices.add(`${observation.scene.id}.${choice.id}`);
     path.push(choice.id);
     state = choose(story, state, choice.id);
     path.push(state.currentScene);
@@ -116,44 +188,6 @@ function runOne(
     steps: maxSteps,
     path
   };
-}
-
-function pickCoverageChoice(
-  story: Story,
-  state: GameState,
-  sceneId: string,
-  random: () => number,
-  coverageMemory: { scenes: Set<string>; choices: Set<string> },
-  localVisits: Map<string, number>
-): Choice {
-  const choices = story.scenes[sceneId].choices.filter((choice) => {
-    try {
-      choose(story, state, choice.id);
-      return true;
-    } catch {
-      return false;
-    }
-  });
-
-  const scored = choices.map((choice) => {
-    const next = choose(story, state, choice.id);
-    const destination = story.scenes[choice.to];
-    const choiceKey = `${sceneId}.${choice.id}`;
-    let score = random();
-
-    if (!coverageMemory.choices.has(choiceKey)) score += 8;
-    if (!coverageMemory.scenes.has(choice.to)) score += 20;
-    if ((localVisits.get(choice.to) ?? 0) === 0) score += 4;
-    if (destination?.ending && !coverageMemory.scenes.has(choice.to)) score += 12;
-    score += countNewItems(state.inventory, next.inventory) * 5;
-    score += countNewFlags(state.flags, next.flags) * 4;
-    score -= (localVisits.get(choice.to) ?? 0) * 3;
-
-    return { choice, score };
-  });
-
-  scored.sort((left, right) => right.score - left.score);
-  return scored[0].choice;
 }
 
 function countNewItems(before: string[], after: string[]): number {

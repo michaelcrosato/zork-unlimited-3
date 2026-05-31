@@ -42,6 +42,12 @@ describe("engine", () => {
     expect(observe(story, state).choices.map((choice) => choice.id)).toEqual(["unlock"]);
   });
 
+  it("returns derived objectives in observations", () => {
+    const state = initialState(story);
+
+    expect(observe(story, state).objectives).toContain("Find a reliable way to see in the underpass.");
+  });
+
   it("rejects choices that are not in the current scene", () => {
     const state = initialState(story);
     expect(() => choose(story, state, "unlock")).toThrow(/not available/);

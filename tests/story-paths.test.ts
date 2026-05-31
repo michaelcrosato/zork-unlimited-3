@@ -48,6 +48,21 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("service_room");
   });
 
+  it("updates objectives after discovering Platform 13 by following arrows", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "follow_arrows"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.objectives).not.toContain("Find out where the chalk arrows and old line are leading.");
+  });
+
   it("warns before the sign trap ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
