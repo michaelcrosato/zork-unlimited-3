@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { dirname } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -18,11 +18,26 @@ interface McpPlayResult {
   error?: string;
 }
 
+interface CycleArtifacts {
+  report: string;
+  prompt: string;
+}
+
+interface AgentResult {
+  command: string;
+  exitCode: number;
+  output: string;
+  timedOut: boolean;
+}
+
 const once = process.argv.includes("--once");
 const delayMs = Number(process.env.AI_LOOP_DELAY_MS ?? "300000");
 const maxCycles = process.env.AI_LOOP_MAX_CYCLES
   ? Number(process.env.AI_LOOP_MAX_CYCLES)
   : Infinity;
+const evidenceOnly = process.env.AI_LOOP_EVIDENCE_ONLY === "1";
+const agentCommand = evidenceOnly ? undefined : process.env.AI_AGENT_CMD;
+const agentTimeoutMs = Number(process.env.AI_AGENT_TIMEOUT_MS ?? "3600000");
 
 let stopped = false;
 process.on("SIGINT", () => {
@@ -37,17 +52,41 @@ async function main(): Promise<void> {
 
   do {
     cycle += 1;
-    const report = await runCycle(cycle);
-    const reportPath = `ai-runs/cycle-${new Date().toISOString().replace(/[:.]/g, "-")}.md`;
-    await writeText(reportPath, report);
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const reportPath = `ai-runs/cycle-${stamp}.md`;
+    const promptPath = `ai-runs/cycle-${stamp}-prompt.md`;
+    const agentPath = `ai-runs/cycle-${stamp}-agent.md`;
+
+    const artifacts = await runCycle(cycle);
+    await writeText(reportPath, artifacts.report);
+    await writeText(promptPath, artifacts.prompt);
     console.log(`Wrote ${reportPath}`);
+    console.log(`Wrote ${promptPath}`);
+
+    if (agentCommand) {
+      console.log(`Running AI agent command: ${agentCommand}`);
+      const agentResult = await runAgentCommand(
+        agentCommand,
+        artifacts.prompt,
+        cycle,
+        promptPath,
+        reportPath
+      );
+      await writeText(agentPath, renderAgentResult(agentResult));
+      console.log(`Wrote ${agentPath}`);
+      if (agentResult.exitCode !== 0) {
+        console.error(`AI agent command failed with exit code ${agentResult.exitCode}.`);
+      }
+    } else {
+      console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
+    }
 
     if (once || cycle >= maxCycles || stopped) break;
     await sleep(delayMs);
   } while (!stopped);
 }
 
-async function runCycle(cycle: number): Promise<string> {
+async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const commands = [
     "npm run format:check",
     "npm run lint",
@@ -65,8 +104,12 @@ async function runCycle(cycle: number): Promise<string> {
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
   const mcpPlay = await runMcpPlaythrough();
+  const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpPlay);
 
-  return renderReport(cycle, results, randomSummary, coverageSummary, mcpPlay);
+  return {
+    report,
+    prompt: await renderAgentPrompt(cycle, report)
+  };
 }
 
 function renderReport(
@@ -148,6 +191,33 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
   return suggestions;
 }
 
+async function renderAgentPrompt(cycle: number, report: string): Promise<string> {
+  const contract = await readPromptContract();
+
+  return `# Autonomous Game Development Cycle ${cycle}
+
+${contract}
+
+## Current Evidence
+
+The loop has already run validation, automated playtests, and an actual MCP playthrough for this cycle. Use this evidence to choose the next improvement.
+
+${report}
+
+## Required Action Now
+
+Pick one focused, high-impact improvement to the playable game. Inspect the repo, update the plan, build the improvement, run the required checks, actually play the game through MCP or the CLI, record feedback, and commit/push a coherent milestone if the work is green.
+`;
+}
+
+async function readPromptContract(): Promise<string> {
+  try {
+    return await readFile("AI_AGENT_PROMPT.md", "utf8");
+  } catch {
+    return `You are the autonomous development agent for this game. Improve the playable experience in a persistent plan/build/playtest/evaluate/iterate loop.`;
+  }
+}
+
 function asSummary(value: unknown):
   | {
       unfinished?: number;
@@ -186,6 +256,70 @@ function runCommand(command: string): Promise<CommandResult> {
       resolve({ command, exitCode: exitCode ?? 1, output });
     });
   });
+}
+
+function runAgentCommand(
+  command: string,
+  prompt: string,
+  cycle: number,
+  promptPath: string,
+  reportPath: string
+): Promise<AgentResult> {
+  return new Promise((resolve) => {
+    const child = spawn(command, {
+      shell: true,
+      stdio: ["pipe", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        AI_LOOP_CYCLE: String(cycle),
+        AI_PROMPT_FILE: promptPath,
+        AI_REPORT_FILE: reportPath
+      }
+    });
+
+    let settled = false;
+    let output = "";
+    const timeout =
+      agentTimeoutMs > 0
+        ? setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            child.kill("SIGTERM");
+            resolve({ command, exitCode: 124, output, timedOut: true });
+          }, agentTimeoutMs)
+        : undefined;
+
+    child.stdout.on("data", (chunk: Buffer) => {
+      output += chunk.toString();
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      output += chunk.toString();
+    });
+    child.on("error", (error) => {
+      output += `\n${error instanceof Error ? error.message : String(error)}`;
+    });
+    child.on("close", (exitCode) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
+      resolve({ command, exitCode: exitCode ?? 1, output, timedOut: false });
+    });
+
+    child.stdin.end(prompt);
+  });
+}
+
+function renderAgentResult(result: AgentResult): string {
+  return `# AI Agent Result
+
+- Command: \`${result.command}\`
+- Exit code: ${result.exitCode}
+- Timed out: ${result.timedOut ? "yes" : "no"}
+
+\`\`\`text
+${result.output.slice(-12000)}
+\`\`\`
+`;
 }
 
 async function writeText(path: string, text: string): Promise<void> {

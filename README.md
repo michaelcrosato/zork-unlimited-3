@@ -17,7 +17,10 @@ npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summ
 
 ## AI Automation
 
-The repo includes a repeatable autonomous-development loop:
+The repo includes a repeatable autonomous-development loop. Each cycle validates
+the game, runs automated playtests, actually plays a route through the MCP
+server, writes a report, writes an agent prompt, and can hand that prompt to a
+coding agent.
 
 ```bash
 npm run health
@@ -31,9 +34,33 @@ From bash, the simplest long-running command is:
 ./loop.sh
 ```
 
+If `codex` is installed, `./loop.sh` automatically runs Codex non-interactively
+each cycle:
+
+```bash
+codex exec --cd "$PWD" --sandbox danger-full-access --ask-for-approval never -
+```
+
+Use another agent by setting `AI_AGENT_CMD`. The command receives the generated
+cycle prompt on stdin.
+
+```bash
+AI_AGENT_CMD='claude -p' ./loop.sh
+AI_AGENT_CMD='gemini -p' ./loop.sh
+```
+
+Run without allowing an agent to edit the repo:
+
+```bash
+./loop.sh --evidence-only
+```
+
 - `health` is the required gate before commits.
 - `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
 - `ai:loop` repeats cycles indefinitely until interrupted.
+- `AI_LOOP_DELAY_MS` controls the delay between cycles.
+- `AI_LOOP_MAX_CYCLES` limits the loop for dry runs.
+- `AI_AGENT_TIMEOUT_MS` controls the per-agent timeout.
 
 See [`AGENTS.md`](./AGENTS.md) and [`AI_LOOP_STATE.md`](./AI_LOOP_STATE.md) for agent handoff instructions.
 
