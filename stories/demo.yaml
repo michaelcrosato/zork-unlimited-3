@@ -162,6 +162,18 @@ scenes:
           any:
             - notItem: fuse
             - notItem: badge
+      - id: read_personnel_file
+        label: Read the personnel file on the desk
+        to: personnel_file
+        requires:
+          notFlag: read_mara_file
+        effects:
+          set:
+            read_mara_file: true
+            met_mara: true
+      - id: return_to_tunnel
+        label: Return to the tunnel
+        to: tunnel
       - id: go_to_platform
         label: Go to Platform 13
         to: platform
@@ -186,6 +198,16 @@ scenes:
             knows_release: true
       - id: shut_radio_off
         label: Shut the radio off
+        to: service_room
+
+  personnel_file:
+    text: >
+      The file belongs to Mara Vale, night dispatcher, missing since the signal
+      fire. Her last note says: "Badge clears the ledger. Token opens the booth.
+      Do not let them call my route complete while my name is still in transit."
+    choices:
+      - id: keep_mara_file
+        label: Keep Mara's note with the map
         to: service_room
 
   locker:

@@ -149,7 +149,7 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
-  if ((flag("knows_shutdown") || flag("met_mara") || flag("knows_release")) && !has("token")) {
+  if ((flag("knows_shutdown") || flag("met_mara") || flag("knows_release") || flag("read_mara_file")) && !has("token")) {
     objectives.push("Investigate anything marked with the time 1:13 or signal access.");
   }
 
@@ -157,7 +157,7 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find a way to power the platform gate control.");
   }
 
-  if ((has("fuse") || flag("met_mara")) && !has("badge")) {
+  if ((has("fuse") || flag("met_mara") || flag("read_mara_file")) && !has("badge")) {
     objectives.push("Find proof of Mara Vale's identity before clearing her name.");
   }
 
