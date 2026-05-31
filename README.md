@@ -25,6 +25,12 @@ npm run ai:cycle
 npm run ai:loop
 ```
 
+From bash, the simplest long-running command is:
+
+```bash
+./loop.sh
+```
+
 - `health` is the required gate before commits.
 - `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
 - `ai:loop` repeats cycles indefinitely until interrupted.
