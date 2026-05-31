@@ -26,7 +26,7 @@ export interface PlaytestReport {
 export function runRandomPlaytests(
   story: Story,
   runs: number,
-  maxSteps = 30,
+  maxSteps = 50,
   strategy: PlaytestStrategy = "random"
 ): PlaytestReport {
   const coverageMemory = {

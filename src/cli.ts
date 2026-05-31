@@ -85,12 +85,13 @@ async function transcript(args: string[]): Promise<void> {
 async function playtest(args: string[]): Promise<void> {
   const storyPath = required(args[0], "story path");
   const runs = Number(option(args, "--runs") ?? "20");
+  const maxSteps = Number(option(args, "--max-steps") ?? "50");
   const strategy = option(args, "--strategy") ?? "random";
   const story = await loadStory(storyPath);
   if (strategy !== "random" && strategy !== "coverage") {
     throw new Error(`Unknown playtest strategy '${strategy}'`);
   }
-  const result = runRandomPlaytests(story, runs, 30, strategy);
+  const result = runRandomPlaytests(story, runs, maxSteps, strategy);
   print(hasFlag(args, "--summary") ? result.summary : result, hasFlag(args, "--json"));
 }
 
@@ -124,7 +125,7 @@ function usage(): void {
   cyoa choose <choice_id> --save <save.json> [--json]
   cyoa state --save <save.json> [--json]
   cyoa transcript --save <save.json> [--out <transcript.md>]
-  cyoa playtest <story.yaml> [--runs 20] [--strategy random|coverage] [--summary] [--json]`);
+  cyoa playtest <story.yaml> [--runs 20] [--max-steps 50] [--strategy random|coverage] [--summary] [--json]`);
 }
 
 await main();

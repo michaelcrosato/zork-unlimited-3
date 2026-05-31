@@ -33,4 +33,32 @@ describe("demo story critical paths", () => {
     expect(finalObservation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);
     expect(finalObservation.state.flags.freed_mara).toBe(true);
   });
+
+  it("warns before the forced-gate bad ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "follow_arrows", "force_gate"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    expect(observe(story, state).scene.id).toBe("gate_warning");
+
+    state = choose(story, state, "back_away_from_gate");
+    expect(observe(story, state).scene.id).toBe("service_room");
+  });
+
+  it("warns before the sign trap ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "open_service_door", "take_map", "go_to_platform", "board_train", "look_at_sign"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    expect(observe(story, state).scene.id).toBe("sign_warning");
+
+    state = choose(story, state, "look_away_from_sign");
+    expect(observe(story, state).scene.id).toBe("good_ending");
+  });
 });

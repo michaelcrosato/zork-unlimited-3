@@ -232,7 +232,7 @@ scenes:
         to: service_room
       - id: force_gate
         label: Force the rusted gate
-        to: bad_ending
+        to: gate_warning
 
   lit_platform:
     text: >
@@ -295,6 +295,34 @@ scenes:
           item: map
       - id: look_at_sign
         label: Look directly at the destination sign
+        to: sign_warning
+
+  gate_warning:
+    text: >
+      The gate bends, but the platform answers with a deep knock from beneath
+      the track. The train doors begin to close without you. Whatever is below
+      heard the metal scream.
+    choices:
+      - id: back_away_from_gate
+        label: Back away and return to the service room
+        to: service_room
+      - id: force_gate_anyway
+        label: Force the gate anyway
+        to: bad_ending
+
+  sign_warning:
+    text: >
+      The destination sign almost has you. HOME burns across the glass, bright
+      enough to show a street you know and a porch light that should not still
+      be on. Mara's warning crackles from the speaker: "Look away."
+    choices:
+      - id: look_away_from_sign
+        label: Look away and trust the map
+        to: good_ending
+        requires:
+          item: map
+      - id: stare_at_home
+        label: Keep staring at HOME
         to: lost_ending
 
   true_ending:
