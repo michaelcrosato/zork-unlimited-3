@@ -1,0 +1,6 @@
+[mcp_servers.zork_unlimited]
+command = "npm"
+args = ["run", "mcp"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+enabled = true

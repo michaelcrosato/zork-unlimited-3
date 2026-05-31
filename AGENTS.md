@@ -36,10 +36,13 @@ npm run ai:loop
 
 The loop writes reports, prompts, and agent output logs to `ai-runs/`, which is
 intentionally ignored. `./loop.sh` is the normal bash entry point. It auto-runs
-`codex exec` when Codex is installed, or you can provide any compatible command:
+`codex exec` when Codex is installed, or you can provide any compatible command.
+The default Codex sandbox is `workspace-write`; use full access only in trusted
+throwaway environments.
 
 ```bash
-AI_AGENT_CMD='codex exec --cd "$PWD" --sandbox danger-full-access --ask-for-approval never -' ./loop.sh
+AI_AGENT_CMD='codex exec --cd "$PWD" --sandbox workspace-write --ask-for-approval never -' ./loop.sh
+AI_CODEX_SANDBOX=danger-full-access ./loop.sh
 AI_AGENT_CMD='claude -p' ./loop.sh
 AI_AGENT_CMD='gemini -p' ./loop.sh
 ./loop.sh --evidence-only
@@ -47,6 +50,19 @@ AI_AGENT_CMD='gemini -p' ./loop.sh
 
 The agent command receives the cycle prompt on stdin. The prompt path and report
 path are also available as `AI_PROMPT_FILE` and `AI_REPORT_FILE`.
+
+After the agent returns, the outer loop is responsible for AFK completion:
+
+1. Detect dirty files or unpushed commits.
+2. Run `npm run health`.
+3. Actually play the game through the MCP server.
+4. Commit verified dirty changes.
+5. Push the current branch to `origin`.
+
+Set `AI_LOOP_AUTO_COMMIT=0` or `AI_LOOP_AUTO_PUSH=0` only when intentionally
+dry-running the loop. Start AFK runs from a clean worktree; the loop refuses to
+auto-commit if files were already dirty before the agent started unless
+`AI_LOOP_ALLOW_DIRTY_BASELINE=1` is explicitly set.
 
 ## MCP Play Requirement
 

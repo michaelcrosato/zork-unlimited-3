@@ -35,11 +35,16 @@ From bash, the simplest long-running command is:
 ```
 
 If `codex` is installed, `./loop.sh` automatically runs Codex non-interactively
-each cycle:
+each cycle. The default follows current Codex guidance by granting write access
+to the repo workspace, while the outer loop handles commits and pushes after
+verification:
 
 ```bash
-codex exec --cd "$PWD" --sandbox danger-full-access --ask-for-approval never -
+codex exec --cd "$PWD" --sandbox workspace-write --ask-for-approval never -
 ```
+
+Use `AI_CODEX_SANDBOX=danger-full-access` only for a trusted disposable
+environment where Codex needs broader host access.
 
 Use another agent by setting `AI_AGENT_CMD`. The command receives the generated
 cycle prompt on stdin.
@@ -57,10 +62,18 @@ Run without allowing an agent to edit the repo:
 
 - `health` is the required gate before commits.
 - `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
-- `ai:loop` repeats cycles indefinitely until interrupted.
+- `ai:loop` repeats cycles indefinitely until interrupted. After the agent
+  returns, it detects repo changes or unpushed commits, reruns `health`, plays
+  the game through MCP, commits verified changes, and pushes to GitHub.
 - `AI_LOOP_DELAY_MS` controls the delay between cycles.
 - `AI_LOOP_MAX_CYCLES` limits the loop for dry runs.
 - `AI_AGENT_TIMEOUT_MS` controls the per-agent timeout.
+- `AI_LOOP_AUTO_COMMIT=0` disables the outer-loop commit step.
+- `AI_LOOP_AUTO_PUSH=0` disables the outer-loop push step.
+- `AI_LOOP_ALLOW_DIRTY_BASELINE=1` lets the loop commit even if the repo was
+  dirty before the agent started. Leave this off for normal AFK runs.
+- `CODEX_HOME=$PWD/.codex ./loop.sh` makes Codex load this repo's sample MCP
+  server config.
 
 See [`AGENTS.md`](./AGENTS.md) and [`AI_LOOP_STATE.md`](./AI_LOOP_STATE.md) for agent handoff instructions.
 

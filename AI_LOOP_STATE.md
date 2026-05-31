@@ -23,7 +23,7 @@ commits.
 5. Implement and test it.
 6. Run `npm run health`.
 7. Actually play one route through MCP or CLI.
-8. Commit and push a coherent milestone when green.
+8. Let the outer loop rerun health, play through MCP, commit verified dirty changes, and push the branch to GitHub.
 
 ## Handoff Notes
 
@@ -31,4 +31,9 @@ commits.
 - `npm run ai:loop` repeats evidence-gathering and optional agent execution forever until interrupted.
 - `AI_AGENT_CMD` controls which agent the loop invokes.
 - `AI_LOOP_EVIDENCE_ONLY=1` disables agent execution while preserving reports and prompts.
+- `AI_LOOP_AUTO_COMMIT=0` disables the outer commit step.
+- `AI_LOOP_AUTO_PUSH=0` disables the outer push step.
+- `AI_LOOP_ALLOW_DIRTY_BASELINE=1` allows auto-commit even when the worktree was dirty before the agent ran.
+- `AI_CODEX_SANDBOX` controls the default Codex sandbox used by `loop.sh`; default is `workspace-write`.
+- `CODEX_HOME=$PWD/.codex ./loop.sh` loads the repo-local Codex MCP configuration.
 - Generated reports, saves, and transcripts are ignored by git.

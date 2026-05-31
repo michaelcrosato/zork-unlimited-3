@@ -63,8 +63,9 @@ Operate in a persistent loop until explicitly stopped by the outer bash loop.
 - Prefer frequent small improvements over massive speculative changes.
 - Use tests, debug tools, logs, and playtesting to verify work.
 - Run `npm run health` before committing.
-- Commit and push a coherent milestone when the work is green and the environment supports it.
+- Commit and push a coherent milestone when the work is green and the environment supports it. If you leave changes uncommitted, the outer AFK loop will rerun health, perform an MCP playthrough, commit, and push verified changes.
 - When blocked, document the blocker, choose the next best available task, and continue.
+- Keep generated files in ignored locations. Do not commit `ai-runs/`, `saves/*.json`, or transcripts unless the repository policy changes.
 
 ## Required Cycle Output
 
