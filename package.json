@@ -1,0 +1,26 @@
+{
+  "name": "zork-unlimited-3",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A minimal LLM-playable choose-your-own-adventure engine.",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "cyoa": "tsx src/cli.ts",
+    "mcp": "tsx src/mcp.ts",
+    "validate": "tsx src/cli.ts validate stories/demo.yaml",
+    "playtest": "tsx src/cli.ts playtest stories/demo.yaml --runs 50"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

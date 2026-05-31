@@ -1,0 +1,337 @@
+id: demo
+title: Lantern in the Underpass
+start: entrance
+scenes:
+  entrance:
+    text: >
+      Rain ticks against Warden Street. At the mouth of the underpass, a brass
+      lantern hangs from a bent nail beside a transit notice stamped SERVICE
+      SUSPENDED SINCE 1983.
+    choices:
+      - id: read_notice
+        label: Read the old transit notice
+        to: notice
+        effects:
+          set:
+            knows_shutdown: true
+      - id: take_lantern
+        label: Take the brass lantern
+        to: tunnel
+        effects:
+          addItem: lantern
+          set:
+            has_light: true
+      - id: enter_dark
+        label: Enter the underpass without touching it
+        to: dark_tunnel
+
+  notice:
+    text: >
+      The notice warns that Platform 13 was sealed after a signal fire. Someone
+      has scratched a newer message into the glass: IF THE TRAIN ARRIVES EMPTY,
+      DO NOT BOARD WITHOUT THE MAP. A second, smaller line reads: CLEAR THE
+      DISPATCHER'S NAME BEFORE YOU PULL THE RELEASE.
+    choices:
+      - id: take_lantern_after_notice
+        label: Take the brass lantern
+        to: tunnel
+        effects:
+          addItem: lantern
+          set:
+            has_light: true
+      - id: ignore_warning
+        label: Ignore the warning and step into the dark
+        to: dark_tunnel
+
+  tunnel:
+    text: >
+      Lantern light reveals chalk arrows on the concrete wall. One points
+      toward a service door. Another points deeper into the tunnel, where a
+      station clock ticks without moving.
+    choices:
+      - id: open_service_door
+        label: Open the service door
+        to: service_room
+      - id: follow_arrows
+        label: Follow the arrows deeper
+        to: platform
+      - id: inspect_clock
+        label: Inspect the stopped station clock
+        to: clock
+        requires:
+          notItem: token
+
+  clock:
+    text: >
+      The clock hands are wired in place at 1:13. A maintenance token has been
+      wedged behind the minute hand, warm as a coin left in sunlight. Its edge
+      is stamped SIGNAL BOOTH ACCESS.
+    choices:
+      - id: take_token
+        label: Take the maintenance token
+        to: tunnel
+        requires:
+          notItem: token
+        effects:
+          addItem: token
+          set:
+            found_token: true
+      - id: leave_clock
+        label: Leave the clock alone
+        to: tunnel
+
+  dark_tunnel:
+    text: >
+      The tunnel swallows the last streetlight. Your hand finds cold concrete,
+      then a chain hanging from the ceiling. Far ahead, a woman speaks through
+      a dead public-address speaker.
+    choices:
+      - id: pull_chain
+        label: Pull the chain
+        to: service_room
+        effects:
+          set:
+            lights_on: true
+      - id: answer_voice
+        label: Answer the voice in the speaker
+        to: dispatcher
+      - id: retreat
+        label: Retreat to the entrance
+        to: entrance
+
+  dispatcher:
+    text: >
+      "This is Mara Vale, night dispatcher," the speaker says. "If you can hear
+      me, the line has chosen you. Find the map. Do not trust the blank sign."
+    choices:
+      - id: ask_mara_about_train
+        label: Ask Mara what happened to the train
+        to: mara_warning
+        effects:
+          set:
+            met_mara: true
+      - id: promise_to_help
+        label: Promise Mara you will find the map
+        to: service_room
+        effects:
+          set:
+            met_mara: true
+            promised_mara: true
+            lights_on: true
+
+  mara_warning:
+    text: >
+      Mara says the last train kept returning without its driver. The city
+      sealed the platform, then forgot the people still listed as "in transit."
+      Static chews through her final word: "Remember the token."
+    choices:
+      - id: continue_to_service_room
+        label: Follow Mara's directions to the service room
+        to: service_room
+        effects:
+          set:
+            lights_on: true
+
+  service_room:
+    text: >
+      A breaker panel hums beside a desk covered with old transit maps. A
+      cracked radio repeats a number station. Someone circled Platform 13 in
+      red pencil.
+    choices:
+      - id: take_map
+        label: Take the marked map
+        to: service_room
+        requires:
+          notItem: map
+        effects:
+          addItem: map
+          set:
+            knows_platform: true
+      - id: tune_radio
+        label: Tune the cracked radio
+        to: radio
+        requires:
+          notFlag: knows_release
+      - id: search_locker
+        label: Search the maintenance locker
+        to: locker
+        requires:
+          any:
+            - notItem: fuse
+            - notItem: badge
+      - id: go_to_platform
+        label: Go to Platform 13
+        to: platform
+        requires:
+          any:
+            - flag: has_light
+            - flag: lights_on
+
+  radio:
+    text: >
+      Beneath the numbers, Mara whispers a route: "Third car. Emergency release
+      under the first seat. If the sign says HOME, look away."
+    choices:
+      - id: note_radio_route
+        label: Write down Mara's route
+        to: service_room
+        effects:
+          set:
+            knows_release: true
+      - id: shut_radio_off
+        label: Shut the radio off
+        to: service_room
+
+  locker:
+    text: >
+      The locker contains a wet uniform coat, a fuse stamped PLATFORM LIGHTS,
+      and an employee badge for Mara Vale. The badge number matches a blank
+      line printed on the back of the old transit notice.
+    choices:
+      - id: take_fuse
+        label: Take the platform fuse
+        to: service_room
+        requires:
+          notItem: fuse
+        effects:
+          addItem: fuse
+      - id: take_badge
+        label: Take Mara's badge
+        to: service_room
+        requires:
+          notItem: badge
+        effects:
+          addItem: badge
+          set:
+            has_mara_badge: true
+      - id: close_locker
+        label: Close the locker
+        to: service_room
+
+  platform:
+    text: >
+      Platform 13 waits behind a rusted gate. A driverless train rests on the
+      track, doors open, destination sign blank. The gate control has an empty
+      fuse socket and a token slot.
+    choices:
+      - id: install_fuse
+        label: Install the platform fuse
+        to: lit_platform
+        requires:
+          item: fuse
+        effects:
+          set:
+            platform_lit: true
+      - id: board_train
+        label: Board the train with the map
+        to: train_car
+        requires:
+          item: map
+      - id: return_to_service_room
+        label: Return to the service room and prepare
+        to: service_room
+      - id: force_gate
+        label: Force the rusted gate
+        to: bad_ending
+
+  lit_platform:
+    text: >
+      The platform lights buzz awake. Every advertisement shows the same face:
+      Mara Vale, smiling from a missing-person poster dated forty-three years
+      ago. The train sign flickers between HOME and WARDEN STREET.
+    choices:
+      - id: use_token_slot
+        label: Drop the maintenance token into the gate control
+        to: signal_booth
+        requires:
+          item: token
+      - id: board_from_lit_platform
+        label: Board the train carefully
+        to: train_car
+        requires:
+          item: map
+      - id: return_from_lit_platform
+        label: Return to the service room before boarding
+        to: service_room
+      - id: flee_platform
+        label: Run back to the street
+        to: escape_ending
+
+  signal_booth:
+    text: >
+      The token unlocks a signal booth above the track. Inside, a ledger lists
+      every passenger the line has kept. Mara's name is the last one not crossed
+      out, and her badge number is printed in the margin beside it.
+    choices:
+      - id: mark_mara_clear
+        label: Mark Mara Vale as cleared
+        to: train_car
+        requires:
+          item: badge
+        effects:
+          set:
+            freed_mara: true
+      - id: leave_ledger
+        label: Leave the ledger untouched and board
+        to: train_car
+
+  train_car:
+    text: >
+      The third car smells of rain and hot dust. Under the first seat, your
+      fingers find an emergency release. The blank destination sign begins to
+      spell HOME one letter at a time.
+    choices:
+      - id: pull_release
+        label: Pull the emergency release
+        to: true_ending
+        requires:
+          all:
+            - flag: knows_release
+            - flag: freed_mara
+      - id: ride_with_map
+        label: Follow the map to the morning platform
+        to: good_ending
+        requires:
+          item: map
+      - id: look_at_sign
+        label: Look directly at the destination sign
+        to: lost_ending
+
+  true_ending:
+    ending: true
+    text: >
+      The release opens every door at once. Names vanish from the signal ledger
+      as passengers step into rain-bright morning. Mara's voice thanks you from
+      the speaker, finally close enough to sound alive.
+    choices: []
+
+  good_ending:
+    ending: true
+    text: >
+      The marked map shows the safe transfer beneath Warden Street. The train
+      wakes, carries you one stop, and opens onto morning, though the speaker
+      keeps whispering names after you leave.
+    choices: []
+
+  escape_ending:
+    ending: true
+    text: >
+      You run before the train can choose you. Dawn finds you on Warden Street
+      with rain in your shoes and the certainty that someone else will hear
+      Mara calling tomorrow night.
+    choices: []
+
+  lost_ending:
+    ending: true
+    text: >
+      The sign finishes spelling HOME. For one impossible second it shows your
+      childhood street, your kitchen window, your own silhouette waving you in.
+      The doors close before you remember your real name.
+    choices: []
+
+  bad_ending:
+    ending: true
+    text: >
+      The gate gives way with a scream of metal. The sound wakes something
+      below the platform before the train doors can close.
+    choices: []

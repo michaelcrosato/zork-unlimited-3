@@ -1,0 +1,131 @@
+import { Choice, Condition, Effects, GameState, Story } from "./schema.js";
+
+export interface Observation {
+  story: {
+    id: string;
+    title: string;
+  };
+  scene: {
+    id: string;
+    text: string;
+    ending: boolean;
+  };
+  choices: Array<{
+    id: string;
+    label: string;
+    to: string;
+  }>;
+  state: {
+    flags: Record<string, boolean>;
+    inventory: string[];
+  };
+}
+
+export function initialState(story: Story): GameState {
+  return {
+    storyId: story.id,
+    currentScene: story.start,
+    flags: {},
+    inventory: [],
+    history: [{ scene: story.start }]
+  };
+}
+
+export function observe(story: Story, state: GameState): Observation {
+  const scene = story.scenes[state.currentScene];
+  if (!scene) {
+    throw new Error(`Current scene does not exist: ${state.currentScene}`);
+  }
+
+  return {
+    story: { id: story.id, title: story.title },
+    scene: {
+      id: state.currentScene,
+      text: scene.text,
+      ending: scene.ending
+    },
+    choices: scene.choices.filter((choice) => canChoose(state, choice)).map((choice) => ({
+      id: choice.id,
+      label: choice.label,
+      to: choice.to
+    })),
+    state: {
+      flags: { ...state.flags },
+      inventory: [...state.inventory]
+    }
+  };
+}
+
+export function choose(story: Story, state: GameState, choiceId: string): GameState {
+  const scene = story.scenes[state.currentScene];
+  if (!scene) {
+    throw new Error(`Current scene does not exist: ${state.currentScene}`);
+  }
+
+  const choice = scene.choices.find((candidate) => candidate.id === choiceId);
+  if (!choice) {
+    throw new Error(`Choice '${choiceId}' is not available in scene '${state.currentScene}'`);
+  }
+
+  if (!canChoose(state, choice)) {
+    throw new Error(`Choice '${choiceId}' requirements are not met`);
+  }
+
+  if (!story.scenes[choice.to]) {
+    throw new Error(`Choice '${choiceId}' points to missing scene '${choice.to}'`);
+  }
+
+  const next = applyEffects(state, choice.effects);
+  next.currentScene = choice.to;
+  next.history = [
+    ...state.history,
+    { scene: state.currentScene, choice: choice.id, label: choice.label },
+    { scene: choice.to }
+  ];
+  return next;
+}
+
+export function canChoose(state: GameState, choice: Choice): boolean {
+  return choice.requires ? evaluateCondition(state, choice.requires) : true;
+}
+
+export function evaluateCondition(state: GameState, condition: Condition): boolean {
+  if ("flag" in condition) return state.flags[condition.flag] === true;
+  if ("notFlag" in condition) return state.flags[condition.notFlag] !== true;
+  if ("item" in condition) return state.inventory.includes(condition.item);
+  if ("notItem" in condition) return !state.inventory.includes(condition.notItem);
+  if ("all" in condition) return condition.all.every((nested) => evaluateCondition(state, nested));
+  if ("any" in condition) return condition.any.some((nested) => evaluateCondition(state, nested));
+  return false;
+}
+
+export function applyEffects(state: GameState, effects: Effects | undefined): GameState {
+  const next: GameState = {
+    ...state,
+    flags: { ...state.flags },
+    inventory: [...state.inventory],
+    history: [...state.history]
+  };
+
+  if (!effects) return next;
+
+  for (const [key, value] of Object.entries(effects.set ?? {})) {
+    next.flags[key] = value;
+  }
+
+  for (const item of asArray(effects.addItem)) {
+    if (!next.inventory.includes(item)) next.inventory.push(item);
+  }
+
+  for (const item of asArray(effects.removeItem)) {
+    next.inventory = next.inventory.filter((candidate) => candidate !== item);
+  }
+
+  next.inventory.sort();
+  return next;
+}
+
+function asArray(value: string | string[] | undefined): string[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
