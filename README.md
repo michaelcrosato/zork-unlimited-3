@@ -11,8 +11,8 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.
 - Score-guided goal self-play reaches the 100/100 true ending reliably; chaotic
-  random self-play still misses it, making natural discoverability the next
-  content priority.
+  random self-play now discovers every scene in 250 runs but still rarely earns
+  max score.
 
 ## Quickstart
 

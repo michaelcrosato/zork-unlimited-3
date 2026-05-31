@@ -133,4 +133,62 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "look_away_from_sign");
     expect(observe(story, state).scene.id).toBe("good_ending");
   });
+
+  it("focuses train-car choices on the release after Mara is cleared", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "search_locker",
+      "take_badge",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "mark_mara_clear"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("pull_release");
+    expect(choiceIds).not.toContain("ride_with_map");
+    expect(choiceIds).toContain("look_at_sign");
+  });
+
+  it("focuses signal-booth choices on Mara when carrying her badge", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_badge",
+      "search_locker",
+      "take_fuse",
+      "take_map",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toEqual(["mark_mara_clear"]);
+  });
 });

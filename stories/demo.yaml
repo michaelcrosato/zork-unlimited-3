@@ -302,6 +302,8 @@ scenes:
       - id: leave_ledger
         label: Leave the ledger untouched and board
         to: train_car
+        requires:
+          notItem: badge
 
   train_car:
     text: >
@@ -317,10 +319,12 @@ scenes:
             - flag: knows_release
             - flag: freed_mara
       - id: ride_with_map
-        label: Follow the map to the morning platform
+        label: Follow the map to the morning platform without touching the release
         to: good_ending
         requires:
-          item: map
+          all:
+            - item: map
+            - notFlag: freed_mara
       - id: look_at_sign
         label: Look directly at the destination sign
         to: sign_warning

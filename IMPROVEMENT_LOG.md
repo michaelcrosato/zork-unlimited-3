@@ -229,3 +229,115 @@ highest-leverage improvement target.
   - Add or revise one clue, objective, or choice label that points players
     toward clearing Mara before taking the map escape.
   - Re-run random, goal, coverage, and MCP true-ending checks.
+
+## 2026-05-31 16:18 PT - Iteration 0003: Post-Ledger Choice Focus
+
+### Current Plan
+
+- Main objective: Improve natural true-ending discoverability without removing
+  meaningful failure endings.
+- Why this matters: Goal self-play proves the puzzle can be solved, but random
+  self-play previously missed `true_ending` entirely in 250 runs. The biggest
+  content lever is reducing misleading late-game choices after the player has
+  already collected the correct evidence.
+- Tasks:
+  - Identify late-game branches that compete with the solved Mara/release route.
+  - Hide the generic map escape after Mara is cleared.
+  - Hide the "leave the ledger untouched" branch when the player is carrying
+    Mara's badge.
+  - Add regression tests for both choice-focus moments.
+  - Re-run random, goal, coverage, health, and MCP playtests.
+- Risks:
+  - Over-focusing choices can make the game feel less interactive.
+  - Random-play improvement may be small if the dominant issue is reaching the
+    signal booth at all.
+
+### Work Completed
+
+- Changes made:
+  - `ride_with_map` now requires the player not to have freed Mara, so the
+    train car emphasizes the emergency release after the ledger is resolved.
+  - `leave_ledger` now requires not carrying Mara's badge, so the signal booth
+    focuses the player on clearing her name when they have the proof.
+  - Added tests for the signal-booth and train-car focused-choice states.
+  - Updated README highlights with the new random-discovery result.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `README.md`
+- New content/features added:
+  - No new scenes; this was a late-game affordance and pacing pass.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - CLI random playtest: 250 runs, 80-step cap
+  - CLI random playtest: 1000 runs, 80-step cap
+  - CLI goal playtest: 10 runs, 40-step cap
+  - MCP `run_playtest` for both `goal` and `random`
+- Quantitative metrics:
+  - Health gate:
+    - Formatting: pass
+    - TypeScript: pass
+    - Tests: 4 files, 14 tests passing
+    - Validation: 22 scenes, 5 endings, 22 reachable scenes
+    - Coverage self-play: all scenes visited, best score 100/100
+  - Random self-play, 250 runs:
+    - Ended: 250/250
+    - True ending reached: 1/250
+    - Best score: 90/100
+    - Average score: 35.44/100
+    - Max-score runs: 0
+    - Unvisited scenes: none
+  - Random self-play, 1000 runs:
+    - Ended: 1000/1000
+    - True ending reached: 5/1000
+    - Best score: 100/100
+    - Max-score runs: 3/1000
+  - Goal self-play, 10 runs:
+    - Ended: 10/10
+    - True ending reached: 10/10
+    - Average score: 100/100
+    - Max-score runs: 10/10
+- What worked:
+  - The random strategy now reaches every scene in 250 runs instead of missing
+    `true_ending`.
+  - Goal strategy remains stable at 10/10 max-score true endings.
+  - The focused-choice changes are narratively defensible: if the player holds
+    Mara's badge at the ledger, clearing her name is the natural action; if Mara
+    is freed, the emergency release is the climax.
+- What felt bad/confusing:
+  - Random max-score reliability is still extremely low: 3/1000.
+  - The average random score barely moved, implying early/midgame route
+    discovery needs more help than late-game focus alone can provide.
+- Bugs found:
+  - A first version of the signal-booth regression test attempted to use the
+    token slot before installing the fuse. The test path was corrected.
+
+### Evaluation
+
+- The iteration is a net win but not enough. It improved scene discovery and
+  allowed random play to hit `true_ending`, but it did not materially improve
+  average score.
+- Current success criteria status:
+  - Reliable maximum score in self-play: achieved for goal strategy; random is
+    still very weak.
+  - Unlimited depth: not achieved yet.
+  - Critical bugs: none found after the corrected health gate.
+  - Self-documentation: three persistent feedback entries.
+  - AFK loop robustness: MCP can run the measured strategies.
+
+### Next Iteration
+
+- Highest-priority next task: Add objective-aware transcript analysis or a
+  guided random strategy that uses visible objectives rather than story-specific
+  choice-id keywords.
+- Reason: Late-game affordances helped only slightly. The maintainer needs a
+  more general way to evaluate whether visible objectives guide play.
+- Planned action:
+  - Add a strategy that ranks choices by objective progress and score delta
+    without hard-coded choice-id bonuses.
+  - Compare it against random and goal.
+  - Use the resulting transcripts to decide whether to revise clues or expand
+    the map.
