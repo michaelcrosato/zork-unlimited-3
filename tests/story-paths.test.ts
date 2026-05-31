@@ -25,7 +25,10 @@ describe("demo story critical paths", () => {
       "pull_release"
     ];
 
-    const finalState = path.reduce((state, choiceId) => choose(story, state, choiceId), initialState(story));
+    const finalState = path.reduce(
+      (state, choiceId) => choose(story, state, choiceId),
+      initialState(story)
+    );
     const finalObservation = observe(story, finalState);
 
     expect(finalObservation.scene.id).toBe("true_ending");
@@ -60,29 +63,46 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("platform");
     expect(observation.state.flags.knows_platform).toBe(true);
-    expect(observation.objectives).not.toContain("Find out where the chalk arrows and old line are leading.");
+    expect(observation.objectives).not.toContain(
+      "Find out where the chalk arrows and old line are leading."
+    );
   });
 
   it("surfaces Mara's ledger thread from the service room", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
-    for (const choiceId of ["take_lantern", "open_service_door", "read_personnel_file", "keep_mara_file"]) {
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file"
+    ]) {
       state = choose(story, state, choiceId);
     }
 
     const observation = observe(story, state);
 
     expect(observation.state.flags.read_mara_file).toBe(true);
-    expect(observation.objectives).toContain("Investigate anything marked with the time 1:13 or signal access.");
-    expect(observation.objectives).toContain("Find proof of Mara Vale's identity before clearing her name.");
+    expect(observation.objectives).toContain(
+      "Investigate anything marked with the time 1:13 or signal access."
+    );
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
   });
 
   it("lets players return from the service room to recover the token clue", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
-    for (const choiceId of ["take_lantern", "open_service_door", "read_personnel_file", "keep_mara_file", "return_to_tunnel"]) {
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file",
+      "return_to_tunnel"
+    ]) {
       state = choose(story, state, choiceId);
     }
 
@@ -96,7 +116,14 @@ describe("demo story critical paths", () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
-    for (const choiceId of ["take_lantern", "open_service_door", "take_map", "go_to_platform", "board_train", "look_at_sign"]) {
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign"
+    ]) {
       state = choose(story, state, choiceId);
     }
 

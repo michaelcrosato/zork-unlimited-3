@@ -2,4 +2,6 @@ node_modules/
 dist/
 saves/*.json
 transcripts/*.md
+ai-runs/*
+!ai-runs/.gitkeep
 coverage/

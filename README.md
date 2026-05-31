@@ -15,6 +15,22 @@ npm run cyoa -- transcript --save saves/run.json
 npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json
 ```
 
+## AI Automation
+
+The repo includes a repeatable autonomous-development loop:
+
+```bash
+npm run health
+npm run ai:cycle
+npm run ai:loop
+```
+
+- `health` is the required gate before commits.
+- `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
+- `ai:loop` repeats cycles indefinitely until interrupted.
+
+See [`AGENTS.md`](./AGENTS.md) and [`AI_LOOP_STATE.md`](./AI_LOOP_STATE.md) for agent handoff instructions.
+
 ## MCP Server
 
 Run the stdio MCP server from the project root:

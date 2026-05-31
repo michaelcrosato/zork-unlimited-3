@@ -45,11 +45,13 @@ export function observe(story: Story, state: GameState): Observation {
       text: scene.text,
       ending: scene.ending
     },
-    choices: scene.choices.filter((choice) => canChoose(state, choice)).map((choice) => ({
-      id: choice.id,
-      label: choice.label,
-      to: choice.to
-    })),
+    choices: scene.choices
+      .filter((choice) => canChoose(state, choice))
+      .map((choice) => ({
+        id: choice.id,
+        label: choice.label,
+        to: choice.to
+      })),
     state: {
       flags: { ...state.flags },
       inventory: [...state.inventory]
@@ -149,7 +151,13 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
-  if ((flag("knows_shutdown") || flag("met_mara") || flag("knows_release") || flag("read_mara_file")) && !has("token")) {
+  if (
+    (flag("knows_shutdown") ||
+      flag("met_mara") ||
+      flag("knows_release") ||
+      flag("read_mara_file")) &&
+    !has("token")
+  ) {
     objectives.push("Investigate anything marked with the time 1:13 or signal access.");
   }
 

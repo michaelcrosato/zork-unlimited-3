@@ -1,0 +1,8 @@
+node_modules/
+.git/
+saves/
+transcripts/
+ai-runs/
+coverage/
+dist/
+package-lock.json

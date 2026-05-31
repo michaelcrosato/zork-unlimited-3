@@ -43,7 +43,8 @@ server.registerTool(
   "validate_story",
   {
     title: "Validate Story",
-    description: "Validate a story graph for missing links, duplicate choices, dead ends, and reachability.",
+    description:
+      "Validate a story graph for missing links, duplicate choices, dead ends, and reachability.",
     inputSchema: z.object({
       storyPath: z.string().default(DEFAULT_STORY)
     })
@@ -92,7 +93,8 @@ server.registerTool(
   "choose_option",
   {
     title: "Choose Option",
-    description: "Apply a legal choice id to the current save and return the next scene observation.",
+    description:
+      "Apply a legal choice id to the current save and return the next scene observation.",
     inputSchema: z.object({
       choiceId: z.string(),
       savePath: z.string().default(DEFAULT_SAVE)

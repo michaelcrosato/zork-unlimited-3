@@ -117,8 +117,10 @@ function validateConditionReferences(
 function collectConditionValues(condition: Condition, key: "item" | "flag"): string[] {
   if (key === "item" && "item" in condition) return [condition.item];
   if (key === "flag" && "flag" in condition) return [condition.flag];
-  if ("all" in condition) return condition.all.flatMap((nested) => collectConditionValues(nested, key));
-  if ("any" in condition) return condition.any.flatMap((nested) => collectConditionValues(nested, key));
+  if ("all" in condition)
+    return condition.all.flatMap((nested) => collectConditionValues(nested, key));
+  if ("any" in condition)
+    return condition.any.flatMap((nested) => collectConditionValues(nested, key));
   return [];
 }
 

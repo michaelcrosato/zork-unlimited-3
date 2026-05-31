@@ -45,7 +45,9 @@ describe("engine", () => {
   it("returns derived objectives in observations", () => {
     const state = initialState(story);
 
-    expect(observe(story, state).objectives).toContain("Find a reliable way to see in the underpass.");
+    expect(observe(story, state).objectives).toContain(
+      "Find a reliable way to see in the underpass."
+    );
   });
 
   it("rejects choices that are not in the current scene", () => {

@@ -37,7 +37,9 @@ export function runRandomPlaytests(
     };
   }
 
-  const playtestRuns = Array.from({ length: runs }, (_, index) => runOne(story, index + 1, maxSteps));
+  const playtestRuns = Array.from({ length: runs }, (_, index) =>
+    runOne(story, index + 1, maxSteps)
+  );
   return {
     summary: summarizePlaytests(story, playtestRuns),
     runs: playtestRuns
@@ -53,7 +55,10 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
   const reportedScenes = new Set<string>();
   const runs: PlaytestRun[] = [];
 
-  while (queue.length > 0 && (runs.length < maxRuns || expandedScenes.size < Object.keys(story.scenes).length)) {
+  while (
+    queue.length > 0 &&
+    (runs.length < maxRuns || expandedScenes.size < Object.keys(story.scenes).length)
+  ) {
     const current = queue.shift()!;
     const signature = stateSignature(current.state);
     if (seen.has(signature)) continue;
@@ -93,8 +98,10 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
       if (!current.path.includes(next.currentScene)) score += 10;
       score += countNewItems(current.state.inventory, next.inventory) * 8;
       score += countNewFlags(current.state.flags, next.flags) * 6;
-      if (choice.id.includes("token") || choice.id.includes("fuse") || choice.id.includes("badge")) score += 5;
-      if (choice.id.includes("force") || choice.id.includes("flee") || choice.id.includes("stare")) score -= 8;
+      if (choice.id.includes("token") || choice.id.includes("fuse") || choice.id.includes("badge"))
+        score += 5;
+      if (choice.id.includes("force") || choice.id.includes("flee") || choice.id.includes("stare"))
+        score -= 8;
       return {
         score,
         state: next,
@@ -152,11 +159,7 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
   };
 }
 
-function runOne(
-  story: Story,
-  run: number,
-  maxSteps: number
-): PlaytestRun {
+function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
   let state: GameState = initialState(story);
   const path: string[] = [state.currentScene];
   const random = seededRandom(run);
@@ -196,7 +199,8 @@ function countNewItems(before: string[], after: string[]): number {
 }
 
 function countNewFlags(before: Record<string, boolean>, after: Record<string, boolean>): number {
-  return Object.entries(after).filter(([key, value]) => value === true && before[key] !== true).length;
+  return Object.entries(after).filter(([key, value]) => value === true && before[key] !== true)
+    .length;
 }
 
 function seededRandom(seed: number): () => number {
