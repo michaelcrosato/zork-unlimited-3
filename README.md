@@ -10,9 +10,9 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
   endings.
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.
-- Current measured target: coverage self-play can reach 100/100, but random
-  self-play still misses the true ending, making max-score discoverability the
-  next priority.
+- Score-guided goal self-play reaches the 100/100 true ending reliably; chaotic
+  random self-play still misses it, making natural discoverability the next
+  content priority.
 
 ## Quickstart
 
@@ -26,6 +26,7 @@ npm run cyoa -- choose take_lantern --save saves/run.json --json
 npm run cyoa -- score --save saves/run.json --json
 npm run cyoa -- transcript --save saves/run.json
 npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json
+npm run cyoa -- playtest stories/demo.yaml --runs 10 --strategy goal --summary --json
 ```
 
 ## AI Automation

@@ -167,7 +167,7 @@ server.registerTool(
       storyPath: z.string().default(DEFAULT_STORY),
       runs: z.number().int().positive().max(1000).default(20),
       maxSteps: z.number().int().positive().max(500).default(50),
-      strategy: z.enum(["random", "coverage"]).default("random"),
+      strategy: z.enum(["random", "coverage", "goal"]).default("random"),
       includeRuns: z.boolean().default(false)
     })
   },

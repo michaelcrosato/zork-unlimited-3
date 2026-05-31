@@ -96,7 +96,7 @@ async function playtest(args: string[]): Promise<void> {
   const maxSteps = Number(option(args, "--max-steps") ?? "50");
   const strategy = option(args, "--strategy") ?? "random";
   const story = await loadStory(storyPath);
-  if (strategy !== "random" && strategy !== "coverage") {
+  if (strategy !== "random" && strategy !== "coverage" && strategy !== "goal") {
     throw new Error(`Unknown playtest strategy '${strategy}'`);
   }
   const result = runRandomPlaytests(story, runs, maxSteps, strategy);
@@ -134,7 +134,7 @@ function usage(): void {
   cyoa state --save <save.json> [--json]
   cyoa score --save <save.json> [--json]
   cyoa transcript --save <save.json> [--out <transcript.md>]
-  cyoa playtest <story.yaml> [--runs 20] [--max-steps 50] [--strategy random|coverage] [--summary] [--json]`);
+  cyoa playtest <story.yaml> [--runs 20] [--max-steps 50] [--strategy random|coverage|goal] [--summary] [--json]`);
 }
 
 await main();

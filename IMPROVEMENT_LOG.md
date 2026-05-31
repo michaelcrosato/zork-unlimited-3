@@ -127,3 +127,105 @@ highest-leverage improvement target.
     random exploration.
   - Then adjust story clues or choice affordances only where solver transcripts
     show genuine ambiguity.
+
+## 2026-05-31 16:15 PT - Iteration 0002: Goal-Oriented Self-Play
+
+### Current Plan
+
+- Main objective: Add a self-play strategy that behaves like a score-seeking
+  puzzle solver, not a chaotic random walker.
+- Why this matters: Iteration 0001 showed coverage could prove max score, but
+  random self-play reached 0 max-score runs out of 250. The maintainer loop
+  needs a reliable puzzle-solving probe before story changes can be judged
+  fairly.
+- Tasks:
+  - Add a `goal` playtest strategy.
+  - Expose the strategy through CLI and MCP.
+  - Test that it reaches the true ending and max score reliably.
+  - Compare this against random and coverage baselines.
+- Risks:
+  - A hand-tuned heuristic can overfit the current story.
+  - Solver success does not prove a human player will naturally understand the
+    route.
+
+### Work Completed
+
+- Changes made:
+  - Added `goal` to the playtest strategy type.
+  - Implemented score-guided choice ranking using score deltas, new items,
+    newly set flags, destination quality, and loop avoidance.
+  - Updated CLI strategy validation and usage text.
+  - Updated MCP `run_playtest` schema to accept `goal`.
+  - Added a test requiring 10/10 goal runs to reach `true_ending` at max score.
+  - Updated README highlights and quickstart.
+- Files/systems touched:
+  - `src/playtest.ts`
+  - `src/cli.ts`
+  - `src/mcp.ts`
+  - `tests/playtest.test.ts`
+  - `README.md`
+- New content/features added:
+  - A solver-like autonomous player suitable for future regression checks and
+    puzzle-solvability metrics.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 10 --max-steps 40 --strategy goal --summary --json`
+  - `npm run health`
+  - MCP `run_playtest` with `{ strategy: "goal", runs: 10, maxSteps: 40 }`
+- Quantitative metrics:
+  - Goal self-play, 10 runs, 40-step cap:
+    - Ended: 10/10
+    - Unfinished: 0
+    - True ending reached: 10/10
+    - Best score: 100/100
+    - Average score: 100/100
+    - Max-score runs: 10/10
+  - Health gate:
+    - Formatting: pass
+    - TypeScript: pass
+    - Tests: 4 files, 12 tests passing
+    - Validation: 22 scenes, 5 endings, 22 reachable scenes
+    - Coverage self-play: all scenes visited, best score 100/100
+- What worked:
+  - The new strategy consistently solves the existing puzzle arc.
+  - MCP can invoke the same strategy, so AFK loops can compare random,
+    coverage, and goal-oriented player behaviors.
+  - Score metrics now make the difference between solvability and
+    discoverability explicit.
+- What felt bad/confusing:
+  - The strategy reaches max score by aggressively following score/keyword
+    affordances, which may mask subtle narrative ambiguity.
+  - Goal runs do not visit optional failure/warning scenes; coverage remains
+    necessary for edge-case exploration.
+- Bugs found:
+  - None in this iteration.
+
+### Evaluation
+
+- The iteration is a net win. The game now has three complementary self-play
+  modes:
+  - `random`: chaotic discoverability probe.
+  - `coverage`: graph reachability and edge-case probe.
+  - `goal`: puzzle-solvability and max-score probe.
+- Current success criteria status:
+  - Reliable maximum score in self-play: achieved for goal strategy, not for
+    random strategy.
+  - Unlimited depth: not achieved yet; still fixed graph content.
+  - Critical bugs: none found.
+  - Self-documentation: two persistent feedback entries.
+  - AFK loop robustness: MCP can run the new strategy.
+
+### Next Iteration
+
+- Highest-priority next task: Improve human-facing discoverability of the true
+  ending while preserving meaningful bad/good/lost endings.
+- Reason: Goal self-play can solve the game, but random self-play still misses
+  `true_ending`; the next content pass should make the Mara/token/release chain
+  more naturally legible.
+- Planned action:
+  - Inspect goal transcripts and random misses.
+  - Add or revise one clue, objective, or choice label that points players
+    toward clearing Mara before taking the map escape.
+  - Re-run random, goal, coverage, and MCP true-ending checks.

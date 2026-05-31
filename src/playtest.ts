@@ -2,7 +2,7 @@ import { choose, initialState, observe } from "./engine.js";
 import { GameState, Story } from "./schema.js";
 import { scoreState } from "./score.js";
 
-export type PlaytestStrategy = "random" | "coverage";
+export type PlaytestStrategy = "random" | "coverage" | "goal";
 
 export interface PlaytestRun {
   run: number;
@@ -38,6 +38,16 @@ export function runRandomPlaytests(
 ): PlaytestReport {
   if (strategy === "coverage") {
     const playtestRuns = runCoveragePlaytests(story, runs, maxSteps);
+    return {
+      summary: summarizePlaytests(story, playtestRuns),
+      runs: playtestRuns
+    };
+  }
+
+  if (strategy === "goal") {
+    const playtestRuns = Array.from({ length: runs }, (_, index) =>
+      runGoalOriented(story, index + 1, maxSteps)
+    );
     return {
       summary: summarizePlaytests(story, playtestRuns),
       runs: playtestRuns
@@ -212,6 +222,89 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     path,
     ...scoreOnly(state)
   };
+}
+
+function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestRun {
+  let state: GameState = initialState(story);
+  const path: string[] = [state.currentScene];
+  const random = seededRandom(run);
+  const seen = new Map<string, number>();
+
+  for (let step = 0; step < maxSteps; step += 1) {
+    const observation = observe(story, state);
+
+    if (observation.scene.ending || observation.choices.length === 0) {
+      return {
+        run,
+        ended: observation.scene.ending,
+        finalScene: observation.scene.id,
+        steps: step,
+        path,
+        ...scoreOnly(state)
+      };
+    }
+
+    const currentScore = scoreState(state).score;
+    const ranked = observation.choices
+      .map((choice) => {
+        const next = choose(story, state, choice.id);
+        const nextObservation = observe(story, next);
+        const nextScore = scoreState(next).score;
+        const signature = stateSignature(next);
+        const visits = seen.get(signature) ?? 0;
+        return {
+          choice,
+          next,
+          rank:
+            (nextScore - currentScore) * 100 +
+            scoreDestination(nextObservation.scene.id) +
+            scoreChoiceId(choice.id) +
+            countNewItems(state.inventory, next.inventory) * 30 +
+            countNewFlags(state.flags, next.flags) * 20 -
+            visits * 150 +
+            random()
+        };
+      })
+      .sort((left, right) => right.rank - left.rank);
+
+    const selected = ranked[0];
+    seen.set(stateSignature(selected.next), (seen.get(stateSignature(selected.next)) ?? 0) + 1);
+    path.push(selected.choice.id);
+    state = selected.next;
+    path.push(state.currentScene);
+  }
+
+  return {
+    run,
+    ended: false,
+    finalScene: state.currentScene,
+    steps: maxSteps,
+    path,
+    ...scoreOnly(state)
+  };
+}
+
+function scoreDestination(sceneId: string): number {
+  if (sceneId === "true_ending") return 1000;
+  if (sceneId === "good_ending") return 200;
+  if (sceneId === "escape_ending") return 50;
+  if (sceneId === "bad_ending" || sceneId === "lost_ending") return -400;
+  return 0;
+}
+
+function scoreChoiceId(choiceId: string): number {
+  if (choiceId.includes("pull_release")) return 500;
+  if (choiceId.includes("mark_mara_clear")) return 250;
+  if (choiceId.includes("use_token")) return 180;
+  if (choiceId.includes("install_fuse")) return 140;
+  if (choiceId.includes("note_radio")) return 120;
+  if (choiceId.includes("take") || choiceId.includes("read") || choiceId.includes("inspect")) {
+    return 80;
+  }
+  if (choiceId.includes("search") || choiceId.includes("tune")) return 60;
+  if (choiceId.includes("force") || choiceId.includes("stare")) return -200;
+  if (choiceId.includes("flee")) return -100;
+  return 0;
 }
 
 function scoreOnly(state: GameState): { score: number; maxScore: number } {

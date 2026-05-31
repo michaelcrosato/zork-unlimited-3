@@ -12,4 +12,14 @@ describe("playtest strategies", () => {
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
     expect(report.summary.maxScoreRuns).toBeGreaterThan(0);
   });
+
+  it("goal strategy reliably reaches the max-score true ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    const report = runRandomPlaytests(story, 10, 40, "goal");
+
+    expect(report.summary.unfinished).toBe(0);
+    expect(report.summary.endings.true_ending).toBe(10);
+    expect(report.summary.bestScore).toBe(report.summary.maxScore);
+    expect(report.summary.maxScoreRuns).toBe(10);
+  });
 });
