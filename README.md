@@ -2,6 +2,18 @@
 
 A minimal choose-your-own-adventure engine built so an LLM can inspect, play, validate, and revise the game.
 
+## Current AI-Maintained Version Highlights
+
+- MCP-first autonomous maintenance loop with report, prompt, verification,
+  commit, and push automation.
+- Haunted transit interactive-fiction story with 22 reachable scenes and 5
+  endings.
+- Deterministic 100-point score model exposed through observations, CLI, MCP,
+  and playtest summaries.
+- Current measured target: coverage self-play can reach 100/100, but random
+  self-play still misses the true ending, making max-score discoverability the
+  next priority.
+
 ## Quickstart
 
 ```bash
@@ -11,6 +23,7 @@ npm run cyoa -- validate stories/demo.yaml
 npm run cyoa -- start stories/demo.yaml --save saves/run.json
 npm run cyoa -- scene --save saves/run.json --json
 npm run cyoa -- choose take_lantern --save saves/run.json --json
+npm run cyoa -- score --save saves/run.json --json
 npm run cyoa -- transcript --save saves/run.json
 npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json
 ```
@@ -76,6 +89,8 @@ Run without allowing an agent to edit the repo:
   server config.
 
 See [`AGENTS.md`](./AGENTS.md) and [`AI_LOOP_STATE.md`](./AI_LOOP_STATE.md) for agent handoff instructions.
+See [`IMPROVEMENT_LOG.md`](./IMPROVEMENT_LOG.md) for persistent self-play
+metrics and maintainer feedback.
 
 ## MCP Server
 
@@ -103,6 +118,7 @@ Available tools:
 - `get_scene`
 - `choose_option`
 - `get_state`
+- `get_score`
 - `get_transcript`
 - `run_playtest`
 

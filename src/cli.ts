@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { choose, initialState, observe } from "./engine.js";
 import { runRandomPlaytests } from "./playtest.js";
 import { readSave, writeSave } from "./save.js";
+import { scoreState } from "./score.js";
 import { loadStory } from "./story.js";
 import { renderTranscript } from "./transcript.js";
 import { validateStory } from "./validate.js";
@@ -17,6 +18,7 @@ async function main(): Promise<void> {
     if (command === "scene") return await scene(args);
     if (command === "choose") return await chooseCommand(args);
     if (command === "state") return await state(args);
+    if (command === "score") return await score(args);
     if (command === "transcript") return await transcript(args);
     if (command === "playtest") return await playtest(args);
     usage();
@@ -65,6 +67,12 @@ async function state(args: string[]): Promise<void> {
   const savePath = required(option(args, "--save"), "--save");
   const save = await readSave(savePath);
   print(save.state, hasFlag(args, "--json"));
+}
+
+async function score(args: string[]): Promise<void> {
+  const savePath = required(option(args, "--save"), "--save");
+  const save = await readSave(savePath);
+  print(scoreState(save.state), hasFlag(args, "--json"));
 }
 
 async function transcript(args: string[]): Promise<void> {
@@ -124,6 +132,7 @@ function usage(): void {
   cyoa scene --save <save.json> [--json]
   cyoa choose <choice_id> --save <save.json> [--json]
   cyoa state --save <save.json> [--json]
+  cyoa score --save <save.json> [--json]
   cyoa transcript --save <save.json> [--out <transcript.md>]
   cyoa playtest <story.yaml> [--runs 20] [--max-steps 50] [--strategy random|coverage] [--summary] [--json]`);
 }

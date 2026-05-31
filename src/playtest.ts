@@ -1,5 +1,6 @@
 import { choose, initialState, observe } from "./engine.js";
 import { GameState, Story } from "./schema.js";
+import { scoreState } from "./score.js";
 
 export type PlaytestStrategy = "random" | "coverage";
 
@@ -9,6 +10,8 @@ export interface PlaytestRun {
   finalScene: string;
   steps: number;
   path: string[];
+  score: number;
+  maxScore: number;
 }
 
 export interface PlaytestReport {
@@ -19,6 +22,10 @@ export interface PlaytestReport {
     endings: Record<string, number>;
     visitedScenes: string[];
     unvisitedScenes: string[];
+    bestScore: number;
+    averageScore: number;
+    maxScore: number;
+    maxScoreRuns: number;
   };
   runs: PlaytestRun[];
 }
@@ -73,7 +80,8 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         ended: false,
         finalScene: observation.scene.id,
         steps: current.steps,
-        path: current.path
+        path: current.path,
+        ...scoreOnly(current.state)
       });
     }
 
@@ -84,7 +92,8 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         ended: observation.scene.ending,
         finalScene: observation.scene.id,
         steps: current.steps,
-        path: current.path
+        path: current.path,
+        ...scoreOnly(current.state)
       });
       continue;
     }
@@ -148,6 +157,12 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
   const unvisitedScenes = Object.keys(story.scenes)
     .filter((sceneId) => !visited.has(sceneId))
     .sort();
+  const maxScore = runs[0]?.maxScore ?? scoreState(initialState(story)).maxScore;
+  const bestScore = runs.reduce((best, run) => Math.max(best, run.score), 0);
+  const averageScore =
+    runs.length > 0
+      ? Number((runs.reduce((total, run) => total + run.score, 0) / runs.length).toFixed(2))
+      : 0;
 
   return {
     runs: runs.length,
@@ -155,7 +170,11 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
     unfinished: runs.filter((run) => !run.ended).length,
     endings,
     visitedScenes,
-    unvisitedScenes
+    unvisitedScenes,
+    bestScore,
+    averageScore,
+    maxScore,
+    maxScoreRuns: runs.filter((run) => run.score === maxScore).length
   };
 }
 
@@ -173,7 +192,8 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
         ended: observation.scene.ending,
         finalScene: observation.scene.id,
         steps: step,
-        path
+        path,
+        ...scoreOnly(state)
       };
     }
 
@@ -189,8 +209,14 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     ended: false,
     finalScene: state.currentScene,
     steps: maxSteps,
-    path
+    path,
+    ...scoreOnly(state)
   };
+}
+
+function scoreOnly(state: GameState): { score: number; maxScore: number } {
+  const score = scoreState(state);
+  return { score: score.score, maxScore: score.maxScore };
 }
 
 function countNewItems(before: string[], after: string[]): number {

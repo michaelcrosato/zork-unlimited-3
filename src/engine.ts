@@ -1,4 +1,5 @@
 import { Choice, Condition, Effects, GameState, Story } from "./schema.js";
+import { scoreState } from "./score.js";
 
 export interface Observation {
   story: {
@@ -18,6 +19,10 @@ export interface Observation {
   state: {
     flags: Record<string, boolean>;
     inventory: string[];
+  };
+  score: {
+    score: number;
+    maxScore: number;
   };
   objectives: string[];
 }
@@ -56,6 +61,7 @@ export function observe(story: Story, state: GameState): Observation {
       flags: { ...state.flags },
       inventory: [...state.inventory]
     },
+    score: scoreState(state),
     objectives: getObjectives(state)
   };
 }

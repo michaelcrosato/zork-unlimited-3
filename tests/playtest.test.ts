@@ -9,5 +9,7 @@ describe("playtest strategies", () => {
 
     expect(report.summary.unvisitedScenes).toEqual([]);
     expect(report.summary.endings.true_ending).toBeGreaterThan(0);
+    expect(report.summary.bestScore).toBe(report.summary.maxScore);
+    expect(report.summary.maxScoreRuns).toBeGreaterThan(0);
   });
 });

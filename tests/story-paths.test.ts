@@ -35,6 +35,7 @@ describe("demo story critical paths", () => {
     expect(finalObservation.scene.ending).toBe(true);
     expect(finalObservation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);
     expect(finalObservation.state.flags.freed_mara).toBe(true);
+    expect(finalObservation.score.score).toBe(finalObservation.score.maxScore);
   });
 
   it("warns before the forced-gate bad ending", async () => {

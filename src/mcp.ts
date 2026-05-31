@@ -7,6 +7,7 @@ import { z } from "zod";
 import { choose, initialState, observe } from "./engine.js";
 import { runRandomPlaytests } from "./playtest.js";
 import { readSave, writeSave } from "./save.js";
+import { scoreState } from "./score.js";
 import { loadStory } from "./story.js";
 import { renderTranscript } from "./transcript.js";
 import { validateStory } from "./validate.js";
@@ -121,6 +122,21 @@ server.registerTool(
   async ({ savePath }) => {
     const save = await readSave(savePath);
     return jsonResult(save.state);
+  }
+);
+
+server.registerTool(
+  "get_score",
+  {
+    title: "Get Score",
+    description: "Read the current score, max score, and earned puzzle achievements.",
+    inputSchema: z.object({
+      savePath: z.string().default(DEFAULT_SAVE)
+    })
+  },
+  async ({ savePath }) => {
+    const save = await readSave(savePath);
+    return jsonResult(scoreState(save.state));
   }
 );
 
