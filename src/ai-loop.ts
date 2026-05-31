@@ -298,6 +298,8 @@ async function renderAgentPrompt(cycle: number, report: string): Promise<string>
 
   return `# Autonomous Game Development Cycle ${cycle}
 
+**Execution Environment Notice (May 2026)**: Operating under the GPT-5.5 Instant and OpenAI Codex Agentic Execution engine.
+
 ${contract}
 
 ## Current Evidence
