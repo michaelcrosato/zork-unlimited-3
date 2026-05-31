@@ -8,6 +8,36 @@ Make the CYOA engine and story capable of indefinite AI-assisted improvement
 through repeatable planning, playtesting, validation, agent execution, and
 commits.
 
+## Last Completed Cycle
+
+- Date: 2026-05-31
+- Change: Expanded `src/ai-loop.ts` evidence gathering so every cycle records
+  MCP tool verification, MCP `validate_story`, MCP random/coverage/goal
+  playtest summaries, the fixed true-ending MCP route, and an adaptive
+  exploratory MCP route.
+- Evidence:
+  - `npm run health` passed before the change.
+  - Project-scoped Codex config loads with `CODEX_HOME=$PWD/.codex codex mcp list --json`.
+  - Installed Codex CLI supports `codex exec -`, `--cd`, `--sandbox`, and
+    `--ask-for-approval never`.
+  - Installed Codex CLI MCP help does not expose a required-server setting, so
+    the MCP server cannot be marked required in `.codex/config.toml` with this
+    version.
+- MCP notes:
+  - Required tools verified: `list_stories`, `validate_story`, `start_game`,
+    `get_scene`, `choose_option`, `get_state`, `get_transcript`,
+    `run_playtest`.
+  - Extra tool available: `get_score`.
+  - True-ending route reaches `true_ending` at 100/100.
+  - Exploratory route through Mara's voice reaches `lit_platform` at 55/100 and
+    stalls because the token was not recovered, confirming token signposting is
+    still the main design weakness.
+- Remaining weakness: random play reaches `true_ending` rarely and max score
+  even less often.
+- Next task: improve token/signaling affordances for players who learn Mara's
+  route from the dark-tunnel/dispatcher path before finding the clock token.
+- Risks: do not make the true ending trivial; keep failure endings meaningful.
+
 ## Last Known Priorities
 
 - Improve true-ending discoverability in normal play.
@@ -36,4 +66,6 @@ commits.
 - `AI_LOOP_ALLOW_DIRTY_BASELINE=1` allows auto-commit even when the worktree was dirty before the agent ran.
 - `AI_CODEX_SANDBOX` controls the default Codex sandbox used by `loop.sh`; default is `workspace-write`.
 - `CODEX_HOME=$PWD/.codex ./loop.sh` loads the repo-local Codex MCP configuration.
+- This Codex CLI version does not expose a required-MCP-server option; keep
+  explicit MCP verification in `src/ai-loop.ts`.
 - Generated reports, saves, and transcripts are ignored by git.

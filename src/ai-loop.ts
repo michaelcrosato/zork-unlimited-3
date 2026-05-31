@@ -14,7 +14,19 @@ interface CommandResult {
 interface McpPlayResult {
   ok: boolean;
   finalScene?: string;
+  score?: string;
   transcript?: string;
+  error?: string;
+}
+
+interface McpEvidence {
+  tools: string[];
+  missingRequiredTools: string[];
+  validateStory?: unknown;
+  randomSummary?: unknown;
+  coverageSummary?: unknown;
+  goalSummary?: unknown;
+  exploratory?: McpPlayResult;
   error?: string;
 }
 
@@ -118,8 +130,9 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
 
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
+  const mcpEvidence = await runMcpEvidence();
   const mcpPlay = await runMcpPlaythrough();
-  const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpPlay);
+  const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpEvidence, mcpPlay);
 
   return {
     report,
@@ -132,6 +145,7 @@ function renderReport(
   results: CommandResult[],
   randomSummary: unknown,
   coverageSummary: unknown,
+  mcpEvidence: McpEvidence,
   mcpPlay: McpPlayResult
 ): string {
   const failed = results.filter((result) => result.exitCode !== 0);
@@ -156,20 +170,77 @@ ${JSON.stringify(randomSummary, null, 2)}
 ${JSON.stringify(coverageSummary, null, 2)}
 \`\`\`
 
+## MCP Tool Verification
+
+- Tools: ${mcpEvidence.tools.length > 0 ? mcpEvidence.tools.join(", ") : "unknown"}
+- Missing required tools: ${
+    mcpEvidence.missingRequiredTools.length > 0
+      ? mcpEvidence.missingRequiredTools.join(", ")
+      : "none"
+  }
+
+## MCP validate_story
+
+\`\`\`json
+${JSON.stringify(mcpEvidence.validateStory ?? { error: mcpEvidence.error }, null, 2)}
+\`\`\`
+
+## MCP run_playtest Summaries
+
+Random:
+
+\`\`\`json
+${JSON.stringify(mcpEvidence.randomSummary ?? { error: mcpEvidence.error }, null, 2)}
+\`\`\`
+
+Coverage:
+
+\`\`\`json
+${JSON.stringify(mcpEvidence.coverageSummary ?? { error: mcpEvidence.error }, null, 2)}
+\`\`\`
+
+Goal:
+
+\`\`\`json
+${JSON.stringify(mcpEvidence.goalSummary ?? { error: mcpEvidence.error }, null, 2)}
+\`\`\`
+
 ## Actual MCP Playthrough
 
 - Status: ${mcpPlay.ok ? "PASS" : "FAIL"}
 - Final scene: ${mcpPlay.finalScene ?? "unknown"}
+- Score: ${mcpPlay.score ?? "unknown"}
 
 \`\`\`text
 ${(mcpPlay.transcript ?? mcpPlay.error ?? "No transcript.").slice(-3000)}
 \`\`\`
 
+## Adaptive Exploratory MCP Route
+
+- Status: ${mcpEvidence.exploratory?.ok ? "PASS" : "INCOMPLETE"}
+- Final scene: ${mcpEvidence.exploratory?.finalScene ?? "unknown"}
+- Score: ${mcpEvidence.exploratory?.score ?? "unknown"}
+- Finding: ${
+    mcpEvidence.exploratory?.ok
+      ? "Exploratory route reached an ending."
+      : "Exploratory route stopped before the true ending; inspect transcript for signposting gaps."
+  }
+
+\`\`\`text
+${(
+  mcpEvidence.exploratory?.transcript ??
+  mcpEvidence.exploratory?.error ??
+  "No exploratory transcript."
+).slice(-3000)}
+\`\`\`
+
 ## AI Feedback
 
 ${failed.length > 0 ? "- Fix failing health checks before changing content." : "- Health checks are green."}
+- Treat missing MCP tools or failed MCP validation as blockers.
 - Compare random and coverage summaries. Random misses point to normal-player discoverability issues.
 - Actually play one route through MCP before making story or gameplay changes.
+- Use the adaptive exploratory route to identify the next unclear objective or late-game distraction.
 - Prefer one focused improvement in the next commit.
 
 ## Suggested Next Actions
@@ -337,6 +408,118 @@ function renderAgentResult(result: AgentResult): string {
 ${result.output.slice(-12000)}
 \`\`\`
 `;
+}
+
+async function runMcpEvidence(): Promise<McpEvidence> {
+  const requiredTools = [
+    "list_stories",
+    "validate_story",
+    "start_game",
+    "get_scene",
+    "choose_option",
+    "get_state",
+    "get_transcript",
+    "run_playtest"
+  ];
+  const client = new Client({ name: "ai-loop-evidence", version: "0.1.0" });
+  const transport = new StdioClientTransport({
+    command: "npm",
+    args: ["run", "mcp"],
+    cwd: process.cwd(),
+    stderr: "pipe"
+  });
+
+  try {
+    await client.connect(transport);
+    const tools = (await client.listTools()).tools.map((tool) => tool.name).sort();
+    const missingRequiredTools = requiredTools.filter((tool) => !tools.includes(tool));
+    const validateStory = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "validate_story",
+          arguments: { storyPath: "stories/demo.yaml" }
+        })
+      )
+    );
+    const randomSummary = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "run_playtest",
+          arguments: {
+            storyPath: "stories/demo.yaml",
+            runs: 250,
+            maxSteps: 80,
+            strategy: "random",
+            includeRuns: false
+          }
+        })
+      )
+    ).summary;
+    const coverageSummary = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "run_playtest",
+          arguments: {
+            storyPath: "stories/demo.yaml",
+            runs: 100,
+            maxSteps: 50,
+            strategy: "coverage",
+            includeRuns: false
+          }
+        })
+      )
+    ).summary;
+    const goalSummary = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "run_playtest",
+          arguments: {
+            storyPath: "stories/demo.yaml",
+            runs: 10,
+            maxSteps: 40,
+            strategy: "goal",
+            includeRuns: false
+          }
+        })
+      )
+    ).summary;
+    const exploratory = await runMcpRoute(client, "saves/ai-loop-exploratory.json", [
+      "enter_dark",
+      "answer_voice",
+      "ask_mara_about_train",
+      "continue_to_service_room",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_badge",
+      "search_locker",
+      "take_fuse",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "mark_mara_clear",
+      "pull_release"
+    ]);
+
+    await client.close();
+    return {
+      tools,
+      missingRequiredTools,
+      validateStory,
+      randomSummary,
+      coverageSummary,
+      goalSummary,
+      exploratory
+    };
+  } catch (error) {
+    await client.close().catch(() => undefined);
+    return {
+      tools: [],
+      missingRequiredTools: requiredTools,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
 }
 
 async function runPostAgentAutomation(
@@ -516,30 +699,9 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
 
   try {
     await client.connect(transport);
-    await client.callTool({
-      name: "start_game",
-      arguments: { storyPath: "stories/demo.yaml", savePath }
-    });
-
-    let finalScene = "unknown";
-    for (const choiceId of choices) {
-      const result = await client.callTool({
-        name: "choose_option",
-        arguments: { savePath, choiceId }
-      });
-      const observation = JSON.parse(textContent(result));
-      finalScene = observation.scene.id;
-    }
-
-    const transcript = textContent(
-      await client.callTool({
-        name: "get_transcript",
-        arguments: { savePath }
-      })
-    );
+    const result = await runMcpRoute(client, savePath, choices, "true_ending");
     await client.close();
-
-    return { ok: finalScene === "true_ending", finalScene, transcript };
+    return result;
   } catch (error) {
     await client.close().catch(() => undefined);
     return {
@@ -547,6 +709,64 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
       error: error instanceof Error ? error.message : String(error)
     };
   }
+}
+
+async function runMcpRoute(
+  client: Client,
+  savePath: string,
+  choices: string[],
+  expectedFinalScene?: string
+): Promise<McpPlayResult> {
+  let observation = JSON.parse(
+    textContent(
+      await client.callTool({
+        name: "start_game",
+        arguments: { storyPath: "stories/demo.yaml", savePath }
+      })
+    )
+  );
+
+  for (const choiceId of choices) {
+    const legalChoices = observation.choices.map((choice: { id: string }) => choice.id);
+    if (!legalChoices.includes(choiceId)) {
+      const transcript = textContent(
+        await client.callTool({
+          name: "get_transcript",
+          arguments: { savePath }
+        })
+      );
+      return {
+        ok: false,
+        finalScene: observation.scene.id,
+        score: `${observation.score.score}/${observation.score.maxScore}`,
+        transcript,
+        error: `Choice '${choiceId}' was not available in '${observation.scene.id}'. Legal choices: ${legalChoices.join(", ")}`
+      };
+    }
+
+    observation = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "choose_option",
+          arguments: { savePath, choiceId }
+        })
+      )
+    );
+  }
+
+  const transcript = textContent(
+    await client.callTool({
+      name: "get_transcript",
+      arguments: { savePath }
+    })
+  );
+  const finalScene = observation.scene.id;
+  return {
+    ok: expectedFinalScene ? finalScene === expectedFinalScene : observation.scene.ending,
+    finalScene,
+    score: `${observation.score.score}/${observation.score.maxScore}`,
+    transcript
+  };
 }
 
 function textContent(result: unknown): string {
