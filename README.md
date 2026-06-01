@@ -6,7 +6,7 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 
 - MCP-first autonomous maintenance loop with report, prompt, verification,
   commit, and push automation.
-- Haunted transit interactive-fiction story with 23 reachable scenes and 5
+- Haunted transit interactive-fiction story with 26 reachable scenes and 5
   endings.
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.
@@ -79,6 +79,9 @@ Run without allowing an agent to edit the repo:
 - `ai:loop` repeats cycles indefinitely until interrupted. After the agent
   returns, it detects repo changes or unpushed commits, reruns `health`, plays
   the game through MCP, commits verified changes, and pushes to GitHub.
+- If a cycle changes loop runtime files such as `src/ai-loop.ts` or
+  `package*.json`, the loop exits after verification and asks you to restart
+  `./loop.sh` so the next cycle runs fresh code.
 - `AI_LOOP_DELAY_MS` controls the delay between cycles.
 - `AI_LOOP_MAX_CYCLES` limits the loop for dry runs.
 - `AI_AGENT_TIMEOUT_MS` controls the per-agent timeout.

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
-import { dirname } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
@@ -29,6 +30,31 @@ interface McpEvidence {
   exploratory?: McpPlayResult;
   suspiciousPaths?: string[];
   error?: string;
+}
+
+interface McpObservation {
+  scene: {
+    id: string;
+    ending: boolean;
+  };
+  choices: Array<{
+    id: string;
+    to: string;
+  }>;
+  score: {
+    score: number;
+    maxScore: number;
+  };
+}
+
+interface McpPlaytestRun {
+  run: number;
+  ended: boolean;
+  finalScene: string;
+  score: number;
+  maxScore: number;
+  steps: number;
+  path: string[];
 }
 
 interface CycleArtifacts {
@@ -62,6 +88,8 @@ const autoCommit = process.env.AI_LOOP_AUTO_COMMIT !== "0";
 const autoPush = process.env.AI_LOOP_AUTO_PUSH !== "0";
 const allowDirtyBaseline = process.env.AI_LOOP_ALLOW_DIRTY_BASELINE === "1";
 
+const restartSensitivePaths = new Set(["package.json", "package-lock.json", "src/ai-loop.ts"]);
+
 let stopped = false;
 process.on("SIGINT", () => {
   stopped = true;
@@ -90,6 +118,7 @@ async function main(): Promise<void> {
     if (agentCommand) {
       console.log(`Running AI agent command: ${agentCommand}`);
       const baselineStatus = await runCommand("git status --porcelain");
+      const baselineHead = await runCommand("git rev-parse HEAD");
       const agentResult = await runAgentCommand(
         agentCommand,
         artifacts.prompt,
@@ -105,6 +134,15 @@ async function main(): Promise<void> {
       const postAgentResult = await runPostAgentAutomation(cycle, agentResult, baselineStatus);
       await writeText(postAgentPath, renderPostAgentResult(postAgentResult));
       console.log(`Wrote ${postAgentPath}`);
+      const changedPaths = await getChangedPathsSince(baselineHead.output.trim());
+      if (requiresLoopRestart(changedPaths)) {
+        console.log(
+          `Loop runtime changed (${changedPaths
+            .filter((path) => restartSensitivePaths.has(path))
+            .join(", ")}); restart ./loop.sh before the next cycle.`
+        );
+        stopped = true;
+      }
     } else {
       console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
     }
@@ -497,9 +535,9 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     const randomSummary = randomPlaytestRes.summary;
 
     const suspiciousPaths: string[] = [];
-    if (randomPlaytestRes.runs) {
+    if (Array.isArray(randomPlaytestRes.runs)) {
       const suspicious = randomPlaytestRes.runs.filter(
-        (run: any) =>
+        (run: McpPlaytestRun) =>
           !run.ended ||
           run.finalScene === "bad_ending" ||
           run.finalScene === "lost_ending" ||
@@ -616,18 +654,18 @@ async function runMcpExploratoryRoute(
       }
 
       // Prioritize less visited scenes to avoid trivial loops and ensure backtracking/risky path exploration
-      const choiceVisits = observation.choices.map((choice: any) => {
+      const choiceVisits = (observation as McpObservation).choices.map((choice) => {
         const destination = choice.to;
         const visits = history.filter((sceneId) => sceneId === destination).length;
         return { choice, visits };
       });
 
       // Sort ascending by history visits
-      choiceVisits.sort((left: any, right: any) => left.visits - right.visits);
+      choiceVisits.sort((left, right) => left.visits - right.visits);
 
       // Take candidates with the minimum visits
       const minVisits = choiceVisits[0].visits;
-      const candidates = choiceVisits.filter((c: any) => c.visits === minVisits);
+      const candidates = choiceVisits.filter((candidate) => candidate.visits === minVisits);
       const selected = candidates[Math.floor(rng() * candidates.length)].choice;
 
       history.push(selected.to);
@@ -810,6 +848,40 @@ function shellQuote(value: string): string {
   return `'${value.replace(/'/g, `'\\''`)}'`;
 }
 
+async function getChangedPathsSince(baselineHead: string): Promise<string[]> {
+  const committed = baselineHead
+    ? await runCommand(`git diff --name-only ${shellQuote(baselineHead)} HEAD`)
+    : { output: "" };
+  const worktree = await runCommand("git status --porcelain");
+  return [...parsePathLines(committed.output), ...parsePorcelainPaths(worktree.output)].sort();
+}
+
+export function requiresLoopRestart(changedPaths: string[]): boolean {
+  return changedPaths.some((path) => restartSensitivePaths.has(path));
+}
+
+function parsePathLines(output: string): string[] {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+export function parsePorcelainPaths(output: string): string[] {
+  return output
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0)
+    .flatMap((line) => {
+      const path = line.slice(3);
+      const renameSeparator = " -> ";
+      if (path.includes(renameSeparator)) {
+        const [from, to] = path.split(renameSeparator);
+        return [from, to];
+      }
+      return [path];
+    });
+}
+
 async function writeText(path: string, text: string): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, text, "utf8");
@@ -953,4 +1025,6 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-await main();
+if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? "")) {
+  await main();
+}
