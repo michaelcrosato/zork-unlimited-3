@@ -11,19 +11,69 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make Mara's explicit map request affect platform routing.
+- Why this matters: Current evidence showed players can promise Mara they will
+  find the map, walk to Platform 13 without any useful tool, and then force the
+  rusted gate into the bad ending. Follow-up evidence showed the same promise
+  could still be bypassed by taking only the fuse and badge, restoring the
+  platform, and fleeing without the map. After a promise, the hub should
+  reinforce Mara's specific map request before Platform 13 travel.
+- Tasks:
+  - Hide no-tool platform travel after `promise_to_help` until the player has
+    the map.
+  - Preserve early no-tool platform exploration before Mara is contacted.
+  - Add regression coverage for promise-specific service-room and tunnel
+    routing.
+  - Run health and an actual route through the changed promise branch.
+- Evidence so far:
+  - Added `notFlag: promised_mara` to the no-tool `go_to_platform` allowance.
+  - Added the same promise-aware gating to the tunnel `follow_arrows` route so
+    players cannot bypass the service-room guidance without the map.
+  - Tightened the promise gate after evidence showed fuse-only platform travel
+    could still lead to `escape_ending` without honoring Mara's map request.
+  - Updated objective generation so `promised_mara` surfaces the marked-map
+    objective even before Platform 13 has been discovered.
+  - Added a regression proving Mara-promising players see `take_map` and
+    `search_locker`, do not see `go_to_platform`, then regain `go_to_platform`
+    after taking the map.
+  - Added regressions proving Mara-promising players cannot reach Platform 13
+    from either the service room or tunnel with only the fuse and badge, then
+    regain those routes after taking the map.
+  - `npm test -- tests/story-paths.test.ts` passed with 36 tests.
+  - `npm run health` passed with formatting, TypeScript, 52 tests, validation,
+    and coverage playtest.
+  - Manual CLI route promised Mara, collected fuse and badge first, confirmed
+    the tunnel offered only `open_service_door` and `inspect_clock` plus the
+    marked-map objective, then recovered the map and reached `true_ending` at
+    100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - Final evidence random playtest, 100 runs: all ended, all 30 scenes visited,
+    `true_ending` reached 56 times, best score 100/100, average score 71.3.
+  - Final MCP random playtest, 250 runs: all ended, all 30 scenes visited,
+    `true_ending` reached 142 times, best score 100/100, average score 71.08.
+- Follow-up: The adaptive exploratory route now stops in the service room with
+  badge, fuse, and token but no map. Next cycle should improve the service-room
+  prompt or choice ordering for that exact "map is the last missing promise"
+  state without reopening platform travel before the map.
+- Risks:
+  - This slightly narrows one route after contacting Mara. The deliberate
+    forced-gate bad ending remains reachable through early platform exploration
+    before the player promises to find the map.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made the lit-platform escape branch feel more deliberate and
+  recoverable.
 - Main objective: Make the lit-platform escape branch feel more deliberate and
   recoverable.
 - Why this matters: The adaptive exploratory route can do meaningful setup,
   restore Platform 13, then immediately run to `escape_ending`. That branch is
   useful, but a brief hesitation beat should clarify that leaving is a conscious
   abandonment of Mara's unresolved thread rather than the next normal objective.
-- Tasks:
-  - Add a warning scene before the street escape from the lit platform.
-  - Preserve the deliberate escape ending.
-  - Add regression coverage for both confirming the escape and returning to the
-    lit platform.
-  - Run health and an actual route that exercises the new warning recovery.
-- Evidence so far:
+- Evidence:
   - Selected the lit-platform escape branch based on the latest adaptive
     exploratory route reaching `escape_ending` immediately after platform power
     was restored.

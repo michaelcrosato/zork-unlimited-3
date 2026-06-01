@@ -80,7 +80,11 @@ scenes:
         label: Follow the arrows deeper
         to: platform
         requires:
-          notFlag: platform_lit
+          all:
+            - notFlag: platform_lit
+            - any:
+                - notFlag: promised_mara
+                - item: map
         effects:
           set:
             knows_platform: true
@@ -241,10 +245,10 @@ scenes:
             - any:
                 - all:
                     - notFlag: left_unprepared_platform
+                    - notFlag: promised_mara
                     - notFlag: read_mara_file
                     - notFlag: knows_release
                 - item: map
-                - item: fuse
             - notFlag: platform_lit
         effects:
           set:

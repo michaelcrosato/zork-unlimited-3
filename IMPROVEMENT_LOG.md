@@ -4,6 +4,95 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Promise-Aware Platform Routing
+
+### Current Plan
+
+- Main objective: Make Mara's explicit map request affect platform routing.
+- Why this matters: The latest evidence showed players can promise Mara they
+  will find the map, leave the service room without any useful platform tool,
+  and force the rusted gate into the bad ending. Follow-up evidence showed a
+  fuse-only platform route could still abandon the map promise through the
+  escape ending. After the promise, the hub should make Mara's map request feel
+  like the immediate commitment.
+- Tasks:
+  - Hide Platform 13 travel after `promise_to_help` until the map is recovered.
+  - Preserve early no-tool platform exploration before Mara is contacted.
+  - Add promise-specific regression coverage.
+  - Run health and an actual route through the changed moment.
+- Risks: This narrows one post-Mara route, so the forced-gate bad ending must
+  remain reachable through early platform exploration.
+
+### Work Completed
+
+- Changes made:
+  - Added `notFlag: promised_mara` to the no-tool `go_to_platform` allowance.
+  - Added matching promise-aware gating to the tunnel `follow_arrows` route so
+    players cannot bypass the service-room guidance without the map.
+  - Tightened the promise gate after evidence showed a fuse-only route could
+    still restore the platform and flee without the map.
+  - Updated objective generation so Mara's promise surfaces the marked-map
+    objective before Platform 13 is discovered.
+  - Added a regression proving Mara-promising players stay in the service room
+    until they recover the marked map.
+  - Added a regression proving the tunnel arrows stay unavailable after the
+    promise until the player recovers the marked map.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/engine.ts`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is a route-steering improvement that makes an existing
+    character promise mechanically visible.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through the changed promise branch
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+- What worked:
+  - Story-path tests pass with 36 tests.
+  - Full health passes with formatting, TypeScript, 52 tests, validation, and
+    coverage playtest.
+  - Validation remains clean: 30 scenes, 5 endings, 30 reachable.
+  - Coverage remains stable: 697 runs, 672 ended, 0 unfinished, 25 frontier
+    samples, all scenes visited, best score 100/100.
+  - Manual CLI play confirmed that after promising Mara and collecting only the
+    fuse and badge, the tunnel offers `open_service_door` and `inspect_clock`,
+    with no `follow_arrows`, and the objective list explicitly asks for the
+    marked map.
+  - Continuing that route after taking the map reached `true_ending` at
+    100/100.
+  - Evidence cycle passed health, MCP tool verification, MCP validation, MCP
+    random/coverage/goal playtests, and an actual MCP true-ending playthrough
+    at 100/100.
+  - Final MCP random playtest ended all 250 runs, visited all scenes, reached
+    `true_ending` 142 times, and kept best score at 100/100.
+- What felt bad/confusing:
+  - The adaptive exploratory route now stops in the service room with badge,
+    fuse, and token but no map. The route is no longer falling into a bad or
+    escape ending, but the next pass should make the map-last state feel more
+    directed.
+- Bugs found:
+  - Initial promise gating only covered `go_to_platform`; evidence showed the
+    player could bypass it via `return_to_tunnel` and `follow_arrows`, then via
+    a fuse-only platform route. Both gaps are now covered by tests.
+
+### Next Iteration
+
+- Highest-priority next task: Improve the service-room handoff when the marked
+  map is the last missing promise item.
+- Reason: The adaptive route now correctly avoids premature Platform 13 travel,
+  but it can idle between the service room and tunnel instead of taking the map.
+- Planned action:
+  - Consider a map-specific choice label or ordering rule for
+    `promised_mara && !map` states, then verify it does not reduce ending
+    reachability.
+
 ## 2026-06-01 - Post-Poster Route Focus
 
 ### Current Plan

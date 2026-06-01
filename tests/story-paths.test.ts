@@ -167,6 +167,79 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("go_to_platform");
   });
 
+  it("keeps Mara-promising players in the service room until they recover the map", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["enter_dark", "answer_voice", "promise_to_help"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.promised_mara).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    state = choose(story, state, "search_locker");
+    state = choose(story, state, "take_fuse");
+    state = choose(story, state, "take_badge");
+    state = choose(story, state, "close_locker");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    state = choose(story, state, "take_map");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("go_to_platform");
+  });
+
+  it("keeps Mara-promising players from following the arrows without the map", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["enter_dark", "answer_voice", "promise_to_help", "return_to_tunnel"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.flags.promised_mara).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(choiceIds).toContain("open_service_door");
+    expect(choiceIds).toContain("inspect_clock");
+    expect(choiceIds).not.toContain("follow_arrows");
+
+    state = choose(story, state, "open_service_door");
+    state = choose(story, state, "search_locker");
+    state = choose(story, state, "take_fuse");
+    state = choose(story, state, "take_badge");
+    state = choose(story, state, "close_locker");
+    state = choose(story, state, "return_to_tunnel");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).not.toContain("follow_arrows");
+
+    state = choose(story, state, "open_service_door");
+    state = choose(story, state, "take_map");
+    state = choose(story, state, "return_to_tunnel");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("follow_arrows");
+  });
+
   it("removes the destructive gate option after players find the fuse", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
