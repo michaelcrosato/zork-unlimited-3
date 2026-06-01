@@ -11,57 +11,63 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a manifest-keepsake handoff beat to deepen the passenger
-  rescue route.
-- Why this matters: Core route metrics are healthy, and the strongest next
-  improvement is richer story payoff on successful manifest play. The manifest
-  already names ordinary objects, but only the mitten had an interactive
-  platform payoff; matching more keepsakes makes the released crowd feel less
-  generic without changing the main progression.
+- Main objective: Add a keepsake-specific final intercom beat to deepen the
+  manifest rescue route.
+- Why this matters: The previous cycle made manifest keepsake matching
+  playable, but the payoff collapsed back into the generic gathered-passenger
+  intercom as soon as players reached the third car. The route now preserves
+  the direct helped-passenger ending while giving careful keepsake players one
+  more authored confirmation that the objects helped the passengers reclaim
+  their names.
 - Tasks:
-  - Add an optional passenger-platform choice for matching manifest keepsakes
-    to their owners.
-  - Route that choice through a new scene that gathers the passengers and then
-    returns to the existing third-car release flow.
-  - Preserve direct boarding, the generic gathered-passenger beat, and the
-    lost-mitten route.
-  - Add regression coverage for the new route and existing passenger-platform
-    choice order.
+  - Add a matched-keepsake intercom choice from the third car.
+  - Keep generic gathered-passenger intercom routing for players who use the
+    generic gathering route.
+  - Route matched-keepsake players through a new optional scene that can either
+    release immediately or continue into the existing final roll call.
+  - Add regression coverage for the new choice ordering, new scene text, and
+    helped-ending completion.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI playthrough through the new keepsake route.
+    CLI playthrough through the new keepsake intercom route.
 - Evidence:
-  - Added `passenger_keepsake_handoff`, reached from
-    `match_manifest_keepsakes` on `passenger_platform`.
-  - The new choice sets `matched_manifest_keepsakes` and
-    `helped_passengers_gather`, then leads to the same gathered-passenger
-    release branch as other crowd-helping routes.
-  - Direct boarding, `help_passengers_gather`, and `return_lost_mitten` remain
-    available from `passenger_platform`.
-  - Added story-path regression coverage for the keepsake handoff route.
-  - Focused story-path tests passed with 79 tests.
-  - Validation passed with 59 scenes, 9 endings, and all 59 reachable.
-  - A 100-run random sample ended 100/100 runs, visited all 59 scenes, kept
+  - Added `passenger_keepsake_intercom`, reached from
+    `listen_to_matched_keepsakes` after the player matches manifest keepsakes
+    and leads the matched passengers to the third car.
+  - The generic `listen_to_gathered_passengers` choice now excludes
+    `matched_manifest_keepsakes`, so matched players see the authored keepsake
+    payoff instead of duplicate intercom options.
+  - `passenger_keepsake_intercom` can release directly to
+    `passenger_helped_true_ending` or continue into the existing final roll
+    call through `hear_final_keepsake_roll_call`.
+  - Added story-path regression coverage for the new keepsake-specific
+    intercom route and updated the keepsake handoff route's train-car choice
+    order.
+  - Focused story-path tests passed with 80 tests.
+  - Validation passed with 60 scenes, 9 endings, and all 60 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 60 scenes, kept
     best score 100/100, averaged 78.2, and reached
-    `passenger_keepsake_handoff`.
-  - A coverage sample visited all 59 scenes with 0 unfinished completed routes,
+    `passenger_keepsake_intercom`.
+  - A coverage sample visited all 60 scenes with 0 unfinished completed routes,
     best score 100/100, average score 98.58, and 101016 max-score runs.
-  - Manual CLI play took the manifest route, listened to passenger answers,
-    matched keepsakes, heard the gathered-passenger intercom and final roll
-    call, then reached `passenger_helped_true_ending` at 100/100 with no
-    lingering objectives.
+  - `npm run health` passed with formatting, TypeScript, 101 tests,
+    validation, and coverage playtest.
+  - Manual CLI play took the manifest route, matched keepsakes, heard the new
+    keepsake intercom, continued through the final roll call, and reached
+    `passenger_helped_true_ending` at 100/100 with no lingering objectives.
 - Playtest notes:
-  - The new beat makes the lunch tin, newspaper, and umbrellas function as
-    playable identity anchors instead of only atmospheric manifest details.
-  - The route naturally feeds into the existing gathered-passenger ending and
-    does not require another ending label.
-  - The passenger platform now has four options, but they are distinct:
-    personal mitten payoff, broader keepsake matching, generic gathering, and
-    immediate boarding.
-- Follow-up: Consider whether reports should group the manifest-route variants
-  by route family if the number of optional payoff beats keeps increasing.
+  - The keepsake route now has a stronger final echo: lunch tin, newspaper, and
+    umbrellas are reintroduced at the release point instead of being left
+    behind on the platform.
+  - The new scene improves payoff without adding another ending label or score
+    classifier.
+  - The direct release choice remains available from the train car, so careful
+    players can take the extra beat without making the route mandatory.
+- Follow-up: Consider whether the final roll-call text should get a
+  keepsake-aware variant if the manifest route keeps gaining personalized
+  passenger beats.
 - Risks:
-  - Another optional late-game scene increases coverage state count, but health
-    remains bounded and all sampled runs completed.
+  - Another optional late-game scene increases coverage state count by one, but
+    health remains bounded and all sampled runs completed.
 
 ## Last Completed Cycle
 

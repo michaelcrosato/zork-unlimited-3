@@ -1007,6 +1007,20 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
+            - notFlag: matched_manifest_keepsakes
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: listen_to_matched_keepsakes
+        label: Listen as the matched keepsakes answer for their owners
+        to: passenger_keepsake_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - flag: matched_manifest_keepsakes
             - notFlag: heard_gathered_passengers
         effects:
           set:
@@ -1269,6 +1283,28 @@ scenes:
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+
+  passenger_keepsake_intercom:
+    text: >
+      The returned keepsakes make the platform answer before Mara has to ask.
+      The lunch tin knocks twice against its owner's knee, the newspaper snaps
+      open to the correct transfer column, and the umbrellas rise one by one
+      like a row of small signal flags. Mara reads the names anyway, but now
+      each object gives the person holding it a place to stand. "Good," she
+      says through the speaker. "Hold on to what remembered you. Pull the
+      release while the line is listening."
+    choices:
+      - id: hear_final_keepsake_roll_call
+        label: Hear the matched passengers finish the roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_keepsake_intercom
+        label: Pull the release while the keepsakes hold the names steady
+        to: passenger_helped_true_ending
 
   passenger_roll_call_epilogue:
     text: >
