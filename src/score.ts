@@ -45,7 +45,7 @@ const ACHIEVEMENTS: Array<{
     id: "release_route",
     label: "Learned the third-car release route",
     points: 10,
-    earned: (state) => state.flags.knows_release === true
+    earned: (state) => state.flags.knows_release === true || state.flags.freed_mara === true
   },
   {
     id: "fuse",

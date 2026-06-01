@@ -11,33 +11,60 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce late service-room wandering once players have assembled
-  the map, signal token, platform fuse, and Mara's badge.
-- Outcome: The service-room hub now hides the generic tunnel return after all
-  four true-ending tools are collected, leaving Platform 13 as the clear forward
-  route while preserving earlier tunnel recovery.
+- Main objective: Make the fully equipped service-room state read as a clear
+  launch point for Platform 13 instead of another clue-gathering hub.
+- Outcome: Once players carry the map, signal token, platform fuse, and Mara's
+  badge, the service room now offers only `go_to_platform`; the stale
+  learn-the-release objective is suppressed, and scoring awards the release
+  route when Mara is cleared so no-radio true-ending routes still reach 100/100.
+- Evidence:
+  - Added regression coverage proving a fully equipped service-room state
+    exposes only `go_to_platform`, hides the optional radio/file/tunnel actions,
+    and points objectives toward powering Platform 13.
+  - Added score coverage proving the no-radio ledger route reaches max score
+    after `pull_release`.
+  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts` passes with
+    21 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Goal playtest, 10 runs: all 10 reached `true_ending` at 100/100.
+  - Random playtest, 250 runs: all scenes visited, 249/250 ended, `true_ending`
+    reached 27 times, average score 47.1, max-score runs improved to 18.
+  - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
+    samples remain, `true_ending` reached 20 times, average score 48.82,
+    max-score runs improved to 12.
+  - `npm run health` passes with 27 tests and coverage playtest visiting all
+    scenes.
+  - Manual CLI route collected the map, token, fuse, and badge, confirmed the
+    service room offered only `go_to_platform`, showed objectives for restoring
+    power/token use, then reached `true_ending` at 100/100 while intentionally
+    skipping the radio and file.
+- Follow-up: Coverage still reports 18 unfinished exploration samples. Inspect
+  those traces next and decide whether they are useful coverage-frontier reports
+  or player-facing loops worth smoothing.
+- Risks:
+  - Fully equipped players can no longer return to the clock from the service
+    room or read optional service-room clues before going forward, but they
+    already have the required tools and the route still reaches max score.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Hid the generic tunnel return after players collect the map, signal
+  token, platform fuse, and Mara's badge.
 - Evidence:
   - Added a story-path regression test proving a fully equipped service-room
     state keeps `go_to_platform` available and removes `return_to_tunnel`.
-  - `npm test -- tests/story-paths.test.ts` passes with 19 tests.
-  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - Random playtest, 250 runs: all scenes visited, 249/250 ended, `true_ending`
-    reached 27 times, average score 47.14.
+  - `npm test -- tests/story-paths.test.ts` passed with 19 tests.
+  - Validation passed: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: all scenes visited, 249/250 ended,
+    `true_ending` reached 27 times, average score 47.14.
   - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
     samples remain, `true_ending` reached 20 times, average score 48.24.
-  - `npm run health` passes with 27 tests and coverage playtest visiting all
+  - `npm run health` passed with 27 tests and coverage playtest visiting all
     scenes.
   - Manual CLI route collected the map, token, fuse, and badge, confirmed the
     service room no longer offered `return_to_tunnel`, then reached
     `true_ending` at 90/100 while intentionally skipping the radio clue.
-- Follow-up: The service-room route still offers optional radio/file inspection
-  after the player is mechanically ready. Consider state-aware labels or scene
-  variants that make those choices feel like deliberate lore/score pursuits
-  rather than competing next-step commands.
-- Risks:
-  - Fully equipped players can no longer return to the clock from the service
-    room, but they already have the token; future content that adds late tunnel
-    interactions should relax or replace this requirement.
 
 ## Last Completed Cycle
 

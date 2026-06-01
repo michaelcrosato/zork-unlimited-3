@@ -167,7 +167,13 @@ scenes:
         label: Tune the cracked radio
         to: radio
         requires:
-          notFlag: knows_release
+          all:
+            - notFlag: knows_release
+            - any:
+                - notItem: map
+                - notItem: token
+                - notItem: fuse
+                - notItem: badge
       - id: search_locker
         label: Search the maintenance locker
         to: locker
@@ -179,7 +185,13 @@ scenes:
         label: Read the personnel file on the desk
         to: personnel_file
         requires:
-          notFlag: read_mara_file
+          all:
+            - notFlag: read_mara_file
+            - any:
+                - notItem: map
+                - notItem: token
+                - notItem: fuse
+                - notItem: badge
         effects:
           set:
             read_mara_file: true

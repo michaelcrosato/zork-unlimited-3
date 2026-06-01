@@ -153,7 +153,12 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find out where the chalk arrows and old line are leading.");
   }
 
-  if (flag("knows_platform") && !flag("knows_release") && !flag("freed_mara")) {
+  if (
+    flag("knows_platform") &&
+    !flag("knows_release") &&
+    !flag("freed_mara") &&
+    !(has("map") && has("token") && has("fuse") && has("badge"))
+  ) {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 

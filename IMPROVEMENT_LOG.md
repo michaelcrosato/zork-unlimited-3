@@ -4,6 +4,89 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Fully Equipped Service-Room Launch
+
+### Current Plan
+
+- Main objective: Make the fully equipped service-room state a clear launch
+  point for Platform 13.
+- Why this matters: The previous pass removed the tunnel return, but ready
+  players could still see optional clue actions as competing next steps even
+  after collecting the map, token, fuse, and badge.
+- Tasks:
+  - Hide service-room radio/file clue actions once all four core tools are held.
+  - Remove stale release-route objectives in that same ready state.
+  - Keep max score available for no-radio true-ending routes.
+  - Verify with regression tests, health, playtests, and a real CLI route.
+- Risks:
+  - This narrows optional lore access for fully equipped players. Earlier routes
+    still expose those clues while they are useful for discovery.
+
+### Work Completed
+
+- Changes made:
+  - Added item-gated requirements to `tune_radio` and `read_personnel_file` so
+    they disappear only after the player holds the map, token, fuse, and badge.
+  - Suppressed the "Learn how to survive the driverless train" objective in the
+    fully equipped state, where the next real task is Platform 13.
+  - Updated release-route scoring so clearing Mara also earns that achievement,
+    preserving 100/100 true-ending routes that skip the radio.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/engine.ts`
+  - `src/score.ts`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused pacing, objective, and scoring alignment
+    pass.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 10 --strategy goal --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run health`
+  - Manual CLI route through notice, token, map, locker, focused service room,
+    platform lighting, signal booth, ledger clear, and true ending.
+- Quantitative metrics:
+  - Focused tests: 21 passing.
+  - Health: format check, lint, 27 tests, validation, and coverage playtest all
+    pass.
+  - Goal playtest, 10 runs: 10/10 ended at `true_ending`, average score 100,
+    max-score runs 10.
+  - Random playtest, 250 runs: 249 ended, 1 unfinished, all scenes visited,
+    `true_ending` reached 27 times, average score 47.1, max-score runs 18.
+  - Coverage playtest, 170 runs: 152 ended, 18 unfinished, all scenes visited,
+    `true_ending` reached 20 times, average score 48.82, max-score runs 12.
+  - Manual CLI route: fully equipped service room offered only
+    `go_to_platform`, objectives pointed to power/token use, and the route
+    reached `true_ending` at 100/100 while skipping radio and file.
+- What worked:
+  - The ready service-room state is now unambiguous.
+  - No-radio true-ending routes remain valid max-score routes once Mara is
+    cleared.
+- What felt bad/confusing:
+  - The service-room prose still mentions the radio and maps even when those
+    choices are no longer available; this is acceptable but could be improved
+    with state-aware scene text in a future content pass.
+- Bugs found:
+  - Initial health run exposed a score regression for goal playtests. Updating
+    release-route scoring fixed it and restored 10/10 max-score goal runs.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect the 18 unfinished coverage traces.
+- Reason: Current player-facing route focus is improved, but coverage still
+  reports the same unfinished frontier samples.
+- Planned action:
+  - Generate full coverage traces, group unfinished paths by final scene and
+    repeated state, then either refine reporting or trim the strongest remaining
+    loop.
+
 ## 2026-06-01 - Fully Equipped Service-Room Focus
 
 ### Current Plan

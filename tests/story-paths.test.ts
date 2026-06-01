@@ -265,10 +265,13 @@ describe("demo story critical paths", () => {
       "Learn how to survive the driverless train before boarding it."
     );
     expect(observation.objectives).toContain("Pull the emergency release in the third car.");
+    expect(observation.score.score).toBe(observation.score.maxScore - 10);
     expect(choiceIds).toContain("pull_release");
 
     state = choose(story, state, "pull_release");
-    expect(observe(story, state).scene.id).toBe("true_ending");
+    const finalObservation = observe(story, state);
+    expect(finalObservation.scene.id).toBe("true_ending");
+    expect(finalObservation.score.score).toBe(finalObservation.score.maxScore);
   });
 
   it("warns players without the token before they board from the lit platform", async () => {
@@ -413,8 +416,16 @@ describe("demo story critical paths", () => {
     const choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("service_room");
-    expect(choiceIds).toContain("go_to_platform");
+    expect(choiceIds).toEqual(["go_to_platform"]);
+    expect(choiceIds).not.toContain("tune_radio");
+    expect(choiceIds).not.toContain("read_personnel_file");
     expect(choiceIds).not.toContain("return_to_tunnel");
+    expect(observation.objectives).not.toContain(
+      "Learn how to survive the driverless train before boarding it."
+    );
+    expect(observation.objectives).toContain(
+      "Restore power at Platform 13 and try the token slot."
+    );
   });
 
   it("steers token carriers toward the signal booth from the lit platform", async () => {
