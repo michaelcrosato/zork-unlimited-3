@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { choose, initialState, observe } from "../src/engine.js";
+import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 describe("demo story critical paths", () => {
@@ -771,6 +772,48 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("more than another name");
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
     expect(choiceIds).toEqual(["mark_mara_clear_from_ledger"]);
+  });
+
+  it("keeps badge-less ledger states recoverable", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state: GameState = {
+      ...initialState(story),
+      currentScene: "signal_ledger",
+      flags: {
+        has_light: true,
+        found_token: true,
+        inspected_signal_ledger: true,
+        platform_lit: true
+      },
+      inventory: ["fuse", "lantern", "map", "token"],
+      history: []
+    };
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(choiceIds).toEqual(["return_for_mara_badge"]);
+
+    for (const choiceId of [
+      "return_for_mara_badge",
+      "search_locker",
+      "take_badge",
+      "close_locker",
+      "return_to_lit_platform",
+      "use_token_slot",
+      "reopen_signal_ledger",
+      "mark_mara_clear_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.freed_mara).toBe(true);
+    expect(choiceIds).toContain("pull_release");
   });
 
   it("keeps the locker open until players take both true-ending tools", async () => {

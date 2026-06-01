@@ -11,39 +11,32 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the late-game signal booth feel like a story payoff
-  instead of a single mechanical "mark Mara clear" click.
-- Outcome: The signal booth now routes players through a one-time
-  `signal_ledger` scene before Mara can be cleared, giving the badge action
-  context and reinforcing that Mara stayed on duty until every passenger could
-  leave.
+- Main objective: Keep the late-game signal booth recoverable for unusual or
+  imported states after the ledger has already been inspected.
+- Outcome: Badge-less ledger states can now recover by returning to the service
+  room, collecting Mara's badge, reopening the ledger row, and clearing her
+  name without breaking the normal true-ending route.
 - Evidence:
-  - Added regression coverage proving signal-booth players with Mara's badge
-    see `inspect_signal_ledger` first, then the new ledger scene offers
-    `mark_mara_clear_from_ledger`.
-  - Updated true-ending path regressions and the MCP true-ending route to
-    include the new ledger inspection.
-  - `npm test -- tests/story-paths.test.ts` passed with 29 tests.
+  - Added a regression covering a badge-less `signal_ledger` state: the player
+    can return for Mara's badge, reopen the ledger row, clear Mara, and proceed
+    to the emergency release.
+  - `npm test -- tests/story-paths.test.ts` passed with 30 tests.
   - Validation passed: 26 scenes, 5 endings, 26 reachable, no warnings.
-  - `npm run health` passed with formatting, TypeScript, 40 tests, validation,
+  - `npm run health` passed with formatting, TypeScript, 46 tests, validation,
     and coverage playtest.
-  - Coverage playtest reports 549 runs, 528 ended, 0 unfinished, 21 frontier
-    samples, all 26 scenes visited, and best score 100/100.
-  - Manual CLI route read Mara's uncrossed ledger entry, cleared her with the
-    badge, pulled the emergency release, and reached `true_ending` at 100/100.
+  - Coverage playtest remained stable: 549 runs, 528 ended, 0 unfinished, 21
+    frontier samples, all 26 scenes visited, and best score 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
     tool verification, MCP validation, MCP random/coverage/goal playtests, and
     an actual MCP true-ending playthrough at 100/100.
-  - Evidence cycle random playtest, 100 runs: all ended, all 26 scenes visited,
-    `true_ending` reached 52 times, best score 100/100, average score 67.4.
-  - Evidence cycle MCP random playtest, 250 runs: all ended, all 26 scenes
-    visited, `true_ending` reached 132 times, best score 100/100, average score
-    68.08.
-- Follow-up: Watch whether the extra required click improves late-game payoff
-  without making the true-ending route feel over-constrained.
+  - MCP random playtest, 250 runs: all ended, all 26 scenes visited,
+    `true_ending` reached 132 times, best score 100/100, average score 68.08.
+- Follow-up: The adaptive exploratory route still intentionally reaches the
+  forced-gate bad ending after ignoring the final warning; keep watching whether
+  that branch feels fair or overrepresented in normal play.
 - Risks:
-  - This adds one mandatory late-game beat to the optimal route; the prose needs
-    to justify the added interaction cost.
+  - This is a defensive recovery path; ordinary story constraints already steer
+    most players into carrying the badge before they reach the signal booth.
 
 ## Last Completed Cycle
 

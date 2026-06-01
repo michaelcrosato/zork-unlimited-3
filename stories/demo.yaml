@@ -442,6 +442,11 @@ scenes:
         effects:
           set:
             inspected_signal_ledger: true
+      - id: reopen_signal_ledger
+        label: Reopen Mara's ledger row
+        to: signal_ledger
+        requires:
+          flag: inspected_signal_ledger
 
   signal_ledger:
     text: >
@@ -459,6 +464,11 @@ scenes:
         effects:
           set:
             freed_mara: true
+      - id: return_for_mara_badge
+        label: Return to the service room for Mara's badge
+        to: service_room
+        requires:
+          notItem: badge
 
   train_car:
     text: >
