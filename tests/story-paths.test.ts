@@ -1615,13 +1615,56 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("I can hold the line steady");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_clearing_mara"]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "watch_mara_leave_booth",
+      "board_after_clearing_mara"
+    ]);
 
     state = choose(story, state, "board_after_clearing_mara");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release");
+  });
+
+  it("adds an optional Mara handoff before the non-manifest release route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "watch_mara_leave_booth"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff");
+    expect(observation.scene.text).toContain("done being the last line");
+    expect(observation.state.flags.saw_mara_handoff).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["return_from_mara_handoff"]);
+
+    state = choose(story, state, "return_from_mara_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_released");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_clearing_mara"]);
   });
 
   it("adds a manifest-specific platform beat after clearing Mara's ledger entry", async () => {

@@ -699,9 +699,28 @@ scenes:
       full breath in forty-three years. "Third car," Mara says. "I can hold
       the line steady long enough for you to pull the release."
     choices:
+      - id: watch_mara_leave_booth
+        label: Watch the signal booth go dark behind her
+        to: mara_handoff
+        requires:
+          notFlag: saw_mara_handoff
+        effects:
+          set:
+            saw_mara_handoff: true
       - id: board_after_clearing_mara
         label: Board the third car while Mara holds the line
         to: train_car
+
+  mara_handoff:
+    text: >
+      The signal booth windows clear one by one. For the first time, Mara is
+      not a voice in the walls but a woman stepping away from a desk she kept
+      warm for everyone else. "I am done being the last line," she says, and
+      the platform lights steady as if they believe her.
+    choices:
+      - id: return_from_mara_handoff
+        label: Cross to the third car while Mara holds the line
+        to: mara_released
 
   passengers_released:
     text: >

@@ -11,69 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a reversible morning-transfer checkpoint before the
-  map-only safe escape ending.
-- Why this matters: Current evidence shows ideal-ending discovery is healthy,
-  while the map-only route remains the main low-score safe ending. Letting
-  players see morning, hear Mara's unresolved name, and choose whether to leave
-  or turn back makes the non-ideal route critique itself without removing it.
+- Main objective: Add an optional Mara handoff beat after clearing her ledger
+  on the non-manifest true-ending route.
+- Why this matters: Current route metrics are healthy and all endings remain
+  discoverable, so the highest-value improvement is emotional payoff rather
+  than more guidance. The manifest route already gives released passengers a
+  small platform moment; the solo Mara route now gets a matching one-time beat
+  without making the ending path longer for players who want to board directly.
 - Tasks:
-  - Route map-only train escapes and sign-warning recovery through a
-    `morning_transfer` checkpoint.
-  - Keep `good_ending` available for players who intentionally step into
-    morning.
-  - Let players turn back toward the stopped clock or service room with
-    objectives focused on the signal token, fuse, and Mara's proof.
-  - Add regression coverage for both leaving safely and turning back.
+  - Add a one-time optional scene after `mara_released` that shows Mara leaving
+    the signal booth role behind.
+  - Keep direct boarding from `mara_released` available.
+  - Hide the optional handoff after it is seen so returning players are focused
+    on the third car.
+  - Add regression coverage for the optional beat and the direct route.
   - Run health, an actual CLI playthrough, and the evidence-only AI cycle.
 - Evidence:
-  - Added `morning_transfer`, reached from direct map riding, the optional
-    train-map study route, and looking away from the HOME sign.
-  - `morning_transfer` lets players either step into `good_ending`, return to
-    the stopped clock if they lack the signal token, or return to the service
-    room if they already carry it.
-  - Returning from the safe escape sets `returned_from_safe_escape`,
-    `knows_platform`, `knows_token_location`, and/or `met_mara` so objectives
-    name the remaining useful work.
-  - After a safe-escape return, tunnel and service-room platform routes stay
-    focused on missing parts until the player recovers the fuse, preventing
-    repeated map-only boarding loops.
-  - Updated story-path regression coverage for the optional map-study route,
-    sign-warning recovery, turning back from the transfer, and post-return
-    platform focus.
-  - `npm test -- tests/story-paths.test.ts` passed with 52 tests.
-  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts` passed with
-    58 tests.
-  - `npm run health` passed with formatting, TypeScript, 73 tests, validation,
+  - Added `mara_handoff`, reached from `mara_released` by choosing
+    `watch_mara_leave_booth`.
+  - The handoff sets `saw_mara_handoff`, returns to `mara_released`, and then
+    leaves only `board_after_clearing_mara`, preserving the release pacing.
+  - Direct boarding remains available immediately after clearing Mara's ledger.
+  - Updated story-path regression coverage for both the new optional handoff
+    and the unchanged direct boarding route.
+  - `npm test -- tests/story-paths.test.ts` passed with 53 tests.
+  - `npm run health` passed with formatting, TypeScript, 74 tests, validation,
     and coverage playtest.
-  - Validation reports 42 scenes, 6 endings, and all 42 reachable.
-  - Random playtest sample reports 0 unfinished runs, all 42 scenes visited,
-    best score 100/100, average score 76.2, and 64 max-score runs.
-  - Coverage playtest sample reports 0 unfinished runs, all 42 scenes visited,
-    best score 100/100, average score 94.21, and 8320 max-score runs.
-  - Manual CLI route rode the map to `morning_transfer`, turned back to the
-    stopped clock, collected the true-ending tools, cleared Mara's ledger, and
-    reached `true_ending` at 100/100.
+  - Validation reports 43 scenes, 6 endings, and all 43 reachable.
+  - Health coverage playtest reports 0 unfinished runs, all 43 scenes visited,
+    best score 100/100, average score 95.08, and 9984 max-score runs.
+  - Manual CLI route took `watch_mara_leave_booth`, returned to
+    `mara_released`, boarded the third car, and reached `true_ending` at
+    100/100.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
-    verification, MCP validation, MCP random/coverage/goal playtests, an actual
-    MCP true-ending playthrough at 100/100, and an adaptive exploratory
-    true-ending route at 100/100.
-  - Evidence-cycle random playtest reports 0 unfinished runs, all scenes
+    verification, MCP validation, MCP random/coverage/goal playtests, and an
+    actual MCP true-ending playthrough at 100/100.
+  - Evidence-cycle random playtest reports 0 unfinished runs, all 43 scenes
     visited, 64% ideal endings, and 64 max-score runs.
 - Playtest notes:
-  - The checkpoint worked as intended: seeing morning before leaving made the
-    safe route feel tempting, while Mara's still-audible name gave a concrete
-    reason to turn back.
-  - Returning directly to the stopped clock felt cleaner than returning to the
-    service-room hub when the token was missing.
+  - The new beat reads cleanly in transcript: clearing Mara's name, watching
+    her step away from the booth, then crossing to the third car has a stronger
+    emotional progression.
+  - Returning to `mara_released` after the handoff did not create a loop because
+    the handoff choice disappears after use.
   - No bugs were found in the manual CLI route.
-- Follow-up: If automated routes loop through `morning_transfer` too often,
-  consider deprioritizing the turn-back choice in coverage heuristics rather
-  than removing the player-facing second chance.
+- Follow-up: Consider whether the passenger-manifest route should get a small
+  post-ending report cue so transcript critiques can distinguish "Mara only"
+  from "Mara plus manifest" payoffs without reading the full transcript.
 - Risks:
-  - The new checkpoint adds one scene to non-ideal escape routes. Regression
-    coverage confirms the direct safe exit remains available and the turn-back
-    branch returns to useful objectives.
+  - The optional scene adds one branch to a late-game route. Regression
+    coverage, full health, and manual play confirm the direct route and ideal
+    ending remain stable.
 
 ## Last Completed Cycle
 
