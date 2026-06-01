@@ -261,6 +261,10 @@ scenes:
       - id: close_locker
         label: Close the locker
         to: service_room
+        requires:
+          all:
+            - item: fuse
+            - item: badge
 
   platform:
     text: >

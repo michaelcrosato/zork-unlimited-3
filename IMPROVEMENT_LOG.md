@@ -4,6 +4,82 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Locker Loop Trim
+
+### Current Plan
+
+- Main objective: Reduce low-value locker backtracking seen in exploratory
+  playtests without removing any critical route.
+- Why this matters: Suspicious paths repeatedly bounced between
+  `service_room` and `locker` after taking only one locker item, delaying the
+  useful badge/fuse pairing that supports the true-ending route.
+- Tasks:
+  - Keep the locker open until both the platform fuse and Mara's badge are
+    collected.
+  - Update story-path tests to lock in the tighter pickup flow.
+  - Verify validation, health, automated playtests, and a real playthrough.
+- Risks:
+  - This slightly reduces optional backtracking in the locker, but both items
+    are useful, score-bearing, and harmless for lesser endings.
+
+### Work Completed
+
+- Changes made:
+  - Added fuse-and-badge requirements to `close_locker`.
+  - Updated affected story-path routes and the locker regression expectation.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused pacing and choice-surfacing improvement.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 192 --strategy coverage --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 10 --strategy goal --summary --json`
+  - `npm run health`
+  - Manual CLI route through the updated locker sequence and on to
+    `true_ending`.
+- Quantitative metrics:
+  - Story-path tests: 17 passing.
+  - Health: format check, lint, 25 tests, validation, and coverage playtest all
+    pass.
+  - Random playtest, 250 runs: 248 ended, 2 unfinished, all scenes visited,
+    `true_ending` reached 31 times, average score 47.02.
+  - Coverage playtest, 192 runs: 174 ended, 18 unfinished, all scenes visited,
+    `true_ending` reached 20 times, average score 46.88.
+  - Goal playtest: 10/10 reached `true_ending` at 100/100.
+  - Manual CLI route: after `take_fuse`, the locker offered only `take_badge`;
+    after `take_badge`, it offered only `close_locker`; the full route reached
+    `true_ending` at 100/100.
+- What worked:
+  - The locker no longer offers a low-information close/reopen loop while a
+    critical item is still visible.
+  - The service room no longer offers `search_locker` once both locker items are
+    collected.
+- What felt bad/confusing:
+  - Coverage still reports the same 18 unfinished hub-expansion runs, so this
+    pass improved a player-facing loop without solving the coverage artifact.
+- Bugs found:
+  - A direct Node route failed without the repo's `tsx` loader; rerunning with
+    `node --import tsx` worked. No game runtime bugs were found.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect unfinished coverage traces directly.
+- Reason: The most visible locker churn is trimmed, but the coverage strategy
+  still records 18 unfinished runs from broader hub traversal.
+- Planned action:
+  - Run coverage with full traces, cluster unfinished paths by final scene, and
+    make one narrow route or playtest-reporting improvement based on the
+    dominant trace.
+
 ## 2026-06-01 - Cleared Ledger Finale Focus
 
 ### Current Plan

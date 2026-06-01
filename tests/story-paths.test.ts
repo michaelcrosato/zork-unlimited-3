@@ -61,6 +61,7 @@ describe("demo story critical paths", () => {
       "open_service_door",
       "search_locker",
       "take_fuse",
+      "take_badge",
       "close_locker",
       "go_to_platform"
     ]) {
@@ -348,6 +349,7 @@ describe("demo story critical paths", () => {
       "open_service_door",
       "search_locker",
       "take_fuse",
+      "take_badge",
       "close_locker",
       "go_to_platform",
       "install_fuse",
@@ -420,7 +422,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual(["mark_mara_clear"]);
   });
 
-  it("keeps the locker open until players see both true-ending tools", async () => {
+  it("keeps the locker open until players take both true-ending tools", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -433,7 +435,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("locker");
     expect(choiceIds).toContain("take_badge");
-    expect(choiceIds).toContain("close_locker");
+    expect(choiceIds).not.toContain("close_locker");
 
     state = choose(story, state, "take_badge");
     observation = observe(story, state);

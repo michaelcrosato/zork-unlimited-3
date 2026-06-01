@@ -11,9 +11,37 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the earned true-ending finale decisive after Mara's
-  ledger entry has been cleared.
-- Outcome: Hid the HOME-sign trap from the train car once `freed_mara` is true,
+- Main objective: Reduce low-value locker backtracking seen in exploratory
+  playtests without removing any critical route.
+- Outcome: Kept the maintenance locker open until players take both the
+  platform fuse and Mara's badge, then return them to the service-room hub.
+- Evidence:
+  - Updated the locker regression test to prove `close_locker` is unavailable
+    after taking only the fuse and available after both true-ending tools.
+  - `npm test -- tests/story-paths.test.ts` passes with 17 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - `npm run health` passes with 25 tests and coverage playtest visiting all
+    scenes; coverage still reports the known 18 unfinished runs.
+  - Random playtest, 250 runs: all scenes visited, 2 unfinished,
+    `true_ending` reached 31 times, average score 47.02.
+  - Coverage playtest, 192 runs: all scenes visited, 18 unfinished,
+    `true_ending` reached 20 times, average score 46.88.
+  - Goal playtest, 10 runs: all 10 reached `true_ending` at 100/100.
+  - Manual CLI route confirmed the locker choice list narrows to `take_badge`
+    after `take_fuse`, then to `close_locker` after `take_badge`; a full route
+    reached `true_ending` at 100/100.
+- Follow-up: Coverage strategy still leaves 18 unfinished runs from hub
+  traversal. After this pass, inspect whether the remaining unfinished traces
+  are harmless coverage-budget exits or another loop worth smoothing.
+- Risks:
+  - Over-guiding item collection could make the locker feel less optional, but
+    both items are useful and carrying the badge has no penalty for lesser
+    endings.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Hid the HOME-sign trap from the train car once `freed_mara` is true,
   so players who found the token, lit Platform 13, used the signal booth, and
   cleared Mara now receive the emergency release as the decisive finale action.
 - Evidence:
@@ -27,13 +55,6 @@ preserving normal-play true-ending discoverability.
     `true_ending` reached 19 times, average score 40.82.
   - Manual CLI route reached `train_car` after clearing Mara with only
     `pull_release` available, then reached `true_ending` at 100/100.
-- Follow-up: Coverage strategy still leaves 18 unfinished runs from hub
-  traversal. The next pass should inspect those unfinished traces and trim one
-  remaining loop without removing useful backtracking.
-- Risks:
-  - Removing too much agency from the finale could make the true ending feel
-    automatic, so this only applies after the player has already found the
-    token, badge, lit platform, and cleared the ledger.
 
 ## Last Completed Cycle
 
