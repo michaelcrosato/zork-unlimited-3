@@ -1954,7 +1954,7 @@ scenes:
             backed_away_from_gate: true
       - id: force_gate_anyway
         label: Ignore the final warning and force the gate anyway
-        to: bad_ending
+        to: gate_collapse
 
   gate_echo:
     text: >
@@ -1973,6 +1973,25 @@ scenes:
             backed_away_from_gate: true
       - id: force_gate_after_echo
         label: Ignore what answered and force the gate anyway
+        to: gate_collapse
+
+  gate_collapse:
+    text: >
+      The gate lifts only far enough to show the gap beneath it. The track
+      exhales cold air through your sleeves, and the driverless train answers
+      by closing one door at a time. The empty fuse socket spits brighter now,
+      not as a clue but as a countdown. Behind you, the service-room door is
+      still open. Ahead, the thing below the platform is already practicing
+      Mara's badge number in your voice.
+    choices:
+      - id: brace_gate_and_retreat
+        label: Drop the gate and retreat for the four supplies
+        to: service_room
+        effects:
+          set:
+            backed_away_from_gate: true
+      - id: crawl_under_collapsing_gate
+        label: Crawl under the gate before the doors finish closing
         to: bad_ending
 
   sign_warning:

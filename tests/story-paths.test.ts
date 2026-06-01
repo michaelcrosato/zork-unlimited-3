@@ -107,6 +107,30 @@ describe("demo story critical paths", () => {
       observation.choices.find((choice) => choice.id === "back_away_after_gate_echo")?.label
     ).toBe("Back away and gather the four answers");
 
+    state = choose(story, state, "force_gate_after_echo");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("gate_collapse");
+    expect(observation.scene.text).toContain("not as a clue but as a countdown");
+    expect(observation.scene.text).toContain("service-room door is still open");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "brace_gate_and_retreat",
+      "crawl_under_collapsing_gate"
+    ]);
+
+    state = choose(story, state, "brace_gate_and_retreat");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.backed_away_from_gate).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
+
+    state = initialState(story);
+    for (const choiceId of ["take_lantern", "follow_arrows", "force_gate", "listen_below_gate"]) {
+      state = choose(story, state, choiceId);
+    }
+
     state = choose(story, state, "back_away_after_gate_echo");
     observation = observe(story, state);
 
@@ -121,7 +145,8 @@ describe("demo story critical paths", () => {
       "follow_arrows",
       "force_gate",
       "listen_below_gate",
-      "force_gate_after_echo"
+      "force_gate_after_echo",
+      "crawl_under_collapsing_gate"
     ]) {
       state = choose(story, state, choiceId);
     }

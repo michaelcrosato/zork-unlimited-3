@@ -12,63 +12,57 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a dedicated lunch-tin boarding beat before the final
-  helped-passenger release.
-- Why this matters: The core route metrics are healthy, so the best current
-  value is route-specific story depth. The lunch-tin worker can set the final
-  boarding rhythm, but that choice previously dropped back to the generic third
-  car before its tailored intercom. A short boarding beat makes the player's
-  choice pay off immediately and keeps the branch distinct.
+- Main objective: Add a final recovery beat to the forced-gate failure route.
+- Why this matters: Core route guidance is healthy, but random play still hit
+  the forced-gate bad ending often enough to make the failure feel slightly
+  abrupt. A short collapse beat preserves the deliberate bad route while giving
+  underprepared explorers one more concrete chance to retreat for the map,
+  fuse, badge, and token.
 - Tasks:
-  - Add `passenger_lunch_tin_boarding` after the lunch-tin pace choices.
-  - Preserve the existing `passenger_lunch_tin_intercom` and direct helped
-    ending release.
-  - Add regression coverage for the new boarding scene, the intercom
-    continuation, and the direct release.
-  - Run focused tests, validation, full health, evidence gathering, and a real
-    CLI/MCP playthrough.
+  - Add `gate_collapse` after the final forced-gate choices.
+  - Let players either retreat to the service room or intentionally continue to
+    `bad_ending`.
+  - Add regression coverage for the new collapse scene, its recovery choice,
+    and its deliberate bad-ending continuation.
+  - Run focused tests, validation, random and coverage playtests, full health,
+    evidence gathering, and a real CLI route through the new recovery.
 - Evidence:
-  - Added `passenger_lunch_tin_boarding`, reached from both
-    `let_lunch_tin_worker_keep_count` and `return_from_passenger_farewell`.
-  - The new scene can continue to the existing lunch-tin intercom through
-    `listen_to_lunch_tin_worker_from_boarding`, or release directly through
-    `pull_release_after_lunch_tin_boarding`.
+  - Added `gate_collapse`, reached from both `force_gate_anyway` and
+    `force_gate_after_echo`.
+  - The new scene can recover through `brace_gate_and_retreat`, which sets
+    `backed_away_from_gate` and returns to `service_room`, or continue through
+    `crawl_under_collapsing_gate` to the existing `bad_ending`.
   - Focused story-path tests passed with 99 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 83
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 84
     reachable scenes and 12 endings.
+  - Random 100-run playtest visited `gate_collapse`, had no unfinished runs or
+    unvisited scenes, kept best score 100/100, improved average score to 82.8,
+    and reduced bad endings to 7/100 in that sample.
+  - Coverage playtest visited all 84 scenes, including `gate_collapse`, kept
+    best score 100/100, and averaged 99.58.
   - `npm run health` passed with formatting, TypeScript, 120 tests,
-    validation, and coverage playtest. Coverage visited all 83 scenes,
-    including `passenger_lunch_tin_boarding`, kept best score 100/100, and
-    averaged 99.58.
+    validation, and coverage playtest.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T20-51-32-222Z.md`. Its 100-run random
-    and coverage samples both visited `passenger_lunch_tin_boarding`, had no
-    unvisited scenes, kept best score 100/100, and averaged 78.25 random /
-    99.58 coverage.
-  - Evidence-cycle MCP validation passed with 83 reachable scenes and no
-    warnings. Its required MCP playthrough reached `true_ending` at 100/100,
-    and its adaptive exploratory route reached `passenger_true_ending` at
-    100/100.
-  - Manual CLI play followed `let_lunch_tin_worker_keep_count` ->
-    `listen_to_lunch_tin_worker_from_boarding` ->
-    `pull_release_after_lunch_tin_intercom` and reached
-    `passenger_helped_true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T21-02-44-904Z.md`. Its health checks were
+    green, MCP validation passed with 84 reachable scenes and no warnings, the
+    MCP route reached `true_ending` at 100/100, and the adaptive route reached
+    `passenger_true_ending` at 100/100.
+  - Manual CLI play went through `force_gate` -> `listen_below_gate` ->
+    `force_gate_after_echo` -> `brace_gate_and_retreat`, then gathered the
+    proper supplies and reached `true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new boarding beat makes the lunch-tin choice visible immediately: the
-    latch count now bridges passenger answers into the final intercom instead
-    of briefly returning to generic third-car text.
-  - The branch still offers a direct release for players who understand the
-    count, while preserving the stronger intercom payoff for exploratory
-    players.
+  - The collapse scene makes the danger tactile and explicit without removing
+    the intentional bad-ending choice.
+  - The recovery path cleanly returns players to actionable objectives in the
+    service room and prevents the forced-gate loop after backing away.
   - Automated and manual play found no unreachable scenes, unfinished routes,
     stale objectives, or score regressions.
 - Follow-up:
-  - Watch whether the helped-passenger route now has enough branch identity, or
-    whether the non-lunch gathered route needs a similarly concrete boarding
-    beat later.
+  - Core route metrics are healthy; next value is likely stronger character or
+    ending texture rather than another warning-only pass.
 - Risks:
-  - Passenger routes are already dense; keep this as a single bridge scene and
-    avoid adding more ending families unless playtests show a real gap.
+  - The gate route now has three warnings before failure. Keep future early-game
+    changes focused so the opening does not become over-confirmed.
 
 ## Last Completed Cycle
 
