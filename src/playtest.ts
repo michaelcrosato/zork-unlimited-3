@@ -336,7 +336,7 @@ function scoreDestination(sceneId: string): number {
     return 1000;
   }
   if (sceneId === "good_ending") return 200;
-  if (sceneId === "escape_ending") return 50;
+  if (sceneId === "escape_ending" || sceneId === "warned_escape_ending") return 50;
   if (sceneId === "bad_ending" || sceneId === "lost_ending") return -400;
   return 0;
 }

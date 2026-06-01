@@ -3714,7 +3714,11 @@ describe("demo story critical paths", () => {
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("escape_ending");
+    expect(observation.scene.id).toBe("warned_escape_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("hearing Mara name the signal key");
+    expect(observation.scene.text).toContain("stopped clock");
+    expect(observation.scene.text).toContain("unfinished route");
   });
 
   it("routes ledger-warning players directly to the stopped clock for the token", async () => {

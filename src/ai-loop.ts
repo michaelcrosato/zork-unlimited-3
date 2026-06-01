@@ -450,7 +450,7 @@ function renderEffectivenessSignals(
   const idealRate = idealEndingRate(random);
   const badEndingRate = endingRate(random, "bad_ending");
   const lostEndingRate = endingRate(random, "lost_ending");
-  const escapeEndingRate = endingRate(random, "escape_ending");
+  const escapeEndingRate = endingRate(random, "escape_ending", "warned_escape_ending");
   const maxScoreRate = random.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
   const coverageComplete = (coverage.unvisitedScenes?.length ?? 0) === 0;
   const exploratoryComplete = mcpEvidence.exploratory?.ok === true;
@@ -499,10 +499,14 @@ function identifyLongRunPressure(
 
 function endingRate(
   summary: { runs?: number; endings?: Record<string, number> } | undefined,
-  endingId: string
+  ...endingIds: string[]
 ): number {
   if (!summary?.runs) return 0;
-  return Number(summary.endings?.[endingId] ?? 0) / summary.runs;
+  const total = endingIds.reduce(
+    (sum, endingId) => sum + Number(summary.endings?.[endingId] ?? 0),
+    0
+  );
+  return total / summary.runs;
 }
 
 const idealEndingGroups = [

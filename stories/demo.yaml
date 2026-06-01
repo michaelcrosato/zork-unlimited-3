@@ -610,7 +610,7 @@ scenes:
         to: clock
       - id: leave_after_stairwell_call
         label: Leave Mara calling and run back to the street
-        to: escape_ending
+        to: warned_escape_ending
 
   ledger_warning:
     text: >
@@ -2333,6 +2333,17 @@ scenes:
       You run before the train can choose you. Dawn finds you on Warden Street
       with rain in your shoes and the certainty that someone else will hear
       Mara calling tomorrow night.
+    choices: []
+
+  warned_escape_ending:
+    ending: true
+    text: >
+      You leave after hearing Mara name the signal key, so dawn has sharper
+      edges when it finds you on Warden Street. The stopped clock behind you is
+      still holding the token, the platform lights still wait for a booth to
+      open, and her voice follows the rain down the stairs until traffic covers
+      it. Someone else may answer tomorrow, but they will inherit the same
+      unfinished route you understood well enough to abandon.
     choices: []
 
   lost_ending:

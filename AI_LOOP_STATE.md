@@ -12,6 +12,56 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Give the stairwell-informed escape route its own non-ideal
+  ending and keep reporting escape pressure accurately.
+- Why this matters: Random play still occasionally ends in escape. The branch
+  where the player listens to Mara explain the missing signal key, then leaves
+  anyway, previously collapsed into the same ending as fleeing without that
+  knowledge. A distinct ending makes the player's informed abandonment feel
+  remembered while preserving the route as a valid non-ideal ending.
+- Tasks:
+  - Add `warned_escape_ending` for leaving after `mara_stairwell_call`.
+  - Route `leave_after_stairwell_call` to the new ending.
+  - Keep score-guided playtest valuation and AI-loop long-run reporting aligned
+    by grouping `warned_escape_ending` with escape pressure.
+  - Update focused route coverage for the warned escape branch.
+  - Run full health and a targeted CLI playthrough.
+- Evidence:
+  - Added a distinct terminal scene for players who hear Mara identify the
+    stopped-clock token and still choose to leave.
+  - Updated `src/playtest.ts` so score-guided play treats both escape endings
+    as the same low-value non-ideal outcome.
+  - Updated `src/ai-loop.ts` so long-run effectiveness reports combine
+    `escape_ending` and `warned_escape_ending` in escape pressure.
+  - Focused story-path tests passed with 103 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+    validation, and coverage playtest.
+  - Validation reports 97 scenes, 19 endings, all 97 reachable, and no
+    warnings.
+  - Health coverage visited all 97 scenes, including `warned_escape_ending`,
+    with zero unfinished runs, best score 100/100, average score 99.51, and
+    342040 max-score runs.
+  - Targeted CLI play followed `flee_platform` -> `listen_at_stairwell` ->
+    `leave_after_stairwell_call` and reached `warned_escape_ending` at 35/100.
+- Playtest notes:
+  - The new ending clearly distinguishes panic-fleeing from leaving after
+    understanding the token clue.
+  - The route still feels like a fair failure: the stairwell call offers a
+    concrete recovery choice back to the stopped clock before the player
+    confirms departure.
+  - Coverage found both escape variants without harming ideal-ending reachability
+    or score distribution.
+- Follow-up:
+  - Review whether report suspicious-path sampling should include escape
+    variants when random escape pressure rises.
+- Risks:
+  - The game now has another ending ID; future report work should keep
+    non-ideal endings grouped by player-facing meaning.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Give the direct answered-passenger boarding route its own
   final true-ending payoff.
 - Why this matters: Core guidance and true-ending discoverability are healthy,
