@@ -1,3 +1,12 @@
+# Suggestion: MCP Server Blind Test Script
+
+I wrote a short script that acts as an autonomous subagent. It connects to the `npm run mcp` server over `stdio` and blindly plays the game for 5 steps by taking the first available choice.
+
+This proves that the MCP server exposes the game logic cleanly to subagents that don't know the game structure.
+
+If you find this useful to include in the repository as a test/example, you can add the following code as `src/mcp-tester.ts` (or anywhere you see fit).
+
+```typescript
 import { spawn } from "node:child_process";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -79,3 +88,4 @@ async function main() {
 }
 
 main().catch(console.error);
+```
