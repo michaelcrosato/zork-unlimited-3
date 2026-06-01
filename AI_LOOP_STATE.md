@@ -11,6 +11,65 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a handoff-specific intercom payoff after watching Mara
+  open the manifest doors.
+- Why this matters: Players who choose to watch Mara personally call the opened
+  manifest doors now get that careful action acknowledged in the third car
+  instead of falling back to the generic manifest-count intercom.
+- Tasks:
+  - Add an optional train-car intercom scene gated by
+    `saw_mara_manifest_handoff`, direct manifest release state, and no passenger
+    answer/gathering route flags.
+  - Preserve the direct `pull_release_with_manifest` choice and the existing
+    generic manifest intercom for players who did not watch Mara open the
+    manifest.
+  - Add regression coverage for choice ordering, scene text, route flags, and
+    max-score completion.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI playthrough.
+- Evidence:
+  - Added `mara_manifest_handoff_intercom`, reached from the train car only
+    after players open the manifest, watch Mara call the opened doors, and
+    board without listening to passenger answers or gathering the crowd.
+  - The direct `pull_release_with_manifest` choice remains available beside the
+    optional handoff intercom.
+  - The existing `mara_manifest_intercom` remains the generic manifest-count
+    route for players who did not watch Mara's handoff.
+  - Added story-path regression coverage for choice ordering, scene text,
+    `heard_mara_goodbye`, and max-score completion through
+    `passenger_true_ending`.
+  - Focused story-path tests passed with 85 tests.
+  - Validation passed with 66 scenes, 10 endings, and all 66 reachable.
+  - A 100-run random sample ended 100/100 runs, kept best score 100/100,
+    averaged 78.2, and reached max score in 72 runs.
+  - A 100-run coverage sample visited all 66 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.63, and 105408 max-score
+    runs.
+  - `npm run health` passed with formatting, TypeScript, 106 tests,
+    validation, and coverage playtest.
+  - Health coverage playtest visited all 66 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.63, and 105408 max-score
+    runs.
+  - Manual CLI play watched Mara open the manifest, boarded directly, heard the
+    new handoff-specific intercom, and reached `passenger_true_ending` at
+    100/100 with no objectives.
+- Playtest notes:
+  - The new beat makes Mara's door-by-door handoff feel consequential on the
+    direct manifest route.
+  - Keeping the direct release beside the optional intercom preserves route
+    pacing for players ready to finish.
+  - No validation, score, completion, or coverage regression surfaced in
+    focused checks.
+- Follow-up: Consider grouping late-game intercom route families in reports if
+  scene-count growth makes summaries harder to scan.
+- Risks:
+  - Another optional late-game intercom scene can make route-family summaries
+    busier; keep the branch gated to direct manifest-handoff play.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add an answer-listener intercom payoff on the direct manifest
   release route.
 - Why this matters: Players can pause to hear the opened manifest passengers

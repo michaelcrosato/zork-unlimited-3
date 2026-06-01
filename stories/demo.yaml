@@ -1023,14 +1023,29 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
-      - id: listen_to_mara_manifest_intercom
+      - id: listen_to_mara_manifest_handoff_intercom
         label: Listen as Mara calls the passengers home
+        to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - notFlag: heard_mara_goodbye
+            - flag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_mara_manifest_intercom
+        label: Listen as Mara finishes the manifest count
         to: mara_manifest_intercom
         requires:
           all:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
         effects:
@@ -1317,6 +1332,18 @@ scenes:
       - id: pull_release_after_handoff_goodbye
         label: Pull the release while Mara opens the far door
         to: mara_handoff_true_ending
+
+  mara_manifest_handoff_intercom:
+    text: >
+      The speaker stays open after Mara has called every stamped door. You can
+      hear the care in the pauses she leaves between names: long enough for
+      breath, short enough that the line cannot teach anyone to wait again.
+      "They are not entries anymore," she says. "They are almost through. Pull
+      the release while they still sound like people."
+    choices:
+      - id: pull_release_after_manifest_handoff_goodbye
+        label: Pull the release while Mara holds the manifest open
+        to: passenger_true_ending
 
   mara_manifest_intercom:
     text: >
