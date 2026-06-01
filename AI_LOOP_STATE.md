@@ -12,6 +12,71 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Give the echoed-manifest route its own final true-ending
+  payoff.
+- Why this matters: Core guidance and true-ending discoverability are healthy,
+  so the next useful improvement is route-specific story depth. The route where
+  the player listens to the stamped passenger doors, boards with those echoes,
+  and listens again in the third car already has bespoke buildup but resolved
+  into the generic passenger ending. A distinct ending makes that careful
+  listening feel remembered without changing core progression or guidance.
+- Tasks:
+  - Add `passenger_echoed_true_ending`.
+  - Route `passenger_echoed_manifest_intercom` to that ending.
+  - Count the new ending as full-score and ideal in score, playtest, and loop
+    evidence helpers.
+  - Update regression coverage for the echoed-manifest route.
+  - Run focused tests, full health, and a targeted real playthrough.
+- Evidence:
+  - Added `passenger_echoed_true_ending` as a distinct terminal payoff for the
+    route that listens to the stamped passenger doors, boards with those
+    echoes, listens to the opened doors answer from the third car, and then
+    pulls the emergency release.
+  - Routed `passenger_echoed_manifest_intercom` to the new ending while leaving
+    the direct manifest release on the generic `passenger_true_ending`.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending counts as a full-score ideal passenger ending.
+  - Updated story-path, playtest, and AI-loop regression coverage.
+  - Focused tests passed with 116 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+    validation, and coverage playtest.
+  - Health validation reports 95 scenes, 17 endings, all 95 reachable, and no
+    warnings.
+  - Health coverage visited all 95 scenes, including
+    `passenger_echoed_true_ending`, with zero unfinished runs, best score
+    100/100, average score 99.51, and 338016 max-score runs.
+  - Targeted CLI play followed `listen_to_manifest_doors_from_manifest` ->
+    `board_with_echoed_manifest` -> `listen_to_echoed_manifest_intercom` ->
+    `pull_release_after_echoed_manifest_goodbye` and reached
+    `passenger_echoed_true_ending` at 100/100 with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T23-11-05-799Z.md`. Its health checks were
+    green, MCP validation passed with 95 reachable scenes and no warnings, MCP
+    random and coverage playtests reached `passenger_echoed_true_ending`, the
+    required MCP route reached `true_ending` at 100/100, and the adaptive MCP
+    route reached `passenger_helped_true_ending` at 100/100.
+- Playtest notes:
+  - The new ending makes the early door-listening beat feel remembered all the
+    way through the release: the same small sounds move from trapped evidence
+    to proof that the passengers are leaving.
+  - The direct manifest release remains generic, so the variant is tied to the
+    deliberate choice to listen before and after boarding.
+  - Coverage play reached the new ending without harming full scene reachability
+    or the existing high-score route distribution.
+  - MCP random play reached the new ending four times in 250 runs; the
+    evidence-only random sample held the prior 75% ideal-ending rate.
+- Follow-up:
+  - Watch whether the growing set of passenger ending variants remains legible
+    in reports; future content should keep variants tied to distinct player
+    actions.
+- Risks:
+  - The game now has many endings, so future additions should favor clarity and
+    route identity over adding more generic success variants.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Give the answered-passenger Mara handoff route its own final
   true-ending payoff.
 - Why this matters: The route where Mara opens the manifest, passengers answer

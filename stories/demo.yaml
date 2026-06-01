@@ -1774,7 +1774,7 @@ scenes:
     choices:
       - id: pull_release_after_echoed_manifest_goodbye
         label: Pull the release while the opened doors answer
-        to: passenger_true_ending
+        to: passenger_echoed_true_ending
 
   passenger_counted_manifest_intercom:
     text: >
@@ -2240,6 +2240,16 @@ scenes:
       conductor to lunch-tin worker, every answer passing hand to hand until
       the roll call becomes a crowd in motion. Mara steps through after them,
       no longer carrying the manifest alone.
+    choices: []
+
+  passenger_echoed_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the small sounds you heard
+      behind the stamped manifest doors cross into morning before any name can
+      be counted twice: thermos cap, newspaper fold, mitten against the rail,
+      rain shaking loose from umbrellas. Mara does not read over them. She lets
+      the ordinary noise prove the passengers were never only entries.
     choices: []
 
   passenger_helped_true_ending:

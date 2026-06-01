@@ -1810,15 +1810,16 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers",
       "board_with_echoed_manifest",
       "reach_release_with_echoed_manifest",
-      "pull_release_with_manifest"
+      "listen_to_echoed_manifest_intercom",
+      "pull_release_after_echoed_manifest_goodbye"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.text).toContain("a lost mitten");
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.text).toContain("small sounds you heard");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
@@ -1952,7 +1953,8 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.text).toContain("ordinary noise");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
