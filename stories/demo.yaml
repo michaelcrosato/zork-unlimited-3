@@ -366,9 +366,16 @@ scenes:
       - id: return_from_lit_platform
         label: Return to the service room before boarding
         to: service_room
+        requires:
+          any:
+            - notItem: map
+            - notItem: token
+            - notItem: badge
       - id: flee_platform
         label: Run back to the street
         to: escape_ending
+        requires:
+          notItem: token
 
   mara_posters:
     text: >

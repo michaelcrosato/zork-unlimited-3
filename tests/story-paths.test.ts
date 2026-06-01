@@ -506,6 +506,65 @@ describe("demo story critical paths", () => {
 
     expect(choiceIds).toContain("use_token_slot");
     expect(choiceIds).not.toContain("board_before_clearing_ledger");
+    expect(choiceIds).not.toContain("flee_platform");
+  });
+
+  it("focuses fully prepared lit-platform players on the signal booth", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(choiceIds).toContain("use_token_slot");
+    expect(choiceIds).toContain("inspect_mara_posters");
+    expect(choiceIds).not.toContain("return_from_lit_platform");
+    expect(choiceIds).not.toContain("flee_platform");
+  });
+
+  it("keeps the escape ending available before the signal token is recovered", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    expect(observation.choices.map((choice) => choice.id)).toContain("flee_platform");
+
+    state = choose(story, state, "flee_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("adds a one-time Platform 13 poster beat that reinforces Mara's badge", async () => {
