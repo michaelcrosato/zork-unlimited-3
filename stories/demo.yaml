@@ -919,6 +919,14 @@ scenes:
       heard the metal scream. The control panel clicks once, offering one last
       chance to stop making noise and gather the proper supplies.
     choices:
+      - id: listen_below_gate
+        label: Listen to what answered below the platform
+        to: gate_echo
+        requires:
+          notFlag: heard_gate_echo
+        effects:
+          set:
+            heard_gate_echo: true
       - id: back_away_from_gate
         label: Back away and gather proper supplies
         to: service_room
@@ -927,6 +935,24 @@ scenes:
             backed_away_from_gate: true
       - id: force_gate_anyway
         label: Ignore the final warning and force the gate anyway
+        to: bad_ending
+
+  gate_echo:
+    text: >
+      Under the bent gate, the dark repeats the sound you made: metal shriek,
+      wheel scrape, breath held too long. Then it answers in Mara's borrowed
+      voice, reading the first digits of her badge number like a lure. The fuse
+      socket sits silent beside your hand, a simpler answer than the thing
+      below is offering.
+    choices:
+      - id: back_away_after_gate_echo
+        label: Back away and gather proper supplies
+        to: service_room
+        effects:
+          set:
+            backed_away_from_gate: true
+      - id: force_gate_after_echo
+        label: Ignore what answered and force the gate anyway
         to: bad_ending
 
   sign_warning:

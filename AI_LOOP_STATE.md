@@ -11,50 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Sharpen the safe-but-incomplete map escape ending.
+- Main objective: Give the forced-gate failure route a clearer final warning.
 - Why this matters: Cycle evidence shows the true-ending routes are healthy and
-  normal play reaches ideal endings reliably. The strongest next improvement is
-  story clarity on a non-ideal ending: players who use the marked map to escape
-  should understand the route is safe and intentional, but that Mara and the
-  ledger remain unresolved.
+  normal play reaches ideal endings reliably. The adaptive exploratory route
+  currently reaches `bad_ending` through the forced gate at very low score, and
+  that failure path has less feedback than the safer non-ideal endings. A small
+  final warning beat should make the bad outcome feel fairer and more legible
+  without changing the core route.
 - Tasks:
-  - Rewrite `good_ending` prose to pay off the new morning-transfer setup while
-    preserving the unresolved ledger consequence.
-  - Add regression coverage for the strengthened ending text.
+  - Add a one-time optional sensory warning from `gate_warning` before players
+    can still choose to force the gate.
+  - Add regression coverage proving the warning appears once and leaves both
+    retreat and failure routes available without extra navigation.
   - Run focused tests, full health, an actual CLI playthrough, and an evidence
     cycle.
 - Evidence:
-  - `good_ending` now frames the marked-map escape as a real morning escape
-    while explicitly leaving Mara's badge number and the ledger unresolved.
-  - Updated story-path coverage asserts that the optional map-study route still
-    reaches `good_ending` and that the ending preserves the unresolved-Mara
-    consequence.
-  - `npm test -- tests/story-paths.test.ts` passed with 53 tests.
-  - `npm run health` passed with formatting, TypeScript, 74 tests, validation,
+  - Added `gate_echo`, a one-time optional warning from `gate_warning` that
+    lets players hear what answered below the platform before either backing
+    away for supplies or forcing the gate anyway.
+  - Updated story-path coverage proves the warning appears once, points at the
+    fuse socket as the safer answer, preserves retreat, and still allows the
+    deliberate bad ending.
+  - `npm test -- tests/story-paths.test.ts` passed with 54 tests.
+  - `npm test -- tests/playtest.test.ts` passed with 6 tests after simplifying
+    the new beat to avoid adding an extra coverage-budget hop.
+  - `npm run health` passed with formatting, TypeScript, 75 tests, validation,
     and coverage playtest.
-  - Validation reports 43 scenes, 6 endings, and all 43 reachable.
-  - Health coverage playtest reports 0 unfinished runs, all 43 scenes visited,
-    best score 100/100, average score 95.08, and 9984 max-score runs.
-  - Manual CLI play took the map-only train route through `train_map`,
-    `morning_transfer`, and the revised `good_ending`, ending at 15/100 with
-    missing score beats clearly matching the unresolved ledger path.
+  - Validation reports 44 scenes, 6 endings, and all 44 reachable.
+  - Health coverage playtest reports 0 unfinished runs, all 44 scenes visited,
+    best score 100/100, average score 94.99, and 14976 max-score runs.
+  - Manual CLI play took the forced-gate route through `gate_warning`,
+    `gate_echo`, and `bad_ending`, ending at 5/100 with the new warning making
+    the ignored fuse socket explicit.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
     MCP true-ending playthrough at 100/100, and an adaptive exploratory
     true-ending route at 100/100.
 - Playtest notes:
-  - The revised map-only ending now reads as a survivable retreat rather than a
-    thin success state.
-  - The route's 15/100 score and missing score beats reinforce that the player
-    escaped before solving Mara's ledger thread.
+  - The new forced-gate beat makes the bad route feel more fairly telegraphed:
+    it connects the noise below the platform, Mara's badge-number lure, and the
+    missing fuse in one short scene.
+  - Direct choices from `gate_echo` keep pacing tight; players can immediately
+    retreat or knowingly take the bad ending.
   - No route bugs were found in focused tests, full health, manual CLI play, or
     the evidence cycle.
-- Follow-up: Watch whether random route summaries still make the low-score
-  safe escape easy to distinguish from ideal endings.
+- Follow-up: Watch whether random bad-ending samples now include clearer
+  player-facing feedback before the irreversible choice.
 - Risks:
-  - Text-only ending polish does not change route metrics. That is intentional:
-    current metrics are healthy, so this cycle favors payoff clarity over new
-    branching.
+  - Adding a warning choice slightly increases branching on a deliberately bad
+    route. The scene is one-time and routes directly to retreat or the bad
+    ending, so it should not create unfinished runs or affect ideal-ending
+    guidance.
 
 ## Last Completed Cycle
 

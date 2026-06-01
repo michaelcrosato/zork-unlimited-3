@@ -62,11 +62,53 @@ describe("demo story critical paths", () => {
     expect(warning.choices.map((choice) => choice.label)).toContain(
       "Ignore the final warning and force the gate anyway"
     );
+    expect(warning.choices.map((choice) => choice.id)).toContain("listen_below_gate");
     expect(warning.choices.map((choice) => choice.id)).toContain("back_away_from_gate");
 
     state = choose(story, state, "back_away_from_gate");
     expect(observe(story, state).scene.id).toBe("service_room");
     expect(state.flags.backed_away_from_gate).toBe(true);
+  });
+
+  it("adds a final sensory warning before the forced-gate bad ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "follow_arrows", "force_gate", "listen_below_gate"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("gate_echo");
+    expect(observation.scene.text).toContain("reading the first digits of her badge number");
+    expect(observation.scene.text).toContain("The fuse socket sits silent");
+    expect(observation.state.flags.heard_gate_echo).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "back_away_after_gate_echo",
+      "force_gate_after_echo"
+    ]);
+
+    state = choose(story, state, "back_away_after_gate_echo");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.backed_away_from_gate).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "follow_arrows",
+      "force_gate",
+      "listen_below_gate",
+      "force_gate_after_echo"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("bad_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("points underprepared platform explorers back to the marked map", async () => {
