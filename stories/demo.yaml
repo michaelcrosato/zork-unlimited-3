@@ -691,8 +691,9 @@ scenes:
       Mara's row is written in a steadier hand than the others: DISPATCHER
       REMAINING ON DUTY UNTIL ALL PASSENGERS CLEAR. Beside the badge number,
       someone has pressed a thumbprint into the ink so hard it tore the page.
-      The booth speaker clicks once, waiting for proof that she is more than
-      another name the line can keep.
+      The earlier manifest pages rustle under your hand, still full of doors
+      with passenger names stamped shut. The booth speaker clicks once, waiting
+      for proof that she is more than another name the line can keep.
     choices:
       - id: inspect_mara_thumbprint
         label: Touch the torn thumbprint beside Mara's name
@@ -706,7 +707,7 @@ scenes:
           set:
             read_mara_thumbprint: true
       - id: read_manifest_from_ledger
-        label: Check the kept-passenger manifest before clearing Mara
+        label: Check the kept-passenger manifest before clearing only Mara
         to: passenger_manifest
         requires:
           all:
@@ -717,7 +718,7 @@ scenes:
           set:
             read_passenger_manifest: true
       - id: mark_mara_clear_from_ledger
-        label: Enter Mara's badge number and clear her name
+        label: Enter Mara's badge number and clear only her name
         to: mara_released
         requires:
           all:

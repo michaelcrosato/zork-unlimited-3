@@ -11,48 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the missing-map signal warning a clearer recovery payoff.
-- Why this matters: Cycle evidence showed the core true-ending route is healthy,
-  with `signal_map_warning` as the remaining normal-play discoverability point
-  worth smoothing. The warning already prevents mapless token use, but recovering
-  the marked map jumped straight back into the booth without acknowledging what
-  changed.
+- Main objective: Clarify the late-game choice between clearing only Mara and
+  checking the kept-passenger manifest.
+- Why this matters: Current MCP play reached the direct `true_ending` at full
+  score without checking the passenger manifest, even though the ledger says
+  Mara remains on duty until all passengers clear. The route is valid, but the
+  player should understand that clearing Mara only is a deliberate narrower
+  choice and that the manifest route offers a richer rescue.
 - Tasks:
-  - Add a short `signal_map_recovered` transition after the player heeds the
-    map warning.
-  - Keep the branch bounded with one direct choice back into the signal booth.
-  - Update regression coverage for the warning recovery route.
+  - Make the `signal_ledger` text remind players that the manifest doors are
+    still shut.
+  - Rename the direct Mara-clear choice so it clearly says "only her name."
+  - Surface an objective that nudges prepared players to inspect the manifest
+    before deciding whose names to clear.
+  - Add regression coverage for the new text, objective, and choice label.
   - Run focused tests, full health, an actual playthrough, and commit/push if
     green.
 - Evidence:
-  - Added `signal_map_recovered`, a short transition after heeding the
-    missing-map warning from the lit platform or gate control.
-  - `return_for_map_from_signal_warning` now recovers the map, lands on the new
-    transition, and then gives one direct choice into `signal_booth`.
-  - Updated the warning regression to verify the new scene text, one-step
-    continuation, recovered map, and normal booth choices.
+  - Updated `signal_ledger` copy so the kept-passenger manifest pages remain
+    physically present at the moment the player is deciding what to clear.
+  - Renamed `read_manifest_from_ledger` and `mark_mara_clear_from_ledger`
+    labels so the choice between checking the manifest and clearing only Mara
+    is explicit.
+  - Updated objective generation so prepared players who have inspected Mara's
+    ledger row see "Check the kept-passenger manifest before deciding whose
+    names to clear" until they inspect the manifest.
+  - Added regression coverage for the new ledger text, objective, and direct
+    Mara-only clear label.
   - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
   - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
   - Validation reports 51 scenes, 7 endings, and all 51 reachable.
   - Health coverage playtest visited all 51 scenes with 0 unfinished completed
     routes, best score 100/100, average score 91.91, and 15372 max-score runs.
-  - Manual CLI play deliberately triggered `signal_map_warning`, recovered the
-    map through `signal_map_recovered`, cleared Mara's ledger, and reached
-    `true_ending` at 100/100.
+  - Manual CLI play followed the new manifest nudge from `signal_ledger` to
+    `passenger_manifest`, listened to the passenger doors, opened every
+    manifest door, and reached `passenger_true_ending` at 100/100.
 - Playtest notes:
-  - The warning recovery now has visible feedback: the map feels like a concrete
-    proof item instead of silently appearing before the booth opens.
-  - The added beat stayed bounded because it has exactly one onward choice and
-    does not create a new hub loop.
-  - The focused route remained finishable at full score with no objectives
-    lingering.
+  - The ledger decision now reads less like "clear Mara or do optional lore" and
+    more like a meaningful choice between a narrower rescue and the fuller
+    manifest rescue.
+  - The route stayed bounded because no new scene or required confirmation step
+    was added.
+  - The manifest route ended cleanly with no lingering objectives.
   - No bugs surfaced in the focused route.
-- Follow-up: Watch random-route scene coverage and route length; this adds one
-  beat to a recovery route that should remain easy to finish.
+- Follow-up: Watch whether the nudge increases manifest-ending routes without
+  making the valid direct true-ending route feel blocked.
 - Risks:
-  - Adding another scene can lengthen a random route, so coverage must confirm
-    the branch remains bounded and fully reachable.
+  - The direct `true_ending` must remain available for players who intentionally
+    clear only Mara.
 
 ## Last Completed Cycle
 

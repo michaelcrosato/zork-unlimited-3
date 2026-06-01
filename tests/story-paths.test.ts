@@ -1448,9 +1448,16 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.scene.text).toContain("still full of doors");
+    expect(observation.objectives).toContain(
+      "Check the kept-passenger manifest before deciding whose names to clear."
+    );
     expect(choiceIds).toContain("inspect_mara_thumbprint");
     expect(choiceIds).toContain("read_manifest_from_ledger");
     expect(choiceIds).toContain("mark_mara_clear_from_ledger");
+    expect(
+      observation.choices.find((choice) => choice.id === "mark_mara_clear_from_ledger")?.label
+    ).toBe("Enter Mara's badge number and clear only her name");
 
     state = choose(story, state, "inspect_mara_thumbprint");
     observation = observe(story, state);
@@ -2214,7 +2221,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("signal_ledger");
     expect(observation.scene.text).toContain("more than another name");
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
-    expect(observation.objectives).toEqual(["Clear Mara's ledger entry with her badge proof."]);
+    expect(observation.objectives).toEqual([
+      "Check the kept-passenger manifest before deciding whose names to clear."
+    ]);
     expect(choiceIds).toEqual([
       "inspect_mara_thumbprint",
       "read_manifest_from_ledger",

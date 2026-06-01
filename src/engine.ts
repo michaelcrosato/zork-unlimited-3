@@ -208,7 +208,14 @@ function getObjectives(state: GameState): string[] {
   }
 
   if (flag("platform_lit") && has("token") && !flag("freed_mara")) {
-    if (flag("inspected_signal_ledger") && has("map") && has("badge")) {
+    if (
+      flag("inspected_signal_ledger") &&
+      has("map") &&
+      has("badge") &&
+      !flag("read_passenger_manifest")
+    ) {
+      objectives.push("Check the kept-passenger manifest before deciding whose names to clear.");
+    } else if (flag("inspected_signal_ledger") && has("map") && has("badge")) {
       objectives.push("Clear Mara's ledger entry with her badge proof.");
     } else {
       objectives.push("Use the signal booth to resolve Mara's ledger entry.");
