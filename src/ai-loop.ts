@@ -513,6 +513,7 @@ const idealEndingGroups = [
     label: "Passengers",
     endings: [
       "passenger_true_ending",
+      "passenger_answered_true_ending",
       "passenger_helped_true_ending",
       "passenger_conductor_true_ending",
       "passenger_keepsake_true_ending",

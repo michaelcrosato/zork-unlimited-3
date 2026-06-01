@@ -12,58 +12,60 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make Mara's handoff route feel continuous between leaving
-  the signal booth and reaching the third-car release.
-- Why this matters: Normal-play true-ending discovery is healthy, so the best
-  current improvement is route-specific story depth. The handoff branch already
-  lets players watch Mara stop being only a voice, but it previously looped
-  back through the generic release prompt before the final intercom. A short
-  boarding bridge keeps the payoff physically present without changing the core
-  route or score.
+- Main objective: Give the answered-passenger route its own final ending payoff
+  after the player listens once more before pulling the release.
+- Why this matters: Core true-ending guidance is healthy, and the passenger
+  routes are now the strongest place to add value. The answered-passenger
+  branch already rewards listening to the opened manifest, but its final
+  intercom previously collapsed back into the generic passenger ending. A
+  distinct ending makes that optional listening choice feel remembered.
 - Tasks:
-  - Add a `mara_handoff_boarding` scene after `mara_handoff`.
-  - Route the handoff branch through the new bridge before `train_car`.
-  - Keep the direct Mara-cleared route and final handoff intercom unchanged.
-  - Update regression coverage for the bridge, direct release availability, and
-    distinct handoff ending.
-  - Run focused tests, full health, and a real playthrough through the changed
-    branch.
+  - Add `passenger_answered_true_ending`.
+  - Route `passenger_answered_intercom` to the new ending.
+  - Count the new ending as full-score and ideal in score, playtest, and loop
+    evidence helpers.
+  - Update regression coverage for the answered-passenger final route.
+  - Run focused tests, full health, and a real playthrough through the new
+    ending.
 - Evidence:
-  - Added `mara_handoff_boarding` as a visible bridge from Mara leaving the
-    booth to the third-car release.
-  - Updated handoff regression coverage so the new bridge is asserted directly,
-    while the train car still offers `listen_to_mara_after_handoff` and
-    `pull_release`.
-  - Focused story-path tests passed with 103 tests.
+  - Added `passenger_answered_true_ending` as a distinct terminal payoff for
+    the route that listens to answered passengers from the third car.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending counts as a full-score ideal passenger ending.
+  - Updated story-path and ideal-ending regression coverage.
+  - Focused tests passed with 116 tests.
+  - CLI validation passed with 91 scenes, 13 endings, all 91 reachable, and no
+    warnings.
   - `npm run health` passed with formatting, TypeScript, 124 tests, story
     validation, and coverage playtest.
-  - Health validation reports 90 scenes, 12 endings, and all 90 reachable.
-  - Health coverage visited all 90 scenes, including `mara_handoff_boarding`,
-    with zero unfinished runs, best score 100/100, and average score 99.51.
-  - Targeted CLI play followed `watch_mara_leave_booth` ->
-    `return_from_mara_handoff` -> `board_after_mara_handoff` ->
-    `listen_to_mara_after_handoff` and reached `mara_handoff_true_ending` at
-    100/100 with no objectives.
+  - Health coverage visited all 91 scenes, including
+    `passenger_answered_true_ending`, with zero unfinished runs, best score
+    100/100, and average score 99.51.
+  - Targeted CLI play followed `listen_to_passenger_answers` ->
+    `board_after_answered_passengers` ->
+    `listen_to_answered_passengers_from_boarding` ->
+    `pull_release_after_answered_intercom` and reached
+    `passenger_answered_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T22-25-02-733Z.md`. Its health checks
-    were green, MCP validation passed with 90 reachable scenes and no warnings,
-    MCP random play visited `mara_handoff_boarding`, the required MCP route
-    reached `true_ending` at 100/100, and the adaptive MCP route reached
+    report `ai-runs/cycle-2026-06-01T22-36-57-100Z.md`. Its health checks
+    were green, MCP validation passed with 91 reachable scenes and no warnings,
+    MCP random play visited `passenger_answered_true_ending`, the required MCP
+    route reached `true_ending` at 100/100, and the adaptive MCP route reached
     `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new bridge makes Mara's physical departure from the booth carry into
-    the third car instead of snapping back to the generic release prompt.
-  - The direct release remains available from the third car after the bridge,
-    preserving player agency and avoiding a forced final intercom.
-  - The generic direct Mara-cleared route still boards through
-    `board_after_clearing_mara`, so players who skip the handoff beat keep the
-    shorter true-ending path.
+  - The new ending cleanly pays off the answered-passenger intercom by letting
+    passengers carry their own names into morning instead of returning to the
+    generic manifest miracle text.
+  - The direct answered-boarding release still reaches `passenger_true_ending`,
+    so the extra specificity only appears when the player chooses to listen.
+  - Coverage still visits every scene and keeps the main full-score rates
+    healthy.
 - Follow-up:
-  - Watch random and coverage samples to confirm the extra bridge does not
-    dilute normal direct `true_ending` pacing.
+  - Watch random distribution to make sure the new passenger ending appears
+    without reducing non-passenger route clarity.
 - Risks:
-  - The Mara-cleared branch is already clean and short; keep the new bridge to
-    one scene and preserve the direct release from the train car.
+  - The game already has many ideal-ending variants; keep this one tied to a
+    clearly distinct player action rather than proliferating generic endings.
 
 ## Last Completed Cycle
 

@@ -1832,7 +1832,7 @@ scenes:
     choices:
       - id: pull_release_after_answered_intercom
         label: Pull the release while the answered names hold
-        to: passenger_true_ending
+        to: passenger_answered_true_ending
 
   passenger_conductor_intercom:
     text: >
@@ -2197,6 +2197,17 @@ scenes:
       pressed into a child's hand, umbrellas lifting into rain-bright morning.
       Mara's voice thanks each passenger by name, then lets the speaker go
       quiet.
+    choices: []
+
+  passenger_answered_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the answered passengers do not
+      wait for Mara to read them into morning. The child says present while he
+      crosses the threshold, the newspaper woman names Warden Street as a place
+      already behind her, and the old conductor calls each open door clear
+      without touching his punch. Mara listens until their own voices carry the
+      last name out of the line.
     choices: []
 
   passenger_helped_true_ending:
