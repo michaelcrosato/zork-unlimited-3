@@ -11,53 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce service-room backtracking after players recover the
-  signal token.
-- Why this matters: Random and suspicious path evidence still showed players
-  bouncing between the service room, tunnel, and platform after the token was
-  already recovered. Once the token is in inventory, the tunnel no longer adds
-  useful information; keeping the service room focused improves pacing without
-  removing meaningful choices.
+- Main objective: Improve normal-play discovery of `passenger_farewell`.
+- Why this matters: Coverage could reach `passenger_farewell`, but the current
+  random sample missed it. The scene is a strong passenger-humanity beat, so it
+  should be visible from the natural moment when players listen to the opened
+  manifest roll call.
 - Tasks:
-  - Tighten `return_to_tunnel` so it only appears before the token is recovered
-    and before the player knows the direct clock route.
-  - Preserve useful direct service-room routes to the map, locker, platform,
-    and stopped clock.
-  - Add regression coverage for the token-recovered service-room choice set.
+  - Add a direct helped-passenger route from `passenger_answers` to
+    `passenger_farewell`.
+  - Preserve the existing newspaper, passenger-platform, and direct manifest
+    release choices from `passenger_answers`.
+  - Add regression coverage for the new route, flags, and downstream train-car
+    choices.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI playthrough through the updated token-first route.
+    CLI playthrough through the updated farewell route.
 - Evidence:
-  - `return_to_tunnel` now requires both `notItem: token` and
-    `notFlag: knows_token_location`, removing the empty tunnel backtrack once
-    the token is recovered or the direct clock route is known.
-  - Added a story-path regression test that reaches the service room with the
-    token already recovered and confirms `take_map`, `search_locker`, and
-    `go_to_platform` remain while `return_to_tunnel` is absent.
-  - Focused story-path tests passed: 89 tests.
+  - Added `gather_answered_passengers`, reached from `passenger_answers`, which
+    sets `helped_passengers_gather` and routes to `passenger_farewell`.
+  - Kept `follow_newspaper_answer`, `return_from_passenger_answers`, and
+    `board_after_passenger_answers` available, so direct generic and specialized
+    passenger endings remain playable.
+  - Added a story-path regression test for `gather_answered_passengers` through
+    `passenger_farewell` into the gathered-passenger train-car choices.
+  - Focused story-path tests passed: 90 tests.
   - Validation reports 72 scenes, 11 endings, and all 72 reachable.
-  - A 250-run random sample ended every run, visited every scene, kept best
-    score 100/100, averaged 79.94, and reached max score in 183 runs.
+  - A 250-run random sample ended every run, visited every scene including
+    `passenger_farewell`, kept best score 100/100, averaged 79.94, and reached
+    max score in 183 runs.
   - Coverage playtest visited all 72 scenes with 0 unfinished completed routes,
     best score 100/100, average score 99.07, and 152912 max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 110 tests,
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `gather_answered_passengers` -> `passenger_farewell` ->
+    `passenger_gathered_intercom` -> `passenger_roll_call_epilogue` and reached
+    `passenger_helped_true_ending` at 100/100 with no objectives.
+  - `npm run health` passed with formatting, TypeScript, 111 tests,
     validation, and coverage playtest.
-  - Manual CLI play followed the token-first route through the updated service
-    room choice set, verified `return_to_tunnel` was absent after
-    `take_token`, and reached `true_ending` at 100/100 with no objectives.
+  - `npm run ai:cycle` was started as required, wrote ignored `ai-runs/` files,
+    then recursively launched nested Codex/`ai:cycle` work. The nested process
+    was stopped to avoid runaway agents; an unrelated conductor shortcut it
+    briefly added was removed from tracked files.
 - Playtest notes:
-  - The revised service-room menu is noticeably cleaner after the player
-    recovers the token: map, radio, locker, personnel file, and platform remain
-    available, but the tunnel is no longer presented as progress.
-  - Closing the locker after collecting map, token, fuse, and badge correctly
-    leaves a single focused route to Platform 13.
-  - The true-ending route remains intact and still scores 100/100.
-- Follow-up: Watch whether small random samples continue to end every run and
-  whether early players without token knowledge still get enough freedom to
-  revisit the tunnel.
+  - The new choice appears exactly when the player has heard the passengers
+    answer, which makes the farewell feel like a natural response instead of a
+    side action hidden one scene later.
+  - The route reads cleanly into the existing gathered-passenger intercom and
+    final roll call.
+  - Direct boarding from `passenger_answers` still reaches the generic
+    passenger true ending for players who do not stop to gather the crowd.
+- Follow-up: Watch whether the extra `passenger_answers` choice dilutes
+  newspaper-route selection in smaller random samples; the 250-run sample still
+  reached `passenger_newspaper_true_ending` 17 times.
 - Risks:
-  - This removes one low-value navigational option from the midgame; regression
-    coverage preserves the direct clock route for token-informed players and
-    the platform route for prepared players.
+  - `passenger_answers` now has four choices, which improves farewell
+    visibility but slightly increases late-game choice density.
 
 ## Last Completed Cycle
 

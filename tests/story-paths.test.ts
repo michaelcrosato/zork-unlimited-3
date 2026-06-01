@@ -2049,6 +2049,53 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("lets answer listeners gather passengers directly into the farewell beat", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "gather_answered_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("the crowd moves as if boarding");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_farewell"
+    ]);
+
+    state = choose(story, state, "return_from_passenger_farewell");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_gathering_passengers"
+    ]);
+  });
+
   it("acknowledges Mara's handoff when those passengers answer before boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3580,6 +3627,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "follow_newspaper_answer",
+      "gather_answered_passengers",
       "return_from_passenger_answers",
       "board_after_passenger_answers"
     ]);

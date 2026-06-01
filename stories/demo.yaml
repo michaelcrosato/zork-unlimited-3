@@ -883,6 +883,14 @@ scenes:
         effects:
           set:
             heard_newspaper_memory: true
+      - id: gather_answered_passengers
+        label: Help the answered passengers gather for the third car
+        to: passenger_farewell
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
       - id: return_from_passenger_answers
         label: Cross through the answered crowd as they gather
         to: passenger_platform
