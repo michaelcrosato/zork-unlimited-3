@@ -1788,7 +1788,7 @@ scenes:
     choices:
       - id: pull_release_after_counted_manifest_goodbye
         label: Pull the release while the reviewed count holds
-        to: passenger_true_ending
+        to: passenger_counted_true_ending
 
   passenger_answered_handoff_roll_call:
     text: >
@@ -2208,6 +2208,17 @@ scenes:
       already behind her, and the old conductor calls each open door clear
       without touching his punch. Mara listens until their own voices carry the
       last name out of the line.
+    choices: []
+
+  passenger_counted_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the reviewed count falls apart
+      into people keeping track of one another: the newspaper woman checking
+      the child beside her, the lunch-tin worker waiting until the old
+      conductor steps clear, Mara letting the last number go unfinished because
+      no one is missing anymore. Morning rain reaches the third car as a crowd,
+      not a total.
     choices: []
 
   passenger_helped_true_ending:

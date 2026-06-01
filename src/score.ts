@@ -80,6 +80,7 @@ const ACHIEVEMENTS: Array<{
       state.currentScene === "mara_handoff_true_ending" ||
       state.currentScene === "passenger_true_ending" ||
       state.currentScene === "passenger_answered_true_ending" ||
+      state.currentScene === "passenger_counted_true_ending" ||
       state.currentScene === "passenger_helped_true_ending" ||
       state.currentScene === "passenger_conductor_true_ending" ||
       state.currentScene === "passenger_keepsake_true_ending" ||

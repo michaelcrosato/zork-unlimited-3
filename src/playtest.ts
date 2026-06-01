@@ -302,6 +302,7 @@ function scoreDestination(sceneId: string): number {
     sceneId === "mara_handoff_true_ending" ||
     sceneId === "passenger_true_ending" ||
     sceneId === "passenger_answered_true_ending" ||
+    sceneId === "passenger_counted_true_ending" ||
     sceneId === "passenger_helped_true_ending" ||
     sceneId === "passenger_conductor_true_ending" ||
     sceneId === "passenger_keepsake_true_ending" ||

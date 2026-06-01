@@ -12,57 +12,60 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the answered-passenger route its own final ending payoff
-  after the player listens once more before pulling the release.
-- Why this matters: Core true-ending guidance is healthy, and the passenger
-  routes are now the strongest place to add value. The answered-passenger
-  branch already rewards listening to the opened manifest, but its final
-  intercom previously collapsed back into the generic passenger ending. A
-  distinct ending makes that optional listening choice feel remembered.
+- Main objective: Give the reviewed-manifest count route its own final ending
+  payoff after the player listens to the counted manifest in the third car.
+- Why this matters: Core guidance and true-ending discoverability are healthy,
+  so the best current value is route-specific story depth. Reviewing the
+  opened manifest count is a deliberate late-game action with a bespoke
+  intercom, but it previously resolved into the generic passenger ending.
+  A distinct counted ending makes that review feel remembered without changing
+  the core route.
 - Tasks:
-  - Add `passenger_answered_true_ending`.
-  - Route `passenger_answered_intercom` to the new ending.
+  - Add `passenger_counted_true_ending`.
+  - Route `passenger_counted_manifest_intercom` to the new ending.
   - Count the new ending as full-score and ideal in score, playtest, and loop
     evidence helpers.
-  - Update regression coverage for the answered-passenger final route.
+  - Update regression coverage for the counted-manifest final route.
   - Run focused tests, full health, and a real playthrough through the new
     ending.
 - Evidence:
-  - Added `passenger_answered_true_ending` as a distinct terminal payoff for
-    the route that listens to answered passengers from the third car.
+  - Added `passenger_counted_true_ending` as a distinct terminal payoff for
+    the route that reviews the opened manifest count, boards from that count,
+    and listens to the counted-manifest intercom.
+  - Routed `passenger_counted_manifest_intercom` to the new ending while
+    leaving the direct reviewed-count release on `passenger_true_ending`.
   - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
     ending counts as a full-score ideal passenger ending.
-  - Updated story-path and ideal-ending regression coverage.
+  - Updated story-path, playtest, and AI-loop regression coverage.
   - Focused tests passed with 116 tests.
-  - CLI validation passed with 91 scenes, 13 endings, all 91 reachable, and no
-    warnings.
+  - Targeted CLI play followed `review_open_manifest_count` ->
+    `board_after_manifest_count` -> `listen_to_counted_manifest_intercom` ->
+    `pull_release_after_counted_manifest_goodbye` and reached
+    `passenger_counted_true_ending` at 100/100 with no objectives.
   - `npm run health` passed with formatting, TypeScript, 124 tests, story
     validation, and coverage playtest.
-  - Health coverage visited all 91 scenes, including
-    `passenger_answered_true_ending`, with zero unfinished runs, best score
+  - Health validation reports 92 scenes, 14 endings, all 92 reachable, and no
+    warnings.
+  - Health coverage visited all 92 scenes, including
+    `passenger_counted_true_ending`, with zero unfinished runs, best score
     100/100, and average score 99.51.
-  - Targeted CLI play followed `listen_to_passenger_answers` ->
-    `board_after_answered_passengers` ->
-    `listen_to_answered_passengers_from_boarding` ->
-    `pull_release_after_answered_intercom` and reached
-    `passenger_answered_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T22-36-57-100Z.md`. Its health checks
-    were green, MCP validation passed with 91 reachable scenes and no warnings,
-    MCP random play visited `passenger_answered_true_ending`, the required MCP
+    report `ai-runs/cycle-2026-06-01T22-43-10-686Z.md`. Its health checks
+    were green, MCP validation passed with 92 reachable scenes and no warnings,
+    MCP random play visited `passenger_counted_true_ending`, the required MCP
     route reached `true_ending` at 100/100, and the adaptive MCP route reached
     `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new ending cleanly pays off the answered-passenger intercom by letting
-    passengers carry their own names into morning instead of returning to the
-    generic manifest miracle text.
-  - The direct answered-boarding release still reaches `passenger_true_ending`,
-    so the extra specificity only appears when the player chooses to listen.
-  - Coverage still visits every scene and keeps the main full-score rates
-    healthy.
+  - The new ending makes the reviewed-count choice feel consequential by
+    turning the final count into passengers tracking one another instead of a
+    ledger total.
+  - The generic passenger ending remains available for direct manifest release
+    and non-counted passenger routes.
+  - Random and coverage playtests both reached the new ending while preserving
+    the previous 75% random ideal-ending rate and full scene coverage.
 - Follow-up:
-  - Watch random distribution to make sure the new passenger ending appears
-    without reducing non-passenger route clarity.
+  - Watch random distribution to make sure the new counted ending appears
+    without crowding the simpler passenger ending.
 - Risks:
   - The game already has many ideal-ending variants; keep this one tied to a
     clearly distinct player action rather than proliferating generic endings.
