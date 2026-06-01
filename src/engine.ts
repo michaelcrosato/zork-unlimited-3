@@ -170,7 +170,8 @@ function getObjectives(state: GameState): string[] {
     (flag("knows_shutdown") ||
       flag("met_mara") ||
       flag("knows_release") ||
-      flag("read_mara_file")) &&
+      flag("read_mara_file") ||
+      flag("knows_token_location")) &&
     !has("token")
   ) {
     objectives.push("Search the stopped tunnel clock for the signal booth token.");

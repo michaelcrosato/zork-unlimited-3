@@ -138,6 +138,33 @@ describe("demo story critical paths", () => {
     );
   });
 
+  it("lets unprepared platform explorers inspect the gate control for the token clue", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "follow_arrows", "inspect_gate_control"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("gate_control");
+    expect(observation.scene.text).toContain("CLOCK = TOKEN");
+    expect(observation.state.flags.inspected_gate_control).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+
+    state = choose(story, state, "return_to_service_room_for_parts");
+    observation = observe(story, state);
+
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("search_locker");
+  });
+
   it("surfaces Mara's ledger thread from the service room", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

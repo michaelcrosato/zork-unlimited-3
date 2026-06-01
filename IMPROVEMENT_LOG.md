@@ -4,6 +4,72 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Gate Control Readability
+
+### Current Plan
+
+- Main objective: Improve early Platform 13 readability before players commit to
+  forcing the gate or boarding underprepared.
+- Why this matters: The evidence still showed abrupt low-score bad-ending routes
+  from the unlit platform, and the true-ending sequence benefits from an
+  earlier in-world explanation of the fuse, token, and ledger order.
+- Tasks:
+  - Add a one-time unlit-platform inspection beat for the gate control.
+  - Make the beat point players back to the service room and stopped clock.
+  - Cover the route with a focused story-path regression.
+  - Run health and play through the new route.
+- Risks: Adding another platform choice could increase menu clutter if it is not
+  one-time and clearly directional.
+
+### Work Completed
+
+- Changes made:
+  - Added `gate_control`, an optional inspection scene that explains the
+    platform-light fuse, signal-booth token, and ledger-clearing sequence.
+  - Updated objective generation so `knows_token_location` directly surfaces the
+    stopped-clock token objective.
+  - Added a regression test for the new early-platform guidance route.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/engine.ts`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - New reachable story scene: `gate_control`.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run health`
+  - Manual CLI route through `gate_control` to `true_ending`
+- What worked:
+  - Validation reports 25 scenes, 5 endings, and 25 reachable scenes.
+  - Health passes with 32 tests.
+  - Coverage playtest visits every scene including `gate_control` and reaches
+    `true_ending` 72 times in the health sample.
+  - The manual CLI route reached `true_ending` at 100/100 after using the new
+    clue to recover the stopped-clock token.
+- What felt bad/confusing:
+  - The coverage strategy still reports 20 unfinished frontier samples despite
+    visiting all scenes.
+- Bugs found:
+  - The first test run exposed that `knows_token_location` did not by itself
+    surface the token objective. Objective logic was corrected and retested.
+
+### Next Iteration
+
+- Highest-priority next task: Reclassify or explain coverage-strategy
+  unfinished frontier samples.
+- Reason: Health is green, but the summary still looks worse than actual
+  playability because coverage exploration can stop at frontier states.
+- Planned action:
+  - Inspect `src/playtest.ts` unfinished accounting for coverage mode.
+  - Add focused tests that distinguish budget/frontier stops from genuine stuck
+    unfinished playthroughs.
+
 ## 2026-06-01 - Platform 13 Poster Beat
 
 ### Current Plan

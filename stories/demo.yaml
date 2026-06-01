@@ -290,6 +290,15 @@ scenes:
       track, doors open, destination sign blank. The gate control has an empty
       fuse socket and a token slot stamped SIGNAL ACCESS.
     choices:
+      - id: inspect_gate_control
+        label: Inspect the gate control
+        to: gate_control
+        requires:
+          notFlag: inspected_gate_control
+        effects:
+          set:
+            inspected_gate_control: true
+            knows_token_location: true
       - id: install_fuse
         label: Install the platform fuse
         to: lit_platform
@@ -313,6 +322,17 @@ scenes:
           all:
             - notItem: fuse
             - notFlag: backed_away_from_gate
+
+  gate_control:
+    text: >
+      The gate control is less a lock than a ritual. A burned diagram inside
+      the access plate shows three steps: restore PLATFORM LIGHTS, insert the
+      SIGNAL BOOTH token, then clear the ledger before boarding. Someone has
+      scratched CLOCK = TOKEN into the soot.
+    choices:
+      - id: return_to_service_room_for_parts
+        label: Return to the service room for parts
+        to: service_room
 
   lit_platform:
     text: >

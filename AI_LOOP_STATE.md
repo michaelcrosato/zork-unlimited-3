@@ -11,34 +11,32 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add one late-game story beat that clarifies Mara's badge and
-  ledger stakes on Platform 13, while improving playtest report accuracy.
-- Outcome: Lit Platform 13 now has a one-time missing-person poster inspection
-  scene that reinforces Mara's "in transit" status and explains why her proof
-  of service matters before the signal booth. Random and goal playtests now
-  correctly count endings reached on the final allowed step instead of
-  reporting them as unfinished.
+- Main objective: Improve early Platform 13 readability before players force the
+  gate or board underprepared.
+- Outcome: Unprepared Platform 13 explorers can inspect the gate control before
+  forcing the gate or boarding. The new beat explains the fuse, signal-token,
+  and ledger sequence, scratches `CLOCK = TOKEN` into the environment, and
+  routes players back to the service room for parts.
 - Evidence:
-  - Added regression coverage for the `mara_posters` scene proving it is
-    one-time, sets Mara context, and returns to the lit platform.
-  - Added playtest regression coverage for final-step endings in random and goal
-    strategies.
-  - `npm test -- tests/playtest.test.ts tests/story-paths.test.ts` passes with
-    25 tests.
-  - Validation passes: 24 scenes, 5 endings, 24 reachable scenes.
-  - Random playtest, 100 runs: all 100 ended, all scenes visited including
-    `mara_posters`, `true_ending` reached 14 times, average score 49.6.
-  - `npm run health` passes with 31 tests and coverage playtest visiting all
-    scenes. Coverage sample: 243 runs, 224 ended, 19 unfinished frontier
-    reports, `true_ending` reached 40 times, average score 54.22.
-  - Manual CLI route inspected the new poster scene, returned to the lit
-    platform, cleared Mara's ledger, and reached `true_ending` at 100/100.
+  - Added regression coverage proving the new `gate_control` scene is reachable
+    from the unlit platform, sets `knows_token_location`, returns to the service
+    room, and surfaces the stopped-clock token objective.
+  - Updated objective logic so an explicit `knows_token_location` flag surfaces
+    the stopped-clock objective even without reading the notice or Mara file.
+  - `npm test -- tests/story-paths.test.ts` passes with 22 tests.
+  - Validation passes: 25 scenes, 5 endings, 25 reachable scenes.
+  - `npm run health` passes with 32 tests and coverage playtest visiting all
+    scenes including `gate_control`; coverage sample reached `true_ending` 72
+    times, best score 100/100, average score 54.12.
+  - Manual CLI route inspected the new gate control, recovered the map, fuse,
+    badge, and token, cleared Mara's ledger, and reached `true_ending` at
+    100/100.
 - Follow-up: Coverage's unfinished reports are still frontier samples from the
   coverage strategy. Inspect whether those should be labeled separately from
   genuinely unfinished playthroughs.
 - Risks:
-  - The new poster beat adds one optional lit-platform choice. It is one-time,
-    but future passes should keep late-game choice lists focused.
+  - The new gate-control beat adds one optional platform choice. It should stay
+    one-time and informational so the platform does not become a menu maze.
 
 ## Last Completed Cycle
 
