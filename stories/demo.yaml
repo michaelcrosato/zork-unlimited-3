@@ -95,7 +95,11 @@ scenes:
         label: Follow the arrows back to the lit platform
         to: lit_platform
         requires:
-          flag: platform_lit
+          all:
+            - flag: platform_lit
+            - any:
+                - item: token
+                - notFlag: knows_token_location
         effects:
           set:
             knows_platform: true
@@ -262,7 +266,11 @@ scenes:
         label: Return to the lit Platform 13
         to: lit_platform
         requires:
-          flag: platform_lit
+          all:
+            - flag: platform_lit
+            - any:
+                - item: token
+                - notFlag: knows_token_location
         effects:
           set:
             knows_platform: true
@@ -840,6 +848,7 @@ scenes:
             - flag: freed_mara
             - notFlag: heard_mara_goodbye
             - notFlag: read_passenger_manifest
+            - notFlag: saw_mara_handoff
         effects:
           set:
             heard_mara_goodbye: true
@@ -851,6 +860,8 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
         effects:
           set:
             heard_mara_goodbye: true

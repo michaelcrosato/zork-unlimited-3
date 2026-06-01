@@ -11,57 +11,56 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Let ledger-first players discover the kept-passenger manifest
-  before clearing Mara.
-- Why this matters: Cycle evidence showed the core route is healthy and all
-  scenes are reachable, so the best next improvement was a focused late-game
-  depth pass. Players who read Mara's ledger first could immediately clear her
-  name, but the passenger manifest was only obvious from the signal-booth hub.
-  Adding a bounded pivot from the ledger row makes the richer passenger ending
-  more naturally discoverable without adding another scene.
+- Main objective: Reduce excessive late-route loops without removing meaningful
+  exploration or clue discovery.
+- Why this matters: Cycle evidence showed all scenes reachable and the ideal
+  endings discoverable, but larger random samples still found max-step runs
+  caused by repeated service-room, tunnel, lit-platform, and train-car optional
+  beats. The best next improvement was to suppress redundant backtracking once
+  the player already knows the next concrete objective.
 - Tasks:
-  - Add a `read_manifest_from_ledger` choice from `signal_ledger` when the
-    player has Mara's badge and has not already taken another ledger lore beat.
-  - Keep `mara_thumbprint` and the new manifest pivot mutually exclusive so
-    optional late-game content stays bounded under coverage playtest limits.
-  - Add focused regression coverage for the ledger-first manifest route and
-    update affected choice-order expectations.
+  - Hide `return_to_lit_platform` and `follow_arrows_to_lit_platform` while the
+    signal token is missing and the player already knows it is in the stopped
+    clock.
+  - Keep lit-platform revisits available for token-uninformed players who still
+    need clues.
+  - Hide redundant train-car intercom goodbyes after the player has already
+    taken Mara's handoff, passenger-answer, or passenger-farewell beat.
+  - Add focused regression coverage for the new gating.
   - Run focused tests, full health, an actual CLI playthrough, and commit/push
     if green.
 - Evidence:
-  - Added `read_manifest_from_ledger`, returning to the existing
-    `passenger_manifest` scene and setting `read_passenger_manifest`.
-  - The new choice appears only with Mara's badge and only before either the
-    manifest or thumbprint has been read.
-  - Updated `inspect_mara_thumbprint` to hide once the manifest has been read,
-    preventing the longest optional route from stacking both ledger lore beats.
-  - Initial health exposed 6 max-step coverage runs ending at
-    `mara_manifest_intercom`; making the ledger lore beats mutually exclusive
-    restored 0 unfinished coverage runs.
-  - `npm test -- tests/story-paths.test.ts` passed with 61 tests.
-  - `npm run health` passed with formatting, TypeScript, 82 tests, validation,
+  - Reproduced the loop pressure with a 1000-run random playtest: 18 unfinished
+    max-step runs before changes.
+  - Gated lit-platform returns for players who already know the token location,
+    leaving token-uninformed clue revisits intact.
+  - Gated redundant train-car goodbye choices after equivalent late character
+    beats so the release becomes the only remaining action.
+  - The focused 1000-run random sample improved from 18 unfinished runs to 10,
+    with all scenes still visited and max-score runs rising from 623 to 684.
+  - `npm test -- tests/story-paths.test.ts` passed with 65 tests.
+  - `npm run health` passed with formatting, TypeScript, 86 tests, validation,
     and coverage playtest.
   - Validation reports 49 scenes, 6 endings, and all 49 reachable.
   - Health coverage playtest reports 0 unfinished routes, all 49 scenes
-    visited, best score 100/100, average score 95.06, and 36360 max-score
+    visited, best score 100/100, average score 93.22, and 25452 max-score
     runs.
-  - Manual CLI play read Mara's ledger first, pivoted to the kept-passenger
-    manifest through `read_manifest_from_ledger`, listened to the manifest
-    doors, cleared the manifest and Mara, and reached `passenger_true_ending`
-    at 100/100.
+  - Manual CLI play reached the lit platform without the token, returned to the
+    tunnel for the stopped clock, took the token, followed the lit-platform
+    route back, cleared the passenger manifest, and reached
+    `passenger_true_ending` at 100/100.
 - Playtest notes:
-  - The ledger-first route now feels less like an accidental fork: after
-    reading Mara's row, players can still notice the wider passenger obligation
-    before committing to the clear action.
-  - Suppressing the thumbprint after the manifest is read keeps the route from
-    turning into a checklist of every optional late-game beat.
-- Follow-up: Consider whether the passenger ending should get a tiny scoring or
-  transcript distinction in a future cycle; the current score intentionally
-  remains shared with `true_ending`.
+  - The service-room return now better matches the objective text: if the token
+    location is known, the available route points back to the clock instead of
+    another lit-platform lap.
+  - The passenger-answer route no longer offers a second equivalent goodbye in
+    the train car, making the final release feel more decisive.
+- Follow-up: Inspect the remaining 10/1000 random max-step runs; they appear to
+  be long exploratory routes rather than coverage dead ends.
 - Risks:
-  - Late-game optional choices near `signal_ledger` can quickly exceed the
-    50-step coverage budget if they stack. Keep new lore beats mutually
-    exclusive or directly resolving.
+  - Over-gating optional beats can make the route feel narrower. The regression
+    tests preserve clue revisits for players who have not yet learned where the
+    token is.
 
 ## Last Completed Cycle
 
