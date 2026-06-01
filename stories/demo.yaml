@@ -1040,10 +1040,13 @@ scenes:
 
   passenger_farewell:
     text: >
-      You guide the waiting passengers away from the blank sign. The child with
-      the mitten takes an old conductor's hand; a woman folds her newspaper
-      around a transfer that should have expired decades ago. No one thanks you
-      yet. They are saving their voices for the morning.
+      You start with the man holding the paper sack. Inside, his lunch tin is
+      still warm, packed for a double shift he never reached. When he snaps the
+      latch shut, the sound gives the platform a practical rhythm: the child
+      with the mitten takes an old conductor's hand, the newspaper woman tucks
+      her transfer under the tin's handle, and the crowd moves as if boarding
+      has become ordinary work again. No one thanks you yet. They are saving
+      their voices for the morning.
     choices:
       - id: return_from_passenger_farewell
         label: Lead the gathered passengers to the third car

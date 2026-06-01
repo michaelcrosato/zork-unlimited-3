@@ -3571,6 +3571,8 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("packed for a double shift");
+    expect(observation.scene.text).toContain("boarding has become ordinary work again");
     expect(observation.scene.text).toContain("saving their voices for the morning");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
 
