@@ -1643,7 +1643,7 @@ describe("demo story critical paths", () => {
       "mark_mara_clear_from_ledger",
       "watch_mara_leave_booth",
       "return_from_mara_handoff",
-      "board_after_clearing_mara"
+      "board_after_mara_handoff"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1678,7 +1678,7 @@ describe("demo story critical paths", () => {
       "mark_mara_clear_from_ledger",
       "watch_mara_leave_booth",
       "return_from_mara_handoff",
-      "board_after_clearing_mara",
+      "board_after_mara_handoff",
       "listen_to_mara_after_handoff",
       "pull_release_after_handoff_goodbye"
     ]) {
@@ -1718,7 +1718,7 @@ describe("demo story critical paths", () => {
       "mark_mara_clear_from_ledger",
       "watch_mara_leave_booth",
       "return_from_mara_handoff",
-      "board_after_clearing_mara"
+      "board_after_mara_handoff"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -4307,8 +4307,19 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_from_mara_handoff");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_released");
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_clearing_mara"]);
+    expect(observation.scene.id).toBe("mara_handoff_boarding");
+    expect(observation.scene.text).toContain("Mara does not vanish back into the speaker");
+    expect(observation.scene.text).toContain("here means beside you");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_mara_handoff"]);
+
+    state = choose(story, state, "board_after_mara_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_after_handoff",
+      "pull_release"
+    ]);
   });
 
   it("adds a final intercom beat after Mara leaves the booth", async () => {
@@ -4333,7 +4344,7 @@ describe("demo story critical paths", () => {
       "mark_mara_clear_from_ledger",
       "watch_mara_leave_booth",
       "return_from_mara_handoff",
-      "board_after_clearing_mara"
+      "board_after_mara_handoff"
     ]) {
       state = choose(story, state, choiceId);
     }

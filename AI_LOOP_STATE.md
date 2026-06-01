@@ -12,61 +12,58 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the echoed manifest payoff easier to notice during
-  normal direct passenger-manifest play.
-- Why this matters: The route-specific
-  `passenger_echoed_manifest_intercom` payoff is authored and covered, but
-  random play can still board straight past it because the reminder only appears
-  as one optional third-car choice. A short boarding beat for players who heard
-  the stamped-door echoes keeps the path playable while surfacing why the
-  optional intercom matters.
+- Main objective: Make Mara's handoff route feel continuous between leaving
+  the signal booth and reaching the third-car release.
+- Why this matters: Normal-play true-ending discovery is healthy, so the best
+  current improvement is route-specific story depth. The handoff branch already
+  lets players watch Mara stop being only a voice, but it previously looped
+  back through the generic release prompt before the final intercom. A short
+  boarding bridge keeps the payoff physically present without changing the core
+  route or score.
 - Tasks:
-  - Add a gated `passenger_echoed_boarding` scene before the third car when the
-    player heard passenger echoes but has not gathered or answered passengers.
-  - Keep normal, answered, and gathered passenger boarding routes separate.
-  - Update regression coverage for the new boarding beat and the final echoed
-    intercom payoff.
+  - Add a `mara_handoff_boarding` scene after `mara_handoff`.
+  - Route the handoff branch through the new bridge before `train_car`.
+  - Keep the direct Mara-cleared route and final handoff intercom unchanged.
+  - Update regression coverage for the bridge, direct release availability, and
+    distinct handoff ending.
   - Run focused tests, full health, and a real playthrough through the changed
     branch.
 - Evidence:
-  - Added `passenger_echoed_boarding` as a visible bridge from
-    `passenger_platform` to `train_car` for direct echoed-manifest play.
-  - Split the direct passenger-platform boarding choice so echoed direct routes
-    use the new bridge, while non-echoed, answered, and gathered routes keep the
-    normal third-car route.
-  - Updated story-path regression coverage for the new bridge and final
-    `passenger_echoed_manifest_intercom` payoff.
+  - Added `mara_handoff_boarding` as a visible bridge from Mara leaving the
+    booth to the third-car release.
+  - Updated handoff regression coverage so the new bridge is asserted directly,
+    while the train car still offers `listen_to_mara_after_handoff` and
+    `pull_release`.
   - Focused story-path tests passed with 103 tests.
   - `npm run health` passed with formatting, TypeScript, 124 tests, story
     validation, and coverage playtest.
-  - Health validation reports 89 scenes, 12 endings, and all 89 reachable.
-  - Health coverage visited all 89 scenes, including
-    `passenger_echoed_boarding` and `passenger_echoed_manifest_intercom`, with
-    zero unfinished runs, best score 100/100, and average score 99.51.
-  - Targeted CLI play followed `board_with_echoed_manifest` ->
-    `reach_release_with_echoed_manifest` ->
-    `listen_to_echoed_manifest_intercom` and reached
-    `passenger_true_ending` at 100/100 with no objectives.
+  - Health validation reports 90 scenes, 12 endings, and all 90 reachable.
+  - Health coverage visited all 90 scenes, including `mara_handoff_boarding`,
+    with zero unfinished runs, best score 100/100, and average score 99.51.
+  - Targeted CLI play followed `watch_mara_leave_booth` ->
+    `return_from_mara_handoff` -> `board_after_mara_handoff` ->
+    `listen_to_mara_after_handoff` and reached `mara_handoff_true_ending` at
+    100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T22-14-01-681Z.md`. Its health checks
-    were green, random play visited `passenger_echoed_boarding` and
-    `passenger_echoed_manifest_intercom`, and coverage visited all 89 scenes.
+    report `ai-runs/cycle-2026-06-01T22-25-02-733Z.md`. Its health checks
+    were green, MCP validation passed with 90 reachable scenes and no warnings,
+    MCP random play visited `mara_handoff_boarding`, the required MCP route
+    reached `true_ending` at 100/100, and the adaptive MCP route reached
+    `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new boarding beat makes the earlier door-listening choice visible again
-    just before the train car, so the final optional intercom no longer appears
-    as an isolated extra button.
+  - The new bridge makes Mara's physical departure from the booth carry into
+    the third car instead of snapping back to the generic release prompt.
   - The direct release remains available from the third car after the bridge,
-    preserving player agency and avoiding a forced extra lore beat.
-  - Answered and gathered passenger routes still have their own stronger
-    boarding/intercom variants; the new bridge is limited to the direct echoed
-    route.
+    preserving player agency and avoiding a forced final intercom.
+  - The generic direct Mara-cleared route still boards through
+    `board_after_clearing_mara`, so players who skip the handoff beat keep the
+    shorter true-ending path.
 - Follow-up:
-  - Watch random samples to confirm `passenger_echoed_boarding` and
-    `passenger_echoed_manifest_intercom` both show up without crowding the
-    answered/gathered passenger routes.
+  - Watch random and coverage samples to confirm the extra bridge does not
+    dilute normal direct `true_ending` pacing.
 - Risks:
-  - The passenger-manifest branch already has several optional beats; keep this
-    bridge short and limited to the direct echoed route.
+  - The Mara-cleared branch is already clean and short; keep the new bridge to
+    one scene and preserve the direct release from the train car.
 
 ## Last Completed Cycle
 

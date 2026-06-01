@@ -821,8 +821,20 @@ scenes:
       the platform lights steady as if they believe her.
     choices:
       - id: return_from_mara_handoff
-        label: Cross to the third car while Mara holds the line
-        to: mara_released
+        label: Cross the platform with Mara beside the line
+        to: mara_handoff_boarding
+
+  mara_handoff_boarding:
+    text: >
+      Mara does not vanish back into the speaker. She walks the platform edge
+      with one hand brushing each open door, counting by touch instead of by
+      ledger. At the third car, she stops beside the first seat and nods toward
+      the release. "I can hold it from here," she says, and this time here
+      means beside you.
+    choices:
+      - id: board_after_mara_handoff
+        label: Reach the emergency release while Mara holds the doors
+        to: train_car
 
   passengers_released:
     text: >
