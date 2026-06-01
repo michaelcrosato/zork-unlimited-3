@@ -11,51 +11,53 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional last-chance stairwell call for players who
-  almost flee the lit platform before finding the signal token.
-- Why this matters: Current evidence shows healthy completion, full coverage,
-  and strong true-ending discoverability. The best next improvement is a small
-  character beat on a normal exploratory pressure point: players tempted to
-  escape get emotional context and a clear clock-token reminder without losing
-  the ability to leave.
+- Main objective: Add an optional in-train map-study beat for players taking
+  the underprepared map-only escape route.
+- Why this matters: Current evidence shows core true-ending guidance is healthy
+  and the adaptive route now finishes. The map-only `good_ending` remains a
+  valid non-ideal escape, but it previously jumped straight from the ominous
+  third car to morning. A small optional beat makes that route feel intentional,
+  clarifies why the map is safer than the HOME sign, and preserves pressure to
+  pursue the fuller ledger-release ending.
 - Tasks:
-  - Add a one-time stairwell call from `escape_warning`.
-  - Keep both the immediate escape ending and return-to-platform route
-    available.
-  - Set the token-location clue when players listen, then prevent the optional
-    beat from looping.
-  - Add regression coverage for the warning, return, objective, and escape
-    behavior.
-  - Run health, an actual playthrough, and the evidence-only AI cycle.
+  - Add a one-time optional train-map scene from `train_car` for map-only
+    riders who have not cleared Mara.
+  - Keep direct `ride_with_map` and `look_at_sign` choices available from
+    `train_car`.
+  - Let the optional scene resolve either to `good_ending` or the existing
+    `sign_warning`.
+  - Add regression coverage for the new branch and direct route availability.
+  - Run health, an actual CLI playthrough, and the evidence-only AI cycle.
 - Evidence:
-  - Added `mara_stairwell_call`, reached from `escape_warning` via
-    `listen_at_stairwell` before the player confirms escape or returns.
-  - The scene sets `heard_escape_call`, `met_mara`, and `knows_token_location`,
-    then returns to `lit_platform`; revisiting `escape_warning` no longer shows
-    the optional call.
-  - Kept `return_to_lit_platform_from_escape_warning` and
-    `confirm_flee_platform` available, so the escape ending remains intact.
-  - Updated story-path regression coverage for the new optional call and the
-    existing escape-warning choice list.
-  - `npm test -- tests/story-paths.test.ts` passed with 49 tests.
-  - `npm run health` passed with formatting, TypeScript, 70 tests, validation,
+  - Added `train_map`, reached from `train_car` via `study_map_in_train` when
+    the player has the map and has not freed Mara.
+  - The scene sets `checked_train_map`, reinforces the MORNING PLATFORM route
+    and the danger of the HOME sign, then offers either
+    `ride_with_map_after_study` to `good_ending` or `lower_map_to_sign` to
+    `sign_warning`.
+  - Kept the direct `ride_with_map` and `look_at_sign` choices available from
+    `train_car`, so the beat remains optional.
+  - Updated story-path regression coverage for direct map-only train choices
+    and the optional map-study route.
+  - `npm test -- tests/story-paths.test.ts` passed with 50 tests.
+  - `npm run health` passed with formatting, TypeScript, 71 tests, validation,
     and coverage playtest.
-  - Validation reports 40 scenes, 6 endings, and all 40 reachable.
-  - Coverage playtest reports 0 unfinished runs, all 40 scenes visited, best
-    score 100/100, average score 90.42, and 2880 max-score runs.
-  - Manual CLI route took the new stairwell call, recovered the token and map,
-    cleared Mara's ledger row, and reached `true_ending` at 100/100.
+  - Validation reports 41 scenes, 6 endings, and all 41 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 41 scenes visited, best
+    score 100/100, average score 86.08, and 2880 max-score runs.
+  - Manual CLI route took the new train-map beat and reached `good_ending` at
+    15/100, which correctly frames the route as safe but incomplete.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
     MCP true-ending playthrough at 100/100, and an adaptive exploratory
     true-ending route at 100/100.
-- Follow-up: Consider whether the `lit_platform` return path after the
-  stairwell call should offer a more direct tunnel/clock return, since the
-  current route naturally goes through the service-room hub.
+- Follow-up: Consider whether the map-only ending should award or report a
+  distinct "escaped safely but left the ledger unresolved" outcome so low-score
+  endings are easier to critique in transcripts.
 - Risks:
-  - Adding another optional warning choice can slightly slow escape attempts.
-    Tests and playthroughs confirm that immediate escape and true-ending
-    recovery both remain available.
+  - Adding an optional train-car choice increases non-ideal route branching and
+    lowers coverage average compared with the previous cycle. Direct choices,
+    full health, and playthrough evidence confirm ideal routes remain stable.
 
 ## Last Completed Cycle
 

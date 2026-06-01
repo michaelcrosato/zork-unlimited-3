@@ -782,6 +782,17 @@ scenes:
           all:
             - flag: freed_mara
             - notFlag: read_passenger_manifest
+      - id: study_map_in_train
+        label: Check the marked transfer map before the doors close
+        to: train_map
+        requires:
+          all:
+            - item: map
+            - notFlag: freed_mara
+            - notFlag: checked_train_map
+        effects:
+          set:
+            checked_train_map: true
       - id: ride_with_map
         label: Follow the map to the morning platform without touching the release
         to: good_ending
@@ -794,6 +805,22 @@ scenes:
         to: sign_warning
         requires:
           notFlag: freed_mara
+
+  train_map:
+    text: >
+      Under the train's flickering light, the marked map looks less like a
+      route and more like a promise someone kept badly: one transfer marked
+      MORNING PLATFORM, one warning circled three times, and a hand-drawn arrow
+      away from the HOME sign. The emergency release waits under the seat, but
+      without Mara clear in the ledger, the map is the only instruction that
+      does not ask you to trust the train.
+    choices:
+      - id: ride_with_map_after_study
+        label: Follow the map to the morning platform
+        to: good_ending
+      - id: lower_map_to_sign
+        label: Lower the map and look at the destination sign
+        to: sign_warning
 
   mara_intercom:
     text: >

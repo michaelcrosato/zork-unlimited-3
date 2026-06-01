@@ -396,8 +396,40 @@ describe("demo story critical paths", () => {
     const choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(choiceIds).toContain("study_map_in_train");
     expect(choiceIds).toContain("ride_with_map");
     expect(choiceIds).toContain("look_at_sign");
+  });
+
+  it("adds an optional map-study beat for underprepared train riders", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "study_map_in_train"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("train_map");
+    expect(observation.scene.text).toContain("MORNING PLATFORM");
+    expect(observation.scene.text).toContain("away from the HOME sign");
+    expect(observation.state.flags.checked_train_map).toBe(true);
+    expect(choiceIds).toEqual(["ride_with_map_after_study", "lower_map_to_sign"]);
+
+    state = choose(story, state, "ride_with_map_after_study");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("good_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("updates objectives after discovering Platform 13 by following arrows", async () => {
