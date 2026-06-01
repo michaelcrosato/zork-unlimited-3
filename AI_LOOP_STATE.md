@@ -11,6 +11,50 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Prevent mapless signal-booth routes from clearing Mara's
+  ledger and reaching a low-score ideal ending.
+- Why this matters: The adaptive exploratory evidence reached
+  `passenger_true_ending` without the marked map and finished at 90/100, even
+  though the story repeatedly frames the map as required for safe boarding.
+  The fix keeps the exploratory branch playable while preserving the map as a
+  real progression requirement for the true-ending family.
+- Tasks:
+  - Require the marked map before either ledger-clearing action can release
+    Mara or the manifest passengers.
+  - Add an explicit `return_for_marked_map` recovery choice from
+    `signal_ledger` for players who pushed into the signal booth without it.
+  - Add regression coverage for the mapless manifest route and verify the route
+    can recover to a 100/100 passenger true ending.
+- Evidence:
+  - Added an `item: map` requirement to `mark_mara_clear_from_ledger` and
+    `clear_manifest_and_mara_from_ledger`.
+  - Added `return_for_marked_map`, available from `signal_ledger` whenever the
+    player lacks the map.
+  - Added regression coverage proving a mapless manifest reader cannot clear
+    Mara or the manifest, must return for the map, and can then reopen the
+    ledger clear action.
+  - `npm test -- tests/story-paths.test.ts` passed with 46 tests.
+  - `npm run health` passed with formatting, TypeScript, 66 tests, validation,
+    and coverage playtest.
+  - Validation reports 37 scenes, 6 endings, and all 37 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 37 scenes visited, best
+    score 100/100, average score 72.73, and 480 max-score runs.
+  - Manual CLI route deliberately entered the signal booth without the map,
+    confirmed `signal_ledger` only offered `return_for_marked_map`, recovered
+    the map, and reached `passenger_true_ending` at 100/100.
+- Follow-up: The mapless signal-booth checkpoint now works, but the objective
+  list at that moment still includes a generic "Learn how to survive..." line;
+  a future pass could make late-game objectives more scene-specific.
+- Risks:
+  - This tightens a permissive route. Players who intentionally ignore the
+    earlier map warning now take one extra recovery step, but health and manual
+    play confirm the branch remains finishable.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added a stronger manifest-route platform payoff after clearing Mara's
+  ledger entry.
 - Main objective: Add a stronger manifest-route platform payoff after clearing
   Mara's ledger entry.
 - Why this matters: Current route metrics are healthy and all scenes are
@@ -18,13 +62,6 @@ preserving normal-play true-ending discoverability.
   passenger-manifest branch rather than another clue pass. Players who read the
   manifest should briefly see the people they chose to save before returning to
   the emergency release.
-- Tasks:
-  - Add a focused `passenger_platform` scene between opening the manifest doors
-    and boarding the third car.
-  - Update manifest-route regressions so the new beat remains reachable and the
-    passenger true ending still scores 100/100.
-  - Run focused tests, full health, and an actual CLI route through the updated
-    manifest branch.
 - Evidence:
   - Added `passenger_platform`, reached after opening every manifest door and
     before boarding the third car.

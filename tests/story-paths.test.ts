@@ -774,6 +774,52 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("blocks mapless manifest clears and points players back to the marked map", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "try_token_without_map",
+      "continue_to_signal_booth_unprepared",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "inspect_signal_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.state.inventory).not.toContain("map");
+    expect(choiceIds).not.toContain("clear_manifest_and_mara_from_ledger");
+    expect(choiceIds).not.toContain("mark_mara_clear_from_ledger");
+    expect(choiceIds).toContain("return_for_marked_map");
+
+    state = choose(story, state, "return_for_marked_map");
+    state = choose(story, state, "take_map");
+    state = choose(story, state, "return_to_lit_platform");
+    state = choose(story, state, "use_token_slot");
+    state = choose(story, state, "reopen_signal_ledger");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.state.inventory).toContain("map");
+    expect(choiceIds).toContain("clear_manifest_and_mara_from_ledger");
+  });
+
   it("pays off the kept-passenger manifest after Mara's final intercom beat", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

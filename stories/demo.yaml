@@ -598,6 +598,7 @@ scenes:
         requires:
           all:
             - item: badge
+            - item: map
             - notFlag: read_passenger_manifest
         effects:
           set:
@@ -608,10 +609,16 @@ scenes:
         requires:
           all:
             - item: badge
+            - item: map
             - flag: read_passenger_manifest
         effects:
           set:
             freed_mara: true
+      - id: return_for_marked_map
+        label: Return to the service room for the marked map
+        to: service_room
+        requires:
+          notItem: map
       - id: return_for_mara_badge
         label: Return to the service room for Mara's badge
         to: service_room
