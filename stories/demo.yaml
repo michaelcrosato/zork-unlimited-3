@@ -901,6 +901,7 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+            conductor_cleared_platform: true
       - id: return_lost_mitten
         label: Return the lost mitten to the child
         to: passenger_mitten_memory
@@ -1067,6 +1068,21 @@ scenes:
         effects:
           set:
             heard_answered_passengers: true
+      - id: listen_to_conductor_clearance
+        label: Listen for the conductor's platform-clear signal
+        to: passenger_conductor_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: conductor_cleared_platform
+            - flag: helped_passengers_gather
+            - notFlag: matched_manifest_keepsakes
+            - notFlag: returned_lost_mitten
+            - notFlag: heard_conductor_clearance
+        effects:
+          set:
+            heard_conductor_clearance: true
       - id: listen_to_gathered_passengers
         label: Listen to the gathered passengers before the release
         to: passenger_gathered_intercom
@@ -1371,6 +1387,19 @@ scenes:
       - id: pull_release_after_answered_intercom
         label: Pull the release while the answered names hold
         to: passenger_true_ending
+
+  passenger_conductor_intercom:
+    text: >
+      The conductor's borrowed signal carries into the third car before Mara
+      speaks. "Platform clear," he calls again, softer this time, and the
+      answered passengers echo it down the aisle until it stops sounding like
+      an order and starts sounding like a promise. Mara lets the old worker's
+      voice hold the line. "He remembers the way out," she says. "Pull the
+      release on his clear."
+    choices:
+      - id: pull_release_after_conductor_clearance
+        label: Pull the release on the conductor's clear signal
+        to: passenger_helped_true_ending
 
   passenger_gathered_intercom:
     text: >

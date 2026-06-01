@@ -11,56 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make Mara's manifest-handoff intercom easier to discover in
-  normal play.
-- Why this matters: Random play can miss `mara_manifest_handoff_intercom`
-  because players who watch Mara open the manifest have to return to the
-  platform, cross into the passenger crowd, and then board before the
-  handoff-specific third-car payoff appears. A direct board choice keeps the
-  careful handoff action connected to its intercom reward.
+- Main objective: Add a conductor-specific third-car payoff after players ask
+  the old conductor to clear the platform.
+- Why this matters: The conductor route has a strong platform moment, but it
+  previously collapsed back into the generic gathered-passenger intercom after
+  boarding. A route-specific payoff makes the player's trust in another transit
+  worker feel acknowledged without changing the main route or score economy.
 - Tasks:
-  - Add a direct third-car choice from `mara_manifest_handoff`.
-  - Preserve the existing return-to-opened-doors route for players who still
-    want passenger-answer or gathering beats.
-  - Add regression coverage for direct handoff-to-intercom routing.
+  - Set a conductor-route flag when the player asks for the platform-clear
+    signal.
+  - Add an optional conductor-clearance intercom in the third car while
+    preserving generic gathered-passenger and direct release choices.
+  - Add regression coverage for choice ordering, route flags, scene text, and
+    max-score completion.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI or MCP playthrough.
+    CLI playthrough.
 - Evidence:
-  - Added `board_after_mara_manifest_handoff`, a direct route from Mara's
-    opened-door handoff to the third car.
-  - The existing `return_from_mara_manifest_handoff` route remains available
-    for players who want to listen to passenger answers or gather the released
-    crowd.
-  - Added story-path regression coverage that verifies direct handoff boarding
-    exposes `listen_to_mara_manifest_handoff_intercom` beside the direct
-    manifest release.
+  - Added `conductor_cleared_platform` when players ask the old conductor to
+    call the answered platform clear.
+  - Added `passenger_conductor_intercom`, an optional third-car scene that
+    pays off the conductor's platform-clear signal before
+    `passenger_helped_true_ending`.
+  - Preserved the generic gathered-passenger intercom and direct helped release
+    choices from the third car.
+  - Added story-path regression coverage for conductor route choice ordering,
+    flags, scene text, and max-score completion.
   - Focused story-path tests passed with 86 tests.
-  - Validation passed with 66 scenes, 10 endings, and all 66 reachable.
-  - A 250-run random sample ended 250/250 runs, visited all 66 scenes including
-    `mara_manifest_handoff_intercom`, kept best score 100/100, averaged 79.4,
-    and reached max score in 182 runs.
-  - A 100-run coverage sample visited all 66 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 98.63, and 105408 max-score
-    runs.
+  - Validation passed with 67 scenes, 10 endings, and all 67 reachable.
+  - A 100-run random sample ended 100/100 runs, kept best score 100/100,
+    averaged 78.2, and reached max score in 72 runs; the new optional
+    conductor intercom did not appear in that small random sample.
+  - A 100-run coverage sample visited all 67 scenes, including
+    `passenger_conductor_intercom`, with 0 unfinished completed routes, best
+    score 100/100, average score 98.82, and 122976 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 107 tests,
     validation, and coverage playtest.
-  - Manual CLI play watched Mara open the manifest, boarded directly from the
-    handoff scene, heard the handoff-specific intercom, and reached
-    `passenger_true_ending` at 100/100 with no objectives.
+  - Manual CLI play asked the old conductor to clear the platform, boarded the
+    third car, heard the new conductor-clearance intercom, and reached
+    `passenger_helped_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new direct choice keeps the emotional beat contiguous: Mara calls the
-    opened doors, the player boards while she keeps calling, and the train-car
-    intercom immediately pays that off.
-  - The platform-return route still supports richer passenger exploration, so
-    the change improves discoverability without removing the slower route.
+  - The conductor route now has a clear emotional throughline: answer roll
+    call, let another transit worker organize the platform, hear that signal
+    carried into the train, then release the doors on his clear.
+  - The third-car choice list is one item longer on this specific route, but
+    the route-specific label is distinct and does not remove the generic
+    gathered-passenger beat.
   - No validation, score, completion, or coverage regression surfaced.
-- Follow-up: Recheck random playtest samples for whether
-  `mara_manifest_handoff_intercom` appears more naturally without reducing
-  passenger-route variety.
+- Follow-up: Verify that route-specific late-game intercoms remain legible in
+  transcript and playtest summaries as scene count grows.
 - Risks:
-  - The new direct choice could compete with passenger-platform exploration;
-    keep the return route available and verify random ending spread remains
-    healthy.
+  - Another optional late-game intercom can add choice noise in the third car;
+    keep it narrowly gated to the conductor route and preserve existing
+    alternatives.
 
 ## Last Completed Cycle
 
