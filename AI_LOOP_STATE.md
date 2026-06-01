@@ -11,9 +11,32 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Reduce prepared-player bad endings caused by forcing the gate
-  after already finding the platform fuse.
-- Outcome: Hid the destructive `force_gate` choice whenever the player carries
+- Main objective: Remove stale platform prose and repeated fuse installation
+  after Platform 13 has already been lit.
+- Outcome: Added state-aware return routes from the tunnel and service room to
+  `lit_platform` whenever `platform_lit` is true, so token-recovery players
+  return to the already powered platform and can use the signal token directly.
+- Evidence:
+  - Added story-path regression tests for both post-ledger token recovery and
+    service-room returns after the fuse is installed.
+  - `npm test -- tests/story-paths.test.ts` passes with 17 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 100 runs: all scenes visited, 0 unfinished,
+    `true_ending` reached 4 times, average score 40.85.
+  - `npm run health` passes with 25 tests and coverage playtest visiting all
+    scenes; coverage still reports 18 unfinished runs.
+  - Manual CLI route boarded before checking the signal booth, followed the
+    directed token recovery to the clock, returned via
+    `follow_arrows_to_lit_platform`, used the signal booth, and reached
+    `true_ending` at 100/100.
+- Follow-up: Coverage strategy still leaves 18 unfinished runs, likely from
+  repeated hub traversal. The next pass should inspect unfinished traces and
+  trim one remaining loop without removing meaningful backtracking.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Hid the destructive `force_gate` choice whenever the player carries
   the fuse, preserving the bad ending for underprepared exploration while
   steering prepared players toward `install_fuse`.
 - Evidence:
@@ -29,11 +52,8 @@ preserving normal-play true-ending discoverability.
   - Manual MCP route verified the prepared platform choice list excludes
     `force_gate`, then recovered the token through the ledger warning and
     reached `true_ending` at 90/100 without the optional radio clue.
-- Follow-up: The platform scene still says the fuse socket is empty even after
-  `platform_lit` is already true and the player returns from the clock; the next
-  pass should add a state-aware lit-platform return path or prose variant.
 
-## Last Completed Cycle
+## Prior Completed Cycle
 
 - Date: 2026-06-01
 - Change: Routed `return_for_signal_token` from the ledger warning directly to

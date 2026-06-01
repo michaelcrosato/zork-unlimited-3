@@ -4,6 +4,81 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Lit Platform Return Clarity
+
+### Current Plan
+
+- Main objective: Remove stale platform prose and repeated fuse installation
+  after Platform 13 has already been lit.
+- Why this matters: Manual play exposed a recovery path where players lit the
+  platform, boarded too early, followed the warning back to the clock, then
+  returned to base `platform` text that still described an empty fuse socket.
+- Tasks:
+  - Route tunnel returns to `lit_platform` once `platform_lit` is true.
+  - Route service-room returns to `lit_platform` once `platform_lit` is true.
+  - Add regression tests for both return paths.
+  - Verify health and a real playthrough through the corrected recovery route.
+- Risks:
+  - Alternate exploration must stay intact before the fuse is installed.
+
+### Work Completed
+
+- Changes made:
+  - Added `follow_arrows_to_lit_platform` for post-light tunnel returns.
+  - Hid base `follow_arrows` and `go_to_platform` once `platform_lit` is true.
+  - Added `return_to_lit_platform` from the service room for already powered
+    platform returns.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Two state-aware navigation choices that keep prose and mechanics aligned.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random --summary --json`
+  - `npm run health`
+  - Manual CLI route through early boarding, ledger warning, clock token
+    recovery, lit-platform return, signal booth, and true ending.
+- Quantitative metrics:
+  - Story-path tests: 17 passing.
+  - Health: format check, lint, 25 tests, validation, and coverage playtest all
+    pass.
+  - Random playtest, 100 runs: 100 ended, 0 unfinished, all scenes visited,
+    `true_ending` reached 4 times, average score 40.85.
+  - Coverage playtest from health: all scenes visited, `true_ending` reached
+    10 times, 18 unfinished.
+  - Manual CLI route: `true_ending`, 100/100.
+- What worked:
+  - After returning from the ledger warning to the clock, taking the token now
+    exposes `follow_arrows_to_lit_platform` and skips the stale empty-fuse
+    platform scene.
+  - Returning from the lit platform to the service room now offers
+    `return_to_lit_platform` rather than another base platform approach.
+- What felt bad/confusing:
+  - The tunnel prose is still generic after token recovery; the corrective
+    choice label carries the state awareness. This is acceptable for a scoped
+    pass but could be improved with richer scene variants later.
+  - Coverage still reports 18 unfinished runs.
+- Bugs found:
+  - No runtime bugs; the previous stale-prose navigation issue is covered by
+    regression tests.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect unfinished coverage traces and remove one
+  remaining repetitive hub loop.
+- Reason: The platform return issue is fixed, but coverage still exits 18 runs
+  by step budget rather than endings.
+- Planned action:
+  - Run coverage with included traces, identify the dominant unfinished path,
+    and add a narrow state-aware choice or requirement to shorten that loop.
+
 ## 2026-06-01 - Prepared Gate Affordance
 
 ### Current Plan

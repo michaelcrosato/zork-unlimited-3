@@ -307,6 +307,64 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
   });
 
+  it("returns token-recovery players to the lit platform instead of stale platform prose", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "board_before_clearing_ledger",
+      "return_for_signal_token",
+      "take_token",
+      "follow_arrows_to_lit_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.flags.platform_lit).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("use_token_slot");
+  });
+
+  it("returns service-room players to the lit platform after the fuse is installed", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "return_from_lit_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("return_to_lit_platform");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    state = choose(story, state, "return_to_lit_platform");
+    expect(observe(story, state).scene.id).toBe("lit_platform");
+  });
+
   it("steers token carriers toward the signal booth from the lit platform", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

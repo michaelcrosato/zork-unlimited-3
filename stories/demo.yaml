@@ -55,6 +55,16 @@ scenes:
       - id: follow_arrows
         label: Follow the arrows deeper
         to: platform
+        requires:
+          notFlag: platform_lit
+        effects:
+          set:
+            knows_platform: true
+      - id: follow_arrows_to_lit_platform
+        label: Follow the arrows back to the lit platform
+        to: lit_platform
+        requires:
+          flag: platform_lit
         effects:
           set:
             knows_platform: true
@@ -182,9 +192,19 @@ scenes:
         label: Go to Platform 13
         to: platform
         requires:
-          any:
-            - flag: has_light
-            - flag: lights_on
+          all:
+            - any:
+                - flag: has_light
+                - flag: lights_on
+            - notFlag: platform_lit
+        effects:
+          set:
+            knows_platform: true
+      - id: return_to_lit_platform
+        label: Return to the lit Platform 13
+        to: lit_platform
+        requires:
+          flag: platform_lit
         effects:
           set:
             knows_platform: true
