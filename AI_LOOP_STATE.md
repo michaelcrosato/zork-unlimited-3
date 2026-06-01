@@ -12,51 +12,59 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the stairwell-informed escape route its own non-ideal
-  ending and keep reporting escape pressure accurately.
-- Why this matters: Random play still occasionally ends in escape. The branch
-  where the player listens to Mara explain the missing signal key, then leaves
-  anyway, previously collapsed into the same ending as fleeing without that
-  knowledge. A distinct ending makes the player's informed abandonment feel
-  remembered while preserving the route as a valid non-ideal ending.
+- Main objective: Give Mara's direct opened-manifest intercom route its own
+  final true-ending payoff.
+- Why this matters: Core route metrics are healthy, so the highest-value
+  improvement is story depth tied to real player choices. The route where Mara
+  reads the opened manifest from the third car had bespoke buildup, but still
+  resolved into the generic passenger ending. A distinct ending makes that
+  listen-before-release choice feel remembered without changing core
+  progression.
 - Tasks:
-  - Add `warned_escape_ending` for leaving after `mara_stairwell_call`.
-  - Route `leave_after_stairwell_call` to the new ending.
-  - Keep score-guided playtest valuation and AI-loop long-run reporting aligned
-    by grouping `warned_escape_ending` with escape pressure.
-  - Update focused route coverage for the warned escape branch.
+  - Add `passenger_manifest_true_ending`.
+  - Route `pull_release_after_manifest_goodbye` from
+    `mara_manifest_intercom` to the new ending.
+  - Count the new ending as full-score and ideal in score, playtest, and
+    AI-loop evidence helpers.
+  - Update focused, playtest, and AI-loop regression coverage.
   - Run full health and a targeted CLI playthrough.
 - Evidence:
-  - Added a distinct terminal scene for players who hear Mara identify the
-    stopped-clock token and still choose to leave.
-  - Updated `src/playtest.ts` so score-guided play treats both escape endings
-    as the same low-value non-ideal outcome.
-  - Updated `src/ai-loop.ts` so long-run effectiveness reports combine
-    `escape_ending` and `warned_escape_ending` in escape pressure.
-  - Focused story-path tests passed with 103 tests.
-  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+  - Added `passenger_manifest_true_ending` as a distinct terminal payoff for
+    listening to Mara finish the opened manifest count from the third car, then
+    pulling the release.
+  - Left the immediate `pull_release_with_manifest` route on
+    `passenger_true_ending`, preserving the generic direct-release variant.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending counts as a full-score ideal passenger ending.
+  - Updated story-path, playtest, and AI-loop regression coverage.
+  - Focused tests passed with 117 tests.
+  - `npm run health` passed with formatting, TypeScript, 125 tests, story
     validation, and coverage playtest.
-  - Validation reports 97 scenes, 19 endings, all 97 reachable, and no
+  - Validation reports 98 scenes, 20 endings, all 98 reachable, and no
     warnings.
-  - Health coverage visited all 97 scenes, including `warned_escape_ending`,
-    with zero unfinished runs, best score 100/100, average score 99.51, and
-    342040 max-score runs.
-  - Targeted CLI play followed `flee_platform` -> `listen_at_stairwell` ->
-    `leave_after_stairwell_call` and reached `warned_escape_ending` at 35/100.
+  - Health coverage visited all 98 scenes, including
+    `passenger_manifest_true_ending`, with zero unfinished runs, best score
+    100/100, average score 99.51, and 342040 max-score runs.
+  - Targeted CLI play followed `read_manifest_from_ledger` ->
+    `clear_manifest_and_mara_from_ledger` -> `board_after_releasing_passengers`
+    -> `listen_to_mara_manifest_intercom` ->
+    `pull_release_after_manifest_goodbye` and reached
+    `passenger_manifest_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new ending clearly distinguishes panic-fleeing from leaving after
-    understanding the token clue.
-  - The route still feels like a fair failure: the stairwell call offers a
-    concrete recovery choice back to the stopped clock before the player
-    confirms departure.
-  - Coverage found both escape variants without harming ideal-ending reachability
-    or score distribution.
+  - The new ending carries the manifest's ordinary-sound motif through the
+    final release, making the optional intercom listen feel consequential.
+  - The direct release still reaches the generic passenger ending, so the
+    variant remains tied to the deliberate choice to hear Mara finish the
+    manifest count first.
+  - Coverage reached the new ending without harming scene reachability,
+    completion, or score distribution.
 - Follow-up:
-  - Review whether report suspicious-path sampling should include escape
-    variants when random escape pressure rises.
+  - Watch whether the growing passenger-ending list stays readable in reports;
+    future payoff variants should remain tied to clearly distinct player
+    actions.
 - Risks:
-  - The game now has another ending ID; future report work should keep
-    non-ideal endings grouped by player-facing meaning.
+  - The game now has another ideal ending ID; future additions should keep
+    report grouping and test helpers current.
 
 ## Last Completed Cycle
 

@@ -1762,7 +1762,7 @@ scenes:
     choices:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
-        to: passenger_true_ending
+        to: passenger_manifest_true_ending
 
   passenger_echoed_manifest_intercom:
     text: >
@@ -2241,6 +2241,17 @@ scenes:
       conductor to lunch-tin worker, stranger to stranger until the manifest is
       no longer a duty in one voice. Mara lets the final page close only after
       every answer has become movement.
+    choices: []
+
+  passenger_manifest_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once while Mara's opened manifest is
+      still answering in ordinary sounds. A lunch tin clasp becomes a footstep,
+      the child's mitten shakes rain from the threshold, and umbrellas knock
+      together as people check who is beside them. Mara reads until the page
+      has no one left to hold, then lets the passengers finish the count in
+      morning air.
     choices: []
 
   passenger_answered_handoff_true_ending:
