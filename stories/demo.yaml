@@ -891,6 +891,15 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: ask_conductor_from_answers
+        label: Ask the old conductor to call the answered passengers clear
+        to: passenger_conductor_signal
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
       - id: return_from_passenger_answers
         label: Cross through the answered crowd as they gather
         to: passenger_platform

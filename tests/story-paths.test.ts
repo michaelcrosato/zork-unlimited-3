@@ -1942,8 +1942,7 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "listen_to_passenger_answers",
-      "return_from_passenger_answers"
+      "listen_to_passenger_answers"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1951,17 +1950,18 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
     let choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.scene.id).toBe("passenger_answers");
     expect(choiceIds).toEqual([
-      "ask_newspaper_woman_about_stop",
-      "ask_conductor_to_call_platform_clear",
-      "return_lost_mitten",
-      "match_manifest_keepsakes",
-      "help_passengers_gather",
-      "board_third_car_with_passengers"
+      "follow_newspaper_answer",
+      "gather_answered_passengers",
+      "ask_conductor_from_answers",
+      "return_from_passenger_answers",
+      "board_after_passenger_answers"
     ]);
 
-    state = choose(story, state, "ask_conductor_to_call_platform_clear");
+    const answeredState = state;
+
+    state = choose(story, answeredState, "ask_conductor_from_answers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_signal");
@@ -1990,6 +1990,20 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = choose(story, answeredState, "return_from_passenger_answers");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds).toEqual([
+      "ask_newspaper_woman_about_stop",
+      "ask_conductor_to_call_platform_clear",
+      "return_lost_mitten",
+      "match_manifest_keepsakes",
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
+    ]);
   });
 
   it("pays off answered passenger roll call before a direct manifest release", async () => {
@@ -3628,6 +3642,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "follow_newspaper_answer",
       "gather_answered_passengers",
+      "ask_conductor_from_answers",
       "return_from_passenger_answers",
       "board_after_passenger_answers"
     ]);

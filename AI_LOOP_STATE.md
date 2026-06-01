@@ -11,6 +11,60 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the old conductor's clearance route visible directly
+  from the answered-passenger roll call.
+- Why this matters: The conductor scenes were already reachable, but normal
+  random play could miss them because the player had to back out from
+  `passenger_answers` to `passenger_platform` before asking for the conductor's
+  signal. The conductor payoff is stronger when it appears at the exact moment
+  the passengers have answered and need someone to call them clear.
+- Tasks:
+  - Add a direct conductor option to `passenger_answers`.
+  - Preserve the existing platform conductor route and other passenger-answer
+    choices.
+  - Update story-path regression coverage for the new route and final payoff.
+  - Run focused tests, validation/playtest sampling, full health, `ai:cycle`,
+    and a real CLI playthrough through the new route.
+- Evidence:
+  - Added `ask_conductor_from_answers`, which routes from `passenger_answers`
+    to `passenger_conductor_signal` and sets `helped_passengers_gather` plus
+    `conductor_cleared_platform`.
+  - The existing return-to-platform conductor choice remains available, so the
+    older route is preserved.
+  - Updated story-path coverage to assert the new passenger-answer choice list,
+    the direct conductor route, `heard_conductor_clearance`, and the
+    `passenger_helped_true_ending` payoff.
+  - Focused story-path tests passed: 90 tests.
+  - Validation reports 72 scenes, 11 endings, and all 72 reachable.
+  - A 250-run random sample ended every run, visited every scene including
+    `passenger_conductor_signal` and `passenger_conductor_intercom`, kept best
+    score 100/100, averaged 79.94, and reached max score in 183 runs.
+  - `npm run health` passed with formatting, TypeScript, 111 tests,
+    validation, and coverage playtest.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs/cycle-2026-06-01T17-41-33-981Z.md`; its 100-run random sample
+    visited both conductor scenes and reached `passenger_helped_true_ending` 7
+    times.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `passenger_conductor_signal` ->
+    `passenger_conductor_intercom` -> `passenger_helped_true_ending` at
+    100/100 with no objectives.
+- Playtest notes:
+  - The new choice feels better placed because the old conductor can respond to
+    passengers immediately after they answer roll call.
+  - The route reads as one continuous action: answer roll call, call the
+    platform clear, follow the signal, pull the release.
+  - The only tradeoff is a denser `passenger_answers` menu with five choices,
+    but random sampling still reached all passenger-specialized endings.
+- Follow-up: Watch whether the five-choice `passenger_answers` menu starts to
+  dilute the newspaper or farewell choices in smaller samples.
+- Risks:
+  - Late-game choice density is slightly higher at `passenger_answers`.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Improve normal-play discovery of `passenger_farewell`.
 - Why this matters: Coverage could reach `passenger_farewell`, but the current
   random sample missed it. The scene is a strong passenger-humanity beat, so it
