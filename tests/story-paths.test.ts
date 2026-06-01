@@ -733,16 +733,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_manifest");
     expect(observation.scene.text).toContain("Mara's door is the only one still shut");
     expect(observation.state.flags.read_passenger_manifest).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_manifest_doors_from_manifest",
+      "return_to_signal_ledger_from_manifest"
+    ]);
 
-    state = choose(story, state, "return_to_signal_ledger_from_manifest");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("signal_booth");
-    expect(observation.choices.map((choice) => choice.id)).not.toContain("read_passenger_manifest");
-    expect(observation.choices.map((choice) => choice.id)).toContain("listen_to_manifest_doors");
-    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_signal_ledger");
-
-    state = choose(story, state, "listen_to_manifest_doors");
+    state = choose(story, state, "listen_to_manifest_doors_from_manifest");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoes");
@@ -752,13 +748,13 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_from_passenger_echoes");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("signal_booth");
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "listen_to_manifest_doors"
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.state.flags.inspected_signal_ledger).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "clear_manifest_and_mara_from_ledger"
     );
 
     for (const choiceId of [
-      "inspect_signal_ledger",
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
       "board_third_car_with_passengers",
@@ -844,8 +840,7 @@ describe("demo story critical paths", () => {
       "try_token_without_map",
       "continue_to_signal_booth_unprepared",
       "read_passenger_manifest",
-      "return_to_signal_ledger_from_manifest",
-      "inspect_signal_ledger"
+      "return_to_signal_ledger_from_manifest"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -892,7 +887,6 @@ describe("demo story critical paths", () => {
       "use_token_slot",
       "read_passenger_manifest",
       "return_to_signal_ledger_from_manifest",
-      "inspect_signal_ledger",
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
       "board_third_car_with_passengers",
@@ -1236,8 +1230,7 @@ describe("demo story critical paths", () => {
       "try_token_without_map",
       "continue_to_signal_booth_unprepared",
       "read_passenger_manifest",
-      "return_to_signal_ledger_from_manifest",
-      "inspect_signal_ledger"
+      "return_to_signal_ledger_from_manifest"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1480,8 +1473,7 @@ describe("demo story critical paths", () => {
       "install_fuse",
       "use_token_slot",
       "read_passenger_manifest",
-      "return_to_signal_ledger_from_manifest",
-      "inspect_signal_ledger"
+      "return_to_signal_ledger_from_manifest"
     ]) {
       state = choose(story, state, choiceId);
     }

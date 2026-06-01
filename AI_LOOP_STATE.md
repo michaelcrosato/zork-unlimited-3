@@ -11,18 +11,61 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Smooth the optional passenger-manifest branch so it returns
+  directly to Mara's ledger row.
+- Why this matters: Cycle evidence showed an exploratory route stopping at
+  `passenger_manifest` even though the next progress action was available.
+  Removing the signal-booth bounce makes the manifest payoff read as part of
+  the final ledger resolution rather than a detour through a hub.
+- Tasks:
+  - Let `passenger_manifest` offer the passenger-echo beat directly.
+  - Route manifest and echo returns straight to `signal_ledger`, setting the
+    ledger-inspected flag so objectives and choices stay coherent.
+  - Update regression coverage for manifest, mapless recovery, objective, and
+    passenger-ending paths.
+- Evidence:
+  - Added `listen_to_manifest_doors_from_manifest`, so players can hear the
+    kept passengers without first returning to `signal_booth`.
+  - Changed `return_to_signal_ledger_from_manifest` and
+    `return_from_passenger_echoes` to land on `signal_ledger` and mark
+    `inspected_signal_ledger`.
+  - Updated story-path regressions so manifest readers can proceed directly to
+    `clear_manifest_and_mara_from_ledger`, while mapless recovery still points
+    back to the marked map.
+  - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
+  - `npm run health` passed with formatting, TypeScript, 68 tests, validation,
+    and coverage playtest.
+  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
+    score 100/100, average score 82.25, and 960 max-score runs.
+  - Manual CLI route read the manifest, listened to passenger echoes directly
+    from that scene, returned to `signal_ledger`, cleared every manifest door,
+    and reached `passenger_true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, and an
+    actual MCP true-ending playthrough at 100/100.
+  - Post-change adaptive exploratory play no longer stops at
+    `passenger_manifest`; it now stops at `signal_booth` with
+    `inspect_signal_ledger` and `read_passenger_manifest` both visible.
+- Follow-up: Inspect whether the adaptive `signal_booth` stop is a route-depth
+  limitation or whether the booth should more strongly prioritize the ledger
+  entry after the player is fully prepared.
+- Risks:
+  - Moving manifest returns out of `signal_booth` changes a late-game route
+    shape. Focused tests, full health, and manual play confirm the branch
+    remains reachable and finishable.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added an optional late-game character memory before clearing Mara's
+  ledger row.
 - Main objective: Add an optional late-game character memory before clearing
   Mara's ledger row.
-- Why this matters: Current route metrics are healthy, all scenes are reachable,
-  and true-ending discovery is strong. The highest-value next change is a small
-  story payoff that deepens Mara's motivation without adding a mandatory step
+- Why this matters: Route metrics were healthy, all scenes were reachable, and
+  true-ending discovery was strong. The highest-value next change was a small
+  story payoff that deepened Mara's motivation without adding a mandatory step
   to the main ending route.
-- Tasks:
-  - Add a one-time optional `mara_thumbprint` scene from `signal_ledger`.
-  - Require Mara's badge for the thumbprint memory so badge-less recovery states
-    stay focused on returning for proof.
-  - Add regression coverage proving the memory is optional, one-time, and does
-    not block clearing Mara's ledger.
 - Evidence:
   - Added `mara_thumbprint`, reached by `inspect_mara_thumbprint` after reading
     Mara's signal-ledger entry while carrying her badge.
@@ -35,8 +78,8 @@ preserving normal-play true-ending discoverability.
   - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
   - `npm run health` passed with formatting, TypeScript, 68 tests, validation,
     and coverage playtest.
-  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
-  - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
+  - Validation reported 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reported 0 unfinished runs, all 38 scenes visited, best
     score 100/100, average score 82.25, and 960 max-score runs.
   - Manual CLI route took the new thumbprint memory, returned to the ledger,
     cleared Mara's row, and reached `true_ending` at 100/100.

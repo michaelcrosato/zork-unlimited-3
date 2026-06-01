@@ -568,9 +568,20 @@ scenes:
       mitten pinned beside a transfer. Each name has a tiny door stamped beside
       it. Mara's door is the only one still shut.
     choices:
+      - id: listen_to_manifest_doors_from_manifest
+        label: Listen to the marked passenger doors
+        to: passenger_echoes
+        requires:
+          notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_passenger_echoes: true
       - id: return_to_signal_ledger_from_manifest
-        label: Return to Mara's open ledger row
-        to: signal_booth
+        label: Turn from the manifest to Mara's ledger row
+        to: signal_ledger
+        effects:
+          set:
+            inspected_signal_ledger: true
 
   passenger_echoes:
     text: >
@@ -582,7 +593,10 @@ scenes:
     choices:
       - id: return_from_passenger_echoes
         label: Return to Mara's ledger row
-        to: signal_booth
+        to: signal_ledger
+        effects:
+          set:
+            inspected_signal_ledger: true
 
   signal_ledger:
     text: >

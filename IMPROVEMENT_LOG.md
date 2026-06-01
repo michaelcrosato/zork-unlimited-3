@@ -4,6 +4,75 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Manifest Ledger Return
+
+### Current Plan
+
+- Main objective: Smooth the optional passenger-manifest branch so it returns
+  directly to Mara's ledger row.
+- Why this matters: The adaptive exploratory route stopped at
+  `passenger_manifest` with a valid progress choice still available. The
+  manifest branch should carry players into final ledger resolution instead of
+  routing them back through the signal-booth hub.
+- Tasks:
+  - Offer the passenger-echo beat directly from `passenger_manifest`.
+  - Return from the manifest and passenger echoes to `signal_ledger`.
+  - Preserve mapless recovery and manifest true-ending coverage.
+- Risks: Moving late-game returns out of `signal_booth` could make optional
+  passenger echoes or mapless recovery unreachable if the tests miss a branch.
+
+### Work Completed
+
+- Changes made:
+  - Added `listen_to_manifest_doors_from_manifest` to `passenger_manifest`.
+  - Changed manifest and passenger-echo returns to land on `signal_ledger` and
+    set `inspected_signal_ledger`.
+  - Updated story-path regressions for direct manifest resolution, mapless
+    recovery, objective text, and the passenger true-ending branch.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A smoother late-game manifest route with one fewer hub bounce.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through `passenger_manifest`,
+    `listen_to_manifest_doors_from_manifest`, and `passenger_true_ending`
+- What worked:
+  - Focused story-path tests passed with 48 tests.
+  - Full health passed with 68 tests, validation, and coverage playtest.
+  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reports 0 unfinished runs, all scenes visited, best score
+    100/100, average score 82.25, and 960 max-score runs.
+  - The manual route reached `passenger_true_ending` at 100/100 after returning
+    from the passenger echoes directly to Mara's ledger row.
+  - Evidence-only `npm run ai:cycle` passed health, MCP verification, MCP
+    validation, MCP random/coverage/goal playtests, and an actual MCP
+    true-ending route at 100/100.
+  - The adaptive exploratory route no longer stops at `passenger_manifest`; it
+    now stops at `signal_booth` with the ledger and manifest choices visible.
+- What felt bad/confusing:
+  - The revised route reads more cleanly; the signal-booth menu no longer
+    interrupts the manifest-to-ledger payoff.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect whether the adaptive `signal_booth` stop
+  reflects route-depth limits or a remaining choice-prioritization issue.
+- Reason: The manifest branch now continues cleanly, and the next incomplete
+  route has a compact final-state audit with visible legal progress choices.
+- Planned action:
+  - Compare adaptive route depth against the signal-booth choice ordering before
+    making another story-routing change.
+
 ## 2026-06-01 - Transcript Final-State Audit
 
 ### Current Plan
