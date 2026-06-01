@@ -734,9 +734,29 @@ scenes:
       ribs. Mara breathes through the speaker and says, "Third car. I can hold
       the line steady while they find the morning."
     choices:
+      - id: listen_to_passenger_answers
+        label: Listen as the passengers answer their names
+        to: passenger_answers
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
+
+  passenger_answers:
+    text: >
+      The opened manifest does not cheer. It answers roll call in small,
+      stubborn proofs of life: a man clearing his throat before saying "here,"
+      a child asking if the rain is still outside, someone laughing once because
+      the word present finally means something again. Mara waits for every
+      answer before she tells you the third car is ready.
+    choices:
+      - id: return_from_passenger_answers
+        label: Cross through the answered crowd to the third car
+        to: train_car
 
   passenger_platform:
     text: >

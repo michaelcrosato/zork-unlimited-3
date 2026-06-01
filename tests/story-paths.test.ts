@@ -1838,7 +1838,46 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("every tiny stamped door");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
-    expect(choiceIds).toEqual(["board_after_releasing_passengers"]);
+    expect(choiceIds).toEqual(["listen_to_passenger_answers", "board_after_releasing_passengers"]);
+
+    state = choose(story, state, "listen_to_passenger_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_answers"
+    ]);
+
+    state = choose(story, state, "return_from_passenger_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
 
     state = choose(story, state, "board_after_releasing_passengers");
     observation = observe(story, state);
