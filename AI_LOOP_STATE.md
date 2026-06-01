@@ -11,6 +11,62 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a keepsake-specific final roll-call payoff after the
+  matched-keepsake intercom.
+- Why this matters: The previous cycle added a strong matched-keepsake
+  intercom, but choosing the optional final roll call still fell back to the
+  generic gathered-passenger text. Careful keepsake players should get a final
+  beat that keeps the lunch tin, newspaper, and umbrellas central through the
+  last choice before release.
+- Tasks:
+  - Route `hear_final_keepsake_roll_call` into a new keepsake-specific roll
+    call scene.
+  - Preserve the direct keepsake-intercom release path to
+    `passenger_helped_true_ending`.
+  - Add regression coverage for the new scene text, choice ordering, and
+    max-score completion.
+  - Run story-path tests, validation/playtest sampling, full health, and an
+    actual playthrough through the new keepsake roll-call route.
+- Evidence:
+  - Added `passenger_keepsake_roll_call`, reached from
+    `hear_final_keepsake_roll_call`.
+  - The new scene keeps the matched lunch tin, newspaper, and umbrellas in the
+    final roll call rather than reusing the generic passenger roll-call beat.
+  - Direct release from `passenger_keepsake_intercom` remains available.
+  - Added story-path regression coverage for the new keepsake roll-call scene,
+    choice ordering, and max-score helped-ending completion.
+  - Focused story-path tests passed with 81 tests.
+  - Validation passed with 61 scenes, 9 endings, and all 61 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 61 scenes, kept
+    best score 100/100, averaged 78.2, and reached
+    `passenger_keepsake_roll_call`.
+  - `npm run health` passed with formatting, TypeScript, 102 tests,
+    validation, and coverage playtest.
+  - Health coverage playtest visited all 61 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.58, and 101016 max-score
+    runs.
+  - Manual CLI play took the manifest route, matched keepsakes, heard the
+    keepsake intercom, continued through the new keepsake roll call, and
+    reached `passenger_helped_true_ending` at 100/100 with no lingering
+    objectives.
+- Playtest notes:
+  - The new branch preserves the careful keepsake route through the final
+    optional beat: the lunch tin, newspaper, and umbrellas remain active proof
+    rather than becoming generic crowd texture.
+  - The direct release from the keepsake intercom still keeps the route from
+    feeling overlong for players who are ready to finish.
+  - No completion, score, or coverage regression surfaced in focused tests,
+    random sampling, health, or manual CLI play.
+- Follow-up: Watch whether the increasing optional late-route beats need
+  transcript grouping or route-family reporting rather than more ending labels.
+- Risks:
+  - Another optional late-game scene increases coverage state count by one, but
+    all sampled routes still completed and coverage remains bounded.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a keepsake-specific final intercom beat to deepen the
   manifest rescue route.
 - Why this matters: The previous cycle made manifest keepsake matching

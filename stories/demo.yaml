@@ -1296,7 +1296,7 @@ scenes:
     choices:
       - id: hear_final_keepsake_roll_call
         label: Hear the matched passengers finish the roll call
-        to: passenger_roll_call_epilogue
+        to: passenger_keepsake_roll_call
         requires:
           notFlag: heard_final_roll_call
         effects:
@@ -1304,6 +1304,19 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_keepsake_intercom
         label: Pull the release while the keepsakes hold the names steady
+        to: passenger_helped_true_ending
+
+  passenger_keepsake_roll_call:
+    text: >
+      Mara begins the final roll call, but the matched keepsakes answer with
+      the passengers. The lunch tin clicks shut after its owner's name, the
+      newspaper woman reads the old conductor's stop back to him, and the
+      umbrellas lift in order until every initial has a hand beneath it. By the
+      last answer, the manifest has become a platform inventory of ordinary
+      proof: each person holding the small thing the line could not keep.
+    choices:
+      - id: pull_release_after_keepsake_roll_call
+        label: Pull the release after every keepsake answers
         to: passenger_helped_true_ending
 
   passenger_roll_call_epilogue:
