@@ -508,7 +508,8 @@ const idealEndingIds = [
   "true_ending",
   "mara_handoff_true_ending",
   "passenger_true_ending",
-  "passenger_helped_true_ending"
+  "passenger_helped_true_ending",
+  "passenger_mitten_true_ending"
 ];
 
 export function idealEndingRate(

@@ -1004,6 +1004,16 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
+            - notFlag: returned_lost_mitten
+      - id: pull_release_after_returning_mitten
+        label: Pull the release after returning the lost mitten
+        to: passenger_mitten_true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - flag: returned_lost_mitten
       - id: pull_release
         label: Pull the emergency release
         to: true_ending
@@ -1229,6 +1239,13 @@ scenes:
       - id: pull_release_after_gathered_intercom
         label: Pull the release while the passengers hold the doors
         to: passenger_helped_true_ending
+        requires:
+          notFlag: returned_lost_mitten
+      - id: pull_release_after_mitten_intercom
+        label: Pull the release while the mitten child holds the line
+        to: passenger_mitten_true_ending
+        requires:
+          flag: returned_lost_mitten
 
   passenger_roll_call_epilogue:
     text: >
@@ -1242,6 +1259,13 @@ scenes:
       - id: pull_release_after_final_roll_call
         label: Pull the release after every answer
         to: passenger_helped_true_ending
+        requires:
+          notFlag: returned_lost_mitten
+      - id: pull_release_after_mitten_roll_call
+        label: Pull the release after the child's answer
+        to: passenger_mitten_true_ending
+        requires:
+          flag: returned_lost_mitten
 
   gate_warning:
     text: >
@@ -1356,6 +1380,17 @@ scenes:
       between two adults who know his name now; the old conductor holds the
       morning doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
+    choices: []
+
+  passenger_mitten_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the first person through is
+      the child clutching both mittens in one hand. He waits at the morning
+      doors until the woman with the newspaper catches up, then points out the
+      far bench where the other glove should have been all along. The
+      passengers laugh because the line has lost its claim on small things, and
+      Mara lets that be the final sound before the speaker goes quiet.
     choices: []
 
   good_ending:

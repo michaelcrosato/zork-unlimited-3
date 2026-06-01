@@ -1683,9 +1683,64 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_gathering_passengers"
-    );
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_returning_mitten"
+    ]);
+
+    state = choose(story, state, "pull_release_after_returning_mitten");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("clutching both mittens");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("carries the returned-mitten payoff through the final roll call", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "return_lost_mitten",
+      "lead_mitten_child_to_third_car",
+      "listen_to_gathered_passengers",
+      "hear_final_passenger_roll_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_mitten_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_mitten_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
   it("adds a final gathered-passenger intercom beat before the helped ending", async () => {

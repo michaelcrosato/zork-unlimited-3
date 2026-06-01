@@ -46,13 +46,14 @@ describe("AI loop restart detection", () => {
         mara_handoff_true_ending: 10,
         passenger_true_ending: 28,
         passenger_helped_true_ending: 5,
+        passenger_mitten_true_ending: 4,
         good_ending: 20
       }
     };
 
-    expect(idealEndingRate(summary)).toBe(0.7);
+    expect(idealEndingRate(summary)).toBe(0.74);
     expect(formatIdealEndingBreakdown(summary)).toBe(
-      "true_ending: 27, mara_handoff_true_ending: 10, passenger_true_ending: 28, passenger_helped_true_ending: 5"
+      "true_ending: 27, mara_handoff_true_ending: 10, passenger_true_ending: 28, passenger_helped_true_ending: 5, passenger_mitten_true_ending: 4"
     );
   });
 
