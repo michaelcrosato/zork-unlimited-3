@@ -504,7 +504,7 @@ function endingRate(
   return Number(summary.endings?.[endingId] ?? 0) / summary.runs;
 }
 
-const idealEndingIds = ["true_ending", "passenger_true_ending"];
+const idealEndingIds = ["true_ending", "passenger_true_ending", "passenger_helped_true_ending"];
 
 export function idealEndingRate(
   summary: { runs?: number; endings?: Record<string, number> } | undefined

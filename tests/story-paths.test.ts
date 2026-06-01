@@ -1418,7 +1418,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
-    expect(choiceIds).toEqual(["pull_release_with_manifest"]);
+    expect(choiceIds).toEqual(["pull_release_after_gathering_passengers"]);
   });
 
   it("adds an optional thumbprint memory without blocking Mara's ledger clear", async () => {
@@ -2379,7 +2379,20 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "pull_release_with_manifest"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_gathering_passengers"
+    );
+
+    state = choose(story, state, "pull_release_after_gathering_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("already helped them find one another");
+    expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
   it("keeps badge-less ledger states recoverable", async () => {

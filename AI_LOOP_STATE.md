@@ -11,54 +11,52 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the missing-map signal-booth warning easier to discover
-  during normal play.
-- Why this matters: Cycle 18 evidence showed all systems healthy, but the
-  100-run random playtest missed `signal_map_warning` while coverage could only
-  find it through a narrower lit-platform token route. The warning is valuable
-  because it catches players who have the signal token and fuse but skipped the
-  marked map, then redirects them before they board underprepared.
+- Main objective: Pay off the optional kept-passenger gathering beat in the
+  final manifest ending.
+- Why this matters: Current evidence shows core completion and true-ending
+  discovery are healthy, so the highest-value improvement is story depth on an
+  already-successful route. The game already tracks whether the player helped
+  the kept passengers gather, but the final release previously resolved with
+  the same text either way.
 - Tasks:
-  - Add a direct gate-control choice for players carrying the fuse and signal
-    token without the map.
-  - Route that choice to `signal_map_warning` while restoring platform power.
-  - Keep the existing fuse-install route available before the token is found.
-  - Add regression coverage for both the new warning route and the preserved
-    no-token fuse install route.
-  - Run focused tests, full health, an actual CLI playthrough, and commit/push
-    if green.
+  - Add a distinct manifest release choice after `helped_passengers_gather`.
+  - Add a new ideal ending scene that acknowledges the player's help.
+  - Update scoring, playtest desirability, and AI-loop ideal-ending reporting
+    so the new ending counts as a full success.
+  - Add regression coverage for the helped-passenger release branch.
+  - Run focused tests, full health, an actual playthrough, and commit/push if
+    green.
 - Evidence:
-  - Added `install_fuse_and_try_token_without_map` to `gate_control`, requiring
-    fuse + token + no map and sending the player to `signal_map_warning`.
-  - Narrowed `install_fuse_from_gate_control` so it remains the no-token fuse
-    install route instead of competing with the warning route.
-  - Added focused story-path tests for the direct warning and preserved no-token
-    install behavior.
-  - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed.
-  - A focused 250-run random playtest passed with 0 unfinished runs, all 49
-    scenes visited, and `signal_map_warning` reached.
+  - Added `pull_release_after_gathering_passengers`, shown only after the
+    player helped the kept passengers gather.
+  - Added `passenger_helped_true_ending`, a distinct ideal ending that pays off
+    the helped-passenger flag with final-scene acknowledgement.
+  - Updated score, goal-oriented playtest weighting, and AI-loop ideal-ending
+    reporting so `passenger_helped_true_ending` counts as a full success.
+  - Updated story-path and AI-loop regression tests for the new ideal ending
+    branch.
+  - `npm test -- tests/story-paths.test.ts tests/ai-loop.test.ts` passed with
+    74 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 50 scenes,
+    7 endings, and all 50 reachable.
+  - A 100-run random playtest passed with 0 unfinished runs and reached
+    `passenger_helped_true_ending` 10 times.
+  - A 100-run coverage playtest passed with all 50 scenes visited, best score
+    100/100, average score 93.22, and 25452 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
-  - Validation reports 49 scenes, 6 endings, and all 49 reachable.
-  - Health coverage playtest reports 0 unfinished routes, all 49 scenes
-    visited, best score 100/100, average score 93.22, and 25452 max-score
-    runs.
-  - Manual CLI play used the new gate-control warning route, recovered the map,
-    cleared the passenger manifest, and reached `passenger_true_ending` at
-    100/100.
+  - Manual CLI play took the passenger-gathering route and reached
+    `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new choice reads like the natural continuation of the gate-control
-    diagram: restore lights, try the token, then get warned about the missing
-    map.
-  - The warning now appears before a lit-platform detour, making the map
-    recovery objective harder to miss.
-- Follow-up: Consider whether the warning should set a dedicated flag if future
-  transcript reports need to distinguish map recovery from ordinary map pickup.
+  - The helped-passenger action now reads as consequential instead of cosmetic.
+  - The route stayed direct: gather passengers, return to the third car, pull
+    the release, and receive a specific final payoff.
+  - No bugs surfaced in the manual route; objectives cleared at the ending.
+- Follow-up: Watch whether adding a third ideal ending ID makes long-run
+  summaries noisier; if so, reports may need to group manifest endings.
 - Risks:
-  - The direct warning abstracts the act of trying the token immediately after
-    installing the fuse. The label and regression test keep that transition
-    explicit.
+  - Adding another ending ID requires every ideal-ending heuristic to know about
+    it, so focused tests cover scoring and AI-loop reporting.
 
 ## Last Completed Cycle
 

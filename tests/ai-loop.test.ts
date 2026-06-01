@@ -38,18 +38,21 @@ describe("AI loop restart detection", () => {
     ).toEqual(["src/ai-loop.ts", "OUTPUTLOG.md", "old.md", "new.md"]);
   });
 
-  it("counts both true-ending variants as ideal endings in loop evidence", () => {
+  it("counts true-ending variants as ideal endings in loop evidence", () => {
     const summary = {
       runs: 100,
       endings: {
         true_ending: 27,
         passenger_true_ending: 28,
+        passenger_helped_true_ending: 5,
         good_ending: 20
       }
     };
 
-    expect(idealEndingRate(summary)).toBe(0.55);
-    expect(formatIdealEndingBreakdown(summary)).toBe("true_ending: 27, passenger_true_ending: 28");
+    expect(idealEndingRate(summary)).toBe(0.6);
+    expect(formatIdealEndingBreakdown(summary)).toBe(
+      "true_ending: 27, passenger_true_ending: 28, passenger_helped_true_ending: 5"
+    );
   });
 
   it("allows exploratory MCP routes enough steps for late-game detours", () => {
