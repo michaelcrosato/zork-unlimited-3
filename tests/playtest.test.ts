@@ -139,7 +139,7 @@ describe("playtest strategies", () => {
     expect(trueEndingCount(report.summary.endings)).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
     expect(report.summary.maxScoreRuns).toBeGreaterThan(0);
-  });
+  }, 10000);
 
   it("goal strategy reliably reaches the max-score true ending", async () => {
     const story = await loadStory("stories/demo.yaml");

@@ -11,50 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional final roll-call payoff to the strongest
-  helped-passenger route without lengthening the required ending path.
-- Why this matters: Cycle evidence showed the core route metrics were healthy,
-  with all scenes visited and no random unfinished pressure in the latest
-  samples. The highest-value next step was richer story payoff on an already
-  successful route rather than another guidance-only pass.
+- Main objective: Add a final optional Mara intercom beat for players who watch
+  her leave the signal booth before taking the non-manifest true-ending route.
+- Why this matters: Current evidence shows the core route metrics are healthy,
+  so the best next improvement is richer character payoff. Careful players who
+  watched Mara step away from the booth previously lost access to the final
+  Mara intercom beat in the third car, leaving the direct route with more
+  closing texture than the more attentive route.
 - Tasks:
-  - Add a new optional `passenger_roll_call_epilogue` scene after the gathered
-    passenger intercom.
-  - Keep the direct `pull_release_after_gathered_intercom` ending route
-    available so players can skip the extra beat.
-  - Add regression coverage for the new roll-call route and the preserved
-    direct helped-ending route.
-  - Run focused tests, validation, random/coverage playtest sampling, full
-    health, and an actual CLI playthrough through the new scene.
+  - Add a new optional `mara_handoff_intercom` scene from `train_car`.
+  - Keep the direct `pull_release` route available for players who want to end
+    immediately.
+  - Add regression coverage for the handoff route and final release.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI playthrough through the new scene.
 - Evidence:
-  - `passenger_gathered_intercom` now offers
-    `hear_final_passenger_roll_call` before the existing direct release.
-  - `passenger_roll_call_epilogue` lets the gathered crowd finish Mara's roll
-    call before the player pulls the release.
-  - `npm test -- tests/story-paths.test.ts` passed with 74 tests.
-  - Focused validation passed with 54 scenes, 7 endings, and all 54 reachable.
-  - A 250-run random sample ended 250/250 runs, visited all 54 scenes, kept
-    best score 100/100, and averaged 79.4.
-  - Focused coverage playtest visited all 54 scenes, reported 0 unfinished
-    completed routes, kept best score 100/100, averaged 96.98, and found 46116
-    max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 95 tests, validation,
+  - `train_car` now offers `listen_to_mara_after_handoff` plus the existing
+    direct `pull_release` after players watch Mara leave the signal booth.
+  - Added `mara_handoff_intercom`, a short optional closing beat where Mara
+    speaks from the platform side of the release instead of from the booth.
+  - Added regression coverage for the new handoff-intercom route and preserved
+    direct-release access.
+  - Increased the coverage-strategy test timeout to 10 seconds because the
+    exhaustive demo coverage test now sometimes exceeds Vitest's 5-second
+    default as the story grows.
+  - `npm test -- tests/story-paths.test.ts` passed with 75 tests.
+  - `npm test -- tests/playtest.test.ts` passed with 6 tests.
+  - Focused validation passed with 55 scenes, 7 endings, and all 55 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 55 scenes, kept
+    best score 100/100, and averaged 78.2.
+  - `npm run health` passed with formatting, TypeScript, 96 tests, validation,
     and coverage playtest.
-  - Manual CLI play took the manifest route, listened to passenger answers,
-    helped the crowd gather, listened to the gathered intercom, heard the new
-    final roll call, and reached `passenger_helped_true_ending` at 100/100.
+  - Health coverage playtest visited all 55 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 97.11, and 48312 max-score runs.
+  - Manual CLI play took the non-manifest route, watched Mara leave the signal
+    booth, listened to the new handoff intercom, and reached `true_ending` at
+    100/100.
 - Playtest notes:
-  - The new scene clarifies that the released passengers are active
-    participants, not just names Mara reads from a ledger.
-  - The final sequence still has a short route: players can skip the extra roll
-    call and release directly from the gathered intercom.
-  - The transcript ended cleanly with no lingering objectives and a 100/100
-    helped-passenger ending.
-- Follow-up: Consider a future polish pass on early service-room/tunnel/platform
-  revisits only if fresh random samples show renewed step-limit pressure.
+  - The new beat closes the careful non-manifest route with Mara acting from
+    the platform instead of only as a speaker voice.
+  - The direct release remains available in the third car, so the new scene is
+    player-paced and does not lengthen the required true-ending route.
+  - The transcript ended cleanly with no lingering objectives and all score
+    achievements earned.
+- Follow-up: Re-check random route length after adding any optional late-game
+  beat; keep the direct release route covered.
 - Risks:
-  - This adds one more optional late-game step. The direct release route remains
-    covered by tests and playtest samples still ended cleanly.
+  - This adds one optional late-game step. The direct release route remains
+    available so the successful ending path is not lengthened unless the player
+    chooses the extra beat.
 
 ## Last Completed Cycle
 

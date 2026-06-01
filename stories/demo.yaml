@@ -929,6 +929,18 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_mara_after_handoff
+        label: Listen for Mara after she leaves the booth
+        to: mara_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - flag: saw_mara_handoff
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_to_mara_manifest_intercom
         label: Listen as Mara calls the passengers home
         to: mara_manifest_intercom
@@ -1152,6 +1164,18 @@ scenes:
         to: true_ending
         requires:
           notFlag: read_passenger_manifest
+
+  mara_handoff_intercom:
+    text: >
+      The speaker clicks after Mara has already left the booth, and for a
+      moment you hear her crossing the platform instead of haunting it. "I
+      thought stepping away would feel like abandoning my post," she says. "It
+      feels more like opening the last door from the other side. Pull the
+      release when you are ready."
+    choices:
+      - id: pull_release_after_handoff_goodbye
+        label: Pull the release while Mara opens the far door
+        to: true_ending
 
   mara_manifest_intercom:
     text: >
