@@ -11,41 +11,46 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Let adaptive MCP evidence continue through normal late-game
-  detours instead of stopping at a live progress scene.
-- Why this matters: Cycle 12 evidence showed the exploratory route stopping at
-  `signal_booth` with `inspect_signal_ledger` and `read_passenger_manifest`
-  both available. That looked like a gameplay stall, but the 30-step evidence
-  cap was too short for routes that intentionally sample posters, map warnings,
-  manifests, and hub returns before resolving the ledger.
+- Main objective: Add an optional manifest-route farewell that makes the
+  released passengers feel present before the final train-car release.
+- Why this matters: Current evidence shows healthy completion, full coverage,
+  and strong true-ending discoverability. The best next improvement is a small
+  emotional payoff for players who took the optional passenger manifest route,
+  without adding a mandatory step to the core ending.
 - Tasks:
-  - Increase the exploratory MCP route budget from 30 to 45 steps.
-  - Add regression coverage so future loop changes keep enough late-game route
-    budget.
-  - Run health and an actual playthrough after the evidence-tooling change.
+  - Add a one-time passenger-platform farewell scene after the manifest doors
+    open.
+  - Keep direct boarding available so the manifest route remains finishable
+    without extra required choices.
+  - Add regression coverage proving the farewell is optional and non-looping.
+  - Run health and an actual playthrough after the story change.
 - Evidence:
-  - Added `exploratoryMaxSteps = 45` and used it in the adaptive MCP route.
-  - Added a regression confirming exploratory MCP routes keep at least 45 steps
-    of budget for late-game detours.
-  - `npm test -- tests/ai-loop.test.ts` passed with 7 tests.
+  - Added `passenger_farewell`, a one-time optional scene reached from
+    `passenger_platform` after the manifest doors open.
+  - Kept direct `board_third_car_with_passengers` available from
+    `passenger_platform`, so the farewell remains optional.
+  - Updated story-path regression coverage to prove the farewell appears once,
+    returns to the platform, and does not block the manifest true-ending route.
+  - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
   - `npm run health` passed with formatting, TypeScript, 69 tests, validation,
     and coverage playtest.
-  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
-  - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
-    score 100/100, average score 82.25, and 960 max-score runs.
-  - Manual CLI route deliberately took posters, map-warning recovery,
-    passenger manifest, passenger echoes, Mara's thumbprint memory, and Mara's
-    manifest intercom, then reached `passenger_true_ending` at 100/100.
+  - Validation reports 39 scenes, 6 endings, and all 39 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 39 scenes visited, best
+    score 100/100, average score 87.88, and 1600 max-score runs.
+  - Manual CLI route took the passenger manifest, passenger echoes, new
+    farewell scene, Mara's manifest intercom, and reached
+    `passenger_true_ending` at 100/100.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
-    MCP true-ending playthrough at 100/100, and the adaptive exploratory route
-    now finishes at `true_ending` with 100/100.
-- Follow-up: If the longer exploratory route still stops before an ending,
-  inspect the transcript for a real content-level pacing issue instead of
-  treating the old step cap as evidence.
+    MCP true-ending playthrough at 100/100, and an adaptive exploratory
+    true-ending route at 100/100.
+- Follow-up: Watch random route length and max-score rate; if the optional beat
+  adds friction, keep the scene but avoid steering automated players into it
+  too often.
 - Risks:
-  - Changing `src/ai-loop.ts` is restart-sensitive for the outer AFK loop. Keep
-    the edit small, tested, and committed so the next loop runs fresh code.
+  - Adding another late-game optional scene can slightly lengthen manifest
+    routes. Direct boarding remains available to keep pacing under player
+    control.
 
 ## Last Completed Cycle
 

@@ -1501,6 +1501,22 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
+    ]);
+
+    state = choose(story, state, "help_passengers_gather");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("saving their voices for the morning");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+
+    state = choose(story, state, "return_from_passenger_farewell");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_third_car_with_passengers"
     ]);
 

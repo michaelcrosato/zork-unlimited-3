@@ -696,9 +696,28 @@ scenes:
       destination sign. They look to Mara's speaker, then to you, waiting for
       the last door to open.
     choices:
+      - id: help_passengers_gather
+        label: Help the kept passengers gather by the open doors
+        to: passenger_farewell
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
+
+  passenger_farewell:
+    text: >
+      You guide the waiting passengers away from the blank sign. The child with
+      the mitten takes an old conductor's hand; a woman folds her newspaper
+      around a transfer that should have expired decades ago. No one thanks you
+      yet. They are saving their voices for the morning.
+    choices:
+      - id: return_from_passenger_farewell
+        label: Return to the third car before the line closes again
+        to: passenger_platform
 
   train_car:
     text: >
