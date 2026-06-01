@@ -11,56 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the optional passenger manifest pay off before the final
-  train car.
-- Why this matters: Route metrics are healthy and the manifest already changes
-  the ending, so the highest-value next improvement is emotional continuity. A
-  player who reads the kept-passenger manifest should see those passengers begin
-  to release when Mara's ledger row is cleared, not only after the emergency
-  release is pulled.
+- Main objective: Give manifest readers a distinct final intercom goodbye.
+- Why this matters: Route metrics are healthy and the optional manifest now
+  changes the ledger aftermath and final ending. The remaining late-game
+  character beat still used Mara's non-manifest goodbye, so a player who chose
+  the richer passenger route did not get distinct acknowledgement before
+  pulling the release.
 - Tasks:
-  - Add a manifest-specific ledger-clear action gated by
-    `read_passenger_manifest`.
-  - Keep the existing Mara-only `mara_released` aftermath for players who skip
-    the manifest.
-  - Add regression coverage for the new manifest aftermath route and update
-    existing manifest true-ending paths.
+  - Split the train-car intercom choice into Mara-only and manifest-specific
+    branches.
+  - Add a new manifest intercom scene that acknowledges the opened passenger
+    manifest without adding a mandatory step.
+  - Update regression coverage for both intercom branches.
   - Run focused tests, full health, and an actual playthrough through the new
     branch.
 - Evidence:
-  - Added `passengers_released`, reached only when the player read
-    `passenger_manifest` before clearing Mara's ledger row.
-  - Split the ledger-clear choice so non-manifest players still use
-    `mark_mara_clear_from_ledger` and manifest readers use
-    `clear_manifest_and_mara_from_ledger`.
-  - Updated manifest true-ending regressions to route through
-    `passengers_released` and added a focused test for the new aftermath beat.
-  - `npm test -- tests/story-paths.test.ts` passed with 44 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 34 scenes,
-    6 endings, and all 34 reachable.
-  - Random playtest, 100 runs: all ended, all 34 scenes visited, best score
-    100/100, average score 70.7.
-  - Coverage playtest, 988 generated runs: 960 ended, 0 unfinished, all 34
-    scenes visited, best score 100/100, average score 72.75.
-  - `npm run health` passed with formatting, TypeScript, 62 tests, validation,
+  - Added `mara_manifest_intercom`, reached only when the player read the
+    kept-passenger manifest before the optional final intercom beat.
+  - Split the train-car intercom choices so non-manifest players still use
+    `listen_to_mara_intercom`, while manifest readers use
+    `listen_to_mara_manifest_intercom`.
+  - Updated the manifest intercom regression to route through
+    `mara_manifest_intercom` and added coverage that the non-manifest train car
+    does not expose the manifest-specific intercom choice.
+  - `npm test -- tests/story-paths.test.ts` passed with 45 tests.
+  - `npm run health` passed with formatting, TypeScript, 63 tests, validation,
     and coverage playtest.
-  - Manual CLI route through `install_fuse_and_insert_token`,
-    `read_passenger_manifest`, `clear_manifest_and_mara_from_ledger`,
-    `board_after_releasing_passengers`, `listen_to_mara_intercom`, and
+  - Validation now reports 35 scenes, 6 endings, and all 35 reachable.
+  - Coverage playtest, 989 generated runs: 960 ended, 0 unfinished, all 35
+    scenes visited, best score 100/100, average score 72.77.
+  - Manual CLI route through `read_passenger_manifest`,
+    `clear_manifest_and_mara_from_ledger`,
+    `listen_to_mara_manifest_intercom`, and
     `pull_release_after_manifest_goodbye` reached `passenger_true_ending` at
     100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
     MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
     and an actual MCP true-ending playthrough at 100/100.
-  - The evidence report's adaptive exploratory route now stops at
-    `signal_booth` with badge, fuse, map, token, and platform power restored.
-- Follow-up: The manifest route now has stronger payoff. The next useful work
-  is either smoothing the `signal_booth` choice focus for fully prepared
-  exploratory players or improving adaptive route/report depth so playthroughs
-  critique pacing after the booth.
+  - Final evidence random playtest, 100 runs: all ended, all 35 scenes visited,
+    `true_ending` reached 25 times, `passenger_true_ending` reached 29 times,
+    best score 100/100, average score 70.7.
+  - Final MCP random playtest, 250 runs: all ended, all 35 scenes visited,
+    `true_ending` reached 63 times, `passenger_true_ending` reached 76 times,
+    best score 100/100, average score 70.78.
+  - Adaptive exploratory MCP route stopped at `signal_booth` with badge, fuse,
+    map, token, release knowledge, and platform power restored.
+- Follow-up: The next useful work is smoothing or extending adaptive route
+  continuation from `signal_booth`, since prepared exploratory play can still
+  stop there even though the visible choices are valid.
 - Risks:
-  - The manifest branch adds another late-game scene and choice id, so future
-    route tests need to keep both the manifest and non-manifest ledger clears
+  - The train-car intercom split adds another late-game scene and choice id, so
+    tests need to keep both manifest and non-manifest optional goodbye branches
     covered.
 
 ## Last Completed Cycle

@@ -632,6 +632,18 @@ scenes:
           all:
             - flag: freed_mara
             - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_mara_manifest_intercom
+        label: Listen as Mara calls the passengers home
+        to: mara_manifest_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - notFlag: heard_mara_goodbye
         effects:
           set:
             heard_mara_goodbye: true
@@ -679,6 +691,17 @@ scenes:
         to: true_ending
         requires:
           notFlag: read_passenger_manifest
+
+  mara_manifest_intercom:
+    text: >
+      Mara reads from the opened manifest, and each name answers with a small
+      ordinary sound: a lunch tin clasp, a mitten shaken free, umbrellas
+      knocking together by the doors. "They remember the way out now," she
+      says. "Pull the release before the line teaches them to wait again."
+    choices:
+      - id: pull_release_after_manifest_goodbye
+        label: Pull the release while Mara keeps the doors open
+        to: passenger_true_ending
 
   gate_warning:
     text: >

@@ -780,14 +780,16 @@ describe("demo story critical paths", () => {
       "inspect_signal_ledger",
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
-      "listen_to_mara_intercom"
+      "listen_to_mara_manifest_intercom"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_intercom");
+    expect(observation.scene.id).toBe("mara_manifest_intercom");
+    expect(observation.scene.text).toContain("They remember the way out now");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_manifest_goodbye"
     ]);
@@ -798,6 +800,38 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("keeps the non-manifest Mara intercom focused on Mara alone", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("listen_to_mara_intercom");
+    expect(choiceIds).not.toContain("listen_to_mara_manifest_intercom");
   });
 
   it("reveals the emergency release after clearing Mara even without the radio route", async () => {
