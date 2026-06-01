@@ -893,6 +893,14 @@ scenes:
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: train_car
+      - id: continue_manifest_handoff_roll_call
+        label: Keep listening as the opened passengers answer Mara
+        to: passenger_answers
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
       - id: return_from_mara_manifest_handoff
         label: Return to the opened manifest doors
         to: passengers_released

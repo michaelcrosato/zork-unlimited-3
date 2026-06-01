@@ -12,60 +12,64 @@ story depth where the route is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a brief opened-manifest count so the passenger rescue
-  route has a clearer emotional pause after the ledger doors open.
-- Why this matters: Current random and coverage evidence is healthy, so the
-  highest-value next step is richer story pacing rather than more clue pressure.
-  The new beat lets Mara frame the passengers as people with ordinary objects
-  and needs before the player chooses roll call, platform help, or direct
-  boarding.
+- Main objective: Improve normal-play discovery of
+  `passenger_answered_handoff_intercom`.
+- Why this matters: Coverage could reach this handoff intercom, but the cycle's
+  random evidence missed it. The scene is a strong payoff for watching Mara
+  begin the opened-manifest roll call and then letting passengers answer before
+  boarding, so it should sit on a natural continuation rather than requiring a
+  return through the hub.
 - Tasks:
-  - Add an optional `passenger_manifest_count` scene from `passengers_released`.
-  - Preserve the existing passenger-answer, platform, and direct boarding
-    branches.
-  - Add regression coverage for the new scene and all three exits.
+  - Add a direct roll-call continuation from `mara_manifest_handoff` into
+    `passenger_answers`.
+  - Preserve the existing direct handoff boarding route and the return to
+    `passengers_released`.
+  - Add regression coverage for the new route through
+    `passenger_answered_handoff_intercom`.
   - Run focused tests, validation/playtest sampling, full health, `ai:cycle`,
-    and a real CLI playthrough through the new beat.
+    and a real CLI playthrough through the revised handoff route.
 - Evidence:
-  - Added `passenger_manifest_count`, reached from `passengers_released` via
-    `review_open_manifest_count`, with a one-time
-    `reviewed_open_manifest_count` flag.
-  - The new beat preserves exits into `passenger_answers`,
-    `passenger_platform`, and `train_car`, so the existing passenger-answer,
-    platform-help, and direct manifest release branches remain available.
-  - Added story-path regression coverage for the new scene, its text, flag, and
-    all three exits; focused story-path tests passed with 91 tests.
+  - Added `continue_manifest_handoff_roll_call`, reached from
+    `mara_manifest_handoff`, which sets `heard_passenger_answers` and routes to
+    `passenger_answers`.
+  - Kept `board_after_mara_manifest_handoff` available for the direct
+    `mara_manifest_handoff_intercom` payoff, and kept
+    `return_from_mara_manifest_handoff` available for players who want to
+    revisit the opened manifest hub.
+  - Added story-path regression coverage for the new continuation through
+    `passenger_answered_handoff_intercom`; focused story-path tests passed with
+    92 tests.
   - Validation reports 73 scenes, 11 endings, and all 73 reachable.
-  - A 250-run random sample ended every run, visited `passenger_manifest_count`,
-    kept best score 100/100, averaged 79.94, and reached max score in 183 runs.
-  - `npm run health` passed with formatting, TypeScript, 112 tests,
+  - A 250-run random sample ended every run, visited
+    `passenger_answered_handoff_intercom`, visited all scenes, kept best score
+    100/100, averaged 79.94, and reached max score in 183 runs.
+  - `npm run health` passed with formatting, TypeScript, 113 tests,
     validation, and coverage playtest. Coverage visited all 73 scenes with 0
     unfinished completed routes, best score 100/100, average score 99.52, and
     297776 max-score runs.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    `ai-runs/cycle-2026-06-01T17-52-12-475Z.md`; its 100-run random sample
-    visited `passenger_manifest_count` and kept the random max-score rate at
-    71%.
-  - Manual CLI play followed `review_open_manifest_count` ->
-    `listen_after_manifest_count` -> `ask_conductor_from_answers` ->
-    `passenger_conductor_intercom` -> `passenger_helped_true_ending` at 100/100
+    `ai-runs/cycle-2026-06-01T18-03-15-607Z.md`; its 100-run random sample
+    still missed the rare handoff intercom, while coverage reached every scene.
+  - Manual CLI play followed `watch_mara_open_manifest` ->
+    `continue_manifest_handoff_roll_call` -> `board_after_passenger_answers` ->
+    `listen_to_answered_handoff_passengers` ->
+    `passenger_answered_handoff_intercom` -> `passenger_true_ending` at 100/100
     with no objectives.
 - Playtest notes:
-  - The new count beat works as a short breath between opening every manifest
-    door and hearing the passengers answer. It clearly names the newspaper,
-    lunch tin, mitten, and conductor's punch as ordinary anchors for the crowd.
-  - The route still flows into the stronger conductor payoff without extra
-    mechanical friction: count the manifest, listen to names, call the platform
-    clear, pull the release.
-  - A 250-run random sample missed only the rare
-    `passenger_answered_handoff_intercom`; the full coverage strategy still
-    reached every scene.
-- Follow-up: Watch whether the added optional `passengers_released` choice
-  dilutes normal discovery of `listen_to_passenger_answers` in smaller random
-  samples.
+  - The new continuation reads naturally: if the player chooses to watch Mara
+    call opened doors, the next obvious action can be to keep listening as those
+    passengers answer.
+  - The direct handoff intercom remains available for players who board
+    immediately after Mara starts the roll call.
+  - The targeted scene is still rare enough that a 100-run random sample can
+    miss it; the 250-run sample is a better signal that normal discovery has
+    improved without creating unfinished runs.
+- Follow-up: Watch larger random samples to confirm the new continuation keeps
+  `passenger_answered_handoff_intercom` visible without crowding out the direct
+  `mara_manifest_handoff_intercom` payoff.
 - Risks:
-  - `passengers_released` gains one more optional choice, so random samples may
-    distribute slightly more broadly before boarding.
+  - `mara_manifest_handoff` now has three choices, so direct boarding from that
+    beat is slightly less likely in random play.
 
 ## Last Completed Cycle
 
