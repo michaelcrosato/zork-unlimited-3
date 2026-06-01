@@ -983,7 +983,7 @@ scenes:
             helped_passengers_gather: true
             heard_gathered_passengers: true
       - id: help_passengers_after_newspaper_memory
-        label: Help the kept passengers gather into the third car
+        label: Use the transfer column to gather passengers into the third car
         to: passenger_newspaper_intercom
         requires:
           notFlag: helped_passengers_gather

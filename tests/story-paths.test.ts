@@ -1010,6 +1010,10 @@ describe("demo story critical paths", () => {
       "help_passengers_after_newspaper_memory",
       "board_after_newspaper_memory"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "help_passengers_after_newspaper_memory")
+        ?.label
+    ).toBe("Use the transfer column to gather passengers into the third car");
 
     state = choose(story, state, "help_passengers_after_newspaper_memory");
     observation = observe(story, state);

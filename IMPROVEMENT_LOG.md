@@ -4,6 +4,65 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Newspaper Route Label Clarity
+
+### Current Plan
+
+- Main objective: Make the newspaper passenger's help route more readable in
+  normal play.
+- Why this matters: The newspaper-specific intercom payoff was present, but the
+  entry choice still sounded like generic crowd handling instead of using the
+  remembered transfer column.
+- Tasks:
+  - Rename the newspaper-memory help choice to name the transfer-column tactic.
+  - Add regression coverage for the specific label.
+  - Verify the route through tests, health, and manual CLI play.
+- Risks: Too much instruction in choice labels can feel mechanical, so keep the
+  phrasing tied to a story object the player just discovered.
+
+### Work Completed
+
+- Changes made:
+  - Renamed `help_passengers_after_newspaper_memory` to "Use the transfer
+    column to gather passengers into the third car."
+  - Added a story-path assertion for the new label.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Clearer player-facing guidance into the newspaper-specific intercom payoff.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - Manual CLI route through `passenger_newspaper_memory`,
+    `passenger_newspaper_intercom`, final roll call, and
+    `passenger_helped_true_ending`
+  - `npm run health`
+- What worked:
+  - Focused story-path tests passed with 88 tests.
+  - Manual CLI play showed the new label before selection and reached
+    `passenger_helped_true_ending` at 100/100.
+  - Full health passed with formatting, TypeScript, 109 tests, validation, and
+    coverage playtest.
+  - Coverage playtest visited all 70 scenes, including
+    `passenger_newspaper_intercom`.
+- What felt bad/confusing:
+  - No new player-facing confusion surfaced. The final roll-call choice still
+    read clearly after the newspaper intercom.
+- Bugs found:
+  - None in the game. The manual script initially used the wrong final-roll-call
+    choice id, and the displayed choice corrected the route.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether normal random samples still miss
+  `passenger_newspaper_intercom`; if so, consider a small route-shape change
+  rather than more label text.
+
 ## 2026-06-01 - Mara Handoff Ending
 
 ### Current Plan
