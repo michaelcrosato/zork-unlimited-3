@@ -12,65 +12,63 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the conductor passenger route a distinct final roll-call
-  payoff before its ending.
-- Why this matters: Core route guidance and ending discovery are healthy, so the
-  best current value is story depth on strong passenger paths. The conductor
-  route already lets another worker hold the line, but unlike the lunch-tin,
-  mitten, newspaper, and keepsake routes it had no optional final roll-call beat
-  before the release. Adding one makes the conductor path feel equally complete
-  without changing its ending or weakening the direct release.
+- Main objective: Improve normal-play discovery of the conductor final roll-call
+  scene.
+- Why this matters: The conductor roll-call scene existed and was covered, but
+  the cycle evidence still identified it as the weakest normal-play discovery
+  point. The newspaper memory already primes the old conductor as someone who
+  remembers stops, so letting that branch flow directly into his final clear
+  call makes the payoff more likely without adding new graph complexity.
 - Tasks:
-  - Add an optional `passenger_conductor_roll_call` scene from
-    `passenger_conductor_intercom`.
-  - Preserve the direct conductor release path for players who do not want the
-    extra beat.
-  - Reuse `heard_final_roll_call` so the new scene behaves like the other
-    optional final roll-call branches.
-  - Add regression coverage for the new choice, flag effect, conductor
-    roll-call text, and full-score conductor ending.
+  - Route `ask_conductor_after_newspaper_memory` from
+    `passenger_newspaper_memory` directly to `passenger_conductor_roll_call`.
+  - Relabel that choice so it promises the final platform-clear payoff.
+  - Set `heard_final_roll_call` alongside the conductor-clearance flags on that
+    route.
+  - Add regression coverage for the revised newspaper-to-conductor branch.
   - Run focused tests, validation, full health, evidence-only `ai:cycle`, and a
-    real CLI playthrough through the new branch.
+    real CLI playthrough through the revised branch.
 - Evidence:
-  - Added `passenger_conductor_roll_call`, reached by choosing
-    `hear_final_conductor_roll_call` from `passenger_conductor_intercom`.
-  - Preserved the original direct conductor release choice
-    `pull_release_after_conductor_clearance`.
+  - `ask_conductor_after_newspaper_memory` now routes directly to
+    `passenger_conductor_roll_call` and sets `helped_passengers_gather`,
+    `conductor_cleared_platform`, `heard_conductor_clearance`, and
+    `heard_final_roll_call`.
+  - Preserved the existing `passenger_conductor_intercom` optional roll-call
+    branch and direct conductor release branch.
   - Focused story-path test passed with 96 tests after adding assertions for
-    the new conductor roll-call branch and the preserved direct branch.
+    the revised newspaper-memory conductor route.
   - `npm run cyoa -- validate stories/demo.yaml --json` passed with 78 scenes,
     12 endings, and all 78 reachable.
   - Manual CLI play followed `listen_to_passenger_answers` ->
-    `ask_conductor_from_answers` -> `follow_conductor_signal_to_third_car` ->
-    `hear_final_conductor_roll_call` ->
+    `follow_newspaper_answer` -> `ask_conductor_after_newspaper_memory` ->
     `pull_release_after_conductor_roll_call` to
     `passenger_conductor_true_ending` at 100/100 with no objectives.
   - `npm run health` passed with formatting, TypeScript, 117 tests,
     validation, and coverage playtest.
   - Health coverage playtest visited all 78 scenes, including
     `passenger_conductor_roll_call`, with best score 100/100 and average score
-    99.59.
+    99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T19-31-02-304Z.md`; its health checks
+    report `ai-runs/cycle-2026-06-01T19-41-49-618Z.md`; its health checks
     passed, MCP validation reported 78 reachable scenes, MCP random visited the
     new `passenger_conductor_roll_call`, and MCP coverage visited all 78 scenes.
 - Playtest notes:
-  - The new conductor scene makes the borrowed worker signal feel like a final
-    act instead of only a pre-release instruction.
-  - The route now mirrors the other passenger-specific paths: intercom, optional
-    final roll call, then tailored ending.
-  - The direct release remains available and still reaches
-    `passenger_conductor_true_ending` cleanly.
+  - The newspaper memory now pays off its "old conductor remembers her stop"
+    image instead of dropping into a generic intercom decision first.
+  - The direct route is short and readable: passenger answers, newspaper memory,
+    final conductor clear call, release.
+  - Both the 100-run random report and 250-run MCP random report visited
+    `passenger_conductor_roll_call`; this directly addresses the previous
+    random miss.
   - No bugs found in focused tests, validation, full health, evidence cycle, or
     manual CLI play.
-- Follow-up: The 100-run random report generated by `ai:cycle` missed the new
-  optional scene while the MCP 250-run random and coverage runs reached it. Watch
-  whether this should remain an optional depth beat or receive a more attractive
-  label later.
+- Follow-up: Core route metrics remain healthy. Next value is likely a richer
+  character beat or pacing improvement rather than more clue-only guidance.
 - Risks:
-  - Another optional final roll-call scene adds graph surface area; coverage and
-    regression tests cover it, but future route additions should avoid making
-    the third-car choice list feel repetitive.
+  - The newspaper-to-conductor branch now bypasses
+    `passenger_conductor_intercom`; that is intentional because the route just
+    established the conductor's stop memory, but future edits should keep his
+    intercom route reachable through `passenger_conductor_signal`.
 
 ## Last Completed Cycle
 

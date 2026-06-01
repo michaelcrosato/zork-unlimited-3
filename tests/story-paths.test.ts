@@ -4006,6 +4006,23 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.scene.text).toContain("Warden Street, then morning transfer");
 
+    const conductorRollCallState = choose(
+      story,
+      newspaperState,
+      "ask_conductor_after_newspaper_memory"
+    );
+    observation = observe(story, conductorRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    expect(observation.scene.text).toContain("The conductor walks the aisle one last time");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call"
+    ]);
+
     state = choose(story, state, "board_after_answered_passengers");
     observation = observe(story, state);
 
