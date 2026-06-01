@@ -2820,8 +2820,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_answered_handoff_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara can finish the last name");
+    expect(observation.scene.text).toContain("no longer carrying the manifest alone");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

@@ -1819,7 +1819,7 @@ scenes:
     choices:
       - id: pull_release_after_answered_handoff_intercom
         label: Pull the release while Mara's handoff holds
-        to: passenger_true_ending
+        to: passenger_answered_handoff_true_ending
 
   passenger_answered_intercom:
     text: >
@@ -2230,6 +2230,16 @@ scenes:
       conductor to lunch-tin worker, stranger to stranger until the manifest is
       no longer a duty in one voice. Mara lets the final page close only after
       every answer has become movement.
+    choices: []
+
+  passenger_answered_handoff_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once before Mara can finish the last
+      name. The passengers finish it for her: child to newspaper woman,
+      conductor to lunch-tin worker, every answer passing hand to hand until
+      the roll call becomes a crowd in motion. Mara steps through after them,
+      no longer carrying the manifest alone.
     choices: []
 
   passenger_helped_true_ending:
