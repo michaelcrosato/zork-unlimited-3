@@ -1099,6 +1099,26 @@ scenes:
           item: map
       - id: stare_at_home
         label: Keep staring at HOME
+        to: home_sign_echo
+        effects:
+          set:
+            heard_home_sign_echo: true
+
+  home_sign_echo:
+    text: >
+      HOME keeps adding details it should not know: the chipped step outside
+      your door, the warm square of kitchen light, a voice from another room
+      saying you are late. The marked map trembles in your hand, its morning
+      route suddenly plain and practical. Mara's warning thins to one last
+      word: "Away."
+    choices:
+      - id: cover_home_sign_with_map
+        label: Cover the sign with the marked map and step into morning
+        to: good_ending
+        requires:
+          item: map
+      - id: let_home_sign_finish
+        label: Let HOME finish spelling itself
         to: lost_ending
 
   true_ending:
@@ -1142,7 +1162,8 @@ scenes:
     text: >
       The sign finishes spelling HOME. For one impossible second it shows your
       childhood street, your kitchen window, your own silhouette waving you in.
-      The doors close before you remember your real name.
+      The marked map falls unread beside your shoe. The doors close before you
+      remember your real name.
     choices: []
 
   bad_ending:

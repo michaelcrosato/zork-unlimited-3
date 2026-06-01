@@ -980,6 +980,59 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("morning_transfer");
   });
 
+  it("adds a final recoverable HOME sign warning before the lost ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("home_sign_echo");
+    expect(observation.scene.text).toContain("The marked map trembles in your hand");
+    expect(observation.scene.text).toContain("Away");
+    expect(observation.state.flags.heard_home_sign_echo).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "cover_home_sign_with_map",
+      "let_home_sign_finish"
+    ]);
+
+    state = choose(story, state, "cover_home_sign_with_map");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("good_ending");
+    expect(observation.scene.ending).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home",
+      "let_home_sign_finish"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("The marked map falls unread");
+  });
+
   it("focuses train-car choices on the release after Mara is cleared", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
