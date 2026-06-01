@@ -430,6 +430,9 @@ scenes:
           all:
             - notItem: fuse
             - notFlag: backed_away_from_gate
+        effects:
+          set:
+            knows_token_location: true
 
   gate_control:
     text: >
@@ -1613,8 +1616,10 @@ scenes:
     text: >
       The gate bends, but the platform answers with a deep knock from beneath
       the track. The train doors begin to close without you. Whatever is below
-      heard the metal scream. The control panel clicks once, offering one last
-      chance to stop making noise and gather the proper supplies.
+      heard the metal scream. The empty fuse socket spits a blue spark, and a
+      soot-scratched note beside the token slot flashes in your lantern light:
+      CLOCK = TOKEN. The control panel clicks once, offering one last chance to
+      stop making noise and gather the proper supplies.
     choices:
       - id: listen_below_gate
         label: Listen to what answered below the platform
@@ -1625,7 +1630,7 @@ scenes:
           set:
             heard_gate_echo: true
       - id: back_away_from_gate
-        label: Back away and gather proper supplies
+        label: Back away for the fuse, badge, map, and clock token
         to: service_room
         effects:
           set:

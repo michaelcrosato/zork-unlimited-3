@@ -59,15 +59,26 @@ describe("demo story critical paths", () => {
     warning = observe(story, state);
     expect(warning.scene.id).toBe("gate_warning");
     expect(warning.scene.text).toContain("one last chance");
+    expect(warning.scene.text).toContain("empty fuse socket");
+    expect(warning.scene.text).toContain("CLOCK = TOKEN");
+    expect(warning.state.flags.knows_token_location).toBe(true);
     expect(warning.choices.map((choice) => choice.label)).toContain(
       "Ignore the final warning and force the gate anyway"
+    );
+    expect(warning.choices.find((choice) => choice.id === "back_away_from_gate")?.label).toBe(
+      "Back away for the fuse, badge, map, and clock token"
     );
     expect(warning.choices.map((choice) => choice.id)).toContain("listen_below_gate");
     expect(warning.choices.map((choice) => choice.id)).toContain("back_away_from_gate");
 
     state = choose(story, state, "back_away_from_gate");
-    expect(observe(story, state).scene.id).toBe("service_room");
+    const recovery = observe(story, state);
+    expect(recovery.scene.id).toBe("service_room");
     expect(state.flags.backed_away_from_gate).toBe(true);
+    expect(recovery.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(recovery.choices.map((choice) => choice.id)).toContain("go_to_stopped_clock");
   });
 
   it("adds a final sensory warning before the forced-gate bad ending", async () => {
