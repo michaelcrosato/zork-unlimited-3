@@ -1172,8 +1172,29 @@ scenes:
       to the line anymore. Mara lets their voices carry through the speaker.
       "Now," she says. "While they remember they can move together."
     choices:
+      - id: hear_final_passenger_roll_call
+        label: Hear the gathered passengers answer one last roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
       - id: pull_release_after_gathered_intercom
         label: Pull the release while the passengers hold the doors
+        to: passenger_helped_true_ending
+
+  passenger_roll_call_epilogue:
+    text: >
+      Mara starts with the names whose doors opened first, but the passengers
+      finish the roll call for her. The newspaper woman says the conductor's
+      name before he can forget it. The child with the mitten answers for
+      himself, then for the person who found his other glove under the bench.
+      By the final name, the manifest is no longer a list of claims. It is a
+      crowd telling the line who belongs to the morning.
+    choices:
+      - id: pull_release_after_final_roll_call
+        label: Pull the release after every answer
         to: passenger_helped_true_ending
 
   gate_warning:

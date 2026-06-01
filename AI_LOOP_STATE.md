@@ -11,51 +11,50 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Shorten late manifest-route pacing so successful passenger
-  routes are less likely to stop one choice before the ending.
-- Why this matters: Cycle evidence showed remaining random unfinished pressure
-  near `passenger_answers` and `passenger_gathered_intercom`, both successful
-  late-game routes that could still hit the step cap after exploratory detours.
+- Main objective: Add an optional final roll-call payoff to the strongest
+  helped-passenger route without lengthening the required ending path.
+- Why this matters: Cycle evidence showed the core route metrics were healthy,
+  with all scenes visited and no random unfinished pressure in the latest
+  samples. The highest-value next step was richer story payoff on an already
+  successful route rather than another guidance-only pass.
 - Tasks:
-  - Add a direct third-car boarding choice from `passenger_answers` so hearing
-    the roll call can flow straight to the manifest release.
-  - Route `passenger_farewell` directly to `train_car` after the player helps
-    passengers gather, removing an extra return through `passenger_platform`.
-  - Update regression coverage for the direct answer release route and the
-    shortened helped-passenger route.
+  - Add a new optional `passenger_roll_call_epilogue` scene after the gathered
+    passenger intercom.
+  - Keep the direct `pull_release_after_gathered_intercom` ending route
+    available so players can skip the extra beat.
+  - Add regression coverage for the new roll-call route and the preserved
+    direct helped-ending route.
   - Run focused tests, validation, random/coverage playtest sampling, full
-    health, and an actual CLI playthrough.
+    health, and an actual CLI playthrough through the new scene.
 - Evidence:
-  - `passenger_answers` now offers `board_after_passenger_answers` alongside
-    the existing crowd-gathering route.
-  - `return_from_passenger_farewell` now leads directly to `train_car`, where
-    helped-passenger players can listen to the gathered intercom or pull the
-    helped release.
-  - `npm test -- tests/story-paths.test.ts` passed with 73 tests.
-  - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
-  - A 500-run random sample improved from 498/500 ended to 499/500 ended while
-    keeping all 53 scenes visited, best score 100/100, and average score 78.9.
-  - Focused coverage playtest kept all 53 scenes visited, 0 unfinished completed
-    routes, best score 100/100, average score 96.31, and 37332 max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 94 tests, validation,
+  - `passenger_gathered_intercom` now offers
+    `hear_final_passenger_roll_call` before the existing direct release.
+  - `passenger_roll_call_epilogue` lets the gathered crowd finish Mara's roll
+    call before the player pulls the release.
+  - `npm test -- tests/story-paths.test.ts` passed with 74 tests.
+  - Focused validation passed with 54 scenes, 7 endings, and all 54 reachable.
+  - A 250-run random sample ended 250/250 runs, visited all 54 scenes, kept
+    best score 100/100, and averaged 79.4.
+  - Focused coverage playtest visited all 54 scenes, reported 0 unfinished
+    completed routes, kept best score 100/100, averaged 96.98, and found 46116
+    max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 95 tests, validation,
     and coverage playtest.
   - Manual CLI play took the manifest route, listened to passenger answers,
-    boarded directly with `board_after_passenger_answers`, and reached
-    `passenger_true_ending` at 100/100.
+    helped the crowd gather, listened to the gathered intercom, heard the new
+    final roll call, and reached `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The answer beat now lets players act immediately on the roll call instead
-    of requiring a platform detour before release.
-  - The helped-passenger route still preserves the farewell and gathered
-    intercom payoff, but no longer asks players to reselect the third-car board
-    action after helping the crowd.
-  - Remaining random step-limit pressure is rare and still lands one choice
-    before a successful release after many optional detours.
-- Follow-up: Investigate early service-room/tunnel/platform revisits that can
-  consume many random steps before the late manifest sequence.
+  - The new scene clarifies that the released passengers are active
+    participants, not just names Mara reads from a ledger.
+  - The final sequence still has a short route: players can skip the extra roll
+    call and release directly from the gathered intercom.
+  - The transcript ended cleanly with no lingering objectives and a 100/100
+    helped-passenger ending.
+- Follow-up: Consider a future polish pass on early service-room/tunnel/platform
+  revisits only if fresh random samples show renewed step-limit pressure.
 - Risks:
-  - The helped-passenger route is slightly more directed after the farewell
-    beat, but it still gives the player both the optional gathered intercom and
-    direct helped-release choices in the train car.
+  - This adds one more optional late-game step. The direct release route remains
+    covered by tests and playtest samples still ended cleanly.
 
 ## Last Completed Cycle
 
