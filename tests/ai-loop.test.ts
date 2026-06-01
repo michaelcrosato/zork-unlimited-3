@@ -54,7 +54,7 @@ describe("AI loop restart detection", () => {
 
     expect(idealEndingRate(summary)).toBe(0.77);
     expect(formatIdealEndingBreakdown(summary)).toBe(
-      "true_ending: 27, mara_handoff_true_ending: 10, passenger_true_ending: 28, passenger_helped_true_ending: 5, passenger_keepsake_true_ending: 3, passenger_mitten_true_ending: 4"
+      "Mara: 37 (true_ending: 27, mara_handoff_true_ending: 10); Passengers: 40 (passenger_true_ending: 28, passenger_helped_true_ending: 5, passenger_keepsake_true_ending: 3, passenger_mitten_true_ending: 4)"
     );
   });
 

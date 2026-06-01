@@ -11,6 +11,49 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Group ideal-ending variants in AI-loop reports.
+- Why this matters: The game now has several healthy true-ending variants.
+  Flat report lists make future autonomous cycles harder to read, so grouping
+  endings by route family should keep the evidence useful while preserving the
+  underlying route counts.
+- Tasks:
+  - Replace the flat ideal-ending breakdown with grouped Mara/passenger route
+    families.
+  - Preserve the existing ideal-ending rate calculation.
+  - Add regression coverage for the grouped report text.
+  - Run focused tests, full health, and an actual playthrough.
+- Evidence:
+  - `formatIdealEndingBreakdown` now reports grouped route-family totals for
+    Mara and passenger ideal endings while preserving per-ending counts.
+  - `idealEndingRate` still counts all six ideal true-ending variants and
+    remains unchanged at 77% in regression coverage.
+  - Added AI-loop regression coverage for the grouped breakdown string.
+  - Focused AI-loop tests passed with 7 tests.
+  - `npm run health` passed with formatting, TypeScript, 103 tests,
+    validation, and coverage playtest.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` produced grouped long-run
+    evidence: `Mara: 26` and `Passengers: 46` inside the 72% random
+    ideal-ending rate.
+  - CLI play reached `passenger_helped_true_ending` at 100/100 through the
+    conductor signal, gathered-passenger intercom, and final roll call.
+- Playtest notes:
+  - The conductor/passenger helped route remains playable and max-score after
+    the reporting change.
+  - The grouped report line is easier to scan without hiding the individual
+    ending labels needed for route-family debugging.
+  - My first CLI route used an outdated choice id for the final roll call, but
+    continuing with the available `hear_final_passenger_roll_call` choice
+    completed cleanly; no game bug was found.
+- Follow-up: After the report signal is cleaner, return to story depth only if
+  playtests reveal a specific pacing or payoff gap.
+- Risks:
+  - This touches loop runtime code, so the outer loop should restart with fresh
+    code after the commit.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a conductor-led gathering beat after the passenger roll
   call.
 - Why this matters: Core completion metrics are healthy, so the best next

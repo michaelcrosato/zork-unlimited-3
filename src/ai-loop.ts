@@ -504,14 +504,23 @@ function endingRate(
   return Number(summary.endings?.[endingId] ?? 0) / summary.runs;
 }
 
-const idealEndingIds = [
-  "true_ending",
-  "mara_handoff_true_ending",
-  "passenger_true_ending",
-  "passenger_helped_true_ending",
-  "passenger_keepsake_true_ending",
-  "passenger_mitten_true_ending"
+const idealEndingGroups = [
+  {
+    label: "Mara",
+    endings: ["true_ending", "mara_handoff_true_ending"]
+  },
+  {
+    label: "Passengers",
+    endings: [
+      "passenger_true_ending",
+      "passenger_helped_true_ending",
+      "passenger_keepsake_true_ending",
+      "passenger_mitten_true_ending"
+    ]
+  }
 ];
+
+const idealEndingIds = idealEndingGroups.flatMap((group) => group.endings);
 
 export function idealEndingRate(
   summary: { runs?: number; endings?: Record<string, number> } | undefined
@@ -527,9 +536,18 @@ export function idealEndingRate(
 export function formatIdealEndingBreakdown(
   summary: { endings?: Record<string, number> } | undefined
 ): string {
-  return idealEndingIds
-    .map((endingId) => `${endingId}: ${Number(summary?.endings?.[endingId] ?? 0)}`)
-    .join(", ");
+  return idealEndingGroups
+    .map((group) => {
+      const total = group.endings.reduce(
+        (sum, endingId) => sum + Number(summary?.endings?.[endingId] ?? 0),
+        0
+      );
+      const detail = group.endings
+        .map((endingId) => `${endingId}: ${Number(summary?.endings?.[endingId] ?? 0)}`)
+        .join(", ");
+      return `${group.label}: ${total} (${detail})`;
+    })
+    .join("; ");
 }
 
 function formatPercent(value: number): string {
