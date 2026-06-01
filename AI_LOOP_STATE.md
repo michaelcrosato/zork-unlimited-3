@@ -12,56 +12,60 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give Mara's direct opened-manifest intercom route its own
-  final true-ending payoff.
+- Main objective: Give the direct release after reviewing Mara's opened
+  manifest count its own true-ending payoff.
 - Why this matters: Core route metrics are healthy, so the highest-value
-  improvement is story depth tied to real player choices. The route where Mara
-  reads the opened manifest from the third car had bespoke buildup, but still
-  resolved into the generic passenger ending. A distinct ending makes that
-  listen-before-release choice feel remembered without changing core
-  progression.
+  improvement is route-specific story depth. The player can deliberately review
+  the opened manifest count, board while Mara holds that count, and pull the
+  release without the extra intercom listen; that direct action had bespoke
+  setup but still resolved into the generic passenger ending. A distinct ending
+  makes the reviewed-count choice feel remembered while preserving the deeper
+  intercom-count variant.
 - Tasks:
-  - Add `passenger_manifest_true_ending`.
-  - Route `pull_release_after_manifest_goodbye` from
-    `mara_manifest_intercom` to the new ending.
-  - Count the new ending as full-score and ideal in score, playtest, and
-    AI-loop evidence helpers.
+  - Add `passenger_reviewed_count_true_ending`.
+  - Add a reviewed-count direct-release choice from `train_car` and keep the
+    generic manifest release for unrevised manifest routes.
+  - Count the new ending as full-score and ideal in score, playtest, and loop
+    evidence helpers.
   - Update focused, playtest, and AI-loop regression coverage.
-  - Run full health and a targeted CLI playthrough.
+  - Run full health and a targeted real playthrough.
 - Evidence:
-  - Added `passenger_manifest_true_ending` as a distinct terminal payoff for
-    listening to Mara finish the opened manifest count from the third car, then
-    pulling the release.
-  - Left the immediate `pull_release_with_manifest` route on
-    `passenger_true_ending`, preserving the generic direct-release variant.
+  - Added `passenger_reviewed_count_true_ending` as a distinct terminal payoff
+    for reviewing Mara's opened manifest count, boarding while that count holds,
+    and pulling the release directly.
+  - Gated the generic `pull_release_with_manifest` choice away from the
+    reviewed-count state so the player sees a specific direct-release action
+    after choosing `review_open_manifest_count`.
   - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
     ending counts as a full-score ideal passenger ending.
-  - Updated story-path, playtest, and AI-loop regression coverage.
-  - Focused tests passed with 117 tests.
-  - `npm run health` passed with formatting, TypeScript, 125 tests, story
+  - Updated story-path, playtest, and AI-loop regression coverage so the new
+    ending appears in route tests, true-ending counts, and ideal-ending
+    breakdowns.
+  - `npm test` passed with 126 tests.
+  - `npm run health` passed with formatting, TypeScript, 126 tests, story
     validation, and coverage playtest.
-  - Validation reports 98 scenes, 20 endings, all 98 reachable, and no
+  - Validation reports 99 scenes, 21 endings, all 99 reachable, and no
     warnings.
-  - Health coverage visited all 98 scenes, including
-    `passenger_manifest_true_ending`, with zero unfinished runs, best score
-    100/100, average score 99.51, and 342040 max-score runs.
-  - Targeted CLI play followed `read_manifest_from_ledger` ->
-    `clear_manifest_and_mara_from_ledger` -> `board_after_releasing_passengers`
-    -> `listen_to_mara_manifest_intercom` ->
-    `pull_release_after_manifest_goodbye` and reached
-    `passenger_manifest_true_ending` at 100/100 with no objectives.
+  - Health coverage visited all 99 scenes, including
+    `passenger_reviewed_count_true_ending`, with zero unfinished runs, best
+    score 100/100, average score 99.51, and 342040 max-score runs.
+  - Targeted CLI play followed `review_open_manifest_count` ->
+    `board_after_manifest_count` ->
+    `pull_release_after_reviewed_manifest_count` and reached
+    `passenger_reviewed_count_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new ending carries the manifest's ordinary-sound motif through the
-    final release, making the optional intercom listen feel consequential.
-  - The direct release still reaches the generic passenger ending, so the
-    variant remains tied to the deliberate choice to hear Mara finish the
-    manifest count first.
+  - The reviewed-count direct release now pays off the player checking what
+    each passenger carried before boarding, without requiring the optional
+    third-car intercom listen.
+  - The deeper `listen_to_counted_manifest_intercom` route still reaches
+    `passenger_counted_true_ending`, so both the direct action and extra-listen
+    branch remain distinct.
   - Coverage reached the new ending without harming scene reachability,
     completion, or score distribution.
 - Follow-up:
   - Watch whether the growing passenger-ending list stays readable in reports;
     future payoff variants should remain tied to clearly distinct player
-    actions.
+    actions, or reporting should group subvariants more aggressively.
 - Risks:
   - The game now has another ideal ending ID; future additions should keep
     report grouping and test helpers current.

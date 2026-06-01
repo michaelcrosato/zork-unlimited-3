@@ -48,6 +48,7 @@ describe("AI loop restart detection", () => {
         passenger_answered_true_ending: 2,
         passenger_answered_boarding_true_ending: 1,
         passenger_counted_true_ending: 1,
+        passenger_reviewed_count_true_ending: 1,
         passenger_manifest_true_ending: 1,
         passenger_manifest_handoff_true_ending: 1,
         passenger_answered_handoff_true_ending: 1,
@@ -61,9 +62,9 @@ describe("AI loop restart detection", () => {
       }
     };
 
-    expect(idealEndingRate(summary)).toBe(0.91);
+    expect(idealEndingRate(summary)).toBe(0.92);
     expect(formatIdealEndingBreakdown(summary)).toBe(
-      "Mara: 37 (true_ending: 27, mara_handoff_true_ending: 10); Passengers: 54 (passenger_true_ending: 26, passenger_answered_true_ending: 2, passenger_answered_boarding_true_ending: 1, passenger_counted_true_ending: 1, passenger_manifest_true_ending: 1, passenger_manifest_handoff_true_ending: 1, passenger_answered_handoff_true_ending: 1, passenger_echoed_true_ending: 1, passenger_helped_true_ending: 5, passenger_conductor_true_ending: 6, passenger_keepsake_true_ending: 3, passenger_newspaper_true_ending: 2, passenger_mitten_true_ending: 4)"
+      "Mara: 37 (true_ending: 27, mara_handoff_true_ending: 10); Passengers: 55 (passenger_true_ending: 26, passenger_answered_true_ending: 2, passenger_answered_boarding_true_ending: 1, passenger_counted_true_ending: 1, passenger_reviewed_count_true_ending: 1, passenger_manifest_true_ending: 1, passenger_manifest_handoff_true_ending: 1, passenger_answered_handoff_true_ending: 1, passenger_echoed_true_ending: 1, passenger_helped_true_ending: 5, passenger_conductor_true_ending: 6, passenger_keepsake_true_ending: 3, passenger_newspaper_true_ending: 2, passenger_mitten_true_ending: 4)"
     );
   });
 

@@ -1481,6 +1481,16 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+      - id: pull_release_after_reviewed_manifest_count
+        label: Pull the release while Mara's reviewed count holds
+        to: passenger_reviewed_count_true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: reviewed_open_manifest_count
+            - notFlag: helped_passengers_gather
       - id: pull_release_after_gathering_passengers
         label: Pull the release once every passenger is ready
         to: passenger_helped_true_ending
@@ -2230,6 +2240,16 @@ scenes:
       conductor steps clear, Mara letting the last number go unfinished because
       no one is missing anymore. Morning rain reaches the third car as a crowd,
       not a total.
+    choices: []
+
+  passenger_reviewed_count_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once while Mara's reviewed count is still
+      warm from the ledger. Newspaper, lunch tin, mitten, conductor's punch:
+      each item becomes a person stepping through instead of a mark beside a
+      name. Mara starts to add them again, then stops when the passengers look
+      back for one another and prove the count can end.
     choices: []
 
   passenger_manifest_handoff_true_ending:
