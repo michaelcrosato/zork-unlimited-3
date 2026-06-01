@@ -11,6 +11,64 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a conductor-led gathering beat after the passenger roll
+  call.
+- Why this matters: Core completion metrics are healthy, so the best next
+  improvement is richer route texture. Players who pause to hear the released
+  passengers answer their names now get a specific follow-up that lets the old
+  conductor help organize the platform instead of falling straight back to the
+  generic gathering beat.
+- Tasks:
+  - Add an optional conductor signal scene from `passenger_platform` after
+    `heard_passenger_answers`.
+  - Set `helped_passengers_gather` through that scene so it routes into the
+    existing helped-passenger payoff without new scoring or ending labels.
+  - Preserve existing mitten, keepsake, generic gathering, and direct boarding
+    choices.
+  - Add regression coverage for choice ordering, scene text, routing, and
+    max-score completion.
+  - Run focused tests, validation, random/goal/coverage playtests, full health,
+    and an actual CLI playthrough through the new scene.
+- Evidence:
+  - Added `passenger_conductor_signal`, reached via
+    `ask_conductor_to_call_platform_clear` after players listen to passenger
+    answers and return to the platform.
+  - The new scene sets `helped_passengers_gather` and returns to the existing
+    third-car flow through `follow_conductor_signal_to_third_car`.
+  - Added story-path coverage for the conductor route through
+    `passenger_helped_true_ending` at 100/100.
+  - Focused story-path tests passed with 82 tests.
+  - Validation passed with 63 scenes, 10 endings, and all 63 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 63 scenes, kept
+    best score 100/100, averaged 78.2, and reached
+    `passenger_conductor_signal`.
+  - A 100-run coverage sample visited all 63 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.58, and 101016 max-score
+    runs.
+  - Goal playtest ended 10/10 runs at max score.
+  - `npm run health` passed with formatting, TypeScript, 103 tests,
+    validation, and coverage playtest.
+  - Manual CLI play took the manifest route, heard passenger answers, asked
+    the conductor to call the platform clear, heard the gathered-passenger
+    intercom and final roll call, then reached `passenger_helped_true_ending`
+    at 100/100 with no objectives.
+- Playtest notes:
+  - The conductor beat gives the old conductor an active job after being named
+    in the passenger answer/gathering text.
+  - The scene improves pacing for answer-listener routes by turning the crowd's
+    response into action before the third car.
+  - No route completion, score, validation, or coverage regression surfaced.
+- Follow-up: Consider grouping ideal ending variants in AI-loop reports; the
+  growing ending family is useful but increasingly noisy in summaries.
+- Risks:
+  - The passenger platform now has one additional conditional choice after
+    answer-listener routes, but automated and manual play show it remains
+    bounded and clear.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a distinct matched-keepsake true ending.
 - Why this matters: The matched-keepsake route now has bespoke handoff,
   intercom, and final roll-call beats, but before this cycle the actual release

@@ -1631,6 +1631,73 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "return_from_passenger_answers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds).toEqual([
+      "ask_conductor_to_call_platform_clear",
+      "return_lost_mitten",
+      "match_manifest_keepsakes",
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
+    ]);
+
+    state = choose(story, state, "ask_conductor_to_call_platform_clear");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_signal");
+    expect(observation.scene.text).toContain("Platform clear");
+    expect(observation.scene.text).toContain("let another worker hold the line");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_conductor_signal_to_third_car"
+    ]);
+
+    state = choose(story, state, "follow_conductor_signal_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_gathering_passengers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathering_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds an optional lost-mitten passenger beat without blocking boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

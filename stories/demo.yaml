@@ -888,6 +888,16 @@ scenes:
       destination sign. They look to Mara's speaker, then to you, waiting for
       the last door to open.
     choices:
+      - id: ask_conductor_to_call_platform_clear
+        label: Ask the old conductor to call the platform clear
+        to: passenger_conductor_signal
+        requires:
+          all:
+            - flag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
       - id: return_lost_mitten
         label: Return the lost mitten to the child
         to: passenger_mitten_memory
@@ -916,6 +926,19 @@ scenes:
             helped_passengers_gather: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
+        to: train_car
+
+  passenger_conductor_signal:
+    text: >
+      The old conductor straightens when you ask for his signal. He does not
+      have a lantern, only a punch clipped to a chain, but he raises it like
+      one. "Platform clear," he calls, and the answered passengers move as if
+      the words have given them rails again: child beside newspaper woman,
+      umbrellas lifted away from the wheels, Mara's speaker quiet enough to
+      let another worker hold the line.
+    choices:
+      - id: follow_conductor_signal_to_third_car
+        label: Follow the conductor's signal to the third car
         to: train_car
 
   passenger_mitten_memory:
