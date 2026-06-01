@@ -12,6 +12,56 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Clarify the late helped-passenger boarding fork after
+  `passenger_farewell`.
+- Why this matters: The lunch-tin payoff is now playable and covered, but the
+  two choices that preserve the tailored lunch-tin route and the broader
+  gathered-passenger route used similar "lead the gathered passengers" wording.
+  Clearer labels make the player-facing branch understandable without changing
+  the healthy story graph.
+- Tasks:
+  - Rename the lunch-tin-paced boarding choice so it explicitly centers the
+    worker setting the pace.
+  - Rename the preserved generic gathered route so it reads as intentionally
+    boarding without waiting for that count.
+  - Add regression assertions for the two player-visible labels.
+  - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
+    playthrough through the clarified fork.
+- Evidence:
+  - Focused story-path test passed with 95 tests after the label assertions.
+  - `npm run health` passed with formatting, TypeScript, 116 tests,
+    validation, and coverage playtest.
+  - Validation reports 77 scenes, 12 endings, and all 77 reachable.
+  - Coverage playtest visited all 77 scenes, including both
+    `passenger_gathered_intercom` and `passenger_lunch_tin_intercom`, with best
+    score 100/100 and average score 99.57.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T19-08-25-746Z.md`; its 100-run random
+    sample ended every run, kept best score 100/100, averaged 78.25, and missed
+    `passenger_lunch_tin_intercom` while coverage reached it.
+  - Manual CLI play reached `passenger_farewell`, confirmed the two visible
+    labels are distinct, then followed `return_from_passenger_farewell` ->
+    `listen_to_lunch_tin_worker` -> `hear_final_lunch_tin_roll_call` ->
+    `pull_release_after_final_roll_call` to `passenger_helped_true_ending` at
+    100/100 with no objectives.
+- Playtest notes:
+  - The revised choice labels make the branch intention clearer: wait for the
+    lunch-tin worker's count for the tailored payoff, or move the whole crowd
+    aboard without that pacing for the preserved gathered-passenger route.
+  - The lunch-tin-paced route still reads cleanly into the final roll call and
+    helped-passenger ending.
+  - No bugs found in focused tests, full health, evidence cycle, or manual CLI
+    play.
+- Follow-up: Watch whether the generic preserved route still earns its place in
+  future playtests or should become a more distinct crowd-action beat.
+- Risks:
+  - This is a polish-focused cycle, so the impact depends on the choice labels
+    being noticed during normal play rather than on new scene coverage.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Give the generic helped-passenger route a clearer lunch-tin
   worker payoff before the shared helped ending.
 - Why this matters: The main and passenger true-ending routes are already

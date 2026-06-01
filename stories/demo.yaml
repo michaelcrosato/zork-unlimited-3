@@ -1130,13 +1130,13 @@ scenes:
       their voices for the morning.
     choices:
       - id: return_from_passenger_farewell
-        label: Lead the gathered passengers to the third car
+        label: Let the lunch-tin worker set the pace to the third car
         to: train_car
         effects:
           set:
             steadied_lunch_tin_worker: true
       - id: lead_gathered_passengers_without_lunch_tin_pace
-        label: Lead the gathered passengers aboard together
+        label: Board the gathered passengers without waiting for his count
         to: train_car
 
   train_car:

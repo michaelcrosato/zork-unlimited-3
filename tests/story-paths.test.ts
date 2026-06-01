@@ -2273,6 +2273,14 @@ describe("demo story critical paths", () => {
       "return_from_passenger_farewell",
       "lead_gathered_passengers_without_lunch_tin_pace"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "return_from_passenger_farewell")?.label
+    ).toBe("Let the lunch-tin worker set the pace to the third car");
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "lead_gathered_passengers_without_lunch_tin_pace"
+      )?.label
+    ).toBe("Board the gathered passengers without waiting for his count");
 
     state = choose(story, state, "return_from_passenger_farewell");
     observation = observe(story, state);
