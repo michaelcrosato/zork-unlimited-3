@@ -524,7 +524,11 @@ const idealEndingGroups = [
     families: [
       {
         label: "Core",
-        endings: ["passenger_true_ending", "passenger_helped_true_ending"]
+        endings: [
+          "passenger_true_ending",
+          "passenger_helped_true_ending",
+          "passenger_lunch_tin_true_ending"
+        ]
       },
       {
         label: "Manifest",

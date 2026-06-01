@@ -1252,7 +1252,7 @@ scenes:
             heard_gathered_passengers: true
       - id: pull_release_after_lunch_tin_boarding
         label: Pull the release while the lunch-tin count holds
-        to: passenger_helped_true_ending
+        to: passenger_lunch_tin_true_ending
 
   train_car:
     text: >
@@ -1952,7 +1952,7 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
-        to: passenger_helped_true_ending
+        to: passenger_lunch_tin_true_ending
 
   passenger_mitten_intercom:
     text: >
@@ -2302,6 +2302,16 @@ scenes:
       walks between two adults who know his name now; the old conductor holds
       the doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
+    choices: []
+
+  passenger_lunch_tin_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once on the lunch-tin worker's count. His
+      latch clicks each passenger into the rain-bright morning: child, newspaper
+      woman, conductor, Mara, then himself last because someone still has to
+      make sure the shift is over. When the tin finally opens, it holds only
+      steam and daylight, and the line has nothing left to count.
     choices: []
 
   passenger_conductor_true_ending:

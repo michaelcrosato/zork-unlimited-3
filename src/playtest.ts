@@ -330,6 +330,7 @@ function scoreDestination(sceneId: string): number {
     sceneId === "passenger_answered_handoff_true_ending" ||
     sceneId === "passenger_echoed_true_ending" ||
     sceneId === "passenger_helped_true_ending" ||
+    sceneId === "passenger_lunch_tin_true_ending" ||
     sceneId === "passenger_conductor_true_ending" ||
     sceneId === "passenger_keepsake_true_ending" ||
     sceneId === "passenger_newspaper_true_ending" ||

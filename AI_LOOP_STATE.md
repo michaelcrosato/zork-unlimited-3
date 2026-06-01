@@ -12,52 +12,62 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve long-run evidence readability by grouping ideal
-  ending variants into route families.
-- Why this matters: Core route metrics are healthy and the passenger ending
-  list has grown. The raw ending IDs should remain available, but the AI loop's
-  headline evidence needs clearer route-family totals so future agents can
-  judge whether Mara, manifest, roll-call, or keepsake routes need attention.
+- Main objective: Give the lunch-tin passenger route its own final true-ending
+  payoff.
+- Why this matters: Core route metrics are healthy, and the exploratory route
+  surfaced a strong lunch-tin sequence that still resolved into the broader
+  gathered-passenger ending. A distinct ending makes that practical counting
+  motif feel remembered without changing the critical path.
 - Tasks:
-  - Group ideal-ending evidence into Mara and passenger route families.
-  - Preserve exact per-ending counts inside each family.
-  - Update AI-loop regression coverage for the new breakdown string.
+  - Route direct and listened lunch-tin release choices to a new ending.
+  - Count the new ending as full-score and ideal in score, playtest, and loop
+    evidence helpers.
+  - Update route and evidence regression coverage.
   - Run full health and a real playthrough.
 - Evidence:
-  - Reworked `formatIdealEndingBreakdown` so ideal-ending evidence is grouped
-    into route families while preserving exact ending-ID counts.
-  - Passenger ideal endings now report as Core, Manifest, Roll call, and
-    Keepsakes families, making long-run pressure easier to scan as variants
-    grow.
-  - Updated AI-loop regression coverage for the grouped breakdown format.
-  - Focused `npm test -- tests/ai-loop.test.ts` passed with 7 tests.
+  - Added `passenger_lunch_tin_true_ending`.
+  - Routed `pull_release_after_lunch_tin_boarding` and
+    `pull_release_after_lunch_tin_intercom` to the new ending.
+  - Updated full-score and ideal-ending helpers for the new ending.
+  - Updated regression coverage for the direct and listened lunch-tin releases.
+  - Focused `npm test -- tests/story-paths.test.ts tests/playtest.test.ts
+tests/ai-loop.test.ts` passed with 118 tests.
   - `npm run health` passed with formatting, TypeScript, 126 tests, story
     validation, and coverage playtest.
-  - Validation reports 99 scenes, 21 endings, all 99 reachable, and no
+  - Validation reports 100 scenes, 22 endings, all 100 reachable, and no
     warnings.
-  - Health coverage visited all 99 scenes with zero unfinished runs, best score
+  - Health coverage visited all 100 scenes, including
+    `passenger_lunch_tin_true_ending`, with zero unfinished runs, best score
     100/100, average score 99.51, and 342040 max-score runs.
-  - Targeted CLI play reached `true_ending` at 100/100 with no objectives.
+  - Targeted CLI play followed the answered-passenger lunch-tin route through
+    `listen_to_lunch_tin_worker_from_boarding` and
+    `pull_release_after_lunch_tin_intercom`, reaching
+    `passenger_lunch_tin_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T23-39-16-776Z.md`.
-  - The generated report's long-run signals now show random ideal endings as
-    Mara 26 and Passengers 49, with passenger subgroups Core 16, Manifest 9,
-    Roll call 9, and Keepsakes 15.
-  - Evidence-cycle MCP play reached `true_ending` at 100/100, and the adaptive
-    route reached `passenger_helped_true_ending` at 100/100.
+    report `ai-runs/cycle-2026-06-01T23-47-06-789Z.md`.
+  - Evidence-cycle MCP validation passed with 100 reachable scenes and no
+    warnings.
+  - Evidence-cycle MCP random play reached `passenger_lunch_tin_true_ending`
+    11 times in 250 runs, coverage reached it 32192 times, and goal play
+    reached it 2 times in 10 runs.
+  - Evidence-cycle required MCP route still reached `true_ending` at 100/100,
+    and the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
+    100/100.
 - Playtest notes:
-  - The maintained true-ending route remains clear and finishes cleanly after
-    the reporting change.
-  - The grouped long-run line is easier to scan than the previous flat
-    passenger ending list while still exposing exact counts for debugging.
-  - No gameplay bugs were found; this cycle did not change story data or engine
-    behavior.
+  - The lunch-tin route now pays off its count motif directly: the latch moves
+    from platform rhythm to final release signal.
+  - The broader gathered-passenger ending remains reachable through routes that
+    help the crowd without explicitly following the lunch-tin worker's count.
+  - Core guidance remains healthy: random ideal-ending rate stayed at 75%, and
+    coverage still visits every scene.
+  - No gameplay bugs were found.
 - Follow-up:
-  - Use grouped route totals to steer future content work before adding more
-    ending variants.
+  - Check whether the generic `passenger_helped_true_ending` still feels
+    distinct enough for gathered routes that do not explicitly follow the
+    lunch-tin count.
 - Risks:
-  - Reporting-only changes still touch `src/ai-loop.ts`, so the outer loop may
-    need to restart after this milestone.
+  - The game has many ideal-ending variants; reporting must stay readable as
+    route-specific payoffs grow.
 
 ## Last Completed Cycle
 
