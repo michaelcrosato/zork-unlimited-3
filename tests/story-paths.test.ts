@@ -1024,13 +1024,34 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "hear_final_passenger_roll_call",
+      "hear_final_newspaper_roll_call",
       "pull_release_after_gathered_intercom"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "hear_final_newspaper_roll_call")?.label
+    ).toBe("Hear the transfer column become the final roll call");
     expect(
       observation.choices.find((choice) => choice.id === "pull_release_after_gathered_intercom")
         ?.label
     ).toBe("Pull the release while the transfer column holds");
+
+    const rollCallState = choose(story, state, "hear_final_newspaper_roll_call");
+    observation = observe(story, rollCallState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.scene.text).toContain("turned the blank transfer column into a route");
+    expect(observation.scene.text).toContain("It sounds like directions");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_newspaper_roll_call"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, rollCallState, "pull_release_after_newspaper_roll_call")
+    );
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
 

@@ -11,49 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the newspaper passenger route its own true-ending
-  payoff.
-- Why this matters: The newspaper route now has a readable memory and intercom
-  sequence, but it still resolved into the generic helped-passenger ending. A
-  route-specific ending makes the remembered transfer column feel like a real
-  tool that carries the passengers into morning.
+- Main objective: Preserve the newspaper passenger route through optional final
+  exploration.
+- Why this matters: Random play can reach the newspaper-specific route, but an
+  exploratory player who listens to the final roll call from
+  `passenger_newspaper_intercom` was routed back into the generic
+  helped-passenger ending. Keeping that curiosity on-theme should make the
+  route feel more coherent and slightly improve normal discovery of
+  `passenger_newspaper_true_ending`.
 - Tasks:
-  - Route the newspaper intercom release into a new
-    `passenger_newspaper_true_ending`.
-  - Count the new ending as max-score/ideal passenger success in scoring,
-    playtest ranking, and AI-loop evidence reporting.
-  - Update regression coverage for the new route label, ending text, and full
+  - Add a newspaper-specific final roll-call beat after
+    `passenger_newspaper_intercom`.
+  - Route that optional beat into `passenger_newspaper_true_ending`.
+  - Update regression coverage for the new scene, label, ending route, and full
     score.
-  - Run focused tests, full health, and an actual CLI playthrough through the
-    updated route.
+  - Run focused tests, full health, and an actual CLI or MCP playthrough
+    through the updated route.
 - Evidence:
-  - Added `passenger_newspaper_true_ending`, reached by pulling the release
-    from `passenger_newspaper_intercom`.
-  - Changed the route's release label to "Pull the release while the transfer
-    column holds."
-  - Updated score, playtest destination ranking, AI-loop ideal-ending
-    grouping, and aggregate tests so the new ending is treated as a full
-    passenger success.
-  - Focused tests passed: 3 files, 101 tests.
-  - Manual CLI play reached `passenger_newspaper_true_ending` at 100/100 with
-    no objectives and a transcript that preserved the schedule motif through
-    the ending.
+  - Added `passenger_newspaper_roll_call`, reached from
+    `passenger_newspaper_intercom` when the player chooses the optional final
+    roll-call beat.
+  - Routed the newspaper roll-call release to
+    `passenger_newspaper_true_ending`, preserving the transfer-column motif
+    for exploratory players instead of falling back to the generic helped
+    passenger ending.
+  - Updated story-path regression coverage for the new choice label, scene
+    text, final release choice, ending, and 100/100 score.
+  - Focused story-path tests passed: 88 tests.
   - `npm run health` passed with formatting, TypeScript, 109 tests,
     validation, and coverage playtest.
-  - Validation reports 71 scenes, 11 endings, and all 71 reachable.
+  - Validation reports 72 scenes, 11 endings, and all 72 reachable.
   - Coverage playtest visited every scene, including
-    `passenger_newspaper_true_ending`, with best score 100/100, average score
-    99.21, and 184464 max-score runs.
+    `passenger_newspaper_roll_call`, with no unvisited scenes, best score
+    100/100, average score 99.21, and 184464 max-score runs.
+  - Coverage ending pressure for `passenger_newspaper_true_ending` increased
+    from 8784 to 17568 paths because the optional roll-call route now preserves
+    the newspaper ending.
+  - A 250-run random sample ended every run, visited every scene, reached
+    `passenger_newspaper_true_ending` 4 times, and kept best score 100/100.
+  - Manual CLI play reached `passenger_newspaper_true_ending` through
+    `hear_final_newspaper_roll_call` at 100/100 with no objectives.
 - Playtest notes:
-  - The newspaper route now has a complete emotional arc: memory, crowd
-    timetable, and ending all use the transfer-column image.
-  - The direct release choice no longer feels generic on this path.
-  - No story, scoring, validation, objective, or coverage regressions appeared.
-- Follow-up: Recheck random-play ending distribution after a larger sample to
-  see how often normal play finds the newspaper-specific route.
+  - The newspaper route now reads as a coherent sequence: memory, timetable,
+    final roll call, and ending all center on the transfer column.
+  - Listening to the optional roll call feels like deeper engagement with the
+    newspaper route, not a detour away from it.
+  - No story, scoring, validation, objective, formatting, or test regressions
+    appeared.
+- Follow-up: Compare random-play ending distribution after the change to see
+  whether `passenger_newspaper_true_ending` appears more reliably.
 - Risks:
-  - Adding more passenger-specific endings can make reports busier; keep future
-    route payoffs reserved for branches with distinct player action.
+  - Adding another scene increases coverage breadth; keep the beat short and
+    route-specific so it does not make the late game sprawl.
 
 ## Last Completed Cycle
 

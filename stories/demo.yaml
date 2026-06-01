@@ -1521,9 +1521,9 @@ scenes:
       time beside her. Mara lets the schedule carry through the speaker.
       "Good," she says. "Let the line hear them naming where they are going."
     choices:
-      - id: hear_final_passenger_roll_call
-        label: Hear the gathered passengers answer one last roll call
-        to: passenger_roll_call_epilogue
+      - id: hear_final_newspaper_roll_call
+        label: Hear the transfer column become the final roll call
+        to: passenger_newspaper_roll_call
         requires:
           notFlag: heard_final_roll_call
         effects:
@@ -1531,6 +1531,18 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_gathered_intercom
         label: Pull the release while the transfer column holds
+        to: passenger_newspaper_true_ending
+
+  passenger_newspaper_roll_call:
+    text: >
+      Mara begins the final roll call, but the newspaper woman has already
+      turned the blank transfer column into a route everyone can answer. The
+      old conductor calls clear after each stop, passengers repeat the names
+      of streets they thought the line had erased, and the paper no longer
+      sounds like yesterday's news. It sounds like directions.
+    choices:
+      - id: pull_release_after_newspaper_roll_call
+        label: Pull the release after every transfer is named
         to: passenger_newspaper_true_ending
 
   passenger_keepsake_intercom:
