@@ -378,10 +378,22 @@ scenes:
       gate control keeps tapping its token slot like a telegraph key.
     choices:
       - id: use_token_slot
-        label: Drop the maintenance token into the gate control
+        label: Open the signal booth with the map ready
         to: signal_booth
         requires:
-          item: token
+          all:
+            - item: token
+            - item: map
+      - id: try_token_without_map
+        label: Try the signal token before recovering the map
+        to: signal_map_warning
+        requires:
+          all:
+            - item: token
+            - notItem: map
+        effects:
+          set:
+            knows_platform: true
       - id: inspect_mara_posters
         label: Inspect Mara's missing-person posters
         to: mara_posters
@@ -425,6 +437,20 @@ scenes:
       - id: return_to_lit_platform_after_posters
         label: Return to the gate control
         to: lit_platform
+
+  signal_map_warning:
+    text: >
+      The token turns, but the signal booth unlocks only halfway. Behind the
+      glass, the ledger bell rings in time with the blank destination sign.
+      The old notice comes back to you: no one boards the empty train safely
+      without the marked map.
+    choices:
+      - id: return_for_map_from_signal_warning
+        label: Return to the service room for the marked map
+        to: service_room
+      - id: continue_to_signal_booth_unprepared
+        label: Continue into the booth without the map
+        to: signal_booth
 
   ledger_warning:
     text: >

@@ -11,17 +11,66 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make late-game signal-booth entry clearer when players have
+  the token but not the marked map.
+- Why this matters: The true-ending chain depends on clearing Mara's ledger
+  entry, but the opening notice also warns not to board the empty train without
+  the map. Players can currently open the booth with the token while missing
+  the map and only see the score/objective gap indirectly. A short warning at
+  the gate control should make the missing navigation tool feel intentional and
+  recoverable.
+- Tasks:
+  - Add a map warning before unprepared signal-booth entry.
+  - Keep the deliberate unprepared continuation and existing recovery path
+    available.
+  - Add regression coverage for the warning and recovery.
+  - Run health and an actual route that exercises the new warning recovery.
+- Evidence so far:
+  - Selected a focused late-game clarity improvement based on the existing
+    playtest evidence and story structure.
+  - Initial badge-warning idea did not match normal play because the locker
+    intentionally cannot be closed after taking only the fuse. Adjusted the
+    warning to the reachable missing-map case instead.
+  - Added `signal_map_warning`, reached when players try the signal token
+    without the marked map.
+  - Updated the prepared signal-booth choice label to say the map is ready.
+  - Added regression coverage proving the warning appears, reinforces the map
+    objective, and routes back to the service room for recovery.
+  - `npm test -- tests/story-paths.test.ts` passed with 33 tests.
+  - `npm run health` passed with formatting, TypeScript, 49 tests, validation,
+    and coverage playtest.
+  - Validation passed: 29 scenes, 5 endings, 29 reachable, no warnings.
+  - Coverage playtest remained stable: 696 runs, 672 ended, 0 unfinished, 24
+    frontier samples, all 29 scenes visited, and best score 100/100.
+  - Manual CLI route triggered `signal_map_warning`, returned for the map,
+    cleared Mara, listened to her intercom beat, and reached `true_ending` at
+    100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - MCP random playtest, 250 runs: all ended, all 29 scenes visited,
+    `true_ending` reached 132 times, best score 100/100, average score 68.12.
+- Follow-up: The adaptive exploratory route still reaches `bad_ending` after
+  ignoring multiple warnings and forcing the gate without the fuse. Consider
+  nudging early platform explorers toward the service room or gate-control
+  inspection after Mara explicitly asks for the map.
+- Risks:
+  - Adding a warning scene increases scene count and one optional branch. The
+    prepared route should remain direct, and unprepared players should still be
+    able to continue into the booth if they choose.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made the deliberate forced-gate failure read as risky before players
+  enter its confirmation scene.
 - Main objective: Make the deliberate forced-gate failure read as risky before
   players enter its confirmation scene.
 - Why this matters: The adaptive exploratory route can still reach the bad
   ending by forcing the gate. That branch is useful, but the first choice should
   clearly say the player is trying it without the missing fuse so the failure
   feels earned rather than like a neutral inspection option.
-- Tasks:
-  - Clarify the first forced-gate choice label.
-  - Add regression coverage for the risk-forward label and existing warning.
-  - Run health and an actual route that exercises the warning recovery.
-- Evidence so far:
+- Evidence:
   - Changed the `force_gate` label to "Force the rusted gate without the fuse"
     so players see the missing-tool risk before the warning scene.
   - Updated the forced-gate regression to assert the risk-forward label appears

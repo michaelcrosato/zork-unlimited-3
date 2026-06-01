@@ -722,6 +722,46 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("flee_platform");
   });
 
+  it("warns token carriers before they enter the signal booth without the map", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "try_token_without_map"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_map_warning");
+    expect(observation.scene.text).toContain("without the marked map");
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(choiceIds).toEqual([
+      "return_for_map_from_signal_warning",
+      "continue_to_signal_booth_unprepared"
+    ]);
+
+    state = choose(story, state, "return_for_map_from_signal_warning");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
+  });
+
   it("focuses fully prepared lit-platform players on the signal booth", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
