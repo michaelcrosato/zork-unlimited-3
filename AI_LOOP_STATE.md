@@ -11,52 +11,54 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Remove the late-game service-room bounce when the marked map
-  is the last missing preparation item.
-- Why this matters: The latest adaptive exploratory route stopped after the
-  player had Mara's badge, the platform fuse, and the signal token but kept
-  bouncing between the service room and tunnel without taking the map. At that
-  point the tunnel has no remaining useful work, so the service room should
-  focus the player on the one unresolved promise.
+- Main objective: Remove the fully equipped gate-control bounce before platform
+  power restoration.
+- Why this matters: The latest handoff noted that the adaptive exploratory
+  route advanced past the old map stall, inspected the gate control, then
+  landed back in the service room while already carrying the badge, fuse, map,
+  and token. Once the player has the fuse and the gate-control access plate is
+  open, routing them back through the hub before installing it adds a low-value
+  extra step on the main route.
 - Tasks:
-  - Hide `return_to_tunnel` once map is the only missing preparation item.
-  - Preserve tunnel return while the token, fuse, or badge can still be found.
-  - Add regression coverage for the exact adaptive stall state.
-  - Run story-path tests, full health, an actual CLI playthrough, and the
-    evidence cycle.
+  - Add a direct fuse-install choice to the inspected gate control when the
+    player carries the platform fuse.
+  - Preserve the existing return-to-service-room recovery path for players who
+    still need parts.
+  - Add regression coverage for the fully equipped gate-control route.
+  - Run focused tests, full health, an actual CLI playthrough, and the evidence
+    cycle.
 - Evidence:
-  - Removed `notItem: map` from the `return_to_tunnel` availability check, so
-    the tunnel return remains available for missing token/fuse/badge recovery
-    but disappears when only the marked map is missing.
-  - Added a regression that recreates the adaptive stall state with
-    `promised_mara`, `knows_release`, `read_mara_file`, badge, fuse, and token;
-    the only available service-room choice is now `take_map`.
-  - Strengthened the existing missing-map regression to ensure `return_to_tunnel`
-    is absent in the same last-missing-map pressure point.
-  - `npm test -- tests/story-paths.test.ts` passed with 39 tests.
-  - `npm run health` passed with formatting, TypeScript, 55 tests, validation,
+  - Added `install_fuse_from_gate_control`, available from `gate_control` when
+    the player has the fuse, routing directly to `lit_platform` and setting
+    `platform_lit`.
+  - Kept `return_to_service_room_for_parts` available so underprepared players
+    still have the existing recovery route.
+  - Added a regression that reaches the gate control with map, token, fuse, and
+    badge, verifies the direct install choice is first, and confirms it unlocks
+    the lit-platform token-slot path.
+  - `npm test -- tests/story-paths.test.ts` passed with 40 tests.
+  - `npm run health` passed with formatting, TypeScript, 56 tests, validation,
     and coverage playtest.
-  - Manual CLI route verified the last-missing-map service-room state offers
-    exactly `take_map`, then continued through the signal booth, Mara intercom
-    beat, and `pull_release` to `true_ending` at 100/100.
+  - Manual CLI route used `install_fuse_from_gate_control`, then continued
+    through the signal booth, Mara intercom beat, and `pull_release` to
+    `true_ending` at 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
     MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
     and an actual MCP true-ending playthrough at 100/100.
   - Final evidence random playtest, 100 runs: all ended, all 31 scenes visited,
-    `true_ending` reached 56 times, best score 100/100, average score 71.4.
+    `true_ending` reached 54 times, best score 100/100, average score 70.7.
   - Final MCP random playtest, 250 runs: all ended, all 31 scenes visited,
-    `true_ending` reached 142 times, best score 100/100, average score 71.2.
-  - The adaptive route advanced past the old map stall, took the marked map,
-    visited Platform 13, inspected the gate control, and stopped back in the
-    service room with badge, fuse, map, and token.
-- Follow-up: The next pressure point is a fully equipped service-room return
-  after `inspect_gate_control`; check whether the route should auto-focus
-  `go_to_platform` more strongly or whether the adaptive step budget simply
-  expired at a good handoff.
+    `true_ending` reached 139 times, best score 100/100, average score 70.78.
+  - The adaptive route now uses the direct gate-control install and stops later
+    at `lit_platform` with badge, fuse, map, token, `knows_release`, and
+    `platform_lit`.
+- Follow-up: The next pressure point is late lit-platform focus after all true
+  ending tools are gathered; consider making `use_token_slot` the only
+  high-signal action once the player has map, token, fuse, badge, and release
+  knowledge.
 - Risks:
-  - This removes one low-value backtrack when only the map is missing. It should
-    not affect token recovery because `return_to_tunnel` is still available
-    until the token has been collected.
+  - Adding a second fuse-install route touches the critical true-ending path and
+    must stay scored identically to the existing platform install action.
 
 ## Last Completed Cycle
 

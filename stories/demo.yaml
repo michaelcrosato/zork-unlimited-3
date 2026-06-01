@@ -369,6 +369,14 @@ scenes:
       SIGNAL BOOTH token, then clear the ledger before boarding. Someone has
       scratched CLOCK = TOKEN into the soot.
     choices:
+      - id: install_fuse_from_gate_control
+        label: Install the platform fuse while the access plate is open
+        to: lit_platform
+        requires:
+          item: fuse
+        effects:
+          set:
+            platform_lit: true
       - id: return_to_service_room_for_parts
         label: Return to the service room for parts
         to: service_room

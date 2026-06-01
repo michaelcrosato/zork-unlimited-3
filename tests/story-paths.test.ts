@@ -444,6 +444,42 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("search_locker");
   });
 
+  it("lets prepared players install the fuse directly from the inspected gate control", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "inspect_gate_control"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("gate_control");
+    expect(choiceIds[0]).toBe("install_fuse_from_gate_control");
+    expect(choiceIds).toContain("return_to_service_room_for_parts");
+
+    state = choose(story, state, "install_fuse_from_gate_control");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.flags.platform_lit).toBe(true);
+    expect(choiceIds).toContain("use_token_slot");
+  });
+
   it("surfaces Mara's ledger thread from the service room", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
