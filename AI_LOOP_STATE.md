@@ -12,59 +12,70 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the reviewed-manifest-count conductor payoff easier to
-  discover in normal play.
-- Why this matters: Current route health is strong, but the prior random
-  evidence missed `passenger_conductor_count_roll_call`. Players who pause to
-  review Mara's opened manifest count should see an obvious conductor follow-up
-  without having to route through the generic passenger-answer scene first.
+- Main objective: Add a richer answered-manifest handoff beat before the shared
+  passenger true-ending release.
+- Why this matters: Route health is strong, with all scenes reachable and no
+  unfinished random runs. The highest-value next improvement is story depth on
+  a healthy route: players who watch Mara call the opened manifest and hear the
+  passengers answer should feel that handoff before the final intercom, instead
+  of jumping straight from boarding to release instructions.
 - Tasks:
-  - Add a direct conductor choice from `passenger_manifest_count`.
-  - Preserve the existing generic passenger-answer conductor route and generic
-    final conductor roll call.
-  - Update regression coverage for the direct counted-conductor route and
+  - Add a `passenger_answered_handoff_roll_call` scene after boarding from the
+    Mara manifest handoff plus passenger-answer route.
+  - Preserve the existing `passenger_answered_handoff_intercom` as the direct
+    pre-release intercom and keep the train-car listen route intact.
+  - Update regression coverage for the new intermediate scene, flag state, and
     full-score ending.
-  - Run focused tests, validation, full health, evidence-only `ai:cycle`, and a
-    real playthrough through the revised branch.
+  - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
+    playthrough through the revised branch.
 - Evidence:
-  - Added `ask_conductor_after_manifest_count`, which routes from the opened
-    manifest count to `passenger_conductor_signal` while setting the answered
-    passenger, gathered passenger, and conductor-clearance flags needed for the
-    counted conductor path.
+  - Added `passenger_answered_handoff_roll_call`, reached from
+    `board_after_passenger_answers` when players have both watched Mara call
+    the opened manifest and heard the passengers answer.
+  - The new scene sets up the existing `passenger_answered_handoff_intercom`
+    through `listen_to_answered_handoff_after_roll_call`, keeping Mara's final
+    goodbye flag on the intercom rather than the boarding step.
+  - Preserved the existing train-car `listen_to_answered_handoff_passengers`
+    route for players who board first and listen from the car.
   - Focused story-path tests passed with 97 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 79
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 80
     reachable scenes and 12 endings.
   - `npm run health` passed with formatting, TypeScript, 118 tests,
-    validation, and coverage playtest.
-  - A 250-run random playtest ended every run, visited all scenes including
-    `passenger_conductor_count_roll_call`, kept best score 100/100, and
-    averaged 79.94.
+    validation, and coverage playtest. Coverage visited all 80 scenes,
+    including `passenger_answered_handoff_roll_call`, with best score 100/100
+    and average score 99.58.
+  - A 100-run random playtest ended every run, visited all scenes including the
+    new scene, kept best score 100/100, and averaged 78.25.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T20-06-43-248Z.md`; its 100-run random
-    sample visited `passenger_conductor_count_roll_call`, had no unvisited
-    scenes, ended every run, kept best score 100/100, and averaged 78.25.
-  - Manual CLI play followed `review_open_manifest_count` ->
-    `ask_conductor_after_manifest_count` ->
-    `follow_conductor_signal_to_third_car` ->
-    `hear_counted_conductor_roll_call` ->
-    `pull_release_after_conductor_count` and reached
-    `passenger_conductor_true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T20-17-53-099Z.md`; its random and
+    coverage samples both visited `passenger_answered_handoff_roll_call`, had
+    no unvisited scenes, ended every random run, kept best score 100/100, and
+    averaged 78.25 random / 99.58 coverage.
+  - Evidence-cycle MCP validation passed with 80 reachable scenes and no
+    warnings. Its required MCP playthrough reached `true_ending` at 100/100,
+    and its adaptive exploratory route reached `passenger_true_ending` at
+    100/100.
+  - Manual CLI play followed `watch_mara_open_manifest` ->
+    `continue_manifest_handoff_roll_call` -> `board_after_passenger_answers`
+    -> `listen_to_answered_handoff_after_roll_call` ->
+    `pull_release_after_answered_handoff_intercom` and reached
+    `passenger_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new direct choice makes the conductor feel like the natural answer to
-    Mara's warning that the train may try to count the passengers again.
-  - The counted roll-call scene now appears in the fresh 100-run random sample,
-    addressing the prior normal-play miss.
-  - The route still lands cleanly in the existing conductor intercom and ending,
-    so the release remains physically grounded under the first seat.
+  - The new beat makes boarding feel like a public handoff: Mara starts the
+    roll call, but the passengers answer before the line can turn the pause
+    into waiting again.
+  - The existing intercom still works as the final release instruction, so the
+    route gains texture without adding another ending branch.
+  - Manual play felt coherent: the extra scene did not add a navigation loop,
+    and the ending still landed at full score with no stale objectives.
 - Follow-up:
-  - Consider whether the generic `passenger_conductor_signal` text should gain
-    a counted-manifest variant if future playtests find its "answered
-    passengers" phrasing too broad after the direct count choice.
+  - Consider whether the generic direct manifest release should gain a small
+    optional late beat if future playtests make it feel thin beside the richer
+    handoff, conductor, keepsake, mitten, newspaper, and lunch-tin routes.
 - Risks:
-  - The direct branch sets `heard_passenger_answers` without showing the full
-    passenger-answer scene; current text supports that abstraction, but this
-    should be watched if the passenger-answer scene later carries exclusive
-    story facts.
+  - The passenger true-ending family now has several optional intercom beats.
+    Keep future additions route-specific and avoid bloating the train-car
+    choice list.
 
 ## Last Completed Cycle
 

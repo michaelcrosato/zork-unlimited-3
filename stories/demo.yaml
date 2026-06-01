@@ -963,13 +963,12 @@ scenes:
         to: passenger_platform
       - id: board_after_passenger_answers
         label: Board the third car while the roll call holds
-        to: passenger_answered_handoff_intercom
+        to: passenger_answered_handoff_roll_call
         requires:
           flag: saw_mara_manifest_handoff
         effects:
           set:
             heard_answered_passengers: true
-            heard_mara_goodbye: true
       - id: board_after_answered_passengers
         label: Board the third car while the roll call holds
         to: train_car
@@ -1607,6 +1606,22 @@ scenes:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
         to: passenger_true_ending
+
+  passenger_answered_handoff_roll_call:
+    text: >
+      The third car does not board in silence. Mara calls from the speaker, but
+      the opened passengers answer before her pauses can become another kind of
+      waiting: the newspaper woman naming Warden Street, the lunch-tin worker
+      counting the door clear, the child answering present from the threshold.
+      By the time you reach the first seat, Mara's roll call has become a
+      handoff instead of a duty she has to carry alone.
+    choices:
+      - id: listen_to_answered_handoff_after_roll_call
+        label: Listen as Mara lets the answered passengers carry the count
+        to: passenger_answered_handoff_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
 
   passenger_answered_handoff_intercom:
     text: >

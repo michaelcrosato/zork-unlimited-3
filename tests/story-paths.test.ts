@@ -1825,13 +1825,24 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
+    expect(observation.scene.id).toBe("passenger_answered_handoff_roll_call");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
-    expect(observation.scene.text).toContain("Mara began at the opened manifest");
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.scene.text).toContain("the opened passengers answer");
+    expect(observation.scene.text).toContain("handoff instead of a duty");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_handoff_after_roll_call"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_handoff_after_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("Mara began at the opened manifest");
   });
 
   it("adds an optional opened-manifest count before the passenger roll call", async () => {
@@ -2470,13 +2481,24 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
+    expect(observation.scene.id).toBe("passenger_answered_handoff_roll_call");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.scene.text).toContain("The third car does not board in silence");
+    expect(observation.scene.text).toContain("Mara's roll call has become a handoff");
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_handoff_after_roll_call"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_handoff_after_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.scene.text).toContain("The third car fills with the rhythm Mara began");
     expect(observation.scene.text).toContain("They can answer for themselves now");
-    expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_answered_handoff_intercom"
