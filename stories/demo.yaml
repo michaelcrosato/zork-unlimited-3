@@ -1606,7 +1606,7 @@ scenes:
     choices:
       - id: pull_release_after_conductor_clearance
         label: Pull the release on the conductor's clear signal
-        to: passenger_helped_true_ending
+        to: passenger_conductor_true_ending
 
   passenger_gathered_intercom:
     text: >
@@ -1860,6 +1860,17 @@ scenes:
       between two adults who know his name now; the old conductor holds the
       morning doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
+    choices: []
+
+  passenger_conductor_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once on the conductor's clear signal. He
+      stands in the rain-bright threshold with his punch raised, not counting
+      tickets anymore, only people safely through. The answered passengers
+      repeat his call down the platform until every open door sounds like work
+      finished well, and Mara lets another worker's voice be the last one the
+      line obeys.
     choices: []
 
   passenger_keepsake_true_ending:

@@ -5,10 +5,63 @@ This file is the handoff point for future autonomous agents.
 ## Current Objective
 
 Keep the autonomous CYOA engine maintainable, secure, and playable while
-preserving normal-play true-ending discoverability and improving passenger
-story depth where the route is already healthy.
+preserving normal-play true-ending discoverability and improving passenger route
+payoffs where the core guidance is already healthy.
 
 ## Active Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
+- Main objective: Give the old conductor branch its own final ending payoff.
+- Why this matters: The route already had a distinct signal and third-car
+  intercom, but it collapsed into the generic helped-passenger ending. With the
+  true-ending route healthy, a tailored ending adds meaningful character payoff
+  without changing the puzzle structure.
+- Tasks:
+  - Route `pull_release_after_conductor_clearance` to a new
+    `passenger_conductor_true_ending`.
+  - Count the new ending as a max-score/ideal ending in score, playtest, and AI
+    loop reporting.
+  - Add regression coverage for the conductor route and update ending-count
+    tests.
+  - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
+    playthrough through the conductor branch.
+- Evidence:
+  - Added `passenger_conductor_true_ending`, preserving the existing conductor
+    signal and intercom but giving the old conductor a final clear-signal
+    resolution.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending remains a full 100/100 ideal ending in scoring and reports.
+  - Focused story-path, playtest, and AI loop tests passed with 107 tests.
+  - `npm run health` passed with formatting, TypeScript, 115 tests,
+    validation, and coverage playtest.
+  - Validation reports 76 scenes, 12 endings, and all 76 reachable.
+  - Coverage playtest visited all 76 scenes, including
+    `passenger_conductor_true_ending`, with best score 100/100 and average
+    score 99.49.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T18-50-37-660Z.md`; its 100-run random
+    sample reached `passenger_conductor_true_ending` 8 times, ended every run,
+    kept best score 100/100, and averaged 78.25.
+  - Manual CLI play followed `ask_conductor_from_answers` ->
+    `follow_conductor_signal_to_third_car` ->
+    `pull_release_after_conductor_clearance` and reached
+    `passenger_conductor_true_ending` at 100/100 with no objectives.
+- Playtest notes:
+  - The conductor path now feels like the old worker actually takes over a
+    piece of the line instead of merely decorating the generic helped ending.
+  - The route remains compact: passenger answers, conductor signal, conductor
+    intercom, then the conductor-specific ending.
+  - The generic `passenger_helped_true_ending` still serves the non-conductor
+    gathered-passenger route.
+- Follow-up: Consider whether `passenger_helped_true_ending` should mention the
+  lunch-tin worker more directly now that conductor, mitten, newspaper, and
+  keepsake routes all have specific payoffs.
+- Risks:
+  - Another ending ID increases reporting surface area, so future ideal-ending
+    helpers must keep this variant included.
+
+## Last Completed Cycle
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
