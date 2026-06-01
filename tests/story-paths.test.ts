@@ -1439,7 +1439,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
-    expect(choiceIds).toEqual(["pull_release_after_gathering_passengers"]);
+    expect(choiceIds).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_gathering_passengers"
+    ]);
 
     state = initialState(story);
     for (const choiceId of [
@@ -1473,7 +1476,60 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
-    expect(choiceIds).toEqual(["pull_release_after_gathering_passengers"]);
+    expect(choiceIds).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_gathering_passengers"
+    ]);
+  });
+
+  it("adds a final gathered-passenger intercom beat before the helped ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "return_from_passenger_answers",
+      "help_passengers_gather",
+      "return_from_passenger_farewell",
+      "board_third_car_with_passengers",
+      "listen_to_gathered_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("the old conductor answers each number");
+    expect(observation.scene.text).toContain("they can move together");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_gathered_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
   it("adds an optional thumbprint memory without blocking Mara's ledger clear", async () => {
@@ -2535,6 +2591,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).not.toContain(
       "pull_release_with_manifest"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_gathered_passengers"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_gathering_passengers"

@@ -11,58 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a one-time Mara handoff beat after the kept-passenger
-  manifest opens.
+- Main objective: Add a final gathered-passenger intercom beat before the
+  helped manifest ending.
 - Why this matters: Core route metrics are healthy, so the best next
-  improvement is story depth on a successful route. The manifest route releases
-  the passengers but previously moved quickly from ledger clearance to crowd
-  movement; a short optional handoff lets players see Mara transfer her duty to
-  the newly answered passengers before the final release.
+  improvement is richer payoff on the strongest successful route. Players who
+  help the kept passengers gather currently move from the third car straight to
+  the final release; a short optional intercom beat lets the crowd answer Mara
+  together before the player opens every door.
 - Tasks:
-  - Add `mara_manifest_handoff` as a one-time optional scene from
-    `passengers_released`.
-  - Return players to the passenger-release decision point without repeating
-    the handoff choice.
-  - Add regression coverage for gating and continued access to passenger
-    answer/boarding choices.
+  - Add a one-time optional `passenger_gathered_intercom` scene from the
+    helped-passenger train car.
+  - Keep the direct helped-passenger release available for players who want to
+    finish immediately.
+  - Add regression coverage for the new beat and its final release.
   - Run focused tests, full health, an actual CLI playthrough, and commit/push
     if green.
 - Evidence:
-  - Added `mara_manifest_handoff`, reached from `passengers_released` after
-    opening every kept-passenger manifest door.
-  - The new `watch_mara_open_manifest` choice sets
-    `saw_mara_manifest_handoff`, returns to `passengers_released`, and does
-    not repeat after use.
-  - Direct passenger-answer and board routes remain available after the handoff.
-  - Added story-path regression coverage for the one-time handoff gating and
-    continued access to the passenger-answer/boarding choices.
-  - Updated the existing manifest platform test to expect the new optional
-    handoff choice.
-  - Focused validation passed with 52 scenes, 7 endings, and all 52 reachable.
-  - `npm test -- tests/story-paths.test.ts` passed with 69 tests.
-  - Focused 100-run random playtest ended all 100 runs, visited all 52 scenes,
-    kept best score 100/100 and average score 77.75.
-  - `npm run health` passed with formatting, TypeScript, 90 tests, validation,
-    and coverage playtest.
-  - Health coverage playtest visited all 52 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 95.33, and 28548 max-score runs.
-  - Manual CLI play took the manifest route through
-    `mara_manifest_handoff`, passenger answers, passenger gathering, and
-    reached `passenger_helped_true_ending` at 100/100.
+  - Added `passenger_gathered_intercom`, reached from the helped-passenger
+    train car after the player gathers the released crowd.
+  - The new `listen_to_gathered_passengers` choice sets
+    `heard_gathered_passengers`, then flows directly to
+    `passenger_helped_true_ending`.
+  - The direct `pull_release_after_gathering_passengers` route remains
+    available from the train car.
+  - Added story-path regression coverage for the new intercom beat, final
+    release, and continued direct helped-ending release access.
+  - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
+  - `npm test -- tests/story-paths.test.ts` passed with 70 tests.
+  - `npm run health` passed with formatting, TypeScript, 91 tests,
+    validation, and coverage playtest.
+  - Health coverage playtest visited all 53 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 96.35, and 37332 max-score runs.
+  - Manual CLI play took the manifest handoff, passenger answers, passenger
+    gathering, new gathered-passenger intercom, and reached
+    `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new handoff beat gives Mara one direct moment of care for the opened
-    passenger doors before the player moves into the crowd.
-  - Returning to `passengers_released` made the new scene feel optional and did
-    not block answer-listening or direct boarding.
-  - The helped-passenger ending still finishes cleanly with no lingering
-    objectives.
+  - The new beat makes the gathered passengers active before the final release
+    instead of leaving Mara as the only voice of coordination.
+  - The helped route still has a direct release choice, so the extra scene is
+    player-paced rather than mandatory.
+  - The final state had no lingering objectives and retained all five key
+    inventory items.
   - No bugs surfaced in the focused route.
-- Follow-up: Watch coverage run count after adding another optional
-  manifest-path scene; it should remain bounded because the scene is one-time
-  and returns to `passengers_released`.
+- Follow-up: Watch whether the helped route feels too long after several
+  optional manifest beats; the direct release remains available to keep pacing
+  under player control.
 - Risks:
-  - Another optional manifest scene can slightly lengthen careful routes, so
-    focused tests and health should confirm direct boarding still works.
+  - Another optional late-game beat can slow careful routes, so tests and
+    playthrough should confirm direct release still works and no final choices
+    loop.
 
 ## Last Completed Cycle
 

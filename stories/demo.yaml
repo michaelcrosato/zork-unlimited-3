@@ -924,6 +924,18 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_gathered_passengers
+        label: Listen to the gathered passengers before the release
+        to: passenger_gathered_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            heard_gathered_passengers: true
       - id: pull_release_with_manifest
         label: Pull the release for every name in the manifest
         to: passenger_true_ending
@@ -1133,6 +1145,18 @@ scenes:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
         to: passenger_true_ending
+
+  passenger_gathered_intercom:
+    text: >
+      The passengers gather themselves before Mara can call again. The child
+      with the mitten counts the open doors, the old conductor answers each
+      number with "clear," and the platform finds a rhythm that does not belong
+      to the line anymore. Mara lets their voices carry through the speaker.
+      "Now," she says. "While they remember they can move together."
+    choices:
+      - id: pull_release_after_gathered_intercom
+        label: Pull the release while the passengers hold the doors
+        to: passenger_helped_true_ending
 
   gate_warning:
     text: >
