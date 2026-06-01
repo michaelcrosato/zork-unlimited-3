@@ -159,6 +159,7 @@ function trueEndingCount(endings: Record<string, number>): number {
     (endings.passenger_true_ending ?? 0) +
     (endings.passenger_answered_true_ending ?? 0) +
     (endings.passenger_counted_true_ending ?? 0) +
+    (endings.passenger_manifest_handoff_true_ending ?? 0) +
     (endings.passenger_helped_true_ending ?? 0) +
     (endings.passenger_conductor_true_ending ?? 0) +
     (endings.passenger_keepsake_true_ending ?? 0) +

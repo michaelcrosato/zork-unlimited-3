@@ -515,6 +515,7 @@ const idealEndingGroups = [
       "passenger_true_ending",
       "passenger_answered_true_ending",
       "passenger_counted_true_ending",
+      "passenger_manifest_handoff_true_ending",
       "passenger_helped_true_ending",
       "passenger_conductor_true_ending",
       "passenger_keepsake_true_ending",

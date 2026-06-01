@@ -2287,8 +2287,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara is still mid-handoff");
+    expect(observation.scene.text).toContain("no longer a duty in one voice");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
