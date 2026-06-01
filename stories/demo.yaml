@@ -528,9 +528,7 @@ scenes:
         label: Run for the stairs before the train chooses you
         to: escape_warning
         requires:
-          all:
-            - notItem: token
-            - notFlag: inspected_mara_posters
+          notItem: token
 
   mara_posters:
     text: >

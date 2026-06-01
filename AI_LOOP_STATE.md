@@ -11,59 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce service-room/tunnel churn after the player learns the
-  signal token is hidden in the stopped clock.
-- Why this matters: Current evidence shows ideal endings are discoverable, but
-  random suspicious paths still bounce repeatedly through the service room,
-  tunnel, and platform before recovering the token. Once a clue names the
-  stopped clock, the service room should offer a direct actionable route
-  instead of a generic tunnel detour.
+- Main objective: Keep the stairwell escape-warning route discoverable after
+  players inspect Mara's posters.
+- Why this matters: Cycle evidence showed `escape_ending` and
+  `mara_stairwell_call` were reachable but relatively rare in normal random
+  play. Inspecting the posters is a natural hesitation beat on the lit platform,
+  but it previously hid the stairwell route. Players who still lack the signal
+  token should be able to flee, hear Mara's final warning, and recover directly
+  through the stopped-clock clue.
 - Tasks:
-  - Add a direct `go_to_stopped_clock` choice from the service room when
-    `knows_token_location` is true and the token has not been recovered.
-  - Hide the generic tunnel return while the explicit clock-token objective is
-    active, then let normal tunnel navigation resume after the token is found.
-  - Add regression coverage for clue-informed direct token recovery and the
-    lit-platform recovery route.
-  - Run focused tests, full health, an actual CLI/MCP playthrough, and
-    commit/push if green.
+  - Allow `flee_platform` from the lit platform whenever the token is missing,
+    even after the poster beat has been inspected.
+  - Add regression coverage for the poster-to-stairwell-to-clock recovery route.
+  - Update the existing poster regression so posters remain one-time while the
+    stairwell hesitation route stays available.
+  - Run focused tests, random playtest sampling, full health, and an actual CLI
+    playthrough.
 - Evidence:
-  - Added `go_to_stopped_clock`, a service-room choice shown only when
-    `knows_token_location` is true and the token has not been recovered.
-  - Hid `return_to_tunnel` while that explicit clock-token objective is active,
-    preventing the known-token route from bouncing through the generic tunnel
-    hub.
-  - Normal tunnel navigation remains available before the token clue is known
-    and after the token is recovered.
-  - Added story-path regression coverage for direct service-room clock routing,
-    gate-control clue recovery, lit-platform recovery, and updated focused
-    token paths.
+  - `flee_platform` now requires only that the signal token is still missing,
+    so the stairwell remains visible after `inspect_mara_posters`.
+  - Added story-path regression coverage that inspects posters, returns to the
+    lit platform, flees to the stairwell, listens to Mara, and lands directly at
+    the stopped clock with only `take_token` available.
+  - Updated the existing poster regression to assert `inspect_mara_posters`
+    remains one-time while `flee_platform` remains available.
   - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
-  - `npm test -- tests/story-paths.test.ts` passed with 71 tests.
-  - A 250-run random sample visited all 53 scenes, had 1 unfinished run, best
-    score 100/100, average score 80.02, and 184 max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 92 tests, validation,
+  - `npm test -- tests/story-paths.test.ts` passed with 72 tests.
+  - A 250-run random sample visited all 53 scenes, including
+    `mara_stairwell_call`, with 249/250 ended, best score 100/100, average
+    score 79.36, and 181 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 93 tests, validation,
     and coverage playtest.
   - Health coverage playtest visited all 53 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 96.48, and 37332 max-score runs.
-  - Manual CLI play used `go_to_stopped_clock` after reading Mara's personnel
-    file and reached `true_ending` at 100/100.
+    routes, best score 100/100, average score 96.31, and 37332 max-score runs.
+  - Manual CLI play followed the posters -> stairwell warning -> clock recovery
+    route and reached `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The direct clock choice made the personnel-file clue immediately actionable
-    without requiring a service-room-to-tunnel-to-clock detour.
-  - After taking the token, the route naturally returned to the tunnel and
-    reopened the service room, so the player still had to gather the map,
-    release route, fuse, and badge.
-  - The final state had no lingering objectives and retained all five key
-    inventory items.
+  - The poster scene now strengthens the emotional reason to hesitate without
+    closing off the stairwell pressure valve.
+  - Mara's stairwell line cleanly converts panic into an actionable stopped-clock
+    objective.
+  - The route still supports the escape ending because `leave_after_stairwell_call`
+    remains available.
   - No bugs surfaced in the focused route.
-- Follow-up: Recheck random playtest unfinished/loop pressure after the direct
-  clock route is available from the service-room hub.
+- Follow-up: Investigate the remaining occasional random unfinished run and
+  decide whether another late-game loop needs a direct recovery route.
 - Risks:
-  - A direct clock choice can make the map/file clues feel more like task-list
-    routing than exploration, so it remains gated behind explicit token clues
-    and only replaces `return_to_tunnel` while token recovery is the active
-    blocker.
+  - Making the stairwell available after posters slightly increases escape-route
+    branching from the lit platform, but it is still gated by the missing token
+    and preserves the recovery path.
 
 ## Last Completed Cycle
 

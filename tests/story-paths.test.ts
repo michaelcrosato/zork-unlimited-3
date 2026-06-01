@@ -440,6 +440,54 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("inspect_mara_posters");
   });
 
+  it("keeps the stairwell warning available after players inspect Mara's posters", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "inspect_mara_posters",
+      "return_to_lit_platform_after_posters"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.flags.inspected_mara_posters).toBe(true);
+    expect(observation.state.inventory).not.toContain("token");
+    expect(choiceIds).toContain("flee_platform");
+
+    state = choose(story, state, "flee_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_warning");
+    expect(observation.choices.map((choice) => choice.id)).toContain("listen_at_stairwell");
+
+    state = choose(story, state, "listen_at_stairwell");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_stairwell_call");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("return_from_stairwell_call");
+
+    state = choose(story, state, "return_from_stairwell_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
+  });
+
   it("steers fuse carriers toward restoring platform power before boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -2374,7 +2422,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("lit_platform");
     expect(choiceIds).not.toContain("inspect_mara_posters");
     expect(choiceIds).toContain("return_from_lit_platform");
-    expect(choiceIds).not.toContain("flee_platform");
+    expect(choiceIds).toContain("flee_platform");
   });
 
   it("reveals why Mara's badge matters before clearing the ledger", async () => {
