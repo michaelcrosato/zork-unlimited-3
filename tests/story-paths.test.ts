@@ -414,8 +414,54 @@ describe("demo story critical paths", () => {
     const choiceIds = observe(story, state).choices.map((choice) => choice.id);
 
     expect(choiceIds).toContain("pull_release");
+    expect(choiceIds).toContain("listen_to_mara_intercom");
     expect(choiceIds).not.toContain("ride_with_map");
     expect(choiceIds).not.toContain("look_at_sign");
+  });
+
+  it("adds a one-time Mara intercom beat before the final release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "listen_to_mara_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_intercom");
+    expect(observation.scene.text).toContain("do not count the passengers");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["return_to_release"]);
+
+    state = choose(story, state, "return_to_release");
+    observation = observe(story, state);
+
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    expect(observation.scene.id).toBe("train_car");
+    expect(choiceIds).toEqual(["pull_release"]);
+
+    state = choose(story, state, "pull_release");
+    expect(observe(story, state).scene.id).toBe("true_ending");
   });
 
   it("reveals the emergency release after clearing Mara even without the radio route", async () => {

@@ -11,6 +11,43 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a small late-game story beat after Mara is cleared so the
+  true-ending route has more emotional texture before the final release.
+- Outcome: Clearing Mara now exposes a one-time intercom scene in the train car.
+  Players can hear Mara frame the release as freeing over-counted passengers,
+  then return to the emergency release without losing progress or score.
+- Evidence:
+  - Added `mara_intercom`, a one-time optional scene gated by `freed_mara` and
+    `heard_mara_goodbye`.
+  - Added regression coverage proving the intercom scene appears after Mara is
+    cleared, returns to the train car, disappears afterward, and still allows
+    `true_ending`.
+  - `npm test -- tests/story-paths.test.ts` passed with 31 tests.
+  - Validation passed: 27 scenes, 5 endings, 27 reachable, no warnings.
+  - CLI playthrough exercised the new beat and reached `true_ending` at
+    100/100 with `heard_mara_goodbye: true`.
+  - `npm run health` passed with formatting, TypeScript, 47 tests, validation,
+    and coverage playtest.
+  - Coverage playtest remained stable: 694 runs, 672 ended, 0 unfinished, 22
+    frontier samples, all 27 scenes visited, and best score 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - MCP random playtest, 250 runs: all ended, all 27 scenes visited,
+    `true_ending` reached 132 times, best score 100/100, average score 68.08.
+- Follow-up: The goal-oriented MCP route optimizes directly to `pull_release`
+  and skips optional `mara_intercom`; decide whether goal playtests should
+  sample one-time flavor beats when they are safe and score-neutral.
+- Risks:
+  - This adds an optional final choice at a moment where some players may prefer
+    a clean ending action. It is one-time and leaves `pull_release` immediately
+    available.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Kept the late-game signal booth recoverable for unusual or imported
+  states after the ledger has already been inspected.
 - Main objective: Keep the late-game signal booth recoverable for unusual or
   imported states after the ledger has already been inspected.
 - Outcome: Badge-less ledger states can now recover by returning to the service

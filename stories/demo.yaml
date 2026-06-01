@@ -476,6 +476,16 @@ scenes:
       fingers find an emergency release. The blank destination sign begins to
       spell HOME one letter at a time.
     choices:
+      - id: listen_to_mara_intercom
+        label: Listen to Mara before pulling the release
+        to: mara_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: pull_release
         label: Pull the emergency release
         to: true_ending
@@ -493,6 +503,17 @@ scenes:
         to: sign_warning
         requires:
           notFlag: freed_mara
+
+  mara_intercom:
+    text: >
+      Mara's voice returns through the ceiling speaker, no longer buried in
+      static. "When the doors open, do not count the passengers," she says.
+      "Some of us have been counted for too long. Just pull the release and let
+      the morning do the rest."
+    choices:
+      - id: return_to_release
+        label: Return to the emergency release
+        to: train_car
 
   gate_warning:
     text: >
