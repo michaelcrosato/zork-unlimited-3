@@ -12,61 +12,55 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a tailored third-car payoff for players who review the
-  opened passenger manifest count before boarding.
-- Why this matters: Core route guidance is healthy and all scenes are covered,
-  so the best next improvement is richer route texture. Reviewing the opened
-  manifest count is a meaningful optional beat, but boarding immediately after
-  it currently falls back to a generic manifest intercom. A counted-manifest
-  intercom can make that choice feel remembered without changing progression.
+- Main objective: Pay off the early notice-back badge proof clue in Mara's
+  final no-manifest release route.
+- Why this matters: Normal-play guidance and ending coverage are healthy, so
+  the best next improvement is route texture. The notice backing already teaches
+  that Mara needs badge proof, but that optional clue did not change the final
+  Mara goodbye. A small proof-aware intercom makes careful early reading feel
+  remembered without changing the solution.
 - Tasks:
-  - Add a `passenger_counted_manifest_intercom` scene gated by
-    `reviewed_open_manifest_count`.
-  - Keep the existing `mara_manifest_intercom` for players who skip the count
-    review.
-  - Add regression coverage for the counted-manifest intercom and full-score
-    ending.
-  - Run focused tests, validation, random and coverage playtests, full health,
-    evidence gathering, and a real CLI/MCP route through the new branch.
+  - Add a `mara_badge_proof_intercom` scene gated by `knows_badge_proof`.
+  - Keep the generic `mara_intercom` for players who read only the front notice.
+  - Add regression coverage for the proof-aware route and full-score ending.
+  - Run focused tests, full health, evidence gathering, and a real CLI/MCP route
+    through the new branch.
 - Evidence:
-  - Added `passenger_counted_manifest_intercom`, reached from `train_car` only
-    after `reviewed_open_manifest_count` when the player has not already moved
-    into the handoff, answered-passenger, or helped-passenger variants.
-  - Preserved `mara_manifest_intercom` for players who read and clear the
-    manifest without reviewing the opened count.
-  - Focused story-path tests passed with 100 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 85
+  - Added `mara_badge_proof_intercom` from `train_car` for freed-Mara,
+    no-manifest routes where the player checked the notice back.
+  - Tightened `listen_to_mara_intercom` so it remains the generic no-manifest
+    branch for players without `knows_badge_proof`.
+  - Focused story-path tests passed with 101 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 86
     reachable scenes and 12 endings.
-  - `npm run health` passed with formatting, TypeScript, 121 tests,
+  - `npm run health` passed with formatting, TypeScript, 122 tests,
     validation, and coverage playtest.
-  - Health coverage visited all 85 scenes, including
-    `passenger_counted_manifest_intercom`, with best score 100/100 and average
-    score 99.58.
+  - Health coverage visited all 86 scenes, including
+    `mara_badge_proof_intercom`, with best score 100/100 and average score
+    99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T21-14-04-352Z.md`. Its health checks
-    were green, random and coverage samples both visited
-    `passenger_counted_manifest_intercom`, MCP validation passed with 85
-    reachable scenes and no warnings, the MCP route reached `true_ending` at
-    100/100, and the adaptive route reached `passenger_true_ending` at
-    100/100 after reviewing the manifest count.
-  - Manual CLI play followed `review_open_manifest_count` ->
-    `board_after_manifest_count` -> `listen_to_counted_manifest_intercom` ->
-    `pull_release_after_counted_manifest_goodbye` and reached
-    `passenger_true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T21-25-48-562Z.md`. Its health checks
+    were green, MCP validation passed with 86 reachable scenes and no warnings,
+    the MCP route reached `true_ending` at 100/100, and the adaptive route
+    reached `passenger_true_ending` at 100/100.
+  - Manual CLI play followed `inspect_notice_back` ->
+    `listen_to_badge_proof_intercom` ->
+    `pull_release_after_badge_proof_goodbye` and reached `true_ending` at
+    100/100 with no objectives.
 - Playtest notes:
-  - The new intercom makes the reviewed count feel remembered in the third car:
-    Mara names the ordinary passenger proofs again, and the passengers begin
-    checking one another home before the final release.
-  - The route still offers the direct manifest release from `train_car`, so the
-    extra beat is enrichment rather than a required step.
-  - Automated and manual play found no unreachable scenes, unfinished routes,
-    stale objectives, or score regressions.
+  - The new intercom makes the notice-back clue feel remembered: the badge
+    proof changes from a lock into the answer that lets Mara leave.
+  - The branch remains optional and mutually exclusive with thumbprint, handoff,
+    and passenger-manifest variants.
+  - Random playtest samples did not hit the new scene, but coverage and manual
+    play did; this is acceptable for an optional careful-reader payoff, though
+    future cycles can watch whether it should surface more often.
 - Follow-up:
-  - Watch whether counted-manifest routes should later diverge into a conductor
-    or keepsake-specific ending variant.
+  - Watch whether `mara_badge_proof_intercom` needs slightly stronger
+    normal-play discovery without turning it into a default Mara branch.
 - Risks:
-  - Late passenger routes are already dense; the new beat must stay optional
-    and avoid crowding the shared train-car choice list.
+  - Late Mara branches are already dense; the new branch must remain mutually
+    exclusive with thumbprint, handoff, and passenger-manifest variants.
 
 ## Last Completed Cycle
 

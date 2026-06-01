@@ -1223,6 +1223,20 @@ scenes:
       fingers find an emergency release. The blank destination sign begins to
       spell HOME one letter at a time.
     choices:
+      - id: listen_to_badge_proof_intercom
+        label: Listen as Mara answers the badge-proof line
+        to: mara_badge_proof_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: knows_badge_proof
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: read_mara_thumbprint
+            - notFlag: saw_mara_handoff
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_to_mara_thumbprint_intercom
         label: Listen as Mara remembers the torn thumbprint
         to: mara_thumbprint_intercom
@@ -1246,6 +1260,7 @@ scenes:
             - notFlag: read_passenger_manifest
             - notFlag: read_mara_thumbprint
             - notFlag: saw_mara_handoff
+            - notFlag: knows_badge_proof
         effects:
           set:
             heard_mara_goodbye: true
@@ -1622,6 +1637,19 @@ scenes:
         to: true_ending
         requires:
           notFlag: read_passenger_manifest
+
+  mara_badge_proof_intercom:
+    text: >
+      The ceiling speaker warms before Mara speaks. "You found the line on the
+      notice back," she says. "Badge proof required. For forty-three years that
+      sounded like a lock. Tonight you made it an answer." The badge in your
+      pocket ticks once against the release handle, and her voice steadies
+      around the old number. "Pull now. Let the proof open something instead of
+      holding me in place."
+    choices:
+      - id: pull_release_after_badge_proof_goodbye
+        label: Pull the release while the badge proof answers
+        to: true_ending
 
   mara_thumbprint_intercom:
     text: >

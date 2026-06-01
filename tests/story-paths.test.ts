@@ -1503,6 +1503,61 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("pays off the notice-back badge proof clue in Mara's final intercom", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "inspect_notice_back",
+      "take_lantern_after_notice_back",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_badge_proof_intercom",
+      "pull_release"
+    ]);
+
+    state = choose(story, state, "listen_to_badge_proof_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_badge_proof_intercom");
+    expect(observation.scene.text).toContain("Badge proof required");
+    expect(observation.scene.text).toContain("made it an answer");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_badge_proof_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_badge_proof_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("keeps the direct release available after Mara's handoff beat", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
