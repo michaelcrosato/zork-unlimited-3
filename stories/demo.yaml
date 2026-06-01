@@ -670,10 +670,14 @@ scenes:
           set:
             freed_mara: true
       - id: return_for_marked_map
-        label: Return to the service room for the marked map
-        to: service_room
+        label: Recover the marked map and return to Mara's ledger row
+        to: signal_ledger
         requires:
           notItem: map
+        effects:
+          addItem: map
+          set:
+            knows_platform: true
       - id: return_for_mara_badge
         label: Return to the service room for Mara's badge
         to: service_room

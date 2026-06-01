@@ -935,7 +935,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.freed_mara).toBe(true);
   });
 
-  it("blocks mapless manifest clears and points players back to the marked map", async () => {
+  it("blocks mapless manifest clears and resumes at the ledger after map recovery", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -968,15 +968,12 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("return_for_marked_map");
 
     state = choose(story, state, "return_for_marked_map");
-    state = choose(story, state, "take_map");
-    state = choose(story, state, "return_to_lit_platform");
-    state = choose(story, state, "use_token_slot");
-    state = choose(story, state, "reopen_signal_ledger");
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("signal_ledger");
     expect(observation.state.inventory).toContain("map");
+    expect(choiceIds).not.toContain("return_for_marked_map");
     expect(choiceIds).toContain("clear_manifest_and_mara_from_ledger");
   });
 

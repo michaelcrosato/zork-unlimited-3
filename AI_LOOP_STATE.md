@@ -11,50 +11,53 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add score-beat detail to final transcripts.
-- Why this matters: Current route metrics are healthy and all endings remain
-  discoverable, so the next highest-value improvement is evidence quality.
-  Transcripts already show score, objectives, choices, inventory, and flags, but
-  they do not explain which scored story beats were earned or missed. Adding a
-  compact achievement breakdown helps future autonomous agents critique pacing
-  and distinguish partial routes without manually decoding raw flags.
+- Main objective: Smooth map recovery after players read Mara's ledger without
+  the marked map.
+- Why this matters: Cycle evidence showed the core route is healthy, but the
+  adaptive exploratory route could still stall after entering the signal booth
+  unprepared, reading the ledger, returning for the map, and landing back on the
+  lit platform. The warning was useful; the extra service-room and platform
+  hops were not. Recovering the map directly back to Mara's row keeps the
+  player focused on the active ledger objective.
 - Tasks:
-  - Extend final transcript output with earned and missing score beats.
-  - Preserve existing transcript sections for objectives, choices, inventory,
-    and flags.
-  - Add regression coverage for stalled-route and ending transcript output.
-  - Run health and an actual CLI playthrough.
+  - Change the mapless `signal_ledger` recovery choice to add the map and
+    return directly to `signal_ledger`.
+  - Update story-path regression coverage for the mapless manifest route.
+  - Run focused tests, full health, an actual CLI playthrough, and an evidence
+    cycle.
 - Evidence:
-  - `renderTranscript` now prints a `Score beats:` section after the final
-    score, listing each achievement as earned or missing with its point value.
-  - The observation score type now exposes achievement details explicitly.
-  - Updated transcript regression coverage for both a stalled signal-booth
-    route with missing beats and a 100/100 true-ending route with no missing
-    beats.
-  - `npm test -- tests/transcript.test.ts` passed with 2 tests.
-  - `npm run lint` passed.
+  - `return_for_marked_map` now reads "Recover the marked map and return to
+    Mara's ledger row", adds the map, and keeps the player at `signal_ledger`.
+  - The recovered state immediately exposes the correct clear choice, including
+    `clear_manifest_and_mara_from_ledger` when the kept-passenger manifest was
+    read before map recovery.
+  - `npm test -- tests/story-paths.test.ts` passed with 53 tests.
   - `npm run health` passed with formatting, TypeScript, 74 tests, validation,
     and coverage playtest.
   - Validation reports 43 scenes, 6 endings, and all 43 reachable.
   - Health coverage playtest reports 0 unfinished runs, all 43 scenes visited,
     best score 100/100, average score 95.08, and 9984 max-score runs.
-  - Manual CLI route took the Mara thumbprint and handoff beats, listened to
-    Mara's final intercom, and reached `true_ending` at 100/100.
-  - The rendered CLI transcript final state now includes all earned score beats
-    before objectives, making the payoff auditable without reading raw flags.
+  - Manual CLI play deliberately entered the signal booth without the map,
+    read the passenger manifest, recovered the map directly back to
+    `signal_ledger`, cleared the manifest and Mara, took the passenger farewell
+    beat, and reached `passenger_true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, an actual
+    MCP true-ending playthrough at 100/100, and an adaptive exploratory
+    true-ending route at 100/100.
 - Playtest notes:
-  - The completed-route transcript stays readable: `Scene`, `Score`, score
-    beats, objectives, choices, inventory, and flags appear in a logical order.
-  - The score-beat section is useful for stalled routes because it names missed
-    content such as Mara's ledger clear directly instead of requiring flag
-    interpretation.
-  - No route bugs were found in the manual CLI playthrough.
-- Follow-up: Consider whether playtest summaries should also report common
-  missed score beats for unfinished or non-ideal runs.
+  - The recovery choice now reads as a continuation of the warning rather than
+    a detour through already-solved rooms.
+  - Repeating the same `signal_ledger` prose after map recovery is slightly
+    mechanical, but the newly available clear choice makes the next action
+    obvious.
+  - No route bugs were found in manual CLI play or the evidence cycle.
+- Follow-up: Consider adding a short dedicated "map recovered" ledger beat if
+  future transcripts need stronger prose feedback for this direct recovery.
 - Risks:
-  - Transcript output changes may affect snapshot-like consumers. Focused
-    transcript tests cover the new section while preserving existing final-state
-    details.
+  - Directly adding the map abstracts travel to the service room. The route was
+    already abstracted from `signal_map_warning`, and focused tests plus
+    playthrough evidence confirm the branch remains coherent and finishable.
 
 ## Last Completed Cycle
 
