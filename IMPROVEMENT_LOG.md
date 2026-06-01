@@ -4,6 +4,75 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Long-Run Loop Hardening
+
+### Current Plan
+
+- Main objective: Keep the autonomous loop alive and useful during long AFK
+  runs.
+- Why this matters: The captured loop output showed that a stale MCP
+  true-ending route could throw before the agent received a repair prompt. A
+  two-week run needs both uptime recovery and enough report context to avoid
+  repetitive low-impact changes.
+- Tasks:
+  - Preserve pre-agent evidence failures as actionable reports/prompts.
+  - Retry unexpected `npm run ai:loop` exits from `loop.sh`.
+  - Add long-run effectiveness signals to each cycle report.
+  - Verify with health, evidence-only AI cycle, and a player-style route.
+- Risks: Retrying should keep failures visible in `ai-runs/` instead of hiding
+  persistent bugs.
+
+### Work Completed
+
+- Changes made:
+  - `src/ai-loop.ts` now reports MCP/playthrough failures in the generated
+    cycle instead of throwing before the agent prompt is written.
+  - `loop.sh` retries unexpected loop exits with `AI_LOOP_RETRY_DELAY_MS` and
+    supports `AI_LOOP_EXIT_ON_ERROR=1` for debugging.
+  - Cycle reports now include true-ending rate, non-ideal ending pressure,
+    max-score rate, coverage completeness, adaptive route status, and a primary
+    long-run pressure recommendation.
+  - Root `OUTPUTLOG.md` is ignored so pasted terminal transcripts do not create
+    a dirty AFK baseline.
+- Files/systems touched:
+  - `src/ai-loop.ts`
+  - `loop.sh`
+  - `README.md`
+  - `.gitignore`
+  - `AI_LOOP_STATE.md`
+- New content/features added:
+  - Long-run effectiveness reporting for autonomous prioritization.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+  - Manual CLI true-ending route
+- What worked:
+  - Health passes with formatting, TypeScript, 53 tests, validation, and
+    coverage playtest.
+  - The latest evidence-only cycle wrote a report with the new effectiveness
+    section and reached `true_ending` through the actual MCP playthrough.
+  - Manual CLI play reached `true_ending` at 100/100.
+- What felt bad/confusing:
+  - The adaptive route can still stall at the service room after repeated hub
+    returns, so future content work should focus on pacing and richer progress
+    once core reachability remains healthy.
+- Bugs found:
+  - The original loop could terminate before giving the agent a fix prompt when
+    pre-agent MCP evidence failed.
+
+### Next Iteration
+
+- Highest-priority next task: Use the new long-run pressure signal to choose
+  larger design gains when route metrics are saturated.
+- Reason: Current true-ending and coverage metrics are healthy enough that the
+  game now benefits more from depth and pacing than from another clue-only pass.
+- Planned action:
+  - Add a new meaningful late-game beat or system only after preserving health,
+    MCP play, and coverage explainability.
+
 ## 2026-06-01 - Promise-Aware Platform Routing
 
 ### Current Plan
