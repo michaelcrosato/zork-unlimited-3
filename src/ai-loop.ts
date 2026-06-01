@@ -326,6 +326,10 @@ ${(
 ).slice(-3000)}
 \`\`\`
 
+## Long-Run Effectiveness Signals
+
+${renderEffectivenessSignals(randomSummary, coverageSummary, mcpEvidence)}
+
 ## AI Feedback
 
 ${failed.length > 0 ? "- Fix failing health checks before changing content." : "- Health checks are green."}
@@ -360,6 +364,22 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
 
   if (coverage?.unvisitedScenes?.length) {
     suggestions.push(`Fix coverage gaps for: ${coverage.unvisitedScenes.join(", ")}.`);
+  }
+
+  const trueEndingRate = endingRate(random, "true_ending");
+  const maxScoreRate = random?.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  if (
+    random &&
+    coverage &&
+    random.unfinished === 0 &&
+    !random.unvisitedScenes?.length &&
+    !coverage.unvisitedScenes?.length &&
+    trueEndingRate >= 0.35 &&
+    maxScoreRate >= 0.25
+  ) {
+    suggestions.push(
+      "Core route metrics are healthy; favor meaningful new scenes, stronger character beats, or pacing improvements over another clue-only polish pass."
+    );
   }
 
   if (suggestions.length === 0) {
@@ -402,12 +422,87 @@ async function readPromptContract(): Promise<string> {
 
 function asSummary(value: unknown):
   | {
+      runs?: number;
       unfinished?: number;
       unvisitedScenes?: string[];
+      endings?: Record<string, number>;
+      averageScore?: number;
+      maxScoreRuns?: number;
     }
   | undefined {
   if (!value || typeof value !== "object") return undefined;
   return value as { unfinished?: number; unvisitedScenes?: string[] };
+}
+
+function renderEffectivenessSignals(
+  randomSummary: unknown,
+  coverageSummary: unknown,
+  mcpEvidence: McpEvidence
+): string {
+  const random = asSummary(randomSummary);
+  const coverage = asSummary(coverageSummary);
+  if (!random || !coverage) {
+    return "- Summary data was unavailable; repair report parsing before using long-run trends.";
+  }
+
+  const trueEndingRate = endingRate(random, "true_ending");
+  const badEndingRate = endingRate(random, "bad_ending");
+  const lostEndingRate = endingRate(random, "lost_ending");
+  const escapeEndingRate = endingRate(random, "escape_ending");
+  const maxScoreRate = random.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  const coverageComplete = (coverage.unvisitedScenes?.length ?? 0) === 0;
+  const exploratoryComplete = mcpEvidence.exploratory?.ok === true;
+
+  return [
+    `- Random true-ending rate: ${formatPercent(trueEndingRate)}.`,
+    `- Random non-ideal ending pressure: bad ${formatPercent(badEndingRate)}, lost ${formatPercent(
+      lostEndingRate
+    )}, escape ${formatPercent(escapeEndingRate)}.`,
+    `- Random max-score rate: ${formatPercent(maxScoreRate)}; average score: ${
+      random.averageScore ?? "unknown"
+    }.`,
+    `- Coverage completeness: ${
+      coverageComplete ? "all scenes visited" : `missing ${coverage.unvisitedScenes?.join(", ")}`
+    }.`,
+    `- Adaptive route: ${
+      exploratoryComplete
+        ? `finished at ${mcpEvidence.exploratory?.finalScene ?? "an ending"}`
+        : `stopped at ${mcpEvidence.exploratory?.finalScene ?? "unknown"}`
+    }.`,
+    `- Primary long-run pressure: ${identifyLongRunPressure(random, coverage, exploratoryComplete)}`
+  ].join("\n");
+}
+
+function identifyLongRunPressure(
+  random: NonNullable<ReturnType<typeof asSummary>>,
+  coverage: NonNullable<ReturnType<typeof asSummary>>,
+  exploratoryComplete: boolean
+): string {
+  if (random.unfinished && random.unfinished > 0) {
+    return "reduce dead ends or excessive loops before expanding content.";
+  }
+  if (coverage.unvisitedScenes?.length) {
+    return "repair coverage reachability before adding new branches.";
+  }
+  if (!exploratoryComplete) {
+    return "smooth the route where adaptive play stalls, especially repeated hub returns.";
+  }
+  if (endingRate(random, "true_ending") >= 0.35 && (random.averageScore ?? 0) >= 60) {
+    return "core guidance is healthy; invest in richer story depth, endings, or systems.";
+  }
+  return "improve normal-player discoverability for the true ending.";
+}
+
+function endingRate(
+  summary: { runs?: number; endings?: Record<string, number> } | undefined,
+  endingId: string
+): number {
+  if (!summary?.runs) return 0;
+  return Number(summary.endings?.[endingId] ?? 0) / summary.runs;
+}
+
+function formatPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
 }
 
 function parseLastJson(output: string): unknown {

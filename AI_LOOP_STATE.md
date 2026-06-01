@@ -28,11 +28,16 @@ preserving normal-play true-ending discoverability.
     token are gathered but the map is still missing.
   - Convert pre-agent evidence failures into actionable cycle reports/prompts.
   - Make `loop.sh` retry unexpected Node loop exits with a configurable backoff.
+  - Add long-run effectiveness signals to cycle reports so agents can
+    distinguish reachability problems from saturated metrics that call for
+    deeper content or pacing improvements.
   - Run story-path tests, full health, an evidence-only AI cycle, and an actual
     route through the game.
 - Evidence:
   - Updated `take_map` label to "Take the marked Platform 13 map Mara asked
     for".
+  - Moved the promised-Mara missing-map objective ahead of the generic chalk
+    arrows objective so Mara's request is the first prompt in that state.
   - Added a regression asserting that the exact final-missing-map state shows
     the map objective first, exposes the clearer map label, and still withholds
     `go_to_platform`.
@@ -40,14 +45,20 @@ preserving normal-play true-ending discoverability.
     report instead of throwing before the agent prompt is written.
   - `loop.sh` now retries unexpected `npm run ai:loop` exits unless
     `AI_LOOP_EXIT_ON_ERROR=1` is set.
-  - `npm run health` passed with formatting, TypeScript, 52 tests, validation,
+  - Cycle reports now include true-ending rate, non-ideal ending pressure,
+    max-score rate, coverage completeness, adaptive route status, and a primary
+    long-run pressure recommendation.
+  - `npm test -- tests/story-paths.test.ts` passed with 37 tests.
+  - `npm run health` passed with formatting, TypeScript, 53 tests, validation,
     and coverage playtest.
-  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and the
-    actual MCP playthrough reached `true_ending`.
-  - Manual CLI route collected the map, cleared Mara, listened to the intercom,
-    and reached `true_ending` at 100/100.
-- Follow-up: Add higher-level progress metrics so very long runs can avoid
-  low-impact story churn and prioritize larger design gains.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed twice;
+    the latest report showed the new long-run section and the actual MCP
+    playthrough reached `true_ending`.
+  - Manual CLI route promised Mara, collected badge/fuse/token before the map,
+    confirmed the service room showed the clearer map label and map objective
+    first, then recovered the map and reached `true_ending` at 100/100.
+- Follow-up: Use the new long-run pressure signal to prioritize richer story
+  depth, endings, or systems once route guidance remains healthy.
 - Risks:
   - This is intentionally a copy-level guidance change. It should not affect
     reachability, but transcript fixture labels and any brittle label checks may

@@ -76,6 +76,9 @@ Run without allowing an agent to edit the repo:
 
 - `health` is the required gate before commits.
 - `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
+  Reports include long-run effectiveness signals such as true-ending rate,
+  non-ideal ending pressure, max-score rate, coverage completeness, and the
+  current adaptive-route pressure point.
 - `ai:loop` repeats cycles indefinitely until interrupted. After the agent
   returns, it detects repo changes or unpushed commits, reruns `health`, plays
   the game through MCP, commits verified changes, and pushes to GitHub.
