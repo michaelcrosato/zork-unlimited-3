@@ -62,7 +62,7 @@ export function observe(story: Story, state: GameState): Observation {
       inventory: [...state.inventory]
     },
     score: scoreState(state),
-    objectives: getObjectives(state)
+    objectives: scene.ending ? [] : getObjectives(state)
   };
 }
 

@@ -4,6 +4,232 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Repo Quality Pass
+
+### Current Plan
+
+- Main objective: Stabilize and modernize the repo after the latest gameplay
+  cycle without changing public CLI/MCP behavior.
+- Why this matters: Baseline health was green, but `npm audit` reported a
+  moderate Vite/esbuild chain through the older Vitest stack, and `ai:cycle`
+  still used a stale locker route.
+- Tasks:
+  - Upgrade vulnerable dev dependencies with tests proving compatibility.
+  - Simplify validation reference scanning.
+  - Add focused tests for validator and ending-observation behavior.
+  - Verify health, audit, autonomous evidence, and a real playthrough.
+
+### Work Completed
+
+- Changes made:
+  - Upgraded Vitest from 2.x to 4.1.7 and refreshed `package-lock.json`.
+  - Reused a single known item/flag catalog during story validation instead of
+    rebuilding it for every conditional choice.
+  - Cleared derived objectives from ending observations.
+  - Updated the AI-loop MCP true-ending route for the persistent locker flow.
+  - Ignored transient `.codex/tmp/` lock files.
+  - Synced README scene count with validation output.
+- Files/systems touched:
+  - `package.json`
+  - `package-lock.json`
+  - `.gitignore`
+  - `README.md`
+  - `src/engine.ts`
+  - `src/validate.ts`
+  - `src/ai-loop.ts`
+  - `tests/engine.test.ts`
+  - `tests/validate.test.ts`
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/engine.test.ts tests/validate.test.ts`
+  - `npm run health`
+  - `npm audit --audit-level=moderate`
+  - `npm run ai:cycle`
+  - CLI route through the current true-ending path
+- Quantitative metrics:
+  - Unit tests: 19 passing.
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Coverage playtest: all scenes visited, best score 100/100.
+  - Audit: 0 moderate-or-higher vulnerabilities.
+  - True route: `true_ending`, 100/100.
+- What worked:
+  - Vitest 4 is compatible with the existing suite on Node 22.
+  - The autonomous MCP route now exercises the actual current locker flow.
+  - Ending observations no longer show stale final objectives.
+- What felt bad/confusing:
+  - `ai:cycle` initially failed because the verifier route was stale; the failure
+    was useful and is now covered by the cycle itself.
+
+### Next Iteration
+
+- Highest-priority next task: Improve midgame clarity around the release route
+  after the player has the map, badge, and radio clue.
+- Reason: Repo health is green, but random play still seldom reaches
+  `true_ending` compared with lesser endings.
+
+## 2026-06-01 - Cycle 1: Locker Discovery Flow
+
+### Current Plan
+
+- Main objective: Improve normal-play discovery of Mara's badge without adding
+  a new puzzle gate.
+- Why this matters: Random evidence showed players often searched the locker
+  but still missed the full true-ending chain. The old item flow sent players
+  back to the service room after taking one item, making the badge easy to skip
+  after grabbing the fuse.
+- Tasks:
+  - Keep the locker scene open after taking the fuse or badge.
+  - Add regression coverage that the remaining item stays visible.
+  - Verify story validation, playtest reachability, and a real route to the
+    true ending.
+- Risks:
+  - Keeping players in the locker too long could create a dead-feeling loop.
+  - The change should not remove deliberate alternate endings.
+
+### Work Completed
+
+- Changes made:
+  - Changed `take_fuse` and `take_badge` to remain in `locker`.
+  - Players now leave the locker through `close_locker` after seeing both
+    true-ending tools.
+  - Updated critical path tests for the new interaction flow.
+  - Added a focused test that verifies taking one locker item leaves the other
+    visible.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+- New content/features added:
+  - No new scenes; this is a flow and affordance improvement.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run format:check`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 262 --strategy coverage --summary --json`
+  - CLI route through the new locker flow into `true_ending`
+- Quantitative metrics:
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Story-path tests: 11 passing.
+  - Random playtest, 250 runs: 247 ended, 3 unfinished, all scenes visited,
+    `true_ending` reached 4 times, best score 100/100, 3 max-score runs,
+    average score 37.86/100.
+  - Coverage playtest, 262 runs: all scenes visited, best score 100/100, 2
+    max-score runs.
+  - True route: `true_ending`, 100/100.
+- What worked:
+  - The locker now behaves more like a natural container: taking one object does
+    not hide the other behind another search action.
+  - Random play found max score and the true ending more often than the previous
+    evidence sample.
+  - Alternate endings remain reachable.
+- What felt bad/confusing:
+  - The locker text repeats after each pickup because story scenes are static.
+    This is acceptable for now but could be polished later with state-aware text
+    if the engine adds it.
+  - Random play still favors `bad_ending` and `good_ending`, so midgame
+    objective clarity remains the main weakness.
+- Bugs found:
+  - One test path still used the old repeated `search_locker` step; updating it
+    caught and fixed the stale route assumption.
+
+### Next Iteration
+
+- Highest-priority next task: Improve midgame clarity around the release route
+  after the player has the map, badge, and radio clue.
+- Reason: Badge discovery is less missable now, but true-ending completion still
+  depends on players connecting the booth ledger to the release action.
+- Planned action:
+  - Inspect transcripts where players reach `train_car` with partial knowledge.
+  - Add a small clue or objective update that makes pulling the release feel like
+    the natural final action after clearing Mara.
+
+## 2026-06-01 - Cycle 1: Lit-Platform Ledger Warning
+
+### Current Plan
+
+- Main objective: Improve normal-play discovery of the true-ending requirements
+  at the late platform fork.
+- Why this matters: Evidence showed coverage and goal play can reach
+  `true_ending`, but random play still rarely finds it.
+- Tasks:
+  - Add a clear in-world warning before boarding from the lit platform while
+    Mara remains uncleared.
+  - Steer players carrying the signal token toward the booth instead of offering
+    premature boarding.
+  - Preserve lesser endings for deliberate alternate choices.
+  - Keep health, coverage, and a real playthrough green.
+- Risks:
+  - Too much steering could flatten the ending choice.
+  - Too little steering would not improve player comprehension.
+
+### Work Completed
+
+- Changes made:
+  - Added `ledger_warning`, a late warning scene that calls out Mara's uncleared
+    ledger before boarding.
+  - Updated `lit_platform` text to make the token slot more active.
+  - Hid the premature boarding choice when the player already has the token.
+  - Added a return route from the warning back to the tunnel for players missing
+    the token.
+  - Updated npm scripts from `tsx src/...` to `node --import tsx src/...` so
+    health, CLI, MCP, and loop commands avoid sandbox-blocked `tsx` IPC sockets.
+  - Added focused story-path tests for the warning and token-carrier behavior.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `package.json`
+  - `AI_LOOP_STATE.md`
+- New content/features added:
+  - One new story scene: `ledger_warning`.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - Targeted story-path tests
+  - CLI random and coverage playtests
+  - CLI route through the new warning into `good_ending`
+  - CLI route through `true_ending`
+- Quantitative metrics:
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Tests: 4 files, 16 tests passing.
+  - Coverage playtest: all scenes visited, best score 100/100.
+  - Random playtest, 250 runs: `ledger_warning` visited, `true_ending` still
+    reached rarely, best score 90/100.
+  - True route: `true_ending`, 100/100.
+  - Warning route: `good_ending`, 55/100.
+- What worked:
+  - The new warning makes the unresolved ledger explicit without deleting the
+    good ending.
+  - Carrying the token now pushes attention toward the signal booth at the exact
+    moment it matters.
+  - Health now runs in this sandbox with the revised npm scripts.
+- What felt bad/confusing:
+  - Random play still seldom reaches `true_ending`; the remaining problem is
+    probably earlier badge/identity discovery and route ordering, not just the
+    late platform fork.
+- Bugs found:
+  - `tsx src/...` package scripts attempted to create IPC sockets under `/tmp`
+    and failed with `EPERM` in this sandbox. Switching to `node --import tsx`
+    fixed the command path.
+
+### Next Iteration
+
+- Highest-priority next task: Improve normal-play discovery of Mara's badge and
+  the identity requirement before the player reaches the platform.
+- Reason: The late fork is now clearer, but random play still rarely assembles
+  the full true-ending chain.
+- Planned action:
+  - Inspect random suspicious paths that reach the platform without the badge.
+  - Add one earlier clue or affordance that makes searching the locker and taking
+    the badge feel necessary rather than completionist.
+
 ## 2026-05-31 16:12 PT - Iteration 0001: Baseline Scoring Instrumentation
 
 ### Current Plan

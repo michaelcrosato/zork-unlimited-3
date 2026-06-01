@@ -4,23 +4,48 @@ This file is the handoff point for future autonomous agents.
 
 ## Current Objective
 
-Make the CYOA engine and story capable of indefinite AI-assisted improvement
-through repeatable planning, playtesting, validation, agent execution, and
-commits.
+Keep the autonomous CYOA engine maintainable, secure, and playable while
+preserving normal-play true-ending discoverability.
+
+## Active Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push after final green gate.
+- Main objective: Repo quality pass after the locker-discovery cycle.
+- Outcome: Removed the known dev-dependency audit finding, simplified
+  validation reference scanning, fixed stale autonomous true-ending playback,
+  and cleared objectives on ending observations.
+- Evidence:
+  - `npm audit --audit-level=moderate` reports 0 vulnerabilities.
+  - `npm run ai:cycle` passes and writes MCP evidence reports.
+  - CLI true-ending route reaches `true_ending` at 100/100.
+  - Focused engine and validation tests pass.
+  - Story validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Coverage playtest, 262 runs: all scenes visited, best score 100/100.
+- Follow-up: Random play improved but still usually settles for lesser endings,
+  so the next pass should improve how players prioritize the release route after
+  collecting the map and badge.
 
 ## Last Completed Cycle
 
-- Date: 2026-05-31
-- Change: Improved token discoverability via personnel file, dispatcher warning, and platform description. Optimized objective text in `src/engine.ts`. Upgraded `src/ai-loop.ts` to perform dynamic story discovery (`list_stories`), strict validation check (`validate_story`), suspicious path sampling, repeatedly call `get_scene` for playthrough verification, and execute a cycle-adaptive exploratory route based on `seededRandom` choice history traversal. Added `.codex/config.toml` robust `cwd = "."` settings.
+- Date: 2026-06-01
+- Change: Upgraded Vitest to remove the Vite/esbuild audit finding, optimized
+  validation reference collection, updated docs and ignore rules, fixed the
+  autonomous MCP true-ending route, and hid objectives after endings.
 - Evidence:
-  - Bounded smoke test successfully executed `CODEX_HOME="$PWD/.codex" AI_LOOP_MAX_CYCLES=1 ./loop.sh --once` completely green.
-  - Prettier, lint, and all Vitest unit and CYOA validation and playtests passed flawlessly.
+  - `npm run health` passes with 19 tests.
+  - `npm run ai:cycle` passes and performs MCP validation/play.
+  - `npm audit --audit-level=moderate` reports 0 vulnerabilities.
+  - CLI true-ending route reaches `true_ending` at 100/100 and ending
+    observations now have no active objectives.
 - MCP notes:
   - Required tools verified: `list_stories`, `validate_story`, `start_game`, `get_scene`, `choose_option`, `get_state`, `get_transcript`, `run_playtest`.
-  - True-ending route reaches `true_ending` at 100/100.
-  - Exploratory route dynamically explores non-happy paths (e.g. `bad_ending` at 5/100) adapting based on cycle seed and traversal history, avoiding stuck loops.
-- Remaining weakness: random play reaches `true_ending` rarely but coverage play has 100% reachability.
-- Next task: Expand narrative depth and add more horror/transit atmosphere while maintaining validation gates.
+  - `src/ai-loop.ts` true-ending route now matches the current locker flow.
+- Remaining weakness: Random play reaches `true_ending` more often than before
+  but still rarely compared with `good_ending` and `bad_ending`.
+- Next task: Improve midgame objective clarity after players learn Mara's release
+  route so `pull_release` feels like the intended culmination, not an optional
+  hidden action.
 - Risks: Keep gameplay choices meaningful and avoid making the true ending trivial.
 
 ## Last Known Priorities

@@ -11,12 +11,12 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "health": "npm run format:check && npm run lint && npm test && npm run cyoa -- validate stories/demo.yaml --json && npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json",
-    "ai:cycle": "tsx src/ai-loop.ts --once",
-    "ai:loop": "tsx src/ai-loop.ts",
-    "cyoa": "tsx src/cli.ts",
-    "mcp": "tsx src/mcp.ts",
-    "validate": "tsx src/cli.ts validate stories/demo.yaml",
-    "playtest": "tsx src/cli.ts playtest stories/demo.yaml --runs 50"
+    "ai:cycle": "node --import tsx src/ai-loop.ts --once",
+    "ai:loop": "node --import tsx src/ai-loop.ts",
+    "cyoa": "node --import tsx src/cli.ts",
+    "mcp": "node --import tsx src/mcp.ts",
+    "validate": "node --import tsx src/cli.ts validate stories/demo.yaml",
+    "playtest": "node --import tsx src/cli.ts playtest stories/demo.yaml --runs 50"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -28,6 +28,6 @@
     "prettier": "^3.8.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.7"
   }
 }
