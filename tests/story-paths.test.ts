@@ -444,7 +444,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("search_locker");
   });
 
-  it("lets prepared players install the fuse directly from the inspected gate control", async () => {
+  it("lets prepared players continue directly from the inspected gate control to the signal booth", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -468,16 +468,46 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("gate_control");
-    expect(choiceIds[0]).toBe("install_fuse_from_gate_control");
+    expect(choiceIds[0]).toBe("install_fuse_and_insert_token");
+    expect(choiceIds).not.toContain("install_fuse_from_gate_control");
     expect(choiceIds).toContain("return_to_service_room_for_parts");
 
-    state = choose(story, state, "install_fuse_from_gate_control");
+    state = choose(story, state, "install_fuse_and_insert_token");
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.scene.id).toBe("signal_booth");
     expect(observation.state.flags.platform_lit).toBe(true);
-    expect(choiceIds).toContain("use_token_slot");
+    expect(choiceIds).toContain("inspect_signal_ledger");
+  });
+
+  it("still lets gate-control players install only the fuse when the token is missing", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "inspect_gate_control"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("gate_control");
+    expect(choiceIds).toContain("install_fuse_from_gate_control");
+    expect(choiceIds).not.toContain("install_fuse_and_insert_token");
+
+    state = choose(story, state, "install_fuse_from_gate_control");
+    expect(observe(story, state).scene.id).toBe("lit_platform");
   });
 
   it("surfaces Mara's ledger thread from the service room", async () => {

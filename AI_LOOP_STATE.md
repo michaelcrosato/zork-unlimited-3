@@ -11,48 +11,49 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make loop evidence understand both true-ending variants.
-- Why this matters: The game now has the original `true_ending` and the
-  manifest-aware `passenger_true_ending`, both max-score ideal outcomes. The
-  loop report was still calculating normal-play success from `true_ending`
-  alone, which made healthy discoverability look weaker than it was and could
-  steer future agents toward unnecessary clue churn.
+- Main objective: Smooth the fully prepared gate-control route into the signal
+  booth.
+- Why this matters: The latest adaptive route reached the lit platform with the
+  fuse, map, token, and badge already gathered, then stopped before the ledger
+  sequence. When the access plate is open and every signal-booth tool is in
+  hand, splitting fuse installation and token insertion into two prompts adds a
+  low-value beat on the main route.
 - Tasks:
-  - Report the combined ideal-ending rate for `true_ending` and
-    `passenger_true_ending`.
-  - Keep the ending breakdown visible so agents can still see which variant is
-    being reached.
-  - Teach the goal playtest strategy that `passenger_true_ending` is an ideal
-    destination.
-  - Add regression coverage for the new evidence math and goal-strategy
-    ranking.
-  - Run focused tests, full health, and an actual playthrough.
+  - Add a combined gate-control action for players carrying the fuse, token,
+    and map.
+  - Preserve the existing fuse-only install path for players still missing the
+    token or map.
+  - Add regression coverage for both prepared and underprepared gate-control
+    states.
+  - Run focused tests, full health, and an actual playthrough through the new
+    route.
 - Evidence:
-  - Added ideal-ending evidence helpers that combine `true_ending` and
-    `passenger_true_ending` while preserving a visible per-ending breakdown.
-  - Updated long-run effectiveness reporting and next-action heuristics to use
-    the combined ideal-ending rate.
-  - Updated the goal playtest destination score so `passenger_true_ending` is
-    ranked as strongly as `true_ending`.
-  - Added regression coverage for ideal-ending evidence math and manifest true
-    ending goal-strategy ranking.
-  - `npm test -- tests/ai-loop.test.ts` passed with 6 tests.
-  - `npm test -- tests/playtest.test.ts` passed with 6 tests.
-  - `npm run health` passed with formatting, TypeScript, 60 tests, validation,
-    and coverage playtest.
-  - Manual CLI route through `read_passenger_manifest` and
+  - Added `install_fuse_and_insert_token`, available from `gate_control` when
+    the player has the fuse, map, and token, routing directly to
+    `signal_booth` while setting `platform_lit`.
+  - Narrowed `install_fuse_from_gate_control` so it remains available only when
+    the player has the fuse but still lacks the map or token.
+  - Updated story path coverage for the fully prepared direct signal-booth
+    route and the token-missing fuse-only route.
+  - `npm test -- tests/story-paths.test.ts` passed with 43 tests.
+  - `npm run health` passed with formatting, TypeScript, 61 tests,
+    validation, and coverage playtest.
+  - Manual MCP route through `inspect_gate_control`,
+    `install_fuse_and_insert_token`, `read_passenger_manifest`, and
     `pull_release_with_manifest` reached `passenger_true_ending` at 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
-    MCP validation, MCP playtests, and actual MCP playthrough.
-  - The regenerated report now shows `Random ideal-ending rate: 54%
-(true_ending: 27, passenger_true_ending: 27)` and identifies the adaptive
-    route stopping at `lit_platform` as the main remaining pressure.
-- Follow-up: After verification, inspect the next report to confirm the primary
-  long-run pressure shifts away from false true-ending discoverability concern
-  when the combined ideal-ending rate is healthy.
+    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
+    and an actual MCP true-ending playthrough at 100/100.
+  - The regenerated adaptive route now reaches `signal_booth` instead of
+    stopping at `lit_platform`, with the combined action visible in the
+    transcript.
+- Follow-up: The adaptive route still stops before the ending because the
+  exploratory route has a 30-step cap; next work can either continue smoothing
+  the ledger sequence or improve exploratory route depth/reporting.
 - Risks:
-  - This touches loop runtime code, so the outer loop should restart after the
-    commit to pick up fresh evidence-generation behavior.
+  - This bypasses the lit-platform prompt for one prepared gate-control path,
+    so tests must keep underprepared lit-platform recovery and escape routes
+    available.
 
 ## Last Completed Cycle
 
