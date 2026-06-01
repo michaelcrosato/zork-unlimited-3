@@ -715,14 +715,58 @@ describe("demo story critical paths", () => {
       "inspect_signal_ledger",
       "mark_mara_clear_from_ledger",
       "board_after_clearing_mara",
-      "pull_release"
+      "pull_release_with_manifest"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.text).toContain("a lost mitten");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("pays off the kept-passenger manifest after Mara's final intercom beat", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "listen_to_mara_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

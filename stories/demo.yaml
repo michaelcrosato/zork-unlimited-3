@@ -596,11 +596,20 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: pull_release_with_manifest
+        label: Pull the release for every name in the manifest
+        to: passenger_true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
       - id: pull_release
         label: Pull the emergency release
         to: true_ending
         requires:
-          flag: freed_mara
+          all:
+            - flag: freed_mara
+            - notFlag: read_passenger_manifest
       - id: ride_with_map
         label: Follow the map to the morning platform without touching the release
         to: good_ending
@@ -621,9 +630,16 @@ scenes:
       "Some of us have been counted for too long. Just pull the release and let
       the morning do the rest."
     choices:
+      - id: pull_release_after_manifest_goodbye
+        label: Pull the release for Mara and the manifest
+        to: passenger_true_ending
+        requires:
+          flag: read_passenger_manifest
       - id: pull_release_after_mara_goodbye
         label: Pull the release and let the morning in
         to: true_ending
+        requires:
+          notFlag: read_passenger_manifest
 
   gate_warning:
     text: >
@@ -663,6 +679,16 @@ scenes:
       The release opens every door at once. Names vanish from the signal ledger
       as passengers step into rain-bright morning. Mara's voice thanks you from
       the speaker, finally close enough to sound alive.
+    choices: []
+
+  passenger_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once. The manifest becomes a platform
+      full of ordinary miracles: a lunch tin snapping shut, a lost mitten
+      pressed into a child's hand, umbrellas lifting into rain-bright morning.
+      Mara's voice thanks each passenger by name, then lets the speaker go
+      quiet.
     choices: []
 
   good_ending:

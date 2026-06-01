@@ -11,52 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add optional late-game passenger-manifest lore in the signal
-  booth.
+- Main objective: Pay off the optional passenger manifest in the final release.
 - Why this matters: Route metrics are healthy and all scenes are reachable, so
-  the highest-value next improvement is story depth on the successful route
-  rather than another clue-only routing pass. The signal booth currently jumps
-  straight from "many passengers were kept" to Mara's single row; a brief
-  optional manifest makes the true-ending stakes feel broader without blocking
-  the critical path.
+  the highest-value next improvement is emotional payoff rather than another
+  clue-only routing pass. The manifest now broadens the stakes before Mara's
+  ledger row; the ending should acknowledge those specific passengers when the
+  player chose to read it.
 - Tasks:
-  - Add a one-time optional `passenger_manifest` scene from the signal booth.
-  - Keep `inspect_signal_ledger` first so the direct true-ending route remains
-    focused.
-  - Add regression coverage proving the detour returns to the ledger path and
-    still reaches the true ending at max score.
+  - Add a manifest-aware true-ending variant reached by release choices only
+    after `read_passenger_manifest`.
+  - Keep the existing `true_ending` route unchanged for players who skip the
+    optional manifest.
+  - Update scoring so both true-ending variants award max score.
+  - Add regression coverage for the direct release and Mara-intercom manifest
+    routes.
   - Run focused tests, full health, and an actual playthrough.
 - Evidence:
-  - Added `passenger_manifest`, reached by `read_passenger_manifest` from
-    `signal_booth` and returning through `return_to_signal_ledger_from_manifest`.
-  - The direct `inspect_signal_ledger` action remains first in the signal-booth
-    choice list.
-  - Added regression coverage for the optional manifest detour and adjusted the
-    existing badge-proof test to allow the new optional action.
-  - `npm test -- tests/story-paths.test.ts` passed with 41 tests.
-  - `npm run health` passed with formatting, TypeScript, 57 tests, validation,
-    and coverage playtest.
-  - Validation now reports 32 scenes, 5 endings, all 32 reachable.
-  - Coverage playtest visits `passenger_manifest`, has 0 unfinished runs, and
-    keeps best score at 100/100.
-  - Manual CLI route through `read_passenger_manifest` and
-    `return_to_signal_ledger_from_manifest` reached `true_ending` at 100/100
-    with `read_passenger_manifest` set.
+  - Added `passenger_true_ending`, reached only when the player read
+    `passenger_manifest` before pulling the release.
+  - Split release choices so manifest readers see `pull_release_with_manifest`
+    or `pull_release_after_manifest_goodbye`, while players who skip the
+    manifest still use the original `pull_release`/`true_ending` route.
+  - Updated scoring so both `true_ending` and `passenger_true_ending` satisfy
+    the final max-score achievement.
+  - Added regression coverage for the manifest direct-release path and the
+    manifest plus Mara-intercom path.
+  - Updated playtest strategy tests to count both true-ending variants as
+    successful max-score true endings.
+  - `npm test -- tests/story-paths.test.ts` passed with 42 tests.
+  - `npm test` passed with 58 tests.
+  - `npm run health` passed with formatting, TypeScript, all tests,
+    validation, and coverage playtest.
+  - Validation now reports 33 scenes, 6 endings, all 33 reachable.
+  - Coverage playtest visits `passenger_true_ending`, has 0 unfinished runs,
+    and keeps best score at 100/100.
+  - Manual CLI route through `read_passenger_manifest`,
+    `listen_to_mara_intercom`, and `pull_release_after_manifest_goodbye`
+    reached `passenger_true_ending` at 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
     MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
     and an actual MCP true-ending playthrough at 100/100.
-  - Final evidence random playtest, 100 runs: all ended, all 32 scenes visited,
-    `true_ending` reached 54 times, best score 100/100, average score 70.7.
-  - Final MCP random playtest, 250 runs: all ended, all 32 scenes visited,
-    `true_ending` reached 139 times, best score 100/100, average score 70.78.
-- Follow-up: The adaptive exploratory route still stops at fully prepared
-  `lit_platform` with `use_token_slot` as the obvious next action, suggesting
-  the next useful work is either adaptive route continuation/depth or another
-  small story payoff that does not add route ambiguity.
+  - Final evidence random playtest, 100 runs: all ended, all 33 scenes visited,
+    `true_ending` reached 27 times, `passenger_true_ending` reached 27 times,
+    best score 100/100, average score 70.7.
+  - Final MCP random playtest, 250 runs: all ended, all 33 scenes visited,
+    `true_ending` reached 67 times, `passenger_true_ending` reached 72 times,
+    best score 100/100, average score 70.78.
+- Follow-up: The adaptive exploratory route again stops at the fully prepared
+  `lit_platform` state with `use_token_slot` as the only available progress
+  action, suggesting the next useful work is route-continuation support or
+  transcript/report quality rather than additional clue text.
 - Risks:
-  - Adding an optional signal-booth choice can slightly lengthen random runs and
-    reduce max-score rate if it distracts route selection, so the direct ledger
-    action stays first and must remain healthy in playtests.
+  - Adding a second true-ending scene touches scoring and playtest summaries, so
+    both true-ending variants must remain max-score terminal outcomes.
 
 ## Last Completed Cycle
 

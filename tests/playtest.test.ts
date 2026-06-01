@@ -99,7 +99,7 @@ describe("playtest strategies", () => {
     expect(report.summary.unfinished).toBe(0);
     expect(report.summary.frontierSamples).toBeGreaterThan(0);
     expect(report.summary.unvisitedScenes).toEqual([]);
-    expect(report.summary.endings.true_ending).toBeGreaterThan(0);
+    expect(trueEndingCount(report.summary.endings)).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
     expect(report.summary.maxScoreRuns).toBeGreaterThan(0);
   });
@@ -109,8 +109,12 @@ describe("playtest strategies", () => {
     const report = runRandomPlaytests(story, 10, 40, "goal");
 
     expect(report.summary.unfinished).toBe(0);
-    expect(report.summary.endings.true_ending).toBe(10);
+    expect(trueEndingCount(report.summary.endings)).toBe(10);
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
     expect(report.summary.maxScoreRuns).toBe(10);
   });
 });
+
+function trueEndingCount(endings: Record<string, number>): number {
+  return (endings.true_ending ?? 0) + (endings.passenger_true_ending ?? 0);
+}
