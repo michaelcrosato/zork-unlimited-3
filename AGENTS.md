@@ -41,7 +41,7 @@ The default Codex sandbox is `workspace-write`; use full access only in trusted
 throwaway environments.
 
 ```bash
-AI_AGENT_CMD='codex exec --cd "$PWD" --sandbox workspace-write --ask-for-approval never -' ./loop.sh
+AI_AGENT_CMD='codex exec --cd "$PWD" --sandbox workspace-write -' ./loop.sh
 AI_CODEX_SANDBOX=danger-full-access ./loop.sh
 AI_AGENT_CMD='claude -p' ./loop.sh
 AI_AGENT_CMD='gemini -p' ./loop.sh

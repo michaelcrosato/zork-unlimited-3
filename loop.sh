@@ -70,7 +70,7 @@ if [[ "$EVIDENCE_ONLY" == "1" ]]; then
 elif [[ -z "${AI_AGENT_CMD:-}" ]]; then
   if command -v codex >/dev/null 2>&1; then
     CODEX_SANDBOX="${AI_CODEX_SANDBOX:-workspace-write}"
-    export AI_AGENT_CMD="codex exec --cd \"$ROOT_DIR\" --sandbox \"$CODEX_SANDBOX\" --ask-for-approval never -"
+    export AI_AGENT_CMD="codex exec --cd \"$ROOT_DIR\" --sandbox \"$CODEX_SANDBOX\" -"
   else
     export AI_LOOP_EVIDENCE_ONLY=1
     echo "No AI_AGENT_CMD set and codex was not found; running evidence-only."

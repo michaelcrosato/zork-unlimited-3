@@ -54,7 +54,7 @@ to the repo workspace, while the outer loop handles commits and pushes after
 verification:
 
 ```bash
-codex exec --cd "$PWD" --sandbox workspace-write --ask-for-approval never -
+codex exec --cd "$PWD" --sandbox workspace-write -
 ```
 
 Use `AI_CODEX_SANDBOX=danger-full-access` only for a trusted disposable
