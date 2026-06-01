@@ -473,6 +473,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("morning_transfer");
     expect(observation.scene.text).toContain("Mara's is still the clearest");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "study_morning_map_note",
       "listen_at_morning_doors",
       "step_into_morning",
       "turn_back_for_signal_token"
@@ -485,6 +486,43 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's badge number");
     expect(observation.scene.text).toContain("less like an ending");
+  });
+
+  it("adds an optional morning-map note before the safe escape choice", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "study_morning_map_note"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_map_note");
+    expect(observation.scene.text).toContain("SAFE TRANSFER IS NOT CLEARANCE");
+    expect(observation.scene.text).toContain("badge, the fuse, and the signal token");
+    expect(observation.state.flags.read_morning_map_note).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_morning_map_note",
+      "turn_back_from_map_note_for_token"
+    ]);
+
+    state = choose(story, state, "turn_back_from_map_note_for_token");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toEqual(["lantern", "map", "token"]);
+    expect(observation.state.flags.found_token).toBe(true);
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
   });
 
   it("adds an optional morning-door beat before the map-only good ending", async () => {

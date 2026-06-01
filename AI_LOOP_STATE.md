@@ -11,63 +11,67 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a richer optional passenger-answer beat after the kept
-  manifest doors open.
-- Why this matters: Current evidence shows true-ending discoverability and
-  completion health are strong, so the best next improvement is late-game story
-  depth. The passenger-manifest route already rewards careful play with a fuller
-  ending; hearing the released passengers answer their own names should make
-  that payoff feel more embodied without adding a mandatory step.
+- Main objective: Add an optional morning-map note for players taking the
+  map-only safe escape route.
+- Why this matters: Current evidence shows ideal-ending discovery is healthy,
+  while the lower-score `good_ending` route is still useful as a pressure valve.
+  A short note on the morning platform can clarify that safe transfer is not the
+  same as clearing the ledger, making the non-ideal escape feel intentional
+  without adding mandatory steps to the true-ending route.
 - Tasks:
-  - Add a one-time optional `passenger_answers` scene from
-    `passengers_released`.
-  - Preserve the direct `board_after_releasing_passengers` route so pacing and
-    automated completion stay stable.
-  - Add regression coverage proving the optional beat appears once, continues
-    to the third car, and preserves the existing passenger-platform branch.
+  - Add a one-time optional `morning_map_note` scene from `morning_transfer`.
+  - Keep direct safe escape, morning-door listening, and turn-back choices
+    available from `morning_transfer`.
+  - Let the note branch resolve directly to either `good_ending` or a shortened
+    turn-back route so optional beats do not stack past the coverage budget.
+  - Add regression coverage for the note, its content, and the token recovery
+    turn-back branch.
   - Run focused tests, full health, an actual CLI playthrough, and an evidence
     cycle.
 - Evidence:
-  - Added `passenger_answers`, a one-time optional scene from
-    `passengers_released` where released passengers answer roll call before the
-    player crosses directly to the third car.
-  - Kept direct `board_after_releasing_passengers` available from
-    `passengers_released`.
-  - Updated story-path regression coverage for the optional beat, its direct
-    third-car continuation, and the existing passenger-platform branch.
-  - Initial full health exposed that chaining this new beat with the existing
-    passenger farewell branch pushed 8 bounded coverage routes to `max_steps`.
-    The new beat now moves directly to `train_car`, keeping both optional
-    passenger beats available as alternate pacing choices rather than one long
-    mandatory-feeling chain.
-  - `npm test -- tests/story-paths.test.ts` passed with 56 tests.
-  - A focused 50-step coverage run passed with 0 unfinished routes, all 46
-    scenes visited, best score 100/100, average score 96.77, and 33024
+  - Added `morning_map_note`, reached from `morning_transfer` by reading the
+    final note written on the marked map.
+  - The note reinforces that safe transfer is not clearance and names the badge,
+    fuse, and signal token as the practical path back to Mara's ledger.
+  - The note offers direct safe escape or turn-back routes, preserving the
+    existing `morning_doors` scene as an alternate optional beat instead of
+    chaining both optional scenes.
+  - Initial coverage exposed 8 unfinished routes when the note returned to
+    `morning_transfer`; resolving the note directly reduced that to 1.
+  - The token turn-back route now recovers the token and returns to `tunnel`,
+    matching the existing morning-door shortcut and restoring 0 unfinished
+    coverage routes.
+  - `npm test -- tests/story-paths.test.ts` passed with 57 tests.
+  - Validation reports 47 scenes, 6 endings, and all 47 reachable.
+  - A focused 50-step coverage run passed with 0 unfinished routes, all 47
+    scenes visited, best score 100/100, average score 97.04, and 46080
     max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 77 tests, validation,
+  - A focused random run passed with 0 unfinished routes, all 47 scenes visited,
+    best score 100/100, average score 74.55, and 61 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 78 tests, validation,
     and coverage playtest.
-  - Validation reports 46 scenes, 6 endings, and all 46 reachable.
-  - Manual CLI play took the manifest route through `passenger_answers`,
-    `mara_manifest_intercom`, and `passenger_true_ending`, ending at 100/100.
+  - Manual CLI play took the map-only escape route, read the morning-map note,
+    turned back through the token shortcut, cleared Mara's ledger, and reached
+    `true_ending` at 100/100.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
     MCP true-ending playthrough at 100/100, and an adaptive exploratory
     true-ending route at 100/100.
 - Playtest notes:
-  - The new passenger-answer beat makes the manifest route feel more embodied:
-    the release is not just a ledger operation, because passengers answer as
-    people before the final release.
-  - Sending the optional beat directly to `train_car` kept pacing healthy and
-    prevented coverage from stacking every optional passenger scene into one
-    route.
-  - Direct `board_after_releasing_passengers` still leads to
-    `passenger_platform`, preserving the previous passenger farewell branch.
-  - No route bugs were found after the direct third-car adjustment.
-- Follow-up: Watch coverage branching and random max-score rate after adding
-  another optional manifest-route beat.
+  - The morning-map note makes the map-only route feel less like a simple
+    escape hatch and more like a survivable partial success with unfinished
+    obligations.
+  - Letting the note resolve directly kept the older morning-door beat useful
+    as an alternate reflection path, not another scene that every long route
+    must chain through.
+  - The token shortcut from the note reads coherently in play and keeps the
+    turn-back rescue path within the automated coverage budget.
+- Follow-up: If further optional morning-platform content is added, treat it as
+  an alternate branch with its own resolution rather than returning to
+  `morning_transfer`.
 - Risks:
-  - Adding another optional late-game scene can slightly increase route length.
-    Keeping the direct boarding choice available should preserve pacing.
+  - Optional scenes near the map-only escape route can still multiply with
+    turn-back routes; keep checking bounded coverage after each addition.
 
 ## Last Completed Cycle
 

@@ -878,6 +878,14 @@ scenes:
       morning. Behind you, through the closing doors, the underpass speaker
       keeps whispering names. Mara's is still the clearest.
     choices:
+      - id: study_morning_map_note
+        label: Read the final note written on the morning map
+        to: morning_map_note
+        requires:
+          notFlag: read_morning_map_note
+        effects:
+          set:
+            read_morning_map_note: true
       - id: listen_at_morning_doors
         label: Listen at the closing doors before you decide
         to: morning_doors
@@ -902,6 +910,41 @@ scenes:
             met_mara: true
       - id: turn_back_for_mara
         label: Hold the doors and return for Mara's ledger
+        to: service_room
+        requires:
+          item: token
+        effects:
+          set:
+            returned_from_safe_escape: true
+            knows_platform: true
+            met_mara: true
+
+  morning_map_note:
+    text: >
+      On the back of the marked map, a conductor's pencil has left one last
+      instruction: SAFE TRANSFER IS NOT CLEARANCE. Survive first, then send
+      someone back with the badge, the fuse, and the signal token. The morning
+      light makes the note look practical instead of cruel, but Mara's voice
+      keeps reading names behind the closing doors.
+    choices:
+      - id: leave_after_morning_map_note
+        label: Step into morning with the map's warning in mind
+        to: good_ending
+      - id: turn_back_from_map_note_for_token
+        label: Take the map's note seriously and recover the signal token
+        to: tunnel
+        requires:
+          notItem: token
+        effects:
+          addItem: token
+          set:
+            found_token: true
+            returned_from_safe_escape: true
+            knows_platform: true
+            knows_token_location: true
+            met_mara: true
+      - id: turn_back_from_map_note_for_mara
+        label: Take the map's note seriously and return for Mara's ledger
         to: service_room
         requires:
           item: token
