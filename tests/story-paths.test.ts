@@ -256,6 +256,36 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("board_without_clearing_mara");
   });
 
+  it("routes ledger-warning players directly to the stopped clock for the token", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "board_before_clearing_ledger",
+      "return_for_signal_token"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
+  });
+
   it("steers token carriers toward the signal booth from the lit platform", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

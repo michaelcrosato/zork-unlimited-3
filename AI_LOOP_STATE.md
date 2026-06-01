@@ -11,24 +11,21 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Reduce a normal-player miss where the player learns the
-  signal token is hidden in the clock, inspects the clock, then leaves without
-  taking it and drifts toward forcing the gate.
-- Outcome: Added a `knows_token_location` story flag from Mara's personnel file
-  and Mara's explicit warning, then gated `leave_clock` so the token becomes the
-  only clock action after that clue is known.
+- Main objective: Reduce the repetitive platform/service-room/tunnel loop after
+  the ledger warning tells players they still need the signal token.
+- Outcome: Routed `return_for_signal_token` from the ledger warning directly to
+  the stopped clock instead of the broad tunnel hub, and set
+  `knows_token_location` so the clock presents `take_token` as the only action.
 - Evidence:
-  - Added a story-path regression test that verifies the clock offers only
-    `take_token` after Mara's file explains the token location.
-  - `npm test -- tests/story-paths.test.ts` passes with 13 tests.
-  - `npm run health` passes with 21 tests, validation, and coverage playtest.
-  - CLI route through Mara's file, the stopped clock, the signal booth, and the
-    emergency release reaches `true_ending`.
-  - The clock observation after the file clue exposes only `take_token`, proving
-    the earlier skip is closed.
-- Follow-up: Compare random/coverage ending distribution and continue reducing
-  noisy loops around service room/platform travel without deleting meaningful
-  backtracking.
+  - Added a story-path regression test for the directed ledger-warning recovery
+    route.
+  - `npm test -- tests/story-paths.test.ts` passes with 14 tests.
+  - `npm run health` passes with 22 tests, validation, and coverage playtest.
+  - Manual CLI route intentionally boarded before the signal booth, followed the
+    new recovery choice to the clock, then reached `true_ending` at 100/100.
+- Follow-up: The coverage strategy still reports 18 unfinished runs out of 288;
+  the next pass should inspect whether those are harmless coverage-budget exits
+  or remaining loops worth smoothing.
 
 ## Last Completed Cycle
 

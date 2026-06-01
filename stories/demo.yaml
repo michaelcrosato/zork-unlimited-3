@@ -308,10 +308,13 @@ scenes:
         requires:
           item: token
       - id: return_for_signal_token
-        label: Return to the tunnel and find the signal token
-        to: tunnel
+        label: Return to the stopped clock for the signal token
+        to: clock
         requires:
           notItem: token
+        effects:
+          set:
+            knows_token_location: true
       - id: board_without_clearing_mara
         label: Board with only the map to guide you
         to: train_car
