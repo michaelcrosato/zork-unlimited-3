@@ -100,3 +100,33 @@ Write down what felt unclear, boring, unfair, or promising, then let that feedba
 - Reduce random unfinished playtest runs without removing meaningful backtracking.
 - Improve transcript/report quality so AI agents can critique pacing more easily.
 - Grow the story only when the validation and playtest tools can still explain coverage.
+
+## Cursor Cloud specific instructions
+
+This repo is a **Node.js CLI + stdio MCP** project. There is no web dev server, database, or Docker stack.
+
+### Runtime
+
+- Use **Node.js 22+** and **npm** (`package-lock.json`; prefer `npm ci` when the lockfile is present).
+- TypeScript runs via **tsx** (`node --import tsx`); there is no separate compile step for normal dev (`npm run build` / `lint` is `tsc --noEmit` only).
+
+### Health gate and tests
+
+- Pre-commit / CI gate: `npm run health` (Prettier check, typecheck, Vitest, story validate, 100-run coverage playtest on `stories/demo.yaml`). See `package.json` and `.github/workflows/ci.yml`.
+- Unit tests only: `npm test`.
+
+### Playing the game (CLI)
+
+- Story file: `stories/demo.yaml`. Saves go under `saves/` (gitignored).
+- Typical flow: `npm run cyoa -- start stories/demo.yaml --save saves/run.json`, then `scene` / `choose` / `transcript` with `--save saves/run.json`. Add `--json` for machine-readable output.
+- The `ai-loop` and `npm run ai:cycle` spawn the MCP server themselves; you do not need a separate MCP daemon for those commands.
+
+### MCP server
+
+- Start with `npm run mcp` from the repo root (stdio transport only — **no TCP/HTTP port**).
+- Clients attach via stdio (e.g. Cursor MCP config: `npm run mcp` with `cwd` set to the repo). Tools include `start_game`, `get_scene`, `choose_option`, `get_transcript`, `run_playtest`.
+- Optional: `CODEX_HOME=$PWD/.codex` when using `./loop.sh` so Codex loads `.codex/config.toml`.
+
+### Optional tooling
+
+- `./loop.sh` / `npm run ai:loop` expect an external agent CLI (`codex`, `claude`, `gemini`) only when not using `--evidence-only`. Not required for `npm run health` or manual CYOA play.
