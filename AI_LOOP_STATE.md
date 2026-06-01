@@ -11,43 +11,41 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make late-game objectives more precise after players inspect
-  Mara's signal-ledger row.
-- Why this matters: The adaptive exploratory route stalled after reading the
-  signal records while the objective list could still include the broad "learn
-  how to survive" prompt. Once the player has read the ledger or manifest, the
-  UI should point at the exact remaining blocker: recover the marked map or
-  clear Mara's row with her badge proof.
+- Main objective: Add an optional late-game character memory before clearing
+  Mara's ledger row.
+- Why this matters: Current route metrics are healthy, all scenes are reachable,
+  and true-ending discovery is strong. The highest-value next change is a small
+  story payoff that deepens Mara's motivation without adding a mandatory step
+  to the main ending route.
 - Tasks:
-  - Suppress the broad train-survival objective after the player has inspected
-    signal-ledger or manifest records.
-  - Replace the generic signal-booth objective with a direct badge-proof ledger
-    objective when the player has map, badge, token, and a read ledger row.
-  - Add focused regression coverage for both the mapless ledger-stall state and
-    the fully prepared ledger-clear state.
+  - Add a one-time optional `mara_thumbprint` scene from `signal_ledger`.
+  - Require Mara's badge for the thumbprint memory so badge-less recovery states
+    stay focused on returning for proof.
+  - Add regression coverage proving the memory is optional, one-time, and does
+    not block clearing Mara's ledger.
 - Evidence:
-  - Added `hasReadSignalRecords` objective-state detection in `src/engine.ts`.
-  - Added `Clear Mara's ledger entry with her badge proof.` as the precise
-    objective for prepared players after `inspect_signal_ledger`.
-  - Added a regression proving mapless signal-ledger players no longer see the
-    stale broad survival objective.
-  - Updated the badge-proof regression to require the new precise objective.
-  - `npm test -- tests/story-paths.test.ts` passed with 47 tests.
-  - `npm run health` passed with formatting, TypeScript, 67 tests, validation,
+  - Added `mara_thumbprint`, reached by `inspect_mara_thumbprint` after reading
+    Mara's signal-ledger entry while carrying her badge.
+  - Added `read_mara_thumbprint` gating so the memory appears once and then
+    returns to the existing ledger clear choices.
+  - Updated exact-choice tests for prepared ledger states to allow the new
+    optional memory, while preserving badge-less recovery focus.
+  - Added a new regression proving players can inspect the memory, return to
+    `signal_ledger`, and still clear Mara's row.
+  - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
+  - `npm run health` passed with formatting, TypeScript, 68 tests, validation,
     and coverage playtest.
-  - Validation reports 37 scenes, 6 endings, and all 37 reachable.
-  - Coverage playtest reports 0 unfinished runs, all 37 scenes visited, best
-    score 100/100, average score 72.73, and 480 max-score runs.
-  - Manual CLI route deliberately entered the signal booth without the map,
-    confirmed the `signal_ledger` objectives were only "Recover the marked
-    Platform 13 map before boarding." and "Use the signal booth to resolve
-    Mara's ledger entry.", recovered the map, reopened the ledger, and reached
-    `passenger_true_ending` at 100/100.
-- Follow-up: Consider adding a compact transcript diff/audit mode for objective
-  changes so future playtest reports call out stale guidance automatically.
+  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
+    score 100/100, average score 82.25, and 960 max-score runs.
+  - Manual CLI route took the new thumbprint memory, returned to the ledger,
+    cleared Mara's row, and reached `true_ending` at 100/100.
+- Follow-up: Consider a small report/transcript improvement that flags optional
+  lore beats taken before endings, so future AI critique can discuss pacing
+  impact without reading full transcripts.
 - Risks:
-  - This changes derived objective text, so transcript expectations and
-    objective-order assumptions need full health coverage.
+  - The new optional choice slightly increases branching in the signal-ledger
+    scene. Coverage and manual play confirm it remains reachable and finishable.
 
 ## Last Completed Cycle
 

@@ -774,6 +774,58 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("adds an optional thumbprint memory without blocking Mara's ledger clear", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(choiceIds).toContain("inspect_mara_thumbprint");
+    expect(choiceIds).toContain("mark_mara_clear_from_ledger");
+
+    state = choose(story, state, "inspect_mara_thumbprint");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint");
+    expect(observation.scene.text).toContain("No one clears until everyone clears");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+
+    state = choose(story, state, "return_from_mara_thumbprint");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(choiceIds).not.toContain("inspect_mara_thumbprint");
+    expect(choiceIds).toContain("mark_mara_clear_from_ledger");
+
+    state = choose(story, state, "mark_mara_clear_from_ledger");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_released");
+    expect(observation.state.flags.freed_mara).toBe(true);
+  });
+
   it("blocks mapless manifest clears and points players back to the marked map", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1367,7 +1419,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("more than another name");
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
     expect(observation.objectives).toEqual(["Clear Mara's ledger entry with her badge proof."]);
-    expect(choiceIds).toEqual(["mark_mara_clear_from_ledger"]);
+    expect(choiceIds).toEqual(["inspect_mara_thumbprint", "mark_mara_clear_from_ledger"]);
   });
 
   it("adds an aftermath beat after clearing Mara's ledger entry", async () => {
@@ -1438,7 +1490,7 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("signal_ledger");
-    expect(choiceIds).toEqual(["clear_manifest_and_mara_from_ledger"]);
+    expect(choiceIds).toEqual(["inspect_mara_thumbprint", "clear_manifest_and_mara_from_ledger"]);
 
     state = choose(story, state, "clear_manifest_and_mara_from_ledger");
     observation = observe(story, state);

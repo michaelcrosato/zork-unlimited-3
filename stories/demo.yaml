@@ -592,6 +592,16 @@ scenes:
       The booth speaker clicks once, waiting for proof that she is more than
       another name the line can keep.
     choices:
+      - id: inspect_mara_thumbprint
+        label: Touch the torn thumbprint beside Mara's name
+        to: mara_thumbprint
+        requires:
+          all:
+            - item: badge
+            - notFlag: read_mara_thumbprint
+        effects:
+          set:
+            read_mara_thumbprint: true
       - id: mark_mara_clear_from_ledger
         label: Enter Mara's badge number and clear her name
         to: mara_released
@@ -624,6 +634,18 @@ scenes:
         to: service_room
         requires:
           notItem: badge
+
+  mara_thumbprint:
+    text: >
+      The torn paper warms under your thumb. For a moment, the booth is full of
+      raincoats and tired voices. Mara stands at the dispatch panel, pressing
+      her print beside the final open line while the last train waits below.
+      "No one clears until everyone clears," she says, not to the line, but to
+      herself.
+    choices:
+      - id: return_from_mara_thumbprint
+        label: Return to Mara's ledger row
+        to: signal_ledger
 
   mara_released:
     text: >
