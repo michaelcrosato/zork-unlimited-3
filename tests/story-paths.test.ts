@@ -233,6 +233,25 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("go_to_platform");
   });
 
+  it("removes tunnel backtracking after the signal token is recovered", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "inspect_clock", "take_token", "open_service_door"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.inventory).toContain("token");
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).toContain("go_to_platform");
+    expect(choiceIds).not.toContain("return_to_tunnel");
+  });
+
   it("keeps Mara-promising players in the service room until they recover the map", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

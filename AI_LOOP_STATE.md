@@ -11,6 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Reduce service-room backtracking after players recover the
+  signal token.
+- Why this matters: Random and suspicious path evidence still showed players
+  bouncing between the service room, tunnel, and platform after the token was
+  already recovered. Once the token is in inventory, the tunnel no longer adds
+  useful information; keeping the service room focused improves pacing without
+  removing meaningful choices.
+- Tasks:
+  - Tighten `return_to_tunnel` so it only appears before the token is recovered
+    and before the player knows the direct clock route.
+  - Preserve useful direct service-room routes to the map, locker, platform,
+    and stopped clock.
+  - Add regression coverage for the token-recovered service-room choice set.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI playthrough through the updated token-first route.
+- Evidence:
+  - `return_to_tunnel` now requires both `notItem: token` and
+    `notFlag: knows_token_location`, removing the empty tunnel backtrack once
+    the token is recovered or the direct clock route is known.
+  - Added a story-path regression test that reaches the service room with the
+    token already recovered and confirms `take_map`, `search_locker`, and
+    `go_to_platform` remain while `return_to_tunnel` is absent.
+  - Focused story-path tests passed: 89 tests.
+  - Validation reports 72 scenes, 11 endings, and all 72 reachable.
+  - A 250-run random sample ended every run, visited every scene, kept best
+    score 100/100, averaged 79.94, and reached max score in 183 runs.
+  - Coverage playtest visited all 72 scenes with 0 unfinished completed routes,
+    best score 100/100, average score 99.07, and 152912 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 110 tests,
+    validation, and coverage playtest.
+  - Manual CLI play followed the token-first route through the updated service
+    room choice set, verified `return_to_tunnel` was absent after
+    `take_token`, and reached `true_ending` at 100/100 with no objectives.
+- Playtest notes:
+  - The revised service-room menu is noticeably cleaner after the player
+    recovers the token: map, radio, locker, personnel file, and platform remain
+    available, but the tunnel is no longer presented as progress.
+  - Closing the locker after collecting map, token, fuse, and badge correctly
+    leaves a single focused route to Platform 13.
+  - The true-ending route remains intact and still scores 100/100.
+- Follow-up: Watch whether small random samples continue to end every run and
+  whether early players without token knowledge still get enough freedom to
+  revisit the tunnel.
+- Risks:
+  - This removes one low-value navigational option from the midgame; regression
+    coverage preserves the direct clock route for token-informed players and
+    the platform route for prepared players.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Preserve the newspaper passenger payoff after players learn
   the Warden Street transfer-column memory.
 - Why this matters: The newspaper-specific route is discoverable, but normal

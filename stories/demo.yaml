@@ -258,13 +258,8 @@ scenes:
         to: tunnel
         requires:
           all:
-            - any:
-                - notItem: token
-                - notItem: fuse
-                - notItem: badge
-            - any:
-                - item: token
-                - notFlag: knows_token_location
+            - notItem: token
+            - notFlag: knows_token_location
       - id: go_to_platform
         label: Go to Platform 13
         to: platform
