@@ -819,6 +819,14 @@ scenes:
       ribs. Mara breathes through the speaker and says, "Third car. I can hold
       the line steady while they find the morning."
     choices:
+      - id: watch_mara_open_manifest
+        label: Watch Mara call the opened doors
+        to: mara_manifest_handoff
+        requires:
+          notFlag: saw_mara_manifest_handoff
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
       - id: listen_to_passenger_answers
         label: Listen as the passengers answer their names
         to: passenger_answers
@@ -830,6 +838,17 @@ scenes:
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
+
+  mara_manifest_handoff:
+    text: >
+      Mara does not leave the booth at once. She reads the first opened door,
+      waits for its answer, then touches the next line as if steadiness can be
+      handed from name to name. By the time she reaches her own row, the
+      speaker is full of people breathing with her instead of waiting for her.
+    choices:
+      - id: return_from_mara_manifest_handoff
+        label: Return to the opened manifest doors
+        to: passengers_released
 
   passenger_answers:
     text: >

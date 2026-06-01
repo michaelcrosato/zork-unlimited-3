@@ -1353,6 +1353,55 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("adds a one-time Mara handoff beat after opening the passenger manifest", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).toContain("watch_mara_open_manifest");
+
+    state = choose(story, state, "watch_mara_open_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.scene.text).toContain("steadiness can be handed from name to name");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+
+    state = choose(story, state, "return_from_mara_manifest_handoff");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).not.toContain("watch_mara_open_manifest");
+    expect(choiceIds).toContain("listen_to_passenger_answers");
+    expect(choiceIds).toContain("board_after_releasing_passengers");
+  });
+
   it("lets passenger answer listeners still help the released crowd gather", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -2401,7 +2450,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("every tiny stamped door");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
-    expect(choiceIds).toEqual(["listen_to_passenger_answers", "board_after_releasing_passengers"]);
+    expect(choiceIds).toEqual([
+      "watch_mara_open_manifest",
+      "listen_to_passenger_answers",
+      "board_after_releasing_passengers"
+    ]);
 
     state = choose(story, state, "listen_to_passenger_answers");
     observation = observe(story, state);

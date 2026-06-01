@@ -11,6 +11,64 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a one-time Mara handoff beat after the kept-passenger
+  manifest opens.
+- Why this matters: Core route metrics are healthy, so the best next
+  improvement is story depth on a successful route. The manifest route releases
+  the passengers but previously moved quickly from ledger clearance to crowd
+  movement; a short optional handoff lets players see Mara transfer her duty to
+  the newly answered passengers before the final release.
+- Tasks:
+  - Add `mara_manifest_handoff` as a one-time optional scene from
+    `passengers_released`.
+  - Return players to the passenger-release decision point without repeating
+    the handoff choice.
+  - Add regression coverage for gating and continued access to passenger
+    answer/boarding choices.
+  - Run focused tests, full health, an actual CLI playthrough, and commit/push
+    if green.
+- Evidence:
+  - Added `mara_manifest_handoff`, reached from `passengers_released` after
+    opening every kept-passenger manifest door.
+  - The new `watch_mara_open_manifest` choice sets
+    `saw_mara_manifest_handoff`, returns to `passengers_released`, and does
+    not repeat after use.
+  - Direct passenger-answer and board routes remain available after the handoff.
+  - Added story-path regression coverage for the one-time handoff gating and
+    continued access to the passenger-answer/boarding choices.
+  - Updated the existing manifest platform test to expect the new optional
+    handoff choice.
+  - Focused validation passed with 52 scenes, 7 endings, and all 52 reachable.
+  - `npm test -- tests/story-paths.test.ts` passed with 69 tests.
+  - Focused 100-run random playtest ended all 100 runs, visited all 52 scenes,
+    kept best score 100/100 and average score 77.75.
+  - `npm run health` passed with formatting, TypeScript, 90 tests, validation,
+    and coverage playtest.
+  - Health coverage playtest visited all 52 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 95.33, and 28548 max-score runs.
+  - Manual CLI play took the manifest route through
+    `mara_manifest_handoff`, passenger answers, passenger gathering, and
+    reached `passenger_helped_true_ending` at 100/100.
+- Playtest notes:
+  - The new handoff beat gives Mara one direct moment of care for the opened
+    passenger doors before the player moves into the crowd.
+  - Returning to `passengers_released` made the new scene feel optional and did
+    not block answer-listening or direct boarding.
+  - The helped-passenger ending still finishes cleanly with no lingering
+    objectives.
+  - No bugs surfaced in the focused route.
+- Follow-up: Watch coverage run count after adding another optional
+  manifest-path scene; it should remain bounded because the scene is one-time
+  and returns to `passengers_released`.
+- Risks:
+  - Another optional manifest scene can slightly lengthen careful routes, so
+    focused tests and health should confirm direct boarding still works.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Let careful manifest-route players both hear passenger answers and
+  help the released crowd gather.
 - Main objective: Let careful manifest-route players both hear passenger
   answers and help the released crowd gather.
 - Why this matters: Core route metrics were healthy, so the highest-value
@@ -18,13 +76,6 @@ preserving normal-play true-ending discoverability.
   cycle, `listen_to_passenger_answers` sent players directly to the train car,
   making the answer beat mutually exclusive with the later
   `help_passengers_gather` payoff.
-- Tasks:
-  - Route the passenger-answer scene back through `passenger_platform`.
-  - Preserve the direct manifest-release route for players who board without
-    helping the crowd gather.
-  - Update ideal-ending test helpers to count `passenger_helped_true_ending`.
-  - Run focused tests, full health, an actual CLI playthrough, and commit/push
-    if green.
 - Evidence:
   - `return_from_passenger_answers` now sends players to
     `passenger_platform` instead of directly to `train_car`.
