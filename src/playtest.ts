@@ -11,6 +11,7 @@ export interface PlaytestRun {
   finalScene: string;
   steps: number;
   path: string[];
+  readablePath: string[];
   score: number;
   maxScore: number;
 }
@@ -94,6 +95,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         finalScene: observation.scene.id,
         steps: current.steps,
         path: current.path,
+        readablePath: describePath(story, current.path),
         ...scoreOnly(current.state)
       });
     }
@@ -107,6 +109,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         finalScene: observation.scene.id,
         steps: current.steps,
         path: current.path,
+        readablePath: describePath(story, current.path),
         ...scoreOnly(current.state)
       });
       continue;
@@ -210,6 +213,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
         finalScene: observation.scene.id,
         steps: step,
         path,
+        readablePath: describePath(story, path),
         ...scoreOnly(state)
       };
     }
@@ -229,6 +233,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     finalScene: observation.scene.id,
     steps: maxSteps,
     path,
+    readablePath: describePath(story, path),
     ...scoreOnly(state)
   };
 }
@@ -250,6 +255,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
         finalScene: observation.scene.id,
         steps: step,
         path,
+        readablePath: describePath(story, path),
         ...scoreOnly(state)
       };
     }
@@ -292,8 +298,22 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
     finalScene: observation.scene.id,
     steps: maxSteps,
     path,
+    readablePath: describePath(story, path),
     ...scoreOnly(state)
   };
+}
+
+function describePath(story: Story, path: string[]): string[] {
+  return path.map((entry, index) => {
+    if (story.scenes[entry]) return entry;
+
+    const fromSceneId = path[index - 1];
+    const fromScene = fromSceneId ? story.scenes[fromSceneId] : undefined;
+    const choice = fromScene?.choices.find((candidate) => candidate.id === entry);
+    if (!choice) return entry;
+
+    return `${entry}: ${choice.label}`;
+  });
 }
 
 function scoreDestination(sceneId: string): number {

@@ -31,7 +31,9 @@ describe("playtest strategies", () => {
       status: "ending",
       ended: true,
       finalScene: "ending",
-      steps: 1
+      steps: 1,
+      path: ["start", "finish", "ending"],
+      readablePath: ["start", "finish: Finish", "ending"]
     });
   });
 

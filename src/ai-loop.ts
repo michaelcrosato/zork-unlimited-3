@@ -55,6 +55,7 @@ interface McpPlaytestRun {
   maxScore: number;
   steps: number;
   path: string[];
+  readablePath?: string[];
 }
 
 interface CycleArtifacts {
@@ -732,7 +733,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
       );
       for (const run of suspicious.slice(0, 3)) {
         suspiciousPaths.push(
-          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${run.path.join(" -> ")}`
+          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${formatSuspiciousPath(run)}`
         );
       }
     }
@@ -794,6 +795,10 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
       error: error instanceof Error ? error.message : String(error)
     };
   }
+}
+
+function formatSuspiciousPath(run: McpPlaytestRun): string {
+  return (run.readablePath?.length ? run.readablePath : run.path).join(" -> ");
 }
 
 function seededRandom(seed: number): () => number {

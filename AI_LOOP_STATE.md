@@ -6,68 +6,64 @@ This file is the handoff point for future autonomous agents.
 
 Keep the autonomous CYOA engine maintainable, secure, and playable while
 preserving normal-play true-ending discoverability and improving passenger route
-payoffs where the core guidance is already healthy.
+payoffs and agent evidence quality where the core guidance is already healthy.
 
 ## Active Cycle
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give Mara's opened-manifest handoff route its own final
-  ending payoff after the player listens to her third-car intercom.
-- Why this matters: Core route guidance remains healthy, so the highest-value
-  improvement is making deliberate late-game story choices feel remembered.
-  Watching Mara call the opened manifest and then listening to her handoff in
-  the third car was already a distinct route, but it previously resolved into
-  the generic passenger ending. A tailored ending makes Mara's shared-duty
-  handoff land as a real payoff without changing the route's mechanics.
+- Main objective: Improve autonomous playtest evidence by adding readable
+  player-facing decision traces to each run and using them in suspicious path
+  reports.
+- Why this matters: Core route guidance and true-ending discoverability are
+  healthy, so the next useful improvement is making future critique cycles
+  sharper. Suspicious path samples previously showed only internal IDs, which
+  made it harder to judge whether a route felt unclear, tempting, or fairly
+  warned without replaying it by hand.
 - Tasks:
-  - Add `passenger_manifest_handoff_true_ending`.
-  - Route `mara_manifest_handoff_intercom` to the new ending.
-  - Count the new ending as full-score and ideal in score, playtest, and loop
-    evidence helpers.
-  - Update regression coverage for the manifest-handoff final route.
-  - Run focused tests, full health, evidence cycle, and a real playthrough
-    through the new ending.
+  - Add `readablePath` to playtest runs while preserving the existing stable
+    `path` IDs.
+  - Use `readablePath` in AI-loop suspicious path excerpts when available.
+  - Add regression coverage for the readable path contract.
+  - Run focused tests, full health, and a real playthrough.
 - Evidence:
-  - Added `passenger_manifest_handoff_true_ending` as a distinct terminal
-    payoff for the route that watches Mara call the opened manifest, boards
-    during that handoff, listens to her third-car intercom, and pulls the
-    release.
-  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
-    ending counts as a full-score ideal passenger ending.
-  - Updated story-path, playtest, and AI-loop regression coverage.
-  - Focused tests passed with 116 tests.
-  - Targeted CLI play followed `watch_mara_open_manifest` ->
-    `board_after_mara_manifest_handoff` ->
-    `listen_to_mara_manifest_handoff_intercom` ->
-    `pull_release_after_manifest_handoff_goodbye` and reached
-    `passenger_manifest_handoff_true_ending` at 100/100 with no objectives.
+  - Added `readablePath` to every `PlaytestRun`, preserving the existing
+    `path` array for stable scene and choice IDs.
+  - AI-loop suspicious path samples now prefer `readablePath`, so reports show
+    player-facing choice labels next to internal IDs.
+  - Added regression coverage proving a run records both
+    `["start", "finish", "ending"]` and
+    `["start", "finish: Finish", "ending"]`.
+  - Focused playtest tests passed with 6 tests.
   - `npm run health` passed with formatting, TypeScript, 124 tests, story
     validation, and coverage playtest.
   - Health validation reports 93 scenes, 15 endings, all 93 reachable, and no
     warnings.
-  - Health coverage visited all 93 scenes, including
-    `passenger_manifest_handoff_true_ending`, with zero unfinished runs, best
-    score 100/100, and average score 99.51.
+  - Health coverage visited all 93 scenes with zero unfinished runs, best score
+    100/100, average score 99.51, and 338016 max-score runs.
+  - Targeted CLI play reached `true_ending` at 100/100 with no objectives.
+  - Sampled `npm run cyoa -- playtest stories/demo.yaml --runs 1 --strategy
+random --json`; the run reached `passenger_conductor_true_ending` and
+    included readable labels such as `force_gate: Force the rusted gate without
+the fuse`.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T22-48-23-826Z.md`. Its health checks
+    report `ai-runs/cycle-2026-06-01T22-55-55-068Z.md`. Its health checks
     were green, MCP validation passed with 93 reachable scenes and no warnings,
-    MCP random play reached `passenger_manifest_handoff_true_ending`, the
-    required MCP route reached `true_ending` at 100/100, and the adaptive MCP
-    route reached `passenger_helped_true_ending` at 100/100.
+    MCP random suspicious samples included readable choice labels, the required
+    MCP route reached `true_ending` at 100/100, and the adaptive MCP route
+    reached `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new ending makes Mara's opened-manifest handoff feel like a shared
-    release instead of another generic passenger evacuation.
-  - Random and coverage evidence both reached the new ending while preserving
-    the 75% random ideal-ending rate and full scene coverage.
-  - The generic passenger ending remains available for direct manifest release
-    and other non-handoff passenger routes.
+  - The readable suspicious samples make it much easier to see why bad routes
+    are deliberate: the samples now include labels such as "Ignore the final
+    warning and force the gate anyway" and "Let HOME take your name."
+  - The actual route still plays cleanly to the primary true ending.
+  - No gameplay regressions appeared in health, CLI play, or MCP evidence.
 - Follow-up:
-  - Watch random distribution to make sure route-specific endings keep adding
-    meaning without making the ending list feel fragmented.
+  - Use the richer suspicious path samples in the next content or fairness
+    pass, especially for `bad_ending`, `lost_ending`, and long detours.
 - Risks:
-  - The passenger finale now has many variants; future endings should stay tied
-    to clearly distinct player actions or consolidate payoffs instead.
+  - `includeRuns` MCP playtest output is slightly larger because each run now
+    includes both ID and readable path arrays.
 
 ## Last Completed Cycle
 
