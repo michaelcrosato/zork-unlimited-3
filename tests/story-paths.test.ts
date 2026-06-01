@@ -322,6 +322,31 @@ describe("demo story critical paths", () => {
     );
   });
 
+  it("lets careful notice readers discover the badge proof clue early", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["read_notice", "inspect_notice_back"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("notice_back");
+    expect(observation.scene.text).toContain("BADGE PROOF REQUIRED");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
+
+    state = choose(story, state, "take_lantern_after_notice_back");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toContain("lantern");
+    expect(observation.state.flags.has_light).toBe(true);
+  });
+
   it("lets players return from the service room to recover the token clue", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

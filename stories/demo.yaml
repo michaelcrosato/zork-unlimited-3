@@ -32,6 +32,12 @@ scenes:
       DO NOT BOARD WITHOUT THE MAP. A second, smaller line reads: CLEAR THE
       DISPATCHER'S NAME BEFORE YOU PULL THE RELEASE.
     choices:
+      - id: inspect_notice_back
+        label: Check the back of the notice
+        to: notice_back
+        effects:
+          set:
+            knows_badge_proof: true
       - id: take_lantern_after_notice
         label: Take the brass lantern
         to: tunnel
@@ -40,6 +46,24 @@ scenes:
           set:
             has_light: true
       - id: ignore_warning
+        label: Ignore the warning and step into the dark
+        to: dark_tunnel
+
+  notice_back:
+    text: >
+      The notice backing is covered in transfer stamps that never reached the
+      city archive. One blank line is labeled DISPATCHER CLEARANCE: BADGE
+      PROOF REQUIRED. Beside it, someone wrote M. VALE and pressed so hard the
+      paper nearly split.
+    choices:
+      - id: take_lantern_after_notice_back
+        label: Take the brass lantern
+        to: tunnel
+        effects:
+          addItem: lantern
+          set:
+            has_light: true
+      - id: ignore_back_warning
         label: Ignore the warning and step into the dark
         to: dark_tunnel
 

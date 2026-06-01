@@ -11,6 +11,51 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the early true-ending clue chain more discoverable by
+  letting careful players inspect the back of the old transit notice.
+- Why this matters: The story later says Mara's badge number matches a blank
+  line on the notice, but players could not inspect that side themselves. Adding
+  the clue makes the badge and ledger requirement feel earned earlier instead
+  of appearing only once the locker or personnel file explains it.
+- Tasks:
+  - Add an optional notice-back scene with a badge-proof clue.
+  - Carry that clue into the objective system.
+  - Add regression coverage for the new early clue.
+  - Run health and an actual route that uses the new clue.
+- Evidence so far:
+  - Added `notice_back`, reached from `notice` by `inspect_notice_back`.
+  - Added `knows_badge_proof` so the objective list can ask players to find
+    proof of Mara Vale's identity after they discover the notice-back clue.
+  - Added a regression proving the scene appears, sets the clue flag, surfaces
+    the proof objective, and still lets players take the lantern.
+  - `npm run format:check` passed.
+  - `npm test -- tests/story-paths.test.ts` passed with 32 tests.
+  - Validation passed: 28 scenes, 5 endings, 28 reachable, no warnings.
+  - `npm run health` passed with formatting, TypeScript, 48 tests, validation,
+    and coverage playtest.
+  - Coverage playtest remained stable: 695 runs, 672 ended, 0 unfinished, 23
+    frontier samples, all 28 scenes visited, and best score 100/100.
+  - Manual CLI route inspected `notice_back`, collected the token, map, fuse,
+    and badge, listened to Mara's final intercom beat, and reached
+    `true_ending` at 100/100 with `knows_badge_proof: true`.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - MCP random playtest, 250 runs: all ended, all 28 scenes visited,
+    `true_ending` reached 132 times, best score 100/100, average score 67.84.
+- Follow-up: The adaptive exploratory route still reaches the deliberate
+  forced-gate bad ending after ignoring the final warning. Consider whether the
+  first `force_gate` label should say "without supplies" so curious players
+  better understand the risk before the confirmation scene.
+- Risks:
+  - The first notice now has one additional optional choice. It should improve
+    clue agency without blocking the fast route through the underpass.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added a small late-game story beat after Mara is cleared so the
+  true-ending route has more emotional texture before the final release.
 - Main objective: Add a small late-game story beat after Mara is cleared so the
   true-ending route has more emotional texture before the final release.
 - Outcome: Clearing Mara now exposes a one-time intercom scene in the train car.

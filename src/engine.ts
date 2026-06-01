@@ -181,7 +181,10 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find a way to power the platform gate control.");
   }
 
-  if ((has("fuse") || flag("met_mara") || flag("read_mara_file")) && !has("badge")) {
+  if (
+    (has("fuse") || flag("met_mara") || flag("read_mara_file") || flag("knows_badge_proof")) &&
+    !has("badge")
+  ) {
     objectives.push("Find proof of Mara Vale's identity before clearing her name.");
   }
 
