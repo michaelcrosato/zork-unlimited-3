@@ -1046,6 +1046,7 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
     "use_token_slot",
     "inspect_signal_ledger",
     "mark_mara_clear_from_ledger",
+    "board_after_clearing_mara",
     "pull_release"
   ];
 

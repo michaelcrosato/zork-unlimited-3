@@ -526,7 +526,7 @@ scenes:
     choices:
       - id: mark_mara_clear_from_ledger
         label: Enter Mara's badge number and clear her name
-        to: train_car
+        to: mara_released
         requires:
           item: badge
         effects:
@@ -537,6 +537,17 @@ scenes:
         to: service_room
         requires:
           notItem: badge
+
+  mara_released:
+    text: >
+      The ledger ink lifts from Mara's name like smoke. Far below, the train
+      doors open with a softer sound, and the booth speaker carries her first
+      full breath in forty-three years. "Third car," Mara says. "I can hold
+      the line steady long enough for you to pull the release."
+    choices:
+      - id: board_after_clearing_mara
+        label: Board the third car while Mara holds the line
+        to: train_car
 
   train_car:
     text: >

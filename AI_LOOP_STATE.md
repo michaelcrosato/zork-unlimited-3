@@ -11,61 +11,49 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the final missing map action clearer after promising
-  Mara, and harden the autonomous loop so long AFK runs recover from evidence
-  failures instead of stopping.
-- Why this matters: The latest adaptive route correctly blocks platform travel
-  when the player has promised Mara and gathered badge, fuse, and token but not
-  the map. That state is mechanically safe, but the next action should read as
-  the obvious fulfillment of Mara's request, not just another generic pickup in
-  the service room. The interrupted loop output also showed a brittle failure
-  mode: a true-ending MCP route mismatch could throw before the agent received a
-  repair prompt.
+- Main objective: Add a stronger character payoff after clearing Mara's signal
+  ledger entry.
+- Why this matters: Current route metrics are healthy and the latest guidance
+  changes keep normal players moving toward the true ending. The highest-value
+  next step is a small story-depth improvement on the core successful route so
+  the ledger action feels like freeing a person, not just flipping a puzzle
+  flag.
 - Tasks:
-  - Rename the map pickup so it explicitly references Platform 13 and Mara's
-    request.
-  - Add regression coverage for the promised-Mara state where badge, fuse, and
-    token are gathered but the map is still missing.
-  - Convert pre-agent evidence failures into actionable cycle reports/prompts.
-  - Make `loop.sh` retry unexpected Node loop exits with a configurable backoff.
-  - Add long-run effectiveness signals to cycle reports so agents can
-    distinguish reachability problems from saturated metrics that call for
-    deeper content or pacing improvements.
-  - Run story-path tests, full health, an evidence-only AI cycle, and an actual
-    route through the game.
+  - Add a short required scene after `mark_mara_clear_from_ledger`.
+  - Route that scene back into the existing third-car finale.
+  - Add regression coverage for the new transition and update affected true
+    route tests.
+  - Run story-path tests, full health, and an actual CLI playthrough to
+    `true_ending`.
 - Evidence:
-  - Updated `take_map` label to "Take the marked Platform 13 map Mara asked
-    for".
-  - Moved the promised-Mara missing-map objective ahead of the generic chalk
-    arrows objective so Mara's request is the first prompt in that state.
-  - Added a regression asserting that the exact final-missing-map state shows
-    the map objective first, exposes the clearer map label, and still withholds
-    `go_to_platform`.
-  - `src/ai-loop.ts` now reports MCP/evidence failures in the normal cycle
-    report instead of throwing before the agent prompt is written.
-  - `loop.sh` now retries unexpected `npm run ai:loop` exits unless
-    `AI_LOOP_EXIT_ON_ERROR=1` is set.
-  - Cycle reports now include true-ending rate, non-ideal ending pressure,
-    max-score rate, coverage completeness, adaptive route status, and a primary
-    long-run pressure recommendation.
-  - `npm test -- tests/story-paths.test.ts` passed with 37 tests.
-  - `npm run health` passed with formatting, TypeScript, 53 tests, validation,
+  - Added `mara_released`, a required aftermath scene after Mara's ledger entry
+    is cleared.
+  - Routed `mark_mara_clear_from_ledger` to `mara_released`, then back to the
+    existing third-car finale through `board_after_clearing_mara`.
+  - Updated the autonomous MCP true-ending route so evidence generation follows
+    the new transition.
+  - Added regression coverage for the new aftermath beat and updated affected
+    true-ending path tests.
+  - `npm test -- tests/story-paths.test.ts` passed with 38 tests.
+  - `npm test -- tests/ai-loop.test.ts` passed with 5 tests.
+  - `npm run health` passed with formatting, TypeScript, 54 tests, validation,
     and coverage playtest.
-  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed twice;
-    the latest report showed the new long-run section and the actual MCP
-    playthrough reached `true_ending`.
-  - Manual CLI route promised Mara, collected badge/fuse/token before the map,
-    confirmed the service room showed the clearer map label and map objective
-    first, then recovered the map and reached `true_ending` at 100/100.
-- Follow-up: Use the new long-run pressure signal to prioritize richer story
-  depth, endings, or systems once route guidance remains healthy.
+  - Manual CLI route through `mara_released`, Mara's intercom beat, and
+    `pull_release` reached `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
+    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
+    and an actual MCP true-ending playthrough at 100/100.
+  - Final evidence random playtest, 100 runs: all ended, all 31 scenes visited,
+    `true_ending` reached 56 times, best score 100/100, average score 71.3.
+  - Final evidence coverage playtest: all 31 scenes visited, 0 unfinished,
+    best score 100/100.
+- Follow-up: Watch whether adding a mandatory beat slightly lowers random
+  max-score completion by increasing route length; if so, keep the beat but
+  revisit playtest step limits or goal strategy.
 - Risks:
-  - This is intentionally a copy-level guidance change. It should not affect
-    reachability, but transcript fixture labels and any brittle label checks may
-    need updating if they are tracked later.
-  - The retry wrapper keeps the unattended run alive after unexpected exits, so
-    persistent failures should remain visible in `ai-runs/` instead of silently
-    stopping.
+  - A new required scene touches the critical true-ending route. Tests and
+    playthrough must confirm the route remains direct, scored correctly, and
+    reachable within existing playtest limits.
 
 ## Last Completed Cycle
 

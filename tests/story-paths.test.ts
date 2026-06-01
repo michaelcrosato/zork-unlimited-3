@@ -24,6 +24,7 @@ describe("demo story critical paths", () => {
       "use_token_slot",
       "inspect_signal_ledger",
       "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
       "pull_release"
     ];
 
@@ -542,7 +543,8 @@ describe("demo story critical paths", () => {
       "install_fuse",
       "use_token_slot",
       "inspect_signal_ledger",
-      "mark_mara_clear_from_ledger"
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -577,6 +579,7 @@ describe("demo story critical paths", () => {
       "use_token_slot",
       "inspect_signal_ledger",
       "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
       "listen_to_mara_intercom"
     ]) {
       state = choose(story, state, choiceId);
@@ -619,7 +622,8 @@ describe("demo story critical paths", () => {
       "install_fuse",
       "use_token_slot",
       "inspect_signal_ledger",
-      "mark_mara_clear_from_ledger"
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1033,6 +1037,45 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual(["mark_mara_clear_from_ledger"]);
   });
 
+  it("adds an aftermath beat after clearing Mara's ledger entry", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_released");
+    expect(observation.scene.text).toContain("I can hold the line steady");
+    expect(observation.state.flags.freed_mara).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_clearing_mara"]);
+
+    state = choose(story, state, "board_after_clearing_mara");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release");
+  });
+
   it("keeps badge-less ledger states recoverable", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state: GameState = {
@@ -1062,7 +1105,8 @@ describe("demo story critical paths", () => {
       "return_to_lit_platform",
       "use_token_slot",
       "reopen_signal_ledger",
-      "mark_mara_clear_from_ledger"
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara"
     ]) {
       state = choose(story, state, choiceId);
     }
