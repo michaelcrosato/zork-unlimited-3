@@ -1533,10 +1533,11 @@ scenes:
       wheel scrape, breath held too long. Then it answers in Mara's borrowed
       voice, reading the first digits of her badge number like a lure. The fuse
       socket sits silent beside your hand, a simpler answer than the thing
-      below is offering.
+      below is offering: fuse for light, badge for proof, map for the route,
+      token for the booth.
     choices:
       - id: back_away_after_gate_echo
-        label: Back away and gather proper supplies
+        label: Back away and gather the four answers
         to: service_room
         effects:
           set:

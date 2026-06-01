@@ -11,58 +11,56 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a combined third-car payoff for players who both watch
-  Mara call the opened manifest and listen to the passengers answer.
-- Why this matters: Core route metrics are healthy, so the best next
-  improvement is richer late-game acknowledgement. The combined route currently
-  falls back to the answered-passenger intercom, which misses the player's
-  earlier choice to watch Mara make the manifest handoff.
+- Main objective: Strengthen the recovery guidance after the player listens
+  beneath the forced gate.
+- Why this matters: The exploratory MCP route showed the forced-gate branch is
+  doing its job as a bad-ending pressure point. The cautious branch after the
+  deeper warning should feel like the player learned something actionable, not
+  like a simple reset to the service room.
 - Tasks:
-  - Add a `passenger_answered_handoff_intercom` scene gated by both
-    `saw_mara_manifest_handoff` and `heard_passenger_answers`.
-  - Keep the existing direct release and standalone answered-passenger route
-    unchanged.
-  - Add regression coverage for choice ordering, text, route flags, and
-    max-score completion.
+  - Revise the `gate_echo` warning so the cautious branch names the four
+    practical answers: fuse, badge, map, and token.
+  - Keep the immediate bad ending available for players who ignore both
+    warnings.
+  - Add regression coverage for the recovery text, choice label, flagging, and
+    return to the service-room objective loop.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI or MCP playthrough through the new route.
+    CLI or MCP playthrough through the updated route.
 - Evidence:
-  - Added `passenger_answered_handoff_intercom`, reached only after players
-    open the manifest, watch Mara call the opened doors, listen to passengers
-    answer, and board without gathering the crowd.
-  - Added `listen_to_answered_handoff_passengers` before the generic
-    answer-listener intercom and kept `pull_release_with_manifest` available
-    beside it.
-  - Guarded the standalone `listen_to_answered_passengers` choice so
-    answer-only routes keep their existing payoff while the combined route gets
-    the new handoff-aware scene.
-  - Added regression coverage for choice ordering, scene text, route flags, and
-    max-score completion through `passenger_true_ending`.
+  - Revised `gate_echo` so the deeper warning names the practical recovery
+    path: fuse for light, badge for proof, map for the route, and token for the
+    booth.
+  - Renamed the cautious recovery choice to `Back away and gather the four
+    answers`, while keeping `force_gate_after_echo` available for the bad
+    ending.
+  - Added regression coverage for the new text, choice label, flagging, return
+    to the service-room objective loop, and unchanged bad-ending route.
   - Focused story-path tests passed with 87 tests.
   - Validation passed with 68 scenes, 10 endings, and all 68 reachable.
-  - A 100-run random sample ended 100/100 runs, visited
-    `passenger_answered_handoff_intercom`, had no unvisited scenes, kept best
-    score 100/100, averaged 78.2, and reached max score in 72 runs.
-  - A 100-run coverage sample visited all 68 scenes with 0 unfinished
-    completed routes, best score 100/100, average score 98.69, and 109800
-    max-score runs.
+  - A 100-run random sample ended 100/100 runs, visited all 68 scenes, had no
+    unvisited scenes, kept best score 100/100, averaged 78.2, and reached max
+    score in 72 runs.
+  - A 100-run coverage sample visited all 68 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.69, and 109800 max-score
+    runs.
   - `npm run health` passed with formatting, TypeScript, 108 tests,
     validation, and coverage playtest.
-  - Manual CLI play watched Mara open the manifest, listened to the passengers
-    answer, boarded into the new handoff-aware intercom, and reached
-    `passenger_true_ending` at 100/100 with no objectives.
+  - Manual CLI play forced the gate, listened below, backed away using the
+    revised clue, gathered the four answers, and reached `true_ending` at
+    100/100 with no objectives.
 - Playtest notes:
-  - The new beat makes the combined careful route read as one continuous
-    escalation: Mara offers names, passengers answer, then the release opens
-    while they still believe their own voices.
-  - Keeping the direct release beside the optional intercom preserves pacing
-    for players who are ready to finish.
-  - No validation, score, completion, or coverage regression surfaced.
-- Follow-up: Recheck whether route-family summaries remain readable as
-  late-game intercom scenes accumulate.
+  - The revised gate echo turns the scary optional listen into useful player
+    knowledge without adding another scene or increasing route depth.
+  - The route exposed one natural point of uncertainty: after backing away, the
+    direct service-room clock shortcut is unavailable unless the player has
+    learned the token clue, but the tunnel clock remains reachable and clear.
+  - Bad-ending pressure is unchanged because players can still ignore the
+    second warning and force the gate.
+- Follow-up: Recheck whether the recovery beat reduces confusion without
+  softening the bad-ending pressure.
 - Risks:
-  - Another optional late-game intercom scene can make summaries busier; keep
-    the branch tightly gated to the combined handoff plus answer-listener path.
+  - Failure-adjacent guidance can become too explanatory; keep the clue short
+    and grounded in the objects the player can actually collect.
 
 ## Last Completed Cycle
 

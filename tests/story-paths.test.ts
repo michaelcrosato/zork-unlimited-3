@@ -83,17 +83,26 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("gate_echo");
     expect(observation.scene.text).toContain("reading the first digits of her badge number");
     expect(observation.scene.text).toContain("The fuse socket sits silent");
+    expect(observation.scene.text).toContain("fuse for light");
+    expect(observation.scene.text).toContain("badge for proof");
+    expect(observation.scene.text).toContain("map for the route");
+    expect(observation.scene.text).toContain("token for the booth");
     expect(observation.state.flags.heard_gate_echo).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "back_away_after_gate_echo",
       "force_gate_after_echo"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "back_away_after_gate_echo")?.label
+    ).toBe("Back away and gather the four answers");
 
     state = choose(story, state, "back_away_after_gate_echo");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("service_room");
     expect(observation.state.flags.backed_away_from_gate).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
 
     state = initialState(story);
     for (const choiceId of [
