@@ -944,7 +944,18 @@ scenes:
         to: passenger_platform
       - id: board_after_passenger_answers
         label: Board the third car while the roll call holds
+        to: passenger_answered_handoff_intercom
+        requires:
+          flag: saw_mara_manifest_handoff
+        effects:
+          set:
+            heard_answered_passengers: true
+            heard_mara_goodbye: true
+      - id: board_after_answered_passengers
+        label: Board the third car while the roll call holds
         to: train_car
+        requires:
+          notFlag: saw_mara_manifest_handoff
 
   passenger_platform:
     text: >
@@ -1027,7 +1038,7 @@ scenes:
             heard_conductor_clearance: true
       - id: return_lost_mitten_after_newspaper_memory
         label: Return the lost mitten and lead the child to the third car
-        to: passenger_gathered_intercom
+        to: passenger_mitten_intercom
         requires:
           notFlag: returned_lost_mitten
         effects:
@@ -1089,7 +1100,10 @@ scenes:
     choices:
       - id: lead_mitten_child_to_third_car
         label: Lead the child and gathered passengers to the third car
-        to: train_car
+        to: passenger_mitten_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
 
   passenger_keepsake_handoff:
     text: >
@@ -1532,9 +1546,10 @@ scenes:
       her voice offering each name, each passenger answering before the line
       can turn them back into entries. The child says present with both hands
       on the returned doorway, the newspaper woman answers for the stop she
-      almost forgot, and Mara lets their voices outrun hers at last. "They can
-      answer for themselves now," she says. "Pull the release while they still
-      believe it."
+      almost forgot, and Mara lets their voices outrun hers at last. Beneath
+      the first seat, the emergency release waits in reach. "They can answer
+      for themselves now," she says. "Pull the release while they still believe
+      it."
     choices:
       - id: pull_release_after_answered_handoff_intercom
         label: Pull the release while Mara's handoff holds
@@ -1601,7 +1616,8 @@ scenes:
       in the roll call, he answers before anyone can prompt him, then turns and
       calls for the newspaper woman to step in out of the rain. The small
       mittened knock that follows is not a signal the line taught him. It is
-      his own way of saying the door is still open.
+      his own way of saying the door is still open, while the emergency release
+      waits under the first seat.
     choices:
       - id: hear_final_mitten_roll_call
         label: Hear the child finish the final roll call

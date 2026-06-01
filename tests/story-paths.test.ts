@@ -1768,19 +1768,10 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_answered_handoff_passengers",
-      "pull_release_with_manifest"
-    ]);
-
-    state = choose(story, state, "listen_to_answered_handoff_passengers");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.scene.text).toContain("Mara began at the opened manifest");
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
@@ -2076,7 +2067,7 @@ describe("demo story critical paths", () => {
       "gather_answered_passengers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
-      "board_after_passenger_answers"
+      "board_after_answered_passengers"
     ]);
 
     const answeredState = state;
@@ -2149,7 +2140,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "listen_to_passenger_answers",
-      "board_after_passenger_answers"
+      "board_after_answered_passengers"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2262,19 +2253,10 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_answered_handoff_passengers",
-      "pull_release_with_manifest"
-    ]);
-
-    state = choose(story, state, "listen_to_answered_handoff_passengers");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.scene.text).toContain("The third car fills with the rhythm Mara began");
     expect(observation.scene.text).toContain("They can answer for themselves now");
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
@@ -2344,13 +2326,14 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "lead_mitten_child_to_third_car");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_mitten_intercom");
+    expect(observation.scene.text).toContain("both mittens pressed against the frame");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mitten_child_intercom",
-      "pull_release_after_returning_mitten"
+      "hear_final_mitten_roll_call",
+      "pull_release_after_mitten_child_intercom"
     ]);
 
-    state = choose(story, state, "pull_release_after_returning_mitten");
+    state = choose(story, state, "pull_release_after_mitten_child_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
@@ -2540,7 +2523,6 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers",
       "return_lost_mitten",
       "lead_mitten_child_to_third_car",
-      "listen_to_mitten_child_intercom",
       "hear_final_mitten_roll_call"
     ]) {
       state = choose(story, state, choiceId);
@@ -2585,8 +2567,7 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
       "return_lost_mitten",
-      "lead_mitten_child_to_third_car",
-      "listen_to_mitten_child_intercom"
+      "lead_mitten_child_to_third_car"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -3814,7 +3795,7 @@ describe("demo story critical paths", () => {
       "gather_answered_passengers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
-      "board_after_passenger_answers"
+      "board_after_answered_passengers"
     ]);
 
     const newspaperState = choose(story, state, "follow_newspaper_answer");
@@ -3824,7 +3805,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.scene.text).toContain("Warden Street, then morning transfer");
 
-    state = choose(story, state, "board_after_passenger_answers");
+    state = choose(story, state, "board_after_answered_passengers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");

@@ -12,6 +12,58 @@ story depth where the route is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Improve normal-play discovery for the answered-handoff and
+  returned-mitten passenger intercom beats.
+- Why this matters: Current health and coverage are strong, so the highest
+  value is making existing story depth easier to see in ordinary play. The
+  prior random evidence still occasionally missed
+  `passenger_answered_handoff_intercom` and `passenger_mitten_intercom`
+  because both were hidden behind an extra train-car listen choice after the
+  player had already committed to their character-specific route.
+- Tasks:
+  - Route Mara-manifest-handoff passenger boarding directly into the answered
+    handoff intercom while preserving the generic answered-passenger train-car
+    path.
+  - Route returned-mitten boarding directly into the mitten-child intercom.
+  - Route newspaper-memory mitten return into the mitten-child intercom instead
+    of the generic gathered-passenger beat.
+  - Update story-path regression tests for the revised flow.
+  - Run focused tests, full health, and a real playthrough through one revised
+    route.
+- Evidence:
+  - Focused story-path test suite passes with 93 tests.
+  - `npm run health` passes with formatting, TypeScript, 114 tests,
+    validation, and coverage playtest.
+  - Coverage playtest visited all 74 scenes, including
+    `passenger_answered_handoff_intercom` and `passenger_mitten_intercom`, with
+    0 unfinished completed routes, best score 100/100, and average score 99.49.
+  - A 100-run random sample ended every run, visited all scenes including both
+    target intercom beats, kept best score 100/100, averaged 78.25, and reached
+    max score in 71 runs.
+  - Manual CLI play followed `watch_mara_open_manifest` ->
+    `continue_manifest_handoff_roll_call` -> `board_after_passenger_answers`
+    directly into `passenger_answered_handoff_intercom`, then reached
+    `passenger_true_ending` at 100/100 with no objectives.
+- Playtest notes:
+  - The handoff intercom now arrives at the moment the player boards with
+    Mara's roll call still active, which reads more naturally than landing in a
+    generic train-car menu and asking the player to opt into the payoff.
+  - The redirected intercom text now explicitly places the emergency release
+    under the first seat, preserving action clarity after bypassing the generic
+    `train_car` scene.
+  - Random and coverage samples both reached the target intercom scenes after
+    the change.
+- Follow-up: Recheck random playtest samples after the route changes to confirm
+  both intercom scenes appear more consistently.
+- Risks:
+  - Making bespoke intercom beats automatic reduces one optional train-car menu
+    stop, so tests need to preserve the generic direct-release paths where they
+    still matter.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Give the returned-mitten passenger route a distinct final
   intercom payoff.
 - Why this matters: The passenger routes are healthy, so the best current value
