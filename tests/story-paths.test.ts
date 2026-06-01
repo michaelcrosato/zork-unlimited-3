@@ -1663,6 +1663,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_lost_mitten",
+      "match_manifest_keepsakes",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);
@@ -1694,6 +1695,62 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("clutching both mittens");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("lets players match manifest keepsakes before the helped passenger ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "match_manifest_keepsakes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_handoff");
+    expect(observation.scene.text).toContain("warm lunch tin");
+    expect(observation.scene.text).toContain("people finding their places");
+    expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "lead_keepsake_passengers_to_third_car"
+    ]);
+
+    state = choose(story, state, "lead_keepsake_passengers_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers",
+      "pull_release_after_gathering_passengers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathering_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
@@ -2971,6 +3028,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_lost_mitten",
+      "match_manifest_keepsakes",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);

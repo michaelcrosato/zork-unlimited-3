@@ -897,6 +897,15 @@ scenes:
           set:
             returned_lost_mitten: true
             helped_passengers_gather: true
+      - id: match_manifest_keepsakes
+        label: Match the manifest keepsakes to their owners
+        to: passenger_keepsake_handoff
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            helped_passengers_gather: true
       - id: help_passengers_gather
         label: Help the kept passengers gather by the open doors
         to: passenger_farewell
@@ -920,6 +929,20 @@ scenes:
     choices:
       - id: lead_mitten_child_to_third_car
         label: Lead the child and gathered passengers to the third car
+        to: train_car
+
+  passenger_keepsake_handoff:
+    text: >
+      The manifest's details become a way to make the crowd real again. You
+      give the warm lunch tin to the man whose hands still expect its handle,
+      point the newspaper woman toward the conductor who remembers her stop,
+      and sort the rain-dark umbrellas by the initials etched into their
+      hooks. Each small return gives Mara another answered name, until the
+      platform sounds less like a ledger and more like people finding their
+      places beside one another.
+    choices:
+      - id: lead_keepsake_passengers_to_third_car
+        label: Lead the matched passengers to the third car
         to: train_car
 
   passenger_farewell:
