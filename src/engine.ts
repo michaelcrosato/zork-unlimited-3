@@ -195,7 +195,7 @@ function getObjectives(state: GameState): string[] {
 
   if (flag("freed_mara")) {
     objectives.push("Pull the emergency release in the third car.");
-  } else if (has("map")) {
+  } else if (has("map") && !(has("token") && has("fuse") && has("badge"))) {
     objectives.push("Use the marked map if you need a safe way out.");
   }
 

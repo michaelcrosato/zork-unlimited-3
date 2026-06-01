@@ -121,6 +121,78 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("force_gate");
   });
 
+  it("steers fuse carriers toward restoring platform power before boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("install_fuse");
+    expect(choiceIds).not.toContain("board_train");
+  });
+
+  it("removes stale map escape objectives once true-ending tools are gathered", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.objectives).toContain(
+      "Restore power at Platform 13 and try the token slot."
+    );
+    expect(observation.objectives).not.toContain("Use the marked map if you need a safe way out.");
+  });
+
+  it("keeps map-only boarding available as an underprepared escape route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(choiceIds).toContain("ride_with_map");
+    expect(choiceIds).toContain("look_at_sign");
+  });
+
   it("updates objectives after discovering Platform 13 by following arrows", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

@@ -311,7 +311,9 @@ scenes:
         label: Board the train with the map
         to: train_car
         requires:
-          item: map
+          all:
+            - item: map
+            - notItem: fuse
       - id: return_to_service_room
         label: Return to the service room and prepare
         to: service_room
