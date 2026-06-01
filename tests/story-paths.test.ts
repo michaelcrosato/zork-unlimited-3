@@ -109,6 +109,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("bad_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("badge number you never proved");
+    expect(observation.scene.text).toContain("empty fuse socket");
+    expect(observation.scene.text).toContain("another unfinished name");
   });
 
   it("points underprepared platform explorers back to the marked map", async () => {

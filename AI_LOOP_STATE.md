@@ -11,6 +11,47 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Improve the forced-gate bad ending payoff.
+- Why this matters: Current evidence shows completion and true-ending
+  discoverability are healthy, so the next valuable improvement is polish on a
+  non-ideal route. The forced-gate path already warns players twice, but the
+  final bad ending is brief; strengthening it should make the failure feel like
+  a fair consequence of ignoring the fuse, badge, and ledger rules.
+- Tasks:
+  - Expand `bad_ending` text so it reflects the warned forced-gate consequence.
+  - Add focused regression coverage for the stronger bad-ending payoff.
+  - Run focused tests, full health, an actual CLI playthrough, and commit/push
+    if green.
+- Evidence:
+  - Expanded `bad_ending` so forcing the gate after warnings now echoes the
+    missing badge proof, unfilled fuse socket, and ledger consequence.
+  - Added regression coverage to the forced-gate sensory-warning test for the
+    stronger bad-ending payoff.
+  - `npm test -- tests/story-paths.test.ts` passed with 59 tests.
+  - `npm run health` passed with formatting, TypeScript, 80 tests, validation,
+    and coverage playtest.
+  - Validation reports 48 scenes, 6 endings, and all 48 reachable.
+  - Health coverage playtest stayed stable with 0 unfinished routes, all 48
+    scenes visited, best score 100/100, average score 97.33, and 58176
+    max-score runs.
+  - Manual CLI play took the forced-gate route through `gate_warning` and
+    `gate_echo`, ignored the final warning, and reached `bad_ending` at 5/100.
+- Playtest notes:
+  - The bad route now reads as a fairer failure: `gate_echo` previews the
+    borrowed badge-number voice and silent fuse socket, while `bad_ending` pays
+    those details off with the ledger finding another unfinished name.
+  - The fail state remains short enough for transcript scanning and does not
+    add extra route branching.
+- Follow-up: Watch whether fail-state prose stays concise enough for transcript
+  readability; do not turn bad endings into long lore dumps.
+- Risks:
+  - Pure prose changes can improve feel without changing route metrics, so
+    manual playthrough feedback matters.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added an optional badge-inspection memory in the maintenance locker.
 - Main objective: Add an optional badge-inspection memory in the maintenance
   locker.
 - Why this matters: Current evidence shows completion and true-ending

@@ -1149,5 +1149,8 @@ scenes:
     ending: true
     text: >
       The gate gives way with a scream of metal. The sound wakes something
-      below the platform before the train doors can close.
+      below the platform before the train doors can close. It uses Mara's
+      borrowed voice to read a badge number you never proved, and every light
+      on Platform 13 goes out except the empty fuse socket. By the time the
+      train moves, the ledger has found another unfinished name.
     choices: []
