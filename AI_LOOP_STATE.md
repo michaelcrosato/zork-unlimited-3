@@ -12,64 +12,72 @@ story depth where the route is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve normal-play discovery of
-  `passenger_answered_handoff_intercom`.
-- Why this matters: Coverage could reach this handoff intercom, but the cycle's
-  random evidence missed it. The scene is a strong payoff for watching Mara
-  begin the opened-manifest roll call and then letting passengers answer before
-  boarding, so it should sit on a natural continuation rather than requiring a
-  return through the hub.
+- Main objective: Give the returned-mitten passenger route a distinct final
+  intercom payoff.
+- Why this matters: The passenger routes are healthy, so the best current value
+  is richer story depth. Returning the mitten already creates one of the most
+  human passenger endings, but the late route previously used the generic
+  gathered-passenger intercom before the mitten-specific ending. A distinct
+  intercom makes the child's agency clearer and keeps the payoff coherent.
 - Tasks:
-  - Add a direct roll-call continuation from `mara_manifest_handoff` into
-    `passenger_answers`.
-  - Preserve the existing direct handoff boarding route and the return to
-    `passengers_released`.
-  - Add regression coverage for the new route through
-    `passenger_answered_handoff_intercom`.
-  - Run focused tests, validation/playtest sampling, full health, `ai:cycle`,
-    and a real CLI playthrough through the revised handoff route.
+  - Add a `passenger_mitten_intercom` scene after players return the lost
+    mitten and board the third car.
+  - Route returned-mitten train-car listening to the new mitten-specific
+    intercom while preserving the generic gathered-passenger intercom for
+    non-mitten gathered routes.
+  - Preserve the direct returned-mitten release and optional final roll-call
+    path.
+  - Add regression coverage for the new scene, choice visibility, flags, and
+    ending path.
+  - Run focused tests, validation/playtest sampling, full health,
+    evidence-only `ai:cycle`, and a real CLI playthrough through the revised
+    mitten route.
 - Evidence:
-  - Added `continue_manifest_handoff_roll_call`, reached from
-    `mara_manifest_handoff`, which sets `heard_passenger_answers` and routes to
-    `passenger_answers`.
-  - Kept `board_after_mara_manifest_handoff` available for the direct
-    `mara_manifest_handoff_intercom` payoff, and kept
-    `return_from_mara_manifest_handoff` available for players who want to
-    revisit the opened manifest hub.
-  - Added story-path regression coverage for the new continuation through
-    `passenger_answered_handoff_intercom`; focused story-path tests passed with
-    92 tests.
-  - Validation reports 73 scenes, 11 endings, and all 73 reachable.
+  - Added `passenger_mitten_intercom`, reached from
+    `listen_to_mitten_child_intercom` when `returned_lost_mitten` is set.
+  - Added `hear_final_mitten_roll_call` so players can continue into the
+    existing final roll-call epilogue before the mitten ending, plus
+    `pull_release_after_mitten_child_intercom` for a direct release.
+  - Added `notFlag: returned_lost_mitten` to the generic
+    `listen_to_gathered_passengers` route so returned-mitten players see the
+    tailored intercom instead of the generic one.
+  - Added story-path regression coverage for direct returned-mitten release,
+    the new mitten intercom, and the final roll-call continuation; focused
+    story-path tests passed with 93 tests.
+  - Increased the demo coverage-strategy regression timeout from 20s to 40s
+    after the larger graph exposed runtime variance while still discovering all
+    scenes.
+  - Validation reports 74 scenes, 11 endings, and all 74 reachable.
   - A 250-run random sample ended every run, visited
-    `passenger_answered_handoff_intercom`, visited all scenes, kept best score
-    100/100, averaged 79.94, and reached max score in 183 runs.
-  - `npm run health` passed with formatting, TypeScript, 113 tests,
-    validation, and coverage playtest. Coverage visited all 73 scenes with 0
+    `passenger_mitten_intercom`, visited all scenes, kept best score 100/100,
+    averaged 79.94, and reached max score in 183 runs.
+  - `npm run health` passed with formatting, TypeScript, 114 tests,
+    validation, and coverage playtest. Coverage visited all 74 scenes with 0
     unfinished completed routes, best score 100/100, average score 99.52, and
     297776 max-score runs.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    `ai-runs/cycle-2026-06-01T18-03-15-607Z.md`; its 100-run random sample
-    still missed the rare handoff intercom, while coverage reached every scene.
-  - Manual CLI play followed `watch_mara_open_manifest` ->
-    `continue_manifest_handoff_roll_call` -> `board_after_passenger_answers` ->
-    `listen_to_answered_handoff_passengers` ->
-    `passenger_answered_handoff_intercom` -> `passenger_true_ending` at 100/100
+    `ai-runs/cycle-2026-06-01T18-14-02-400Z.md`; its 100-run random sample
+    missed `passenger_mitten_intercom`, while coverage reached every scene.
+  - Manual CLI play followed `return_lost_mitten` ->
+    `lead_mitten_child_to_third_car` -> `listen_to_mitten_child_intercom` ->
+    `hear_final_mitten_roll_call` -> `passenger_mitten_true_ending` at 100/100
     with no objectives.
 - Playtest notes:
-  - The new continuation reads naturally: if the player chooses to watch Mara
-    call opened doors, the next obvious action can be to keep listening as those
-    passengers answer.
-  - The direct handoff intercom remains available for players who board
-    immediately after Mara starts the roll call.
-  - The targeted scene is still rare enough that a 100-run random sample can
-    miss it; the 250-run sample is a better signal that normal discovery has
-    improved without creating unfinished runs.
-- Follow-up: Watch larger random samples to confirm the new continuation keeps
-  `passenger_answered_handoff_intercom` visible without crowding out the direct
-  `mara_manifest_handoff_intercom` payoff.
+  - The new intercom makes the child feel like an active participant instead of
+    a prop carried into the ending.
+  - The direct mitten ending remains available for players who do not stop for
+    the intercom.
+  - The optional final roll-call continuation still lands cleanly in the
+    existing `passenger_roll_call_epilogue` and preserves the
+    `passenger_mitten_true_ending` payoff.
+  - A 100-run random sample can miss the new scene; the 250-run sample is a
+    better signal for normal route visibility.
+- Follow-up: Watch whether smaller random samples continue to miss
+  `passenger_mitten_intercom`; if so, consider surfacing the mitten child from
+  `passenger_answers` the way the newspaper and conductor routes are surfaced.
 - Risks:
-  - `mara_manifest_handoff` now has three choices, so direct boarding from that
-    beat is slightly less likely in random play.
+  - Another specialized late-game intercom increases route richness but also
+    adds one more branch for future ending maintenance.
 
 ## Last Completed Cycle
 

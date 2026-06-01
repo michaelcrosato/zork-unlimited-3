@@ -1229,6 +1229,20 @@ scenes:
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
             - notFlag: matched_manifest_keepsakes
+            - notFlag: returned_lost_mitten
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: listen_to_mitten_child_intercom
+        label: Listen as the mitten child answers from the doorway
+        to: passenger_mitten_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - flag: returned_lost_mitten
             - notFlag: heard_gathered_passengers
         effects:
           set:
@@ -1579,6 +1593,27 @@ scenes:
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+
+  passenger_mitten_intercom:
+    text: >
+      The child stands in the third-car doorway with both mittens pressed
+      against the frame, one found and one returned. When Mara reaches his name
+      in the roll call, he answers before anyone can prompt him, then turns and
+      calls for the newspaper woman to step in out of the rain. The small
+      mittened knock that follows is not a signal the line taught him. It is
+      his own way of saying the door is still open.
+    choices:
+      - id: hear_final_mitten_roll_call
+        label: Hear the child finish the final roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_mitten_child_intercom
+        label: Pull the release while the child's door stays open
+        to: passenger_mitten_true_ending
 
   passenger_newspaper_intercom:
     text: >

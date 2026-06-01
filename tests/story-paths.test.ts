@@ -2346,7 +2346,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers",
+      "listen_to_mitten_child_intercom",
       "pull_release_after_returning_mitten"
     ]);
 
@@ -2540,8 +2540,8 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers",
       "return_lost_mitten",
       "lead_mitten_child_to_third_car",
-      "listen_to_gathered_passengers",
-      "hear_final_passenger_roll_call"
+      "listen_to_mitten_child_intercom",
+      "hear_final_mitten_roll_call"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2554,6 +2554,55 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_mitten_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("adds a mitten-specific intercom before the returned-mitten ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "return_lost_mitten",
+      "lead_mitten_child_to_third_car",
+      "listen_to_mitten_child_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_intercom");
+    expect(observation.scene.text).toContain("both mittens pressed against the frame");
+    expect(observation.scene.text).toContain("his own way of saying the door is still open");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_mitten_roll_call",
+      "pull_release_after_mitten_child_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_mitten_child_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
