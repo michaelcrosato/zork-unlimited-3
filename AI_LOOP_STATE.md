@@ -11,21 +11,61 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Pay off the optional kept-passenger gathering beat in the
-  final manifest ending.
+- Main objective: Smooth the rare missing-map signal-booth warning route.
 - Why this matters: Current evidence shows core completion and true-ending
-  discovery are healthy, so the highest-value improvement is story depth on an
-  already-successful route. The game already tracks whether the player helped
-  the kept passengers gather, but the final release previously resolved with
-  the same text either way.
+  discovery are healthy, but `signal_map_warning` is still the one scene random
+  play can miss. When players do trigger it, recovering the map should feel like
+  direct progress back to the active signal-booth problem instead of adding an
+  extra gate-control hop.
 - Tasks:
-  - Add a distinct manifest release choice after `helped_passengers_gather`.
-  - Add a new ideal ending scene that acknowledges the player's help.
-  - Update scoring, playtest desirability, and AI-loop ideal-ending reporting
-    so the new ending counts as a full success.
-  - Add regression coverage for the helped-passenger release branch.
+  - Send `return_for_map_from_signal_warning` directly back to the signal booth
+    with the recovered map.
+  - Update regression coverage for the smoother warning recovery branch.
   - Run focused tests, full health, an actual playthrough, and commit/push if
     green.
+- Evidence:
+  - `return_for_map_from_signal_warning` now sends players directly back to
+    `signal_booth` with the recovered map instead of returning to
+    `lit_platform` for an extra token-slot click.
+  - Updated the missing-map warning regression test to expect immediate
+    signal-booth access with ledger and manifest choices available.
+  - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 50 scenes,
+    7 endings, and all 50 reachable.
+  - Manual CLI play deliberately triggered `signal_map_warning`, recovered the
+    map directly into `signal_booth`, cleared Mara's ledger, and reached
+    `true_ending` at 100/100.
+  - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
+    and coverage playtest.
+  - Health coverage playtest kept all 50 scenes visited with 0 unfinished
+    completed routes, best score 100/100, average score 93.22, and 25452
+    max-score runs.
+- Playtest notes:
+  - The warning branch now reads as a cleaner correction: the map warning fires,
+    the player recovers the map, and the next scene is the signal booth ledger
+    rather than another gate-control prompt.
+  - The route remained finishable and reached the full true ending without
+    objectives lingering.
+  - No bugs surfaced in the focused route.
+- Follow-up: If the route still feels abrupt, consider a short dedicated map
+  recovery beat, but keep the path bounded.
+- Risks:
+  - Direct map recovery abstracts a service-room return, but the branch already
+    used abstraction; focused playtesting should confirm the destination is
+    clearer.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added a distinct manifest release ending for players who help the
+  kept passengers gather.
+- Main objective: Pay off the optional kept-passenger gathering beat in the
+  final manifest ending.
+- Why this matters: Current evidence showed core completion and true-ending
+  discovery were healthy, so the highest-value improvement was story depth on
+  an already-successful route. The game already tracked whether the player
+  helped the kept passengers gather, but the final release previously resolved
+  with the same text either way.
 - Evidence:
   - Added `pull_release_after_gathering_passengers`, shown only after the
     player helped the kept passengers gather.
@@ -35,14 +75,6 @@ preserving normal-play true-ending discoverability.
     reporting so `passenger_helped_true_ending` counts as a full success.
   - Updated story-path and AI-loop regression tests for the new ideal ending
     branch.
-  - `npm test -- tests/story-paths.test.ts tests/ai-loop.test.ts` passed with
-    74 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 50 scenes,
-    7 endings, and all 50 reachable.
-  - A 100-run random playtest passed with 0 unfinished runs and reached
-    `passenger_helped_true_ending` 10 times.
-  - A 100-run coverage playtest passed with all 50 scenes visited, best score
-    100/100, average score 93.22, and 25452 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
   - Manual CLI play took the passenger-gathering route and reached
@@ -51,9 +83,6 @@ preserving normal-play true-ending discoverability.
   - The helped-passenger action now reads as consequential instead of cosmetic.
   - The route stayed direct: gather passengers, return to the third car, pull
     the release, and receive a specific final payoff.
-  - No bugs surfaced in the manual route; objectives cleared at the ending.
-- Follow-up: Watch whether adding a third ideal ending ID makes long-run
-  summaries noisier; if so, reports may need to group manifest endings.
 - Risks:
   - Adding another ending ID requires every ideal-ending heuristic to know about
     it, so focused tests cover scoring and AI-loop reporting.

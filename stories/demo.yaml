@@ -526,8 +526,8 @@ scenes:
       without the marked map.
     choices:
       - id: return_for_map_from_signal_warning
-        label: Recover the marked map and return to the gate control
-        to: lit_platform
+        label: Recover the marked map and return to the half-open booth
+        to: signal_booth
         effects:
           addItem: map
           set:

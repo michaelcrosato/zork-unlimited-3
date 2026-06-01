@@ -1912,9 +1912,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_for_map_from_signal_warning");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.scene.id).toBe("signal_booth");
     expect(observation.state.inventory).toContain("map");
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["use_token_slot"]);
+    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_signal_ledger");
+    expect(observation.choices.map((choice) => choice.id)).toContain("read_passenger_manifest");
   });
 
   it("surfaces the missing-map warning directly from the gate control", async () => {
