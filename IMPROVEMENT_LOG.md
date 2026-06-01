@@ -4,6 +4,88 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Release After Ledger Clear
+
+### Current Plan
+
+- Main objective: Make the true-ending release action discoverable once players
+  have cleared Mara's ledger entry.
+- Why this matters: The train-car prose says the emergency release is found, but
+  the release choice was hidden unless the player had explicitly written down
+  the radio route. Players who solved the token, badge, fuse, and ledger chain
+  could still be pushed toward lesser endings.
+- Tasks:
+  - Let `freed_mara` expose the emergency release in the train car.
+  - Remove stale "learn how to survive the train" objective after Mara is clear.
+  - Add regression coverage for the no-radio ledger route.
+  - Verify health, playtest summaries, MCP play, and current CLI play.
+- Risks:
+  - This makes `true_ending` easier to reach, so the remaining optional radio
+    clue should still matter as score and foreshadowing.
+
+### Work Completed
+
+- Changes made:
+  - Relaxed `pull_release` requirements from `knows_release + freed_mara` to
+    `freed_mara`.
+  - Updated objective generation so clearing Mara replaces the generic train
+    survival objective with the concrete release instruction.
+  - Added a focused story-path test that reaches `true_ending` after clearing
+    Mara without tuning the radio.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/engine.ts`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a late-game affordance and objective-clarity pass.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 262 --strategy coverage --summary --json`
+  - `npm run health`
+  - MCP route through the no-radio ledger clear into `true_ending`
+  - Current CLI route through the same no-radio ledger clear into `true_ending`
+- Quantitative metrics:
+  - Health: format check, lint, 20 tests, validation, and coverage playtest all
+    pass.
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: 247 ended, 3 unfinished, all scenes visited,
+    `true_ending` reached 5 times, best score 100/100, average score 37.9.
+  - Coverage playtest: all scenes visited, `true_ending` reached 8 times, up
+    from 4 in the prior evidence sample.
+- What worked:
+  - The solved ledger chain now naturally culminates in pulling the emergency
+    release, even when the player skipped the radio note.
+  - The train-car objective now points only at the release after Mara is cleared.
+  - Alternate endings remain reachable.
+- What felt bad/confusing:
+  - Skipping the radio still costs the release-route score achievement, so the
+    no-radio true ending lands at 90/100. This is acceptable for now because the
+    route is successful but not fully informed.
+  - Random play still heavily favors `bad_ending` and `good_ending`.
+- Bugs found:
+  - Current-code CLI verification caught a stale objective after the first pass;
+    tightening the objective condition fixed it.
+
+### Next Iteration
+
+- Highest-priority next task: Reduce repetitive service-room and platform
+  backtracking in random/exploratory routes.
+- Reason: True-ending completion is less brittle now, but normal play still
+  spends too many turns revisiting the same utility scenes before settling on
+  lesser endings.
+- Planned action:
+  - Inspect suspicious random paths for loops around `service_room`, `tunnel`,
+    `locker`, and `platform`.
+  - Add one small state-aware affordance or route pruning change that keeps
+    backtracking useful while reducing dead-feeling repeats.
+
 ## 2026-06-01 - Repo Quality Pass
 
 ### Current Plan

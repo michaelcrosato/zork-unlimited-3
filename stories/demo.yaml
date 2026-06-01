@@ -344,9 +344,7 @@ scenes:
         label: Pull the emergency release
         to: true_ending
         requires:
-          all:
-            - flag: knows_release
-            - flag: freed_mara
+          flag: freed_mara
       - id: ride_with_map
         label: Follow the map to the morning platform without touching the release
         to: good_ending

@@ -11,20 +11,25 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Repo quality pass after the locker-discovery cycle.
-- Outcome: Removed the known dev-dependency audit finding, simplified
-  validation reference scanning, fixed stale autonomous true-ending playback,
-  and cleared objectives on ending observations.
+- Main objective: Make the true-ending release action discoverable after players
+  clear Mara's ledger, even if they skipped the radio route note.
+- Outcome: The train car now exposes `pull_release` whenever Mara has been
+  cleared, and objectives collapse to the release action instead of continuing
+  to ask for the radio clue.
 - Evidence:
-  - `npm audit --audit-level=moderate` reports 0 vulnerabilities.
-  - `npm run ai:cycle` passes and writes MCP evidence reports.
-  - CLI true-ending route reaches `true_ending` at 100/100.
-  - Focused engine and validation tests pass.
+  - `npm run health` passes with 20 tests.
   - Story validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - Coverage playtest, 262 runs: all scenes visited, best score 100/100.
-- Follow-up: Random play improved but still usually settles for lesser endings,
-  so the next pass should improve how players prioritize the release route after
-  collecting the map and badge.
+  - Coverage playtest visits all scenes and reaches `true_ending` 8 times,
+    up from 4 in the prior evidence sample.
+  - Random playtest, 250 runs: all scenes visited, `true_ending` reached 5
+    times, best score 100/100.
+  - MCP no-radio ledger route reaches `true_ending` after `mark_mara_clear`.
+  - Current CLI no-radio ledger route shows only `Pull the emergency release in
+the third car.` as the active objective in `train_car`, then reaches
+    `true_ending`.
+- Follow-up: True-ending discoverability is improved, but lesser endings still
+  dominate random play. The next pass should reduce repetitive service-room and
+  platform backtracking without deleting meaningful alternate endings.
 
 ## Last Completed Cycle
 

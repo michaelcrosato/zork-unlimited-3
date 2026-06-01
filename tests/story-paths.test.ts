@@ -166,6 +166,44 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("look_at_sign");
   });
 
+  it("reveals the emergency release after clearing Mara even without the radio route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "mark_mara_clear"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.knows_release).toBeUndefined();
+    expect(observation.objectives).not.toContain(
+      "Learn how to survive the driverless train before boarding it."
+    );
+    expect(observation.objectives).toContain("Pull the emergency release in the third car.");
+    expect(choiceIds).toContain("pull_release");
+
+    state = choose(story, state, "pull_release");
+    expect(observe(story, state).scene.id).toBe("true_ending");
+  });
+
   it("warns players without the token before they board from the lit platform", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

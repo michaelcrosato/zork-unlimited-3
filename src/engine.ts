@@ -153,7 +153,7 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find out where the chalk arrows and old line are leading.");
   }
 
-  if (flag("knows_platform") && !flag("knows_release")) {
+  if (flag("knows_platform") && !flag("knows_release") && !flag("freed_mara")) {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
@@ -183,7 +183,7 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Use the signal booth to resolve Mara's ledger entry.");
   }
 
-  if (flag("freed_mara") && flag("knows_release")) {
+  if (flag("freed_mara")) {
     objectives.push("Pull the emergency release in the third car.");
   } else if (has("map")) {
     objectives.push("Use the marked map if you need a safe way out.");
