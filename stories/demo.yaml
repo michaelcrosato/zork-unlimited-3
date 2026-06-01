@@ -654,7 +654,8 @@ scenes:
       The earlier pages are not a passenger list so much as a weather report:
       umbrellas left dripping by the stairs, lunch tins still warm, a child's
       mitten pinned beside a transfer. Each name has a tiny door stamped beside
-      it. Mara's door is the only one still shut.
+      it, every one still shut. Mara's dispatcher row is set apart at the end,
+      its door barred by the same badge proof that can open the rest.
     choices:
       - id: listen_to_manifest_doors_from_manifest
         label: Listen to the marked passenger doors

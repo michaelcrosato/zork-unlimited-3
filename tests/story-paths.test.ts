@@ -1251,7 +1251,8 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_manifest");
-    expect(observation.scene.text).toContain("Mara's door is the only one still shut");
+    expect(observation.scene.text).toContain("every one still shut");
+    expect(observation.scene.text).toContain("Mara's dispatcher row is set apart");
     expect(observation.state.flags.read_passenger_manifest).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_manifest_doors_from_manifest",
@@ -1323,7 +1324,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_manifest");
     expect(observation.state.flags.read_passenger_manifest).toBe(true);
-    expect(observation.scene.text).toContain("Mara's door is the only one still shut");
+    expect(observation.scene.text).toContain("every one still shut");
+    expect(observation.scene.text).toContain("same badge proof that can open the rest");
 
     state = choose(story, state, "return_to_signal_ledger_from_manifest");
     observation = observe(story, state);

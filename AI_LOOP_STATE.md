@@ -11,55 +11,48 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Clarify the late-game choice between clearing only Mara and
-  checking the kept-passenger manifest.
-- Why this matters: Current MCP play reached the direct `true_ending` at full
-  score without checking the passenger manifest, even though the ledger says
-  Mara remains on duty until all passengers clear. The route is valid, but the
-  player should understand that clearing Mara only is a deliberate narrower
-  choice and that the manifest route offers a richer rescue.
+- Main objective: Remove contradictory manifest wording in the late-game
+  passenger rescue route.
+- Why this matters: The ledger now correctly nudges prepared players toward
+  the kept-passenger manifest, but the manifest scene itself said Mara's door
+  was the only one still shut after the ledger described passenger doors as
+  still stamped shut. That undercut the player's understanding of why opening
+  every manifest door is different from clearing only Mara.
 - Tasks:
-  - Make the `signal_ledger` text remind players that the manifest doors are
-    still shut.
-  - Rename the direct Mara-clear choice so it clearly says "only her name."
-  - Surface an objective that nudges prepared players to inspect the manifest
-    before deciding whose names to clear.
-  - Add regression coverage for the new text, objective, and choice label.
+  - Revise `passenger_manifest` so all passenger doors remain shut until the
+    player opens the manifest.
+  - Keep Mara's dispatcher row narratively distinct without implying the other
+    passengers are already clear.
+  - Update regression coverage for both signal-booth and ledger-first manifest
+    routes.
   - Run focused tests, full health, an actual playthrough, and commit/push if
     green.
 - Evidence:
-  - Updated `signal_ledger` copy so the kept-passenger manifest pages remain
-    physically present at the moment the player is deciding what to clear.
-  - Renamed `read_manifest_from_ledger` and `mark_mara_clear_from_ledger`
-    labels so the choice between checking the manifest and clearing only Mara
-    is explicit.
-  - Updated objective generation so prepared players who have inspected Mara's
-    ledger row see "Check the kept-passenger manifest before deciding whose
-    names to clear" until they inspect the manifest.
-  - Added regression coverage for the new ledger text, objective, and direct
-    Mara-only clear label.
+  - Revised `passenger_manifest` so each kept-passenger door is still shut, and
+    Mara's dispatcher row is distinct because the badge proof can open the
+    rest.
+  - Updated story-path regression coverage for both direct signal-booth
+    manifest reading and ledger-first manifest pivots.
   - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
   - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
   - Validation reports 51 scenes, 7 endings, and all 51 reachable.
   - Health coverage playtest visited all 51 scenes with 0 unfinished completed
     routes, best score 100/100, average score 91.91, and 15372 max-score runs.
-  - Manual CLI play followed the new manifest nudge from `signal_ledger` to
-    `passenger_manifest`, listened to the passenger doors, opened every
-    manifest door, and reached `passenger_true_ending` at 100/100.
+  - Manual CLI play read the kept-passenger manifest, listened to the marked
+    passenger doors, opened every manifest door, and reached
+    `passenger_true_ending` at 100/100.
 - Playtest notes:
-  - The ledger decision now reads less like "clear Mara or do optional lore" and
-    more like a meaningful choice between a narrower rescue and the fuller
-    manifest rescue.
-  - The route stayed bounded because no new scene or required confirmation step
-    was added.
-  - The manifest route ended cleanly with no lingering objectives.
-  - No bugs surfaced in the focused route.
-- Follow-up: Watch whether the nudge increases manifest-ending routes without
-  making the valid direct true-ending route feel blocked.
+  - The revised manifest beat now lines up with the ledger text and the later
+    `passengers_released` scene: all passenger doors are still closed until the
+    player uses Mara's badge proof.
+  - The manifest route remained clean and ended with no lingering objectives.
+  - No route or scoring bugs surfaced.
+- Follow-up: Watch whether the passenger-manifest copy now reads as a clear
+  rescue objective instead of a lore-only aside.
 - Risks:
-  - The direct `true_ending` must remain available for players who intentionally
-    clear only Mara.
+  - Copy-only changes should not affect route availability, but tests should
+    still confirm both manifest entry points.
 
 ## Last Completed Cycle
 
