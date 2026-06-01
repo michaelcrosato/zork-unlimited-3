@@ -1017,6 +1017,61 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("board_without_clearing_mara");
   });
 
+  it("lets fleeing players hear one final token reminder without blocking escape", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("escape_warning");
+    expect(choiceIds).toContain("listen_at_stairwell");
+    expect(choiceIds).toContain("confirm_flee_platform");
+
+    state = choose(story, state, "listen_at_stairwell");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_stairwell_call");
+    expect(observation.scene.text).toContain("behind the stopped clock");
+    expect(observation.state.flags.heard_escape_call).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+
+    state = choose(story, state, "return_from_stairwell_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+
+    state = choose(story, state, "flee_platform");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("escape_warning");
+    expect(choiceIds).not.toContain("listen_at_stairwell");
+    expect(choiceIds).toContain("confirm_flee_platform");
+
+    state = choose(story, state, "confirm_flee_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_ending");
+  });
+
   it("routes ledger-warning players directly to the stopped clock for the token", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1304,6 +1359,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("escape_warning");
     expect(observation.scene.text).toContain("unfinished work");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_at_stairwell",
       "return_to_lit_platform_from_escape_warning",
       "confirm_flee_platform"
     ]);

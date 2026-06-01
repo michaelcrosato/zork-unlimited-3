@@ -494,12 +494,33 @@ scenes:
       work. Mara's posters flutter in the tunnel wind, and the token slot keeps
       tapping for a signal key you have not found.
     choices:
+      - id: listen_at_stairwell
+        label: Listen before you leave Mara behind
+        to: mara_stairwell_call
+        requires:
+          notFlag: heard_escape_call
+        effects:
+          set:
+            heard_escape_call: true
+            met_mara: true
+            knows_token_location: true
       - id: return_to_lit_platform_from_escape_warning
         label: Return to the gate control and keep searching
         to: lit_platform
       - id: confirm_flee_platform
         label: Leave Mara calling and run back to the street
         to: escape_ending
+
+  mara_stairwell_call:
+    text: >
+      Halfway up the stairs, the public-address speaker finds one clear breath.
+      "If you walk out now, I will understand," Mara says. "But the signal key
+      is still behind the stopped clock, and the line will keep asking someone
+      else to finish what I could not."
+    choices:
+      - id: return_from_stairwell_call
+        label: Return to the gate control with the clock in mind
+        to: lit_platform
 
   ledger_warning:
     text: >

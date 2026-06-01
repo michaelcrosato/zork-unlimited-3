@@ -11,19 +11,63 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional manifest-route farewell that makes the
-  released passengers feel present before the final train-car release.
+- Main objective: Add an optional last-chance stairwell call for players who
+  almost flee the lit platform before finding the signal token.
 - Why this matters: Current evidence shows healthy completion, full coverage,
   and strong true-ending discoverability. The best next improvement is a small
+  character beat on a normal exploratory pressure point: players tempted to
+  escape get emotional context and a clear clock-token reminder without losing
+  the ability to leave.
+- Tasks:
+  - Add a one-time stairwell call from `escape_warning`.
+  - Keep both the immediate escape ending and return-to-platform route
+    available.
+  - Set the token-location clue when players listen, then prevent the optional
+    beat from looping.
+  - Add regression coverage for the warning, return, objective, and escape
+    behavior.
+  - Run health, an actual playthrough, and the evidence-only AI cycle.
+- Evidence:
+  - Added `mara_stairwell_call`, reached from `escape_warning` via
+    `listen_at_stairwell` before the player confirms escape or returns.
+  - The scene sets `heard_escape_call`, `met_mara`, and `knows_token_location`,
+    then returns to `lit_platform`; revisiting `escape_warning` no longer shows
+    the optional call.
+  - Kept `return_to_lit_platform_from_escape_warning` and
+    `confirm_flee_platform` available, so the escape ending remains intact.
+  - Updated story-path regression coverage for the new optional call and the
+    existing escape-warning choice list.
+  - `npm test -- tests/story-paths.test.ts` passed with 49 tests.
+  - `npm run health` passed with formatting, TypeScript, 70 tests, validation,
+    and coverage playtest.
+  - Validation reports 40 scenes, 6 endings, and all 40 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 40 scenes visited, best
+    score 100/100, average score 90.42, and 2880 max-score runs.
+  - Manual CLI route took the new stairwell call, recovered the token and map,
+    cleared Mara's ledger row, and reached `true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, an actual
+    MCP true-ending playthrough at 100/100, and an adaptive exploratory
+    true-ending route at 100/100.
+- Follow-up: Consider whether the `lit_platform` return path after the
+  stairwell call should offer a more direct tunnel/clock return, since the
+  current route naturally goes through the service-room hub.
+- Risks:
+  - Adding another optional warning choice can slightly slow escape attempts.
+    Tests and playthroughs confirm that immediate escape and true-ending
+    recovery both remain available.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added an optional passenger-platform farewell scene after opening the
+  kept-passenger manifest doors.
+- Main objective: Add an optional manifest-route farewell that makes the
+  released passengers feel present before the final train-car release.
+- Why this matters: Current evidence showed healthy completion, full coverage,
+  and strong true-ending discoverability. The best next improvement was a small
   emotional payoff for players who took the optional passenger manifest route,
   without adding a mandatory step to the core ending.
-- Tasks:
-  - Add a one-time passenger-platform farewell scene after the manifest doors
-    open.
-  - Keep direct boarding available so the manifest route remains finishable
-    without extra required choices.
-  - Add regression coverage proving the farewell is optional and non-looping.
-  - Run health and an actual playthrough after the story change.
 - Evidence:
   - Added `passenger_farewell`, a one-time optional scene reached from
     `passenger_platform` after the manifest doors open.
@@ -34,8 +78,8 @@ preserving normal-play true-ending discoverability.
   - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
   - `npm run health` passed with formatting, TypeScript, 69 tests, validation,
     and coverage playtest.
-  - Validation reports 39 scenes, 6 endings, and all 39 reachable.
-  - Coverage playtest reports 0 unfinished runs, all 39 scenes visited, best
+  - Validation reported 39 scenes, 6 endings, and all 39 reachable.
+  - Coverage playtest reported 0 unfinished runs, all 39 scenes visited, best
     score 100/100, average score 87.88, and 1600 max-score runs.
   - Manual CLI route took the passenger manifest, passenger echoes, new
     farewell scene, Mara's manifest intercom, and reached
