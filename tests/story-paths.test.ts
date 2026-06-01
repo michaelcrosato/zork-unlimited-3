@@ -2055,13 +2055,13 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
     let choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(choiceIds).toEqual([
-      "listen_to_lunch_tin_worker",
-      "pull_release_after_gathering_passengers"
+      "listen_to_lunch_tin_worker_from_boarding",
+      "pull_release_after_lunch_tin_boarding"
     ]);
 
     state = initialState(story);
@@ -2093,12 +2093,12 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(choiceIds).toEqual([
-      "listen_to_lunch_tin_worker",
-      "pull_release_after_gathering_passengers"
+      "listen_to_lunch_tin_worker_from_boarding",
+      "pull_release_after_lunch_tin_boarding"
     ]);
   });
 
@@ -2142,15 +2142,16 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "let_lunch_tin_worker_keep_count");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.scene.text).toContain("clicks the latch");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_lunch_tin_worker",
-      "pull_release_after_gathering_passengers"
+      "listen_to_lunch_tin_worker_from_boarding",
+      "pull_release_after_lunch_tin_boarding"
     ]);
 
-    state = choose(story, state, "listen_to_lunch_tin_worker");
+    state = choose(story, state, "listen_to_lunch_tin_worker_from_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
@@ -2480,10 +2481,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_from_passenger_farewell");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_lunch_tin_worker",
-      "pull_release_after_gathering_passengers"
+      "listen_to_lunch_tin_worker_from_boarding",
+      "pull_release_after_lunch_tin_boarding"
     ]);
   });
 
@@ -2896,7 +2897,7 @@ describe("demo story critical paths", () => {
       "return_from_passenger_answers",
       "help_passengers_gather",
       "return_from_passenger_farewell",
-      "listen_to_lunch_tin_worker"
+      "listen_to_lunch_tin_worker_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2918,6 +2919,42 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("lunch-tin worker's latch");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("lets the lunch-tin boarding count release directly without losing full score", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "let_lunch_tin_worker_keep_count",
+      "pull_release_after_lunch_tin_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
@@ -2990,7 +3027,7 @@ describe("demo story critical paths", () => {
       "return_from_passenger_answers",
       "help_passengers_gather",
       "return_from_passenger_farewell",
-      "listen_to_lunch_tin_worker",
+      "listen_to_lunch_tin_worker_from_boarding",
       "hear_final_lunch_tin_roll_call"
     ]) {
       state = choose(story, state, choiceId);
@@ -4251,16 +4288,18 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_from_passenger_farewell");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.choices.map((choice) => choice.id)).not.toContain(
       "pull_release_with_manifest"
     );
-    expect(observation.choices.map((choice) => choice.id)).toContain("listen_to_lunch_tin_worker");
     expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_gathering_passengers"
+      "listen_to_lunch_tin_worker_from_boarding"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_lunch_tin_boarding"
     );
 
-    state = choose(story, state, "pull_release_after_gathering_passengers");
+    state = choose(story, state, "pull_release_after_lunch_tin_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");

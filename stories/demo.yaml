@@ -942,7 +942,7 @@ scenes:
             helped_passengers_gather: true
       - id: let_lunch_tin_worker_keep_count
         label: Let the lunch-tin worker count the answered passengers aboard
-        to: train_car
+        to: passenger_lunch_tin_boarding
         requires:
           notFlag: helped_passengers_gather
         effects:
@@ -1189,13 +1189,33 @@ scenes:
     choices:
       - id: return_from_passenger_farewell
         label: Let the lunch-tin worker set the pace to the third car
-        to: train_car
+        to: passenger_lunch_tin_boarding
         effects:
           set:
             steadied_lunch_tin_worker: true
       - id: lead_gathered_passengers_without_lunch_tin_pace
         label: Board the gathered passengers without waiting for his count
         to: train_car
+
+  passenger_lunch_tin_boarding:
+    text: >
+      The lunch-tin worker boards first and does not sit. He plants one hand on
+      the rail, keeps the warm tin tucked against his hip, and clicks the latch
+      each time another passenger finds the third car without looking at the
+      HOME sign. The child, the newspaper woman, and the old conductor fall
+      into that practical rhythm until the aisle feels less like a ledger and
+      more like a shift change. Under the first seat, the emergency release
+      waits for the count to become movement.
+    choices:
+      - id: listen_to_lunch_tin_worker_from_boarding
+        label: Listen as the lunch-tin worker keeps time
+        to: passenger_lunch_tin_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: pull_release_after_lunch_tin_boarding
+        label: Pull the release while the lunch-tin count holds
+        to: passenger_helped_true_ending
 
   train_car:
     text: >

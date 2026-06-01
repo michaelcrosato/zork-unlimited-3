@@ -12,6 +12,68 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a dedicated lunch-tin boarding beat before the final
+  helped-passenger release.
+- Why this matters: The core route metrics are healthy, so the best current
+  value is route-specific story depth. The lunch-tin worker can set the final
+  boarding rhythm, but that choice previously dropped back to the generic third
+  car before its tailored intercom. A short boarding beat makes the player's
+  choice pay off immediately and keeps the branch distinct.
+- Tasks:
+  - Add `passenger_lunch_tin_boarding` after the lunch-tin pace choices.
+  - Preserve the existing `passenger_lunch_tin_intercom` and direct helped
+    ending release.
+  - Add regression coverage for the new boarding scene, the intercom
+    continuation, and the direct release.
+  - Run focused tests, validation, full health, evidence gathering, and a real
+    CLI/MCP playthrough.
+- Evidence:
+  - Added `passenger_lunch_tin_boarding`, reached from both
+    `let_lunch_tin_worker_keep_count` and `return_from_passenger_farewell`.
+  - The new scene can continue to the existing lunch-tin intercom through
+    `listen_to_lunch_tin_worker_from_boarding`, or release directly through
+    `pull_release_after_lunch_tin_boarding`.
+  - Focused story-path tests passed with 99 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 83
+    reachable scenes and 12 endings.
+  - `npm run health` passed with formatting, TypeScript, 120 tests,
+    validation, and coverage playtest. Coverage visited all 83 scenes,
+    including `passenger_lunch_tin_boarding`, kept best score 100/100, and
+    averaged 99.58.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T20-51-32-222Z.md`. Its 100-run random
+    and coverage samples both visited `passenger_lunch_tin_boarding`, had no
+    unvisited scenes, kept best score 100/100, and averaged 78.25 random /
+    99.58 coverage.
+  - Evidence-cycle MCP validation passed with 83 reachable scenes and no
+    warnings. Its required MCP playthrough reached `true_ending` at 100/100,
+    and its adaptive exploratory route reached `passenger_true_ending` at
+    100/100.
+  - Manual CLI play followed `let_lunch_tin_worker_keep_count` ->
+    `listen_to_lunch_tin_worker_from_boarding` ->
+    `pull_release_after_lunch_tin_intercom` and reached
+    `passenger_helped_true_ending` at 100/100 with no objectives.
+- Playtest notes:
+  - The new boarding beat makes the lunch-tin choice visible immediately: the
+    latch count now bridges passenger answers into the final intercom instead
+    of briefly returning to generic third-car text.
+  - The branch still offers a direct release for players who understand the
+    count, while preserving the stronger intercom payoff for exploratory
+    players.
+  - Automated and manual play found no unreachable scenes, unfinished routes,
+    stale objectives, or score regressions.
+- Follow-up:
+  - Watch whether the helped-passenger route now has enough branch identity, or
+    whether the non-lunch gathered route needs a similarly concrete boarding
+    beat later.
+- Risks:
+  - Passenger routes are already dense; keep this as a single bridge scene and
+    avoid adding more ending families unless playtests show a real gap.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a direct answered-passenger boarding beat before the
   manifest-passenger intercom/release.
 - Why this matters: Core route health is strong and all scenes are reachable,
