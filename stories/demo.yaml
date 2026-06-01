@@ -1316,6 +1316,23 @@ scenes:
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_echoed_manifest_intercom
+        label: Listen as the opened doors answer from the car
+        to: passenger_echoed_manifest_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
         effects:
           set:
             heard_mara_goodbye: true
@@ -1708,6 +1725,18 @@ scenes:
     choices:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
+        to: passenger_true_ending
+
+  passenger_echoed_manifest_intercom:
+    text: >
+      The third car answers with the same small sounds you heard behind the
+      stamped doors: thermos cap, newspaper fold, mittened knock against the
+      frame. They are no longer trapped behind ink, but the rhythm is familiar
+      enough that Mara stops before reading the first name twice. "You heard
+      them waiting," she says. "Now let the line hear them leaving."
+    choices:
+      - id: pull_release_after_echoed_manifest_goodbye
+        label: Pull the release while the opened doors answer
         to: passenger_true_ending
 
   passenger_counted_manifest_intercom:

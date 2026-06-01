@@ -1852,6 +1852,61 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("pays off listening to passenger echoes before opening the manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "listen_to_manifest_doors_from_manifest",
+      "return_from_passenger_echoes",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "board_third_car_with_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_echoed_manifest_intercom",
+      "pull_release_with_manifest"
+    ]);
+
+    state = choose(story, state, "listen_to_echoed_manifest_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
+    expect(observation.scene.text).toContain("same small sounds you heard behind the");
+    expect(observation.scene.text).toContain("Now let the line hear them leaving");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_echoed_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds a one-time Mara handoff beat after opening the passenger manifest", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

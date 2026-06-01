@@ -12,6 +12,68 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a tailored final intercom payoff for players who listen
+  to the kept-passenger doors before opening the manifest.
+- Why this matters: Core guidance and true-ending discoverability are healthy,
+  so the next useful improvement is route-specific story depth. The
+  `passenger_echoes` scene is evocative, but players who heard those door
+  sounds previously collapsed into the generic manifest intercom if they boarded
+  without further passenger-gathering. Carrying that memory into the third car
+  makes careful manifest play feel acknowledged.
+- Tasks:
+  - Add a `passenger_echoed_manifest_intercom` scene after direct manifest
+    boarding when `heard_passenger_echoes` is set.
+  - Preserve the existing generic `mara_manifest_intercom` for players who read
+    the manifest but skip the passenger-door listening beat.
+  - Add regression coverage for the echoed-manifest route and full-score
+    passenger ending.
+  - Run full health and a real CLI/MCP route through the new branch.
+- Evidence:
+  - Added `passenger_echoed_manifest_intercom`, reached from `train_car` only
+    when players have opened the kept-passenger manifest, listened to the
+    stamped passenger doors, and boarded without moving into answered or
+    gathered passenger branches.
+  - Added `notFlag: heard_passenger_echoes` to the generic
+    `mara_manifest_intercom` gate so both variants remain distinct.
+  - Focused story-path tests passed with 103 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, validation,
+    and coverage playtest.
+  - Health validation reports 87 scenes, 12 endings, and all 87 reachable.
+  - Health coverage visited all 87 scenes, including
+    `passenger_echoed_manifest_intercom`, with best score 100/100 and average
+    score 99.58.
+  - Targeted CLI play followed `listen_to_manifest_doors_from_manifest` ->
+    `listen_to_echoed_manifest_intercom` ->
+    `pull_release_after_echoed_manifest_goodbye` and reached
+    `passenger_true_ending` at 100/100 with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T21-50-02-748Z.md`. Its health checks
+    were green, MCP validation passed with 87 reachable scenes and no warnings,
+    250-run MCP random play visited `passenger_echoed_manifest_intercom`, the
+    required MCP route reached `true_ending` at 100/100, and the adaptive MCP
+    route reached `passenger_helped_true_ending` at 100/100.
+- Playtest notes:
+  - The new third-car beat clearly recalls the thermos, newspaper, and mitten
+    sounds from `passenger_echoes`, making the optional listening beat feel
+    remembered without changing the ending target.
+  - The direct route still offers `pull_release_with_manifest` beside the new
+    intercom, so players are not forced through an extra lore beat.
+  - Automated evidence confirms the generic `mara_manifest_intercom` remains
+    reachable and the new echoed variant is covered by random, coverage, and
+    targeted CLI play.
+- Follow-up:
+  - Watch coverage and random samples to confirm both
+    `passenger_echoed_manifest_intercom` and `mara_manifest_intercom` remain
+    reachable.
+- Risks:
+  - The direct manifest route already has several optional payoffs; keep this
+    branch limited to the specific passenger-door listening memory so it does
+    not crowd stronger answered/gathered routes.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Make the badge-proof payoff easier to discover through normal
   locker play without making it mandatory.
 - Why this matters: The previous cycle added a strong
