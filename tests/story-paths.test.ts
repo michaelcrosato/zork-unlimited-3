@@ -370,6 +370,74 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("force_gate");
   });
 
+  it("adds an optional badge memory without blocking locker preparation", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "open_service_door", "search_locker", "take_badge"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("locker");
+    expect(choiceIds).toContain("inspect_badge_back");
+    expect(choiceIds).toContain("take_fuse");
+
+    state = choose(story, state, "inspect_badge_back");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("badge_memory");
+    expect(observation.scene.text).toContain("LAST TRAIN");
+    expect(observation.scene.text).toContain("DO NOT CLEAR ME BEFORE THE OTHERS");
+    expect(observation.state.flags.inspected_badge_back).toBe(true);
+    expect(observation.state.flags.knows_release).toBe(true);
+
+    state = choose(story, state, "return_from_badge_memory");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("locker");
+    expect(choiceIds).not.toContain("inspect_badge_back");
+    expect(choiceIds).toContain("take_fuse");
+
+    state = choose(story, state, "take_fuse");
+    state = choose(story, state, "close_locker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.inventory).toEqual(["badge", "fuse", "lantern"]);
+  });
+
+  it("does not repeat Mara character beats at the posters after reading the badge", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_badge",
+      "inspect_badge_back",
+      "return_from_badge_memory",
+      "take_fuse",
+      "close_locker",
+      "take_map",
+      "go_to_platform",
+      "install_fuse"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.flags.inspected_badge_back).toBe(true);
+    expect(choiceIds).not.toContain("inspect_mara_posters");
+  });
+
   it("steers fuse carriers toward restoring platform power before boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

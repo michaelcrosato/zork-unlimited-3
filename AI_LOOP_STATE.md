@@ -11,23 +11,68 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add an optional badge-inspection memory in the maintenance
+  locker.
+- Why this matters: Current evidence shows completion and true-ending
+  discoverability are healthy, so the next valuable improvement is a contained
+  character beat. Letting players read the back of Mara's badge makes the badge
+  feel like proof carried by a person, reinforces the third-car release route,
+  and echoes her rule that no one clears until the kept passengers clear.
+- Tasks:
+  - Add a one-time optional `badge_memory` scene from the locker after Mara's
+    badge is recovered.
+  - Return directly to the locker so players can still collect the fuse and
+    close the locker without a hub detour.
+  - Add regression coverage for the scene text, one-time gating, and continued
+    locker preparation.
+  - Run focused tests, full health, an actual CLI playthrough, and commit/push
+    if green.
+- Evidence:
+  - Added `badge_memory`, reached from the locker after taking Mara's badge
+    while the platform fuse is still uncollected.
+  - The badge memory teaches `LAST TRAIN, THIRD CAR, FIRST SEAT RELEASE`,
+    sets `knows_release`, and reinforces Mara's instruction not to clear her
+    before the other kept passengers.
+  - The scene returns directly to the locker so players can still take the fuse
+    and close the locker without a hub detour.
+  - `inspect_mara_posters` is hidden after the badge memory, preventing the
+    longest exploratory coverage routes from stacking two redundant Mara
+    character beats.
+  - `npm test -- tests/story-paths.test.ts` passed with 59 tests.
+  - Validation reports 48 scenes, 6 endings, and all 48 reachable.
+  - A focused random run passed with 0 unfinished routes, all 48 scenes
+    visited, best score 100/100, average score 75.45, and 63 max-score runs.
+  - A focused coverage run passed with 0 unfinished routes, all 48 scenes
+    visited, best score 100/100, average score 97.33, and 58176 max-score
+    runs.
+  - `npm run health` passed with formatting, TypeScript, 80 tests, validation,
+    and coverage playtest.
+  - Manual CLI play took the new badge-memory route, then recovered the map,
+    token, fuse, cleared Mara's ledger, and reached `true_ending` at 100/100.
+- Playtest notes:
+  - The badge memory reads as a useful character beat rather than a detour
+    because it also gives actionable release-route information.
+  - The route felt smoother once the later poster beat was suppressed for
+    players who had already read the badge, keeping optional lore from piling
+    up on the longest route.
+- Follow-up: Watch coverage route count after adding optional locker branches;
+  avoid stacking more one-time beats in the same hub unless tests stay bounded.
+- Risks:
+  - Another optional scene can lengthen random routes through the locker, though
+    it should remain bounded because it is one-time and returns directly.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added an optional morning-map note for players taking the map-only
+  safe escape route.
 - Main objective: Add an optional morning-map note for players taking the
   map-only safe escape route.
-- Why this matters: Current evidence shows ideal-ending discovery is healthy,
-  while the lower-score `good_ending` route is still useful as a pressure valve.
-  A short note on the morning platform can clarify that safe transfer is not the
+- Why this matters: Current evidence showed ideal-ending discovery was healthy,
+  while the lower-score `good_ending` route remained useful as a pressure valve.
+  A short note on the morning platform clarified that safe transfer is not the
   same as clearing the ledger, making the non-ideal escape feel intentional
   without adding mandatory steps to the true-ending route.
-- Tasks:
-  - Add a one-time optional `morning_map_note` scene from `morning_transfer`.
-  - Keep direct safe escape, morning-door listening, and turn-back choices
-    available from `morning_transfer`.
-  - Let the note branch resolve directly to either `good_ending` or a shortened
-    turn-back route so optional beats do not stack past the coverage budget.
-  - Add regression coverage for the note, its content, and the token recovery
-    turn-back branch.
-  - Run focused tests, full health, an actual CLI playthrough, and an evidence
-    cycle.
 - Evidence:
   - Added `morning_map_note`, reached from `morning_transfer` by reading the
     final note written on the marked map.
@@ -57,15 +102,6 @@ preserving normal-play true-ending discoverability.
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
     MCP true-ending playthrough at 100/100, and an adaptive exploratory
     true-ending route at 100/100.
-- Playtest notes:
-  - The morning-map note makes the map-only route feel less like a simple
-    escape hatch and more like a survivable partial success with unfinished
-    obligations.
-  - Letting the note resolve directly kept the older morning-door beat useful
-    as an alternate reflection path, not another scene that every long route
-    must chain through.
-  - The token shortcut from the note reads coherently in play and keeps the
-    turn-back rescue path within the automated coverage budget.
 - Follow-up: If further optional morning-platform content is added, treat it as
   an alternate branch with its own resolution rather than returning to
   `morning_transfer`.

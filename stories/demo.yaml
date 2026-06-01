@@ -316,6 +316,18 @@ scenes:
           addItem: badge
           set:
             has_mara_badge: true
+      - id: inspect_badge_back
+        label: Read the back of Mara's badge
+        to: badge_memory
+        requires:
+          all:
+            - item: badge
+            - notItem: fuse
+            - notFlag: inspected_badge_back
+        effects:
+          set:
+            inspected_badge_back: true
+            knows_release: true
       - id: close_locker
         label: Close the locker
         to: service_room
@@ -323,6 +335,18 @@ scenes:
           all:
             - item: fuse
             - item: badge
+
+  badge_memory:
+    text: >
+      The badge is heavier than it should be. On the back, under Mara Vale's
+      number, someone scratched a route in tiny block letters: LAST TRAIN,
+      THIRD CAR, FIRST SEAT RELEASE. A second hand added one more line later:
+      DO NOT CLEAR ME BEFORE THE OTHERS. The metal is worn smooth where a thumb
+      worried the edge for years.
+    choices:
+      - id: return_from_badge_memory
+        label: Put the badge with the other supplies
+        to: locker
 
   platform:
     text: >
@@ -432,6 +456,7 @@ scenes:
         requires:
           all:
             - notFlag: inspected_mara_posters
+            - notFlag: inspected_badge_back
             - any:
                 - notItem: map
                 - notItem: token
