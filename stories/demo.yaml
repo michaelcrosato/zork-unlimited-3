@@ -858,6 +858,14 @@ scenes:
       morning. Behind you, through the closing doors, the underpass speaker
       keeps whispering names. Mara's is still the clearest.
     choices:
+      - id: listen_at_morning_doors
+        label: Listen at the closing doors before you decide
+        to: morning_doors
+        requires:
+          notFlag: heard_morning_doors
+        effects:
+          set:
+            heard_morning_doors: true
       - id: step_into_morning
         label: Step onto the morning platform and leave the line behind
         to: good_ending
@@ -873,6 +881,41 @@ scenes:
             knows_token_location: true
             met_mara: true
       - id: turn_back_for_mara
+        label: Hold the doors and return for Mara's ledger
+        to: service_room
+        requires:
+          item: token
+        effects:
+          set:
+            returned_from_safe_escape: true
+            knows_platform: true
+            met_mara: true
+
+  morning_doors:
+    text: >
+      At the closing doors, the underpass is only a dark reflection in the
+      glass. Mara is not begging. She is reading the ledger in a steady night
+      voice, leaving enough silence after each name for someone to answer.
+      The morning platform is real under your shoes, but the train has not
+      stopped counting.
+    choices:
+      - id: leave_after_morning_doors
+        label: Step into morning with Mara's voice behind you
+        to: good_ending
+      - id: turn_back_from_morning_doors_for_token
+        label: Recover the signal token and return to the tunnel
+        to: tunnel
+        requires:
+          notItem: token
+        effects:
+          addItem: token
+          set:
+            found_token: true
+            returned_from_safe_escape: true
+            knows_platform: true
+            knows_token_location: true
+            met_mara: true
+      - id: turn_back_from_morning_doors_for_mara
         label: Hold the doors and return for Mara's ledger
         to: service_room
         requires:

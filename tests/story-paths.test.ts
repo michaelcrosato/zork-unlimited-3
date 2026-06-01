@@ -473,6 +473,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("morning_transfer");
     expect(observation.scene.text).toContain("Mara's is still the clearest");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_at_morning_doors",
       "step_into_morning",
       "turn_back_for_signal_token"
     ]);
@@ -484,6 +485,97 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's badge number");
     expect(observation.scene.text).toContain("less like an ending");
+  });
+
+  it("adds an optional morning-door beat before the map-only good ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "study_map_in_train",
+      "ride_with_map_after_study",
+      "listen_at_morning_doors"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_doors");
+    expect(observation.scene.text).toContain("leaving enough silence after each name");
+    expect(observation.scene.text).toContain("the train has not stopped counting");
+    expect(observation.state.flags.heard_morning_doors).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_morning_doors",
+      "turn_back_from_morning_doors_for_token"
+    ]);
+
+    state = choose(story, state, "leave_after_morning_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("good_ending");
+    expect(observation.scene.ending).toBe(true);
+  });
+
+  it("lets morning-door listeners turn back toward the true ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "listen_at_morning_doors",
+      "turn_back_from_morning_doors_for_token"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toEqual(["lantern", "map", "token"]);
+    expect(observation.state.flags.found_token).toBe(true);
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.objectives).toContain("Find a way to power the platform gate control.");
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "listen_at_morning_doors",
+      "turn_back_from_morning_doors_for_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.heard_morning_doors).toBe(true);
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).not.toContain("go_to_platform");
   });
 
   it("lets map-only escape riders turn back for Mara's ledger", async () => {
