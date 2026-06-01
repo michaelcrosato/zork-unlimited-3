@@ -1353,7 +1353,7 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
-  it("focuses the train car on the manifest release after passenger answer beats", async () => {
+  it("lets passenger answer listeners still help the released crowd gather", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -1376,7 +1376,10 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "listen_to_passenger_answers",
-      "return_from_passenger_answers"
+      "return_from_passenger_answers",
+      "help_passengers_gather",
+      "return_from_passenger_farewell",
+      "board_third_car_with_passengers"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1386,7 +1389,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
-    expect(choiceIds).toEqual(["pull_release_with_manifest"]);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(choiceIds).toEqual(["pull_release_after_gathering_passengers"]);
 
     state = initialState(story);
     for (const choiceId of [
@@ -2412,8 +2416,17 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_from_passenger_answers");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("help_passengers_gather");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_third_car_with_passengers"
+    );
+
+    state = choose(story, state, "board_third_car_with_passengers");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["pull_release_with_manifest"]);
 
     state = initialState(story);
 

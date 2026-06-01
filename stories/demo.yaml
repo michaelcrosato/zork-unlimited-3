@@ -840,8 +840,8 @@ scenes:
       answer before she tells you the third car is ready.
     choices:
       - id: return_from_passenger_answers
-        label: Cross through the answered crowd to the third car
-        to: train_car
+        label: Cross through the answered crowd as they gather
+        to: passenger_platform
 
   passenger_platform:
     text: >

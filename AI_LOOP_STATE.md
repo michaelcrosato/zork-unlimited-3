@@ -11,60 +11,53 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve normal-play discovery of the missing-map signal booth
-  warning.
-- Why this matters: Cycle evidence showed the core route was healthy, but the
-  100-run random playtest missed `signal_map_warning` and
-  `signal_map_recovered`. Those scenes teach that the map is required before
-  the train can safely resolve the ledger, so they should appear in ordinary
-  exploratory play instead of only coverage search.
+- Main objective: Let careful manifest-route players both hear passenger
+  answers and help the released crowd gather.
+- Why this matters: Core route metrics were healthy, so the highest-value
+  improvement was story payoff on an already-successful route. Before this
+  cycle, `listen_to_passenger_answers` sent players directly to the train car,
+  making the answer beat mutually exclusive with the later
+  `help_passengers_gather` payoff.
 - Tasks:
-  - Add a direct service-room route for players carrying the fuse and token but
-    missing the map.
-  - Preserve the existing focused-map behavior after the personnel file has
-    already made the map the only missing preparation item.
-  - Add regression coverage for the new service-room warning path and map
-    recovery.
+  - Route the passenger-answer scene back through `passenger_platform`.
+  - Preserve the direct manifest-release route for players who board without
+    helping the crowd gather.
+  - Update ideal-ending test helpers to count `passenger_helped_true_ending`.
   - Run focused tests, full health, an actual CLI playthrough, and commit/push
     if green.
 - Evidence:
-  - Added `try_gate_ritual_without_map` in `service_room`, available only when
-    the player has the fuse and token, lacks the marked map, has not lit the
-    platform, and has not already read Mara's personnel file.
-  - The route sets `knows_platform` and `platform_lit`, then sends the player to
-    the existing `signal_map_warning`; choosing recovery still adds the map and
-    leads through `signal_map_recovered` into `signal_booth`.
-  - Added story-path regression coverage for the direct service-room warning
-    route, map recovery, and platform-lit state.
+  - `return_from_passenger_answers` now sends players to
+    `passenger_platform` instead of directly to `train_car`.
+  - Players who listen to the passenger answers can still board immediately and
+    reach `passenger_true_ending`, or help the passengers gather and reach
+    `passenger_helped_true_ending`.
+  - Updated story-path regression coverage for answer-listeners who help the
+    crowd and answer-listeners who board directly.
+  - Updated `trueEndingCount` in playtest tests so
+    `passenger_helped_true_ending` is treated as an ideal ending.
   - `npm test -- tests/story-paths.test.ts` passed with 68 tests.
   - Focused validation passed with 51 scenes, 7 endings, and all 51 reachable.
-  - Focused 100-run random playtest now visits both `signal_map_warning` and
-    `signal_map_recovered`, with 0 unfinished routes, best score 100/100, and
-    average score 77.75.
-  - Focused coverage playtest visited all 51 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 91.91, and 15372 max-score runs.
+  - Focused 100-run random playtest ended all 100 runs, visited all 51 scenes,
+    kept best score 100/100 and average score 77.75, and increased
+    `passenger_helped_true_ending` from 9/100 to 19/100.
   - `npm run health` passed with formatting, TypeScript, 89 tests, validation,
     and coverage playtest.
-  - Validation reports 51 scenes, 7 endings, and all 51 reachable.
   - Health coverage playtest visited all 51 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 91.91, and 15372 max-score runs.
-  - Manual CLI play skipped the map, triggered `signal_map_warning` directly
-    from the service room, recovered the map through `signal_map_recovered`,
-    cleared Mara's ledger row, and reached `true_ending` at 100/100.
+    routes, best score 100/100, average score 92.79, and 17568 max-score runs.
+  - Manual CLI play took the manifest route, listened to passenger answers,
+    returned through the passenger platform, helped passengers gather, and
+    reached `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new service-room choice makes the fuse/token/map relationship visible
-    without forcing a hub bounce through platform, gate control, and lit
-    platform.
-  - Hiding the shortcut after `read_mara_file` preserves the sharper "take map"
-    focus when the map is truly the last preparation item.
-  - The warning and recovery beat remained actionable and finished with no
-    lingering objectives.
-- Follow-up: Watch whether random-route visits to the signal-map scenes remain
-  stable across future branch additions.
+  - The answer beat now feels like part of gathering the crowd rather than a
+    branch that skips the crowd payoff.
+  - Boarding immediately after the answers remains available, so the route does
+    not force the optional helped-passenger ending.
+  - No new objectives lingered at the final ending.
+- Follow-up: Watch coverage run count after adding optional manifest-path
+  routing; the count rose but remains bounded and health is green.
 - Risks:
-  - The direct service-room route abstracts walking to the gate, but it reuses
-    the established gate ritual and only appears once the player is carrying
-    the physical fuse and token.
+  - The passenger-answer route is one step longer for players who choose it,
+    but it exposes an immediate board option and preserves max-score endings.
 
 ## Last Completed Cycle
 
