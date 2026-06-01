@@ -873,9 +873,18 @@ scenes:
       The opened manifest does not cheer. It answers roll call in small,
       stubborn proofs of life: a man clearing his throat before saying "here,"
       a child asking if the rain is still outside, someone laughing once because
-      the word present finally means something again. Mara waits for every
-      answer before she tells you the third car is ready.
+      the word present finally means something again, and the woman with the
+      folded newspaper answering "Warden Street" like a stop can become a door.
+      Mara waits for every answer before she tells you the third car is ready.
     choices:
+      - id: follow_newspaper_answer
+        label: Follow the newspaper woman's Warden Street answer
+        to: passenger_newspaper_memory
+        requires:
+          notFlag: heard_newspaper_memory
+        effects:
+          set:
+            heard_newspaper_memory: true
       - id: return_from_passenger_answers
         label: Cross through the answered crowd as they gather
         to: passenger_platform

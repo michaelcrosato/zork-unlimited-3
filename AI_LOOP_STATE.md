@@ -11,58 +11,48 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Preserve the newspaper passenger route through optional final
-  exploration.
-- Why this matters: Random play can reach the newspaper-specific route, but an
-  exploratory player who listens to the final roll call from
-  `passenger_newspaper_intercom` was routed back into the generic
-  helped-passenger ending. Keeping that curiosity on-theme should make the
-  route feel more coherent and slightly improve normal discovery of
-  `passenger_newspaper_true_ending`.
+- Main objective: Improve normal-play discovery of the newspaper passenger
+  route after players listen to the opened manifest answer roll call.
+- Why this matters: The newspaper-specific ending is now coherent once found,
+  but random evidence still shows it is comparatively rare. Players who listen
+  to passenger answers should be able to follow the newspaper woman's named
+  stop directly instead of needing to backtrack to the platform first.
 - Tasks:
-  - Add a newspaper-specific final roll-call beat after
-    `passenger_newspaper_intercom`.
-  - Route that optional beat into `passenger_newspaper_true_ending`.
-  - Update regression coverage for the new scene, label, ending route, and full
-    score.
-  - Run focused tests, full health, and an actual CLI or MCP playthrough
-    through the updated route.
+  - Add a newspaper-woman cue to `passenger_answers`.
+  - Add a direct optional choice from `passenger_answers` to
+    `passenger_newspaper_memory` without removing the return or board choices.
+  - Update regression coverage for the new choice, flag, and preserved board
+    route.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI or MCP playthrough through the updated route.
 - Evidence:
-  - Added `passenger_newspaper_roll_call`, reached from
-    `passenger_newspaper_intercom` when the player chooses the optional final
-    roll-call beat.
-  - Routed the newspaper roll-call release to
-    `passenger_newspaper_true_ending`, preserving the transfer-column motif
-    for exploratory players instead of falling back to the generic helped
-    passenger ending.
-  - Updated story-path regression coverage for the new choice label, scene
-    text, final release choice, ending, and 100/100 score.
+  - Added `follow_newspaper_answer`, reached from `passenger_answers` when the
+    player follows the newspaper woman's Warden Street answer.
+  - The new route sets `heard_newspaper_memory` and lands in
+    `passenger_newspaper_memory`, preserving the existing newspaper sequence
+    from memory to transfer-column intercom to roll call and ending.
+  - The existing `return_from_passenger_answers` and
+    `board_after_passenger_answers` routes remain available and covered.
   - Focused story-path tests passed: 88 tests.
-  - `npm run health` passed with formatting, TypeScript, 109 tests,
-    validation, and coverage playtest.
   - Validation reports 72 scenes, 11 endings, and all 72 reachable.
-  - Coverage playtest visited every scene, including
-    `passenger_newspaper_roll_call`, with no unvisited scenes, best score
-    100/100, average score 99.21, and 184464 max-score runs.
-  - Coverage ending pressure for `passenger_newspaper_true_ending` increased
-    from 8784 to 17568 paths because the optional roll-call route now preserves
-    the newspaper ending.
   - A 250-run random sample ended every run, visited every scene, reached
-    `passenger_newspaper_true_ending` 4 times, and kept best score 100/100.
-  - Manual CLI play reached `passenger_newspaper_true_ending` through
-    `hear_final_newspaper_roll_call` at 100/100 with no objectives.
+    `passenger_newspaper_true_ending` 5 times, and kept best score 100/100.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `follow_newspaper_answer` -> `passenger_newspaper_true_ending` at 100/100
+    with no objectives.
 - Playtest notes:
-  - The newspaper route now reads as a coherent sequence: memory, timetable,
-    final roll call, and ending all center on the transfer column.
-  - Listening to the optional roll call feels like deeper engagement with the
-    newspaper route, not a detour away from it.
-  - No story, scoring, validation, objective, formatting, or test regressions
-    appeared.
-- Follow-up: Compare random-play ending distribution after the change to see
-  whether `passenger_newspaper_true_ending` appears more reliably.
+  - The added answer makes the newspaper route visible at the moment players
+    are already listening for individual passenger details.
+  - The path reads naturally because the answer names Warden Street before the
+    memory expands it into the morning-transfer route.
+  - Direct boarding after passenger answers still reaches the generic
+    passenger true ending, so the new cue does not force extra exploration.
+- Follow-up: Recheck random-play distribution over a larger sample to confirm
+  the added choice improves normal newspaper-ending discovery without
+  suppressing other passenger endings too much.
 - Risks:
-  - Adding another scene increases coverage breadth; keep the beat short and
-    route-specific so it does not make the late game sprawl.
+  - Adding another late-game choice may slightly dilute direct boarding odds;
+    watch random ending distribution in the next cycle.
 
 ## Last Completed Cycle
 

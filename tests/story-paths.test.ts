@@ -3507,11 +3507,20 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answers");
     expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.scene.text).toContain("Warden Street");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_newspaper_answer",
       "return_from_passenger_answers",
       "board_after_passenger_answers"
     ]);
+
+    const newspaperState = choose(story, state, "follow_newspaper_answer");
+    observation = observe(story, newspaperState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_memory");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.scene.text).toContain("Warden Street, then morning transfer");
 
     state = choose(story, state, "board_after_passenger_answers");
     observation = observe(story, state);
