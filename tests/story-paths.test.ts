@@ -1451,6 +1451,37 @@ describe("demo story critical paths", () => {
     }
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("home_sign_grip");
+    expect(observation.scene.text).toContain("the map will not fall");
+    expect(observation.scene.text).toContain("both places pulling at your name");
+    expect(observation.state.flags.felt_home_sign_grip).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "wrench_map_free_from_home_sign",
+      "surrender_to_home_sign"
+    ]);
+
+    state = choose(story, state, "wrench_map_free_from_home_sign");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("good_ending");
+    expect(observation.scene.ending).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home",
+      "let_home_sign_finish",
+      "surrender_to_home_sign"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("lost_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");

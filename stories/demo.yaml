@@ -2114,6 +2114,25 @@ scenes:
           item: map
       - id: let_home_sign_finish
         label: Let HOME finish spelling itself
+        to: home_sign_grip
+        effects:
+          set:
+            felt_home_sign_grip: true
+
+  home_sign_grip:
+    text: >
+      The sign finishes the word, but the map will not fall. Its pencil line to
+      MORNING PLATFORM cuts across the false porch light like a transfer stamp,
+      and for one breath you can feel both places pulling at your name. The
+      train doors begin to close around the choice.
+    choices:
+      - id: wrench_map_free_from_home_sign
+        label: Follow the map's morning line before the doors close
+        to: good_ending
+        requires:
+          item: map
+      - id: surrender_to_home_sign
+        label: Let HOME take your name
         to: lost_ending
 
   true_ending:

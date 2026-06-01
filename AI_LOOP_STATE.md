@@ -12,6 +12,62 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the HOME-sign lost route fairer by adding one final
+  map-based recovery beat before the player loses their name.
+- Why this matters: Random play still finds a small number of `lost_ending`
+  routes after players have done useful setup and recovered the marked map. The
+  sign trap already warns the player twice; adding a last recoverable grip beat
+  keeps the bad ending available while making the map feel like an active
+  survival tool instead of a binary earlier choice.
+- Tasks:
+  - Add a `home_sign_grip` scene between `home_sign_echo` and `lost_ending`.
+  - Let players with the marked map recover to the safe morning ending from
+    that final grip beat.
+  - Preserve a deliberate final choice into `lost_ending`.
+  - Update regression coverage for both the recovery and surrender branches.
+  - Run focused tests, full health, and a real playthrough through the new
+    branch.
+- Evidence:
+  - Added `home_sign_grip` between `home_sign_echo` and `lost_ending`.
+  - Players with the marked map can now recover from the final HOME-sign grip
+    directly to `good_ending`; players can still deliberately surrender to
+    `lost_ending`.
+  - Added regression coverage for the new grip scene, map recovery, and
+    preserved lost-ending branch.
+  - Focused story/playtest tests passed with 109 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+    validation, and coverage playtest.
+  - Health validation reports 88 scenes, 12 endings, and all 88 reachable.
+  - Health coverage visited all 88 scenes, including `home_sign_grip`, with
+    zero unfinished runs, best score 100/100, and average score 99.51.
+  - Targeted CLI play followed `look_at_sign` -> `stare_at_home` ->
+    `let_home_sign_finish` -> `wrench_map_free_from_home_sign` and reached
+    `good_ending` with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T22-02-01-408Z.md`. Its health checks
+    were green, MCP validation passed with 88 reachable scenes and no warnings,
+    MCP random play visited `home_sign_grip`, the required MCP route reached
+    `true_ending` at 100/100, and the adaptive MCP route reached
+    `passenger_helped_true_ending` at 100/100.
+- Playtest notes:
+  - The new grip scene makes the map feel physically useful against the HOME
+    sign instead of only being a prior warning.
+  - The safe recovery route ends immediately at `good_ending`, avoiding the
+    long exploratory loop that appeared when recovery returned to
+    `morning_transfer`.
+  - The lost ending remains reachable, but now requires ignoring the warning,
+    ignoring the echo, and surrendering at the final grip.
+- Follow-up:
+  - Watch random lost-ending pressure over future cycles; the evidence sample
+    moved from 4% to 3%, but small random samples will vary.
+- Risks:
+  - Adding too many warnings can weaken the trap; keep this to a single final
+    map payoff and preserve the deliberate lost choice.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed and committed as `7f8a4df`.
 - Main objective: Add a tailored final intercom payoff for players who listen
   to the kept-passenger doors before opening the manifest.
 - Why this matters: Core guidance and true-ending discoverability are healthy,
