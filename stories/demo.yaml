@@ -568,8 +568,11 @@ scenes:
       else to finish what I could not."
     choices:
       - id: return_from_stairwell_call
-        label: Return to the gate control with the clock in mind
-        to: lit_platform
+        label: Return to the stopped clock for the signal key
+        to: clock
+      - id: leave_after_stairwell_call
+        label: Leave Mara calling and run back to the street
+        to: escape_ending
 
   ledger_warning:
     text: >

@@ -1699,24 +1699,46 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("behind the stopped clock");
     expect(observation.state.flags.heard_escape_call).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_stairwell_call",
+      "leave_after_stairwell_call"
+    ]);
 
     state = choose(story, state, "return_from_stairwell_call");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.choices.map((choice) => choice.id)).toContain("take_token");
     expect(observation.objectives).toContain(
       "Search the stopped tunnel clock for the signal booth token."
     );
 
-    state = choose(story, state, "flee_platform");
+    state = choose(story, state, "take_token");
+    state = choose(story, state, "follow_arrows_to_lit_platform");
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("escape_warning");
-    expect(choiceIds).not.toContain("listen_at_stairwell");
-    expect(choiceIds).toContain("confirm_flee_platform");
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(choiceIds).toContain("try_token_without_map");
 
-    state = choose(story, state, "confirm_flee_platform");
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform",
+      "listen_at_stairwell",
+      "leave_after_stairwell_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("escape_ending");

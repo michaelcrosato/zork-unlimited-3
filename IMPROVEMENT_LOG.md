@@ -4,6 +4,71 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Stairwell Clock Recovery
+
+### Current Plan
+
+- Main objective: Smooth the stairwell escape-warning recovery route.
+- Why this matters: The adaptive exploratory route showed a player wavering at
+  the stairs after powering the platform without the signal token. Mara's clue
+  named the stopped clock, but the recovery path returned to the lit platform
+  and made the player navigate extra hubs before acting on that clue.
+- Tasks:
+  - Route Mara's stairwell-call recovery directly to the stopped clock.
+  - Keep the escape ending available after the player hears her warning.
+  - Cover the revised branch with focused story-path tests.
+- Risks: Direct clock routing abstracts travel back through the tunnel; focused
+  playtesting needs to confirm the transition remains readable.
+
+### Work Completed
+
+- Changes made:
+  - Changed `return_from_stairwell_call` to land on `clock`.
+  - Added `leave_after_stairwell_call` as an immediate escape option from
+    Mara's stairwell warning.
+  - Updated story-path regression coverage for both token recovery and escape.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A cleaner late-escape recovery branch that turns Mara's clock clue into
+    immediate playable progress.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run health`
+  - Manual CLI route through `mara_stairwell_call`, direct clock recovery,
+    `signal_map_warning`, and `true_ending`
+- What worked:
+  - Focused story-path tests passed with 67 tests.
+  - Full health passed with format check, TypeScript, 88 tests, validation, and
+    coverage playtest.
+  - Validation reports 50 scenes, 7 endings, and all 50 reachable.
+  - Coverage playtest reports 0 unfinished completed routes, all scenes visited,
+    best score 100/100, average score 91.91, and 15372 max-score runs.
+  - The manual route reached `true_ending` at 100/100 after returning directly
+    from Mara's warning to the clock.
+- What felt bad/confusing:
+  - No new confusion surfaced. The branch now has less backtracking while still
+    preserving the decision to leave.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether random routes still spend too much
+  time in late-game hub loops.
+- Reason: The direct clock recovery removes one known detour, but random-route
+  samples can reveal remaining repeated platform/service-room churn.
+- Planned action:
+  - Compare future suspicious path samples for repeated `lit_platform` and
+    `service_room` returns before adding more story content.
+
 ## 2026-06-01 - Manifest Ledger Return
 
 ### Current Plan

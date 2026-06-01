@@ -11,48 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Smooth the rare missing-map signal-booth warning route.
-- Why this matters: Current evidence shows core completion and true-ending
-  discovery are healthy, but `signal_map_warning` is still the one scene random
-  play can miss. When players do trigger it, recovering the map should feel like
-  direct progress back to the active signal-booth problem instead of adding an
-  extra gate-control hop.
+- Main objective: Smooth the stairwell escape-warning recovery route.
+- Why this matters: The adaptive exploratory route showed a player wavering at
+  the stairs after powering the platform without the signal token. Mara's
+  warning correctly named the stopped clock, but the recovery choice returned
+  to the lit platform, forcing extra hub navigation before the player could act
+  on the clue.
 - Tasks:
-  - Send `return_for_map_from_signal_warning` directly back to the signal booth
-    with the recovered map.
-  - Update regression coverage for the smoother warning recovery branch.
+  - Route `return_from_stairwell_call` directly to the stopped clock.
+  - Preserve player agency by allowing escape directly from Mara's stairwell
+    call.
+  - Update regression coverage for token recovery and the still-available
+    escape branch.
   - Run focused tests, full health, an actual playthrough, and commit/push if
     green.
 - Evidence:
-  - `return_for_map_from_signal_warning` now sends players directly back to
-    `signal_booth` with the recovered map instead of returning to
-    `lit_platform` for an extra token-slot click.
-  - Updated the missing-map warning regression test to expect immediate
-    signal-booth access with ledger and manifest choices available.
+  - `return_from_stairwell_call` now sends players directly to `clock`, where
+    `take_token` is immediately available.
+  - Added `leave_after_stairwell_call` so listening to Mara still permits the
+    lower-score escape ending instead of silently committing the player to the
+    rescue route.
+  - Updated the stairwell regression to verify both the direct token recovery
+    route back to `lit_platform` and the escape branch from Mara's warning.
   - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
   - `npm run cyoa -- validate stories/demo.yaml --json` passed with 50 scenes,
     7 endings, and all 50 reachable.
-  - Manual CLI play deliberately triggered `signal_map_warning`, recovered the
-    map directly into `signal_booth`, cleared Mara's ledger, and reached
-    `true_ending` at 100/100.
   - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
   - Health coverage playtest kept all 50 scenes visited with 0 unfinished
-    completed routes, best score 100/100, average score 93.22, and 25452
+    completed routes, best score 100/100, average score 91.91, and 15372
     max-score runs.
+  - Manual CLI play deliberately fled to the stairwell, listened to Mara,
+    returned directly to the clock, recovered the token, triggered the
+    missing-map signal warning, cleared Mara's ledger, and reached
+    `true_ending` at 100/100.
 - Playtest notes:
-  - The warning branch now reads as a cleaner correction: the map warning fires,
-    the player recovers the map, and the next scene is the signal booth ledger
-    rather than another gate-control prompt.
-  - The route remained finishable and reached the full true ending without
+  - The stairwell warning now reads like actionable guidance instead of a clue
+    followed by a detour.
+  - The route still preserves the pressure of the escape choice because players
+    can leave immediately after hearing Mara's final appeal.
+  - The full route remained finishable and reached the true ending without
     objectives lingering.
   - No bugs surfaced in the focused route.
-- Follow-up: If the route still feels abrupt, consider a short dedicated map
-  recovery beat, but keep the path bounded.
+- Follow-up: Watch random-route ending distribution; the new direct clock
+  route should reduce repeated platform/service-room churn without removing
+  meaningful escape pressure.
 - Risks:
-  - Direct map recovery abstracts a service-room return, but the branch already
-    used abstraction; focused playtesting should confirm the destination is
-    clearer.
+  - Direct routing to the clock abstracts the walk back through the tunnel, but
+    the scene already gives an explicit location clue and the focused playtest
+    confirmed the route stays readable.
 
 ## Last Completed Cycle
 
