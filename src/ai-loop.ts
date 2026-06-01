@@ -27,6 +27,7 @@ interface McpEvidence {
   coverageSummary?: unknown;
   goalSummary?: unknown;
   exploratory?: McpPlayResult;
+  suspiciousPaths?: string[];
   error?: string;
 }
 
@@ -130,8 +131,16 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
 
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
-  const mcpEvidence = await runMcpEvidence();
+  const mcpEvidence = await runMcpEvidence(cycle);
+  if (mcpEvidence.error) {
+    throw new Error(`MCP validation or playtest failed: ${mcpEvidence.error}`);
+  }
   const mcpPlay = await runMcpPlaythrough();
+  if (!mcpPlay.ok) {
+    throw new Error(
+      `True ending regression play failed: ${mcpPlay.error ?? "true_ending was not reached"}`
+    );
+  }
   const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpEvidence, mcpPlay);
 
   return {
@@ -163,6 +172,13 @@ ${results.map((result) => `- ${result.exitCode === 0 ? "PASS" : "FAIL"}: \`${res
 \`\`\`json
 ${JSON.stringify(randomSummary, null, 2)}
 \`\`\`
+
+### Suspicious Path Samples
+${
+  mcpEvidence.suspiciousPaths && mcpEvidence.suspiciousPaths.length > 0
+    ? mcpEvidence.suspiciousPaths.map((p: string) => `- ${p}`).join("\n")
+    : "- None detected"
+}
 
 ## Coverage Playtest Summary
 
@@ -281,6 +297,8 @@ async function renderAgentPrompt(cycle: number, report: string): Promise<string>
   const contract = await readPromptContract();
 
   return `# Autonomous Game Development Cycle ${cycle}
+
+**Execution Environment Notice (May 2026)**: Operating under the GPT-5.5 Instant and OpenAI Codex Agentic Execution engine.
 
 ${contract}
 
@@ -410,7 +428,7 @@ ${result.output.slice(-12000)}
 `;
 }
 
-async function runMcpEvidence(): Promise<McpEvidence> {
+async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
   const requiredTools = [
     "list_stories",
     "validate_story",
@@ -433,34 +451,73 @@ async function runMcpEvidence(): Promise<McpEvidence> {
     await client.connect(transport);
     const tools = (await client.listTools()).tools.map((tool) => tool.name).sort();
     const missingRequiredTools = requiredTools.filter((tool) => !tools.includes(tool));
+
+    // 1. Story discovery
+    const storiesRes = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "list_stories",
+          arguments: {}
+        })
+      )
+    );
+    const mainStory =
+      storiesRes.stories.find((s: string) => s.endsWith("demo.yaml")) || "stories/demo.yaml";
+
+    // 2. Story validation
     const validateStory = JSON.parse(
       textContent(
         await client.callTool({
           name: "validate_story",
-          arguments: { storyPath: "stories/demo.yaml" }
+          arguments: { storyPath: mainStory }
         })
       )
     );
-    const randomSummary = JSON.parse(
+    if (!validateStory.ok) {
+      throw new Error(
+        `validate_story returned ok: false. Errors: ${JSON.stringify(validateStory.errors)}`
+      );
+    }
+
+    // 3. Automated playtest evidence with random strategy (include runs to inspect suspicious samples)
+    const randomPlaytestRes = JSON.parse(
       textContent(
         await client.callTool({
           name: "run_playtest",
           arguments: {
-            storyPath: "stories/demo.yaml",
+            storyPath: mainStory,
             runs: 250,
             maxSteps: 80,
             strategy: "random",
-            includeRuns: false
+            includeRuns: true
           }
         })
       )
-    ).summary;
+    );
+    const randomSummary = randomPlaytestRes.summary;
+
+    const suspiciousPaths: string[] = [];
+    if (randomPlaytestRes.runs) {
+      const suspicious = randomPlaytestRes.runs.filter(
+        (run: any) =>
+          !run.ended ||
+          run.finalScene === "bad_ending" ||
+          run.finalScene === "lost_ending" ||
+          run.steps >= 40
+      );
+      for (const run of suspicious.slice(0, 3)) {
+        suspiciousPaths.push(
+          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${run.path.join(" -> ")}`
+        );
+      }
+    }
+
     const coverageSummary = JSON.parse(
       textContent(
         await client.callTool({
           name: "run_playtest",
           arguments: {
-            storyPath: "stories/demo.yaml",
+            storyPath: mainStory,
             runs: 100,
             maxSteps: 50,
             strategy: "coverage",
@@ -469,12 +526,13 @@ async function runMcpEvidence(): Promise<McpEvidence> {
         })
       )
     ).summary;
+
     const goalSummary = JSON.parse(
       textContent(
         await client.callTool({
           name: "run_playtest",
           arguments: {
-            storyPath: "stories/demo.yaml",
+            storyPath: mainStory,
             runs: 10,
             maxSteps: 40,
             strategy: "goal",
@@ -483,24 +541,14 @@ async function runMcpEvidence(): Promise<McpEvidence> {
         })
       )
     ).summary;
-    const exploratory = await runMcpRoute(client, "saves/ai-loop-exploratory.json", [
-      "enter_dark",
-      "answer_voice",
-      "ask_mara_about_train",
-      "continue_to_service_room",
-      "take_map",
-      "tune_radio",
-      "note_radio_route",
-      "search_locker",
-      "take_badge",
-      "search_locker",
-      "take_fuse",
-      "go_to_platform",
-      "install_fuse",
-      "use_token_slot",
-      "mark_mara_clear",
-      "pull_release"
-    ]);
+
+    // 5. Adaptive exploratory MCP route
+    const exploratory = await runMcpExploratoryRoute(
+      client,
+      "saves/ai-loop-exploratory.json",
+      cycle,
+      mainStory
+    );
 
     await client.close();
     return {
@@ -510,13 +558,115 @@ async function runMcpEvidence(): Promise<McpEvidence> {
       randomSummary,
       coverageSummary,
       goalSummary,
-      exploratory
+      exploratory,
+      suspiciousPaths
     };
   } catch (error) {
     await client.close().catch(() => undefined);
     return {
       tools: [],
       missingRequiredTools: requiredTools,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
+function seededRandom(seed: number): () => number {
+  let h = seed ^ 0xdeadbeef;
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+
+async function runMcpExploratoryRoute(
+  client: Client,
+  savePath: string,
+  cycle: number,
+  storyPath: string
+): Promise<McpPlayResult> {
+  try {
+    let observation = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "start_game",
+          arguments: { storyPath, savePath }
+        })
+      )
+    );
+
+    const history: string[] = [observation.scene.id];
+    const maxSteps = 30;
+    const rng = seededRandom(cycle + 4242);
+
+    for (let step = 0; step < maxSteps; step += 1) {
+      // Repeatedly call get_scene before choices to verify state
+      observation = JSON.parse(
+        textContent(
+          await client.callTool({
+            name: "get_scene",
+            arguments: { savePath }
+          })
+        )
+      );
+
+      if (observation.scene.ending || observation.choices.length === 0) {
+        break;
+      }
+
+      // Prioritize less visited scenes to avoid trivial loops and ensure backtracking/risky path exploration
+      const choiceVisits = observation.choices.map((choice: any) => {
+        const destination = choice.to;
+        const visits = history.filter((sceneId) => sceneId === destination).length;
+        return { choice, visits };
+      });
+
+      // Sort ascending by history visits
+      choiceVisits.sort((left: any, right: any) => left.visits - right.visits);
+
+      // Take candidates with the minimum visits
+      const minVisits = choiceVisits[0].visits;
+      const candidates = choiceVisits.filter((c: any) => c.visits === minVisits);
+      const selected = candidates[Math.floor(rng() * candidates.length)].choice;
+
+      history.push(selected.to);
+      observation = JSON.parse(
+        textContent(
+          await client.callTool({
+            name: "choose_option",
+            arguments: { savePath, choiceId: selected.id }
+          })
+        )
+      );
+    }
+
+    // Call get_scene one last time for final observation
+    observation = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "get_scene",
+          arguments: { savePath }
+        })
+      )
+    );
+
+    const transcript = textContent(
+      await client.callTool({
+        name: "get_transcript",
+        arguments: { savePath }
+      })
+    );
+
+    return {
+      ok: observation.scene.ending,
+      finalScene: observation.scene.id,
+      score: `${observation.score.score}/${observation.score.maxScore}`,
+      transcript
+    };
+  } catch (error) {
+    return {
+      ok: false,
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -680,8 +830,8 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
     "note_radio_route",
     "search_locker",
     "take_fuse",
-    "search_locker",
     "take_badge",
+    "close_locker",
     "go_to_platform",
     "install_fuse",
     "use_token_slot",
@@ -727,6 +877,16 @@ async function runMcpRoute(
   );
 
   for (const choiceId of choices) {
+    // 4. Repeatedly call get_scene before choices to verify state
+    observation = JSON.parse(
+      textContent(
+        await client.callTool({
+          name: "get_scene",
+          arguments: { savePath }
+        })
+      )
+    );
+
     const legalChoices = observation.choices.map((choice: { id: string }) => choice.id);
     if (!legalChoices.includes(choiceId)) {
       const transcript = textContent(
@@ -753,6 +913,16 @@ async function runMcpRoute(
       )
     );
   }
+
+  // Get one last scene verification
+  observation = JSON.parse(
+    textContent(
+      await client.callTool({
+        name: "get_scene",
+        arguments: { savePath }
+      })
+    )
+  );
 
   const transcript = textContent(
     await client.callTool({

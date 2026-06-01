@@ -6,7 +6,7 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 
 - MCP-first autonomous maintenance loop with report, prompt, verification,
   commit, and push automation.
-- Haunted transit interactive-fiction story with 22 reachable scenes and 5
+- Haunted transit interactive-fiction story with 23 reachable scenes and 5
   endings.
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.

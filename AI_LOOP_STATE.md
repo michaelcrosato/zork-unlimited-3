@@ -4,39 +4,49 @@ This file is the handoff point for future autonomous agents.
 
 ## Current Objective
 
-Make the CYOA engine and story capable of indefinite AI-assisted improvement
-through repeatable planning, playtesting, validation, agent execution, and
-commits.
+Keep the autonomous CYOA engine maintainable, secure, and playable while
+preserving normal-play true-ending discoverability.
+
+## Active Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push after final green gate.
+- Main objective: Repo quality pass after the locker-discovery cycle.
+- Outcome: Removed the known dev-dependency audit finding, simplified
+  validation reference scanning, fixed stale autonomous true-ending playback,
+  and cleared objectives on ending observations.
+- Evidence:
+  - `npm audit --audit-level=moderate` reports 0 vulnerabilities.
+  - `npm run ai:cycle` passes and writes MCP evidence reports.
+  - CLI true-ending route reaches `true_ending` at 100/100.
+  - Focused engine and validation tests pass.
+  - Story validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Coverage playtest, 262 runs: all scenes visited, best score 100/100.
+- Follow-up: Random play improved but still usually settles for lesser endings,
+  so the next pass should improve how players prioritize the release route after
+  collecting the map and badge.
 
 ## Last Completed Cycle
 
-- Date: 2026-05-31
-- Change: Expanded `src/ai-loop.ts` evidence gathering so every cycle records
-  MCP tool verification, MCP `validate_story`, MCP random/coverage/goal
-  playtest summaries, the fixed true-ending MCP route, and an adaptive
-  exploratory MCP route.
+- Date: 2026-06-01
+- Change: Upgraded Vitest to remove the Vite/esbuild audit finding, optimized
+  validation reference collection, updated docs and ignore rules, fixed the
+  autonomous MCP true-ending route, and hid objectives after endings.
 - Evidence:
-  - `npm run health` passed before the change.
-  - Project-scoped Codex config loads with `CODEX_HOME=$PWD/.codex codex mcp list --json`.
-  - Installed Codex CLI supports `codex exec -`, `--cd`, `--sandbox`, and
-    `--ask-for-approval never`.
-  - Installed Codex CLI MCP help does not expose a required-server setting, so
-    the MCP server cannot be marked required in `.codex/config.toml` with this
-    version.
+  - `npm run health` passes with 19 tests.
+  - `npm run ai:cycle` passes and performs MCP validation/play.
+  - `npm audit --audit-level=moderate` reports 0 vulnerabilities.
+  - CLI true-ending route reaches `true_ending` at 100/100 and ending
+    observations now have no active objectives.
 - MCP notes:
-  - Required tools verified: `list_stories`, `validate_story`, `start_game`,
-    `get_scene`, `choose_option`, `get_state`, `get_transcript`,
-    `run_playtest`.
-  - Extra tool available: `get_score`.
-  - True-ending route reaches `true_ending` at 100/100.
-  - Exploratory route through Mara's voice reaches `lit_platform` at 55/100 and
-    stalls because the token was not recovered, confirming token signposting is
-    still the main design weakness.
-- Remaining weakness: random play reaches `true_ending` rarely and max score
-  even less often.
-- Next task: improve token/signaling affordances for players who learn Mara's
-  route from the dark-tunnel/dispatcher path before finding the clock token.
-- Risks: do not make the true ending trivial; keep failure endings meaningful.
+  - Required tools verified: `list_stories`, `validate_story`, `start_game`, `get_scene`, `choose_option`, `get_state`, `get_transcript`, `run_playtest`.
+  - `src/ai-loop.ts` true-ending route now matches the current locker flow.
+- Remaining weakness: Random play reaches `true_ending` more often than before
+  but still rarely compared with `good_ending` and `bad_ending`.
+- Next task: Improve midgame objective clarity after players learn Mara's release
+  route so `pull_release` feels like the intended culmination, not an optional
+  hidden action.
+- Risks: Keep gameplay choices meaningful and avoid making the true ending trivial.
 
 ## Last Known Priorities
 

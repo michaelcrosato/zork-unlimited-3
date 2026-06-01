@@ -16,8 +16,8 @@ describe("demo story critical paths", () => {
       "note_radio_route",
       "search_locker",
       "take_fuse",
-      "search_locker",
       "take_badge",
+      "close_locker",
       "go_to_platform",
       "install_fuse",
       "use_token_slot",
@@ -86,7 +86,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.state.flags.read_mara_file).toBe(true);
     expect(observation.objectives).toContain(
-      "Investigate anything marked with the time 1:13 or signal access."
+      "Search the stopped tunnel clock for the signal booth token."
     );
     expect(observation.objectives).toContain(
       "Find proof of Mara Vale's identity before clearing her name."
@@ -149,8 +149,8 @@ describe("demo story critical paths", () => {
       "note_radio_route",
       "search_locker",
       "take_fuse",
-      "search_locker",
       "take_badge",
+      "close_locker",
       "go_to_platform",
       "install_fuse",
       "use_token_slot",
@@ -166,6 +166,65 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("look_at_sign");
   });
 
+  it("warns players without the token before they board from the lit platform", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "board_before_clearing_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("ledger_warning");
+    expect(choiceIds).toContain("return_for_signal_token");
+    expect(choiceIds).toContain("board_without_clearing_mara");
+  });
+
+  it("steers token carriers toward the signal booth from the lit platform", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("use_token_slot");
+    expect(choiceIds).not.toContain("board_before_clearing_ledger");
+  });
+
   it("focuses signal-booth choices on Mara when carrying her badge", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -177,8 +236,8 @@ describe("demo story critical paths", () => {
       "open_service_door",
       "search_locker",
       "take_badge",
-      "search_locker",
       "take_fuse",
+      "close_locker",
       "take_map",
       "go_to_platform",
       "install_fuse",
@@ -190,5 +249,28 @@ describe("demo story critical paths", () => {
     const choiceIds = observe(story, state).choices.map((choice) => choice.id);
 
     expect(choiceIds).toEqual(["mark_mara_clear"]);
+  });
+
+  it("keeps the locker open until players see both true-ending tools", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "open_service_door", "search_locker", "take_fuse"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("locker");
+    expect(choiceIds).toContain("take_badge");
+    expect(choiceIds).toContain("close_locker");
+
+    state = choose(story, state, "take_badge");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("locker");
+    expect(choiceIds).toEqual(["close_locker"]);
   });
 });

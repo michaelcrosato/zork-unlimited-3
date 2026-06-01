@@ -37,6 +37,14 @@ Operate in a persistent loop until explicitly stopped by the outer bash loop.
    - Add or revise content where it strengthens the game.
    - Leave the repo ready for the next cycle.
 
+## 🤖 Model & Execution Context (May 2026 Update)
+
+You are running under the state-of-the-art **GPT-5.5 Instant** and **OpenAI Codex** agentic execution environment:
+
+- **No Canvas Required**: All code changes must be presented cleanly as inline markdown code blocks or direct file diffs.
+- **High-Autonomy Sandbox**: You are running in a `workspace-write` sandbox. Ensure your edits are clean, fully testable, and preserve existing worktree health.
+- **Agentic Capabilities**: Leverage your Terminal-Bench 2.0 (82.7%) and SWE-bench Verified (88.7%) capabilities to run health checks (`npm run health`), play the game programmatically via the MCP stdio interface, and trace execution paths carefully before completing your turn.
+
 ## Focus Areas
 
 - Core gameplay loop

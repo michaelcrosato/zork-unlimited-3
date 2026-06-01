@@ -15,6 +15,7 @@ export function validateStory(story: Story): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   const sceneIds = new Set(Object.keys(story.scenes));
+  const knownReferences = collectKnownReferences(story);
 
   if (!sceneIds.has(story.start)) {
     errors.push(`Start scene '${story.start}' does not exist`);
@@ -36,7 +37,12 @@ export function validateStory(story: Story): ValidationResult {
         errors.push(`Choice '${sceneId}.${choice.id}' points to missing scene '${choice.to}'`);
       }
 
-      validateConditionReferences(story, choice, `Choice '${sceneId}.${choice.id}'`, warnings);
+      validateConditionReferences(
+        knownReferences,
+        choice,
+        `Choice '${sceneId}.${choice.id}'`,
+        warnings
+      );
     }
   }
 
@@ -79,7 +85,7 @@ export function getReachableScenes(story: Story): Set<string> {
 }
 
 function validateConditionReferences(
-  story: Story,
+  knownReferences: KnownReferences,
   choice: Choice,
   location: string,
   warnings: string[]
@@ -87,24 +93,15 @@ function validateConditionReferences(
   if (!choice.requires) return;
 
   const conditionText = JSON.stringify(choice.requires);
-  const itemNames = new Set<string>();
-  const flagNames = new Set<string>();
-
-  for (const scene of Object.values(story.scenes)) {
-    for (const candidate of scene.choices) {
-      for (const item of asArray(candidate.effects?.addItem)) itemNames.add(item);
-      for (const flag of Object.keys(candidate.effects?.set ?? {})) flagNames.add(flag);
-    }
-  }
 
   for (const item of collectConditionValues(choice.requires, "item")) {
-    if (!itemNames.has(item)) {
+    if (!knownReferences.items.has(item)) {
       warnings.push(`${location} requires item '${item}', but no choice adds it`);
     }
   }
 
   for (const flag of collectConditionValues(choice.requires, "flag")) {
-    if (!flagNames.has(flag)) {
+    if (!knownReferences.flags.has(flag)) {
       warnings.push(`${location} requires flag '${flag}', but no choice sets it`);
     }
   }
@@ -112,6 +109,25 @@ function validateConditionReferences(
   if (conditionText.includes("{}")) {
     warnings.push(`${location} has an empty-looking condition`);
   }
+}
+
+interface KnownReferences {
+  items: Set<string>;
+  flags: Set<string>;
+}
+
+function collectKnownReferences(story: Story): KnownReferences {
+  const items = new Set<string>();
+  const flags = new Set<string>();
+
+  for (const scene of Object.values(story.scenes)) {
+    for (const choice of scene.choices) {
+      for (const item of asArray(choice.effects?.addItem)) items.add(item);
+      for (const flag of Object.keys(choice.effects?.set ?? {})) flags.add(flag);
+    }
+  }
+
+  return { items, flags };
 }
 
 function collectConditionValues(condition: Condition, key: "item" | "flag"): string[] {

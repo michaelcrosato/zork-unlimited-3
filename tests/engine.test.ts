@@ -50,6 +50,14 @@ describe("engine", () => {
     );
   });
 
+  it("clears objectives after reaching an ending", () => {
+    let state = initialState(story);
+    state = choose(story, state, "take_key");
+    state = choose(story, state, "unlock");
+
+    expect(observe(story, state).objectives).toEqual([]);
+  });
+
   it("rejects choices that are not in the current scene", () => {
     const state = initialState(story);
     expect(() => choose(story, state, "unlock")).toThrow(/not available/);
