@@ -11,6 +11,75 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a reversible morning-transfer checkpoint before the
+  map-only safe escape ending.
+- Why this matters: Current evidence shows ideal-ending discovery is healthy,
+  while the map-only route remains the main low-score safe ending. Letting
+  players see morning, hear Mara's unresolved name, and choose whether to leave
+  or turn back makes the non-ideal route critique itself without removing it.
+- Tasks:
+  - Route map-only train escapes and sign-warning recovery through a
+    `morning_transfer` checkpoint.
+  - Keep `good_ending` available for players who intentionally step into
+    morning.
+  - Let players turn back toward the stopped clock or service room with
+    objectives focused on the signal token, fuse, and Mara's proof.
+  - Add regression coverage for both leaving safely and turning back.
+  - Run health, an actual CLI playthrough, and the evidence-only AI cycle.
+- Evidence:
+  - Added `morning_transfer`, reached from direct map riding, the optional
+    train-map study route, and looking away from the HOME sign.
+  - `morning_transfer` lets players either step into `good_ending`, return to
+    the stopped clock if they lack the signal token, or return to the service
+    room if they already carry it.
+  - Returning from the safe escape sets `returned_from_safe_escape`,
+    `knows_platform`, `knows_token_location`, and/or `met_mara` so objectives
+    name the remaining useful work.
+  - After a safe-escape return, tunnel and service-room platform routes stay
+    focused on missing parts until the player recovers the fuse, preventing
+    repeated map-only boarding loops.
+  - Updated story-path regression coverage for the optional map-study route,
+    sign-warning recovery, turning back from the transfer, and post-return
+    platform focus.
+  - `npm test -- tests/story-paths.test.ts` passed with 52 tests.
+  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts` passed with
+    58 tests.
+  - `npm run health` passed with formatting, TypeScript, 73 tests, validation,
+    and coverage playtest.
+  - Validation reports 42 scenes, 6 endings, and all 42 reachable.
+  - Random playtest sample reports 0 unfinished runs, all 42 scenes visited,
+    best score 100/100, average score 76.2, and 64 max-score runs.
+  - Coverage playtest sample reports 0 unfinished runs, all 42 scenes visited,
+    best score 100/100, average score 94.21, and 8320 max-score runs.
+  - Manual CLI route rode the map to `morning_transfer`, turned back to the
+    stopped clock, collected the true-ending tools, cleared Mara's ledger, and
+    reached `true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, an actual
+    MCP true-ending playthrough at 100/100, and an adaptive exploratory
+    true-ending route at 100/100.
+  - Evidence-cycle random playtest reports 0 unfinished runs, all scenes
+    visited, 64% ideal endings, and 64 max-score runs.
+- Playtest notes:
+  - The checkpoint worked as intended: seeing morning before leaving made the
+    safe route feel tempting, while Mara's still-audible name gave a concrete
+    reason to turn back.
+  - Returning directly to the stopped clock felt cleaner than returning to the
+    service-room hub when the token was missing.
+  - No bugs were found in the manual CLI route.
+- Follow-up: If automated routes loop through `morning_transfer` too often,
+  consider deprioritizing the turn-back choice in coverage heuristics rather
+  than removing the player-facing second chance.
+- Risks:
+  - The new checkpoint adds one scene to non-ideal escape routes. Regression
+    coverage confirms the direct safe exit remains available and the turn-back
+    branch returns to useful objectives.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added an optional in-train map-study beat for players taking the
+  underprepared map-only escape route.
 - Main objective: Add an optional in-train map-study beat for players taking
   the underprepared map-only escape route.
 - Why this matters: Current evidence shows core true-ending guidance is healthy
@@ -19,15 +88,6 @@ preserving normal-play true-ending discoverability.
   third car to morning. A small optional beat makes that route feel intentional,
   clarifies why the map is safer than the HOME sign, and preserves pressure to
   pursue the fuller ledger-release ending.
-- Tasks:
-  - Add a one-time optional train-map scene from `train_car` for map-only
-    riders who have not cleared Mara.
-  - Keep direct `ride_with_map` and `look_at_sign` choices available from
-    `train_car`.
-  - Let the optional scene resolve either to `good_ending` or the existing
-    `sign_warning`.
-  - Add regression coverage for the new branch and direct route availability.
-  - Run health, an actual CLI playthrough, and the evidence-only AI cycle.
 - Evidence:
   - Added `train_map`, reached from `train_car` via `study_map_in_train` when
     the player has the map and has not freed Mara.

@@ -85,6 +85,9 @@ scenes:
             - any:
                 - notFlag: promised_mara
                 - item: map
+            - any:
+                - notFlag: returned_from_safe_escape
+                - item: fuse
         effects:
           set:
             knows_platform: true
@@ -248,6 +251,9 @@ scenes:
                     - notFlag: read_mara_file
                     - notFlag: knows_release
                 - item: map
+            - any:
+                - notFlag: returned_from_safe_escape
+                - item: fuse
             - notFlag: platform_lit
         effects:
           set:
@@ -795,7 +801,7 @@ scenes:
             checked_train_map: true
       - id: ride_with_map
         label: Follow the map to the morning platform without touching the release
-        to: good_ending
+        to: morning_transfer
         requires:
           all:
             - item: map
@@ -817,10 +823,42 @@ scenes:
     choices:
       - id: ride_with_map_after_study
         label: Follow the map to the morning platform
-        to: good_ending
+        to: morning_transfer
       - id: lower_map_to_sign
         label: Lower the map and look at the destination sign
         to: sign_warning
+
+  morning_transfer:
+    text: >
+      The marked map does exactly what it promised. The train skips every
+      impossible station and opens on a tiled transfer platform bright with
+      morning. Behind you, through the closing doors, the underpass speaker
+      keeps whispering names. Mara's is still the clearest.
+    choices:
+      - id: step_into_morning
+        label: Step onto the morning platform and leave the line behind
+        to: good_ending
+      - id: turn_back_for_signal_token
+        label: Hold the doors and return to the stopped clock
+        to: clock
+        requires:
+          notItem: token
+        effects:
+          set:
+            returned_from_safe_escape: true
+            knows_platform: true
+            knows_token_location: true
+            met_mara: true
+      - id: turn_back_for_mara
+        label: Hold the doors and return for Mara's ledger
+        to: service_room
+        requires:
+          item: token
+        effects:
+          set:
+            returned_from_safe_escape: true
+            knows_platform: true
+            met_mara: true
 
   mara_intercom:
     text: >
@@ -876,7 +914,7 @@ scenes:
     choices:
       - id: look_away_from_sign
         label: Look away and trust the map
-        to: good_ending
+        to: morning_transfer
         requires:
           item: map
       - id: stare_at_home

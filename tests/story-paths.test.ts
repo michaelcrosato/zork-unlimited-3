@@ -428,8 +428,89 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "ride_with_map_after_study");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("morning_transfer");
+    expect(observation.scene.text).toContain("Mara's is still the clearest");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "step_into_morning",
+      "turn_back_for_signal_token"
+    ]);
+
+    state = choose(story, state, "step_into_morning");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("good_ending");
     expect(observation.scene.ending).toBe(true);
+  });
+
+  it("lets map-only escape riders turn back for Mara's ledger", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "turn_back_for_signal_token"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(choiceIds).toEqual(["take_token"]);
+  });
+
+  it("keeps returned safe-escape riders focused on parts before revisiting the platform", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "turn_back_for_signal_token",
+      "take_token"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(choiceIds).toContain("open_service_door");
+    expect(choiceIds).not.toContain("follow_arrows");
+
+    state = choose(story, state, "open_service_door");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    for (const choiceId of ["search_locker", "take_fuse", "take_badge", "close_locker"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("go_to_platform");
   });
 
   it("updates objectives after discovering Platform 13 by following arrows", async () => {
@@ -651,7 +732,7 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("sign_warning");
 
     state = choose(story, state, "look_away_from_sign");
-    expect(observe(story, state).scene.id).toBe("good_ending");
+    expect(observe(story, state).scene.id).toBe("morning_transfer");
   });
 
   it("focuses train-car choices on the release after Mara is cleared", async () => {
