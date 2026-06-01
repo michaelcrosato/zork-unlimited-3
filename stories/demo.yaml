@@ -2054,7 +2054,7 @@ scenes:
     choices:
       - id: pull_release_after_final_roll_call
         label: Pull the release after every answer
-        to: passenger_helped_true_ending
+        to: passenger_roll_call_true_ending
         requires:
           notFlag: returned_lost_mitten
       - id: pull_release_after_mitten_roll_call
@@ -2302,6 +2302,17 @@ scenes:
       walks between two adults who know his name now; the old conductor holds
       the doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
+    choices: []
+
+  passenger_roll_call_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once on the passengers' own roll call.
+      Mara begins the first name, then falls silent as the crowd carries the
+      rest: child answering for himself, newspaper woman naming the morning
+      transfer, conductor calling clear, lunch-tin worker counting no one twice.
+      By the time the last door opens, the manifest has become a chorus the
+      line can hear but cannot hold.
     choices: []
 
   passenger_lunch_tin_true_ending:

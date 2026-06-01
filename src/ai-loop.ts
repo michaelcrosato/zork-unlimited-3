@@ -527,6 +527,7 @@ const idealEndingGroups = [
         endings: [
           "passenger_true_ending",
           "passenger_helped_true_ending",
+          "passenger_roll_call_true_ending",
           "passenger_lunch_tin_true_ending"
         ]
       },

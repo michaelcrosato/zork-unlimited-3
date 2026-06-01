@@ -12,59 +12,66 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the lunch-tin passenger route its own final true-ending
-  payoff.
-- Why this matters: Core route metrics are healthy, and the exploratory route
-  surfaced a strong lunch-tin sequence that still resolved into the broader
-  gathered-passenger ending. A distinct ending makes that practical counting
-  motif feel remembered without changing the critical path.
+- Main objective: Give the optional final gathered-passenger roll call its own
+  true-ending payoff.
+- Why this matters: Core route metrics are healthy, so the highest-value next
+  change is route-specific story depth. The optional final roll-call epilogue
+  already lets players spend an extra beat hearing the passengers answer for
+  themselves, but it previously resolved into the generic gathered-passenger
+  ending. A distinct ending makes that deliberate listening choice feel
+  remembered while preserving the direct helped route.
 - Tasks:
-  - Route direct and listened lunch-tin release choices to a new ending.
+  - Route `pull_release_after_final_roll_call` to a new ending.
   - Count the new ending as full-score and ideal in score, playtest, and loop
     evidence helpers.
   - Update route and evidence regression coverage.
   - Run full health and a real playthrough.
 - Evidence:
-  - Added `passenger_lunch_tin_true_ending`.
-  - Routed `pull_release_after_lunch_tin_boarding` and
-    `pull_release_after_lunch_tin_intercom` to the new ending.
+  - Added `passenger_roll_call_true_ending`.
+  - Routed `pull_release_after_final_roll_call` from
+    `passenger_roll_call_epilogue` to the new ending.
+  - Left direct gathered-passenger releases on `passenger_helped_true_ending`.
   - Updated full-score and ideal-ending helpers for the new ending.
-  - Updated regression coverage for the direct and listened lunch-tin releases.
+  - Updated regression coverage for the final roll-call release.
   - Focused `npm test -- tests/story-paths.test.ts tests/playtest.test.ts
 tests/ai-loop.test.ts` passed with 118 tests.
   - `npm run health` passed with formatting, TypeScript, 126 tests, story
     validation, and coverage playtest.
-  - Validation reports 100 scenes, 22 endings, all 100 reachable, and no
+  - Validation reports 101 scenes, 23 endings, all 101 reachable, and no
     warnings.
-  - Health coverage visited all 100 scenes, including
-    `passenger_lunch_tin_true_ending`, with zero unfinished runs, best score
+  - Health coverage visited all 101 scenes, including
+    `passenger_roll_call_true_ending`, with zero unfinished runs, best score
     100/100, average score 99.51, and 342040 max-score runs.
-  - Targeted CLI play followed the answered-passenger lunch-tin route through
-    `listen_to_lunch_tin_worker_from_boarding` and
-    `pull_release_after_lunch_tin_intercom`, reaching
-    `passenger_lunch_tin_true_ending` at 100/100 with no objectives.
+  - Targeted CLI play followed the broader gathered-passenger route through
+    `listen_to_gathered_passengers`, `hear_final_passenger_roll_call`, and
+    `pull_release_after_final_roll_call`, reaching
+    `passenger_roll_call_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T23-47-06-789Z.md`.
-  - Evidence-cycle MCP validation passed with 100 reachable scenes and no
+    report `ai-runs/cycle-2026-06-01T23-54-42-680Z.md`.
+  - Evidence-cycle health checks passed, including random and coverage
+    playtests.
+  - Evidence-cycle MCP validation passed with 101 reachable scenes and no
     warnings.
-  - Evidence-cycle MCP random play reached `passenger_lunch_tin_true_ending`
-    11 times in 250 runs, coverage reached it 32192 times, and goal play
-    reached it 2 times in 10 runs.
+  - Evidence-cycle random play reached `passenger_roll_call_true_ending` 4
+    times in 100 runs; MCP random play reached it 10 times in 250 runs.
+  - Evidence-cycle coverage visited all 101 scenes and reached both
+    `passenger_roll_call_true_ending` and `passenger_helped_true_ending`.
   - Evidence-cycle required MCP route still reached `true_ending` at 100/100,
     and the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
     100/100.
 - Playtest notes:
-  - The lunch-tin route now pays off its count motif directly: the latch moves
-    from platform rhythm to final release signal.
-  - The broader gathered-passenger ending remains reachable through routes that
-    help the crowd without explicitly following the lunch-tin worker's count.
-  - Core guidance remains healthy: random ideal-ending rate stayed at 75%, and
-    coverage still visits every scene.
+  - The new ending makes the optional extra roll-call listen feel consequential:
+    Mara starts the first name, then the passengers carry the rest.
+  - The direct gathered-passenger route still reaches
+    `passenger_helped_true_ending`, so the generic helped payoff remains
+    distinct for players who gather the crowd but do not take the extra
+    roll-call beat.
   - No gameplay bugs were found.
 - Follow-up:
-  - Check whether the generic `passenger_helped_true_ending` still feels
-    distinct enough for gathered routes that do not explicitly follow the
-    lunch-tin count.
+  - Improve or monitor normal-play discovery for the generic
+    `passenger_helped_true_ending`: the 100-run random evidence sample missed
+    it after the final-roll-call route gained its own payoff, though MCP random
+    and coverage still reached it.
 - Risks:
   - The game has many ideal-ending variants; reporting must stay readable as
     route-specific payoffs grow.

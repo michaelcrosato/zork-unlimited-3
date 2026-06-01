@@ -3395,7 +3395,7 @@ describe("demo story critical paths", () => {
     ]);
   });
 
-  it("adds an optional final roll call before the helped passenger ending", async () => {
+  it("gives the optional final roll call its own true-ending payoff", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -3440,8 +3440,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_final_roll_call");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("passengers' own roll call");
+    expect(observation.scene.text).toContain("the manifest has become a chorus");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
