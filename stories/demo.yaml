@@ -1300,6 +1300,22 @@ scenes:
             - notFlag: saw_mara_manifest_handoff
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_counted_manifest_intercom
+        label: Listen as Mara carries the reviewed count aboard
+        to: passenger_counted_manifest_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: reviewed_open_manifest_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
         effects:
           set:
             heard_mara_goodbye: true
@@ -1664,6 +1680,20 @@ scenes:
     choices:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
+        to: passenger_true_ending
+
+  passenger_counted_manifest_intercom:
+    text: >
+      Mara brings the reviewed count into the third car like a folded timetable.
+      She names what each opened door carried back: newspaper, lunch tin,
+      mitten, conductor's punch. The passengers answer in small practical
+      sounds before she reaches the end, no longer just entries cleared from a
+      page but people checking that the others are still with them. "This is
+      the count the line cannot keep," Mara says. "Pull the release while they
+      are counting one another home."
+    choices:
+      - id: pull_release_after_counted_manifest_goodbye
+        label: Pull the release while the reviewed count holds
         to: passenger_true_ending
 
   passenger_answered_handoff_roll_call:

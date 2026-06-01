@@ -12,57 +12,61 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a final recovery beat to the forced-gate failure route.
-- Why this matters: Core route guidance is healthy, but random play still hit
-  the forced-gate bad ending often enough to make the failure feel slightly
-  abrupt. A short collapse beat preserves the deliberate bad route while giving
-  underprepared explorers one more concrete chance to retreat for the map,
-  fuse, badge, and token.
+- Main objective: Add a tailored third-car payoff for players who review the
+  opened passenger manifest count before boarding.
+- Why this matters: Core route guidance is healthy and all scenes are covered,
+  so the best next improvement is richer route texture. Reviewing the opened
+  manifest count is a meaningful optional beat, but boarding immediately after
+  it currently falls back to a generic manifest intercom. A counted-manifest
+  intercom can make that choice feel remembered without changing progression.
 - Tasks:
-  - Add `gate_collapse` after the final forced-gate choices.
-  - Let players either retreat to the service room or intentionally continue to
-    `bad_ending`.
-  - Add regression coverage for the new collapse scene, its recovery choice,
-    and its deliberate bad-ending continuation.
+  - Add a `passenger_counted_manifest_intercom` scene gated by
+    `reviewed_open_manifest_count`.
+  - Keep the existing `mara_manifest_intercom` for players who skip the count
+    review.
+  - Add regression coverage for the counted-manifest intercom and full-score
+    ending.
   - Run focused tests, validation, random and coverage playtests, full health,
-    evidence gathering, and a real CLI route through the new recovery.
+    evidence gathering, and a real CLI/MCP route through the new branch.
 - Evidence:
-  - Added `gate_collapse`, reached from both `force_gate_anyway` and
-    `force_gate_after_echo`.
-  - The new scene can recover through `brace_gate_and_retreat`, which sets
-    `backed_away_from_gate` and returns to `service_room`, or continue through
-    `crawl_under_collapsing_gate` to the existing `bad_ending`.
-  - Focused story-path tests passed with 99 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 84
+  - Added `passenger_counted_manifest_intercom`, reached from `train_car` only
+    after `reviewed_open_manifest_count` when the player has not already moved
+    into the handoff, answered-passenger, or helped-passenger variants.
+  - Preserved `mara_manifest_intercom` for players who read and clear the
+    manifest without reviewing the opened count.
+  - Focused story-path tests passed with 100 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 85
     reachable scenes and 12 endings.
-  - Random 100-run playtest visited `gate_collapse`, had no unfinished runs or
-    unvisited scenes, kept best score 100/100, improved average score to 82.8,
-    and reduced bad endings to 7/100 in that sample.
-  - Coverage playtest visited all 84 scenes, including `gate_collapse`, kept
-    best score 100/100, and averaged 99.58.
-  - `npm run health` passed with formatting, TypeScript, 120 tests,
+  - `npm run health` passed with formatting, TypeScript, 121 tests,
     validation, and coverage playtest.
+  - Health coverage visited all 85 scenes, including
+    `passenger_counted_manifest_intercom`, with best score 100/100 and average
+    score 99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T21-02-44-904Z.md`. Its health checks were
-    green, MCP validation passed with 84 reachable scenes and no warnings, the
-    MCP route reached `true_ending` at 100/100, and the adaptive route reached
-    `passenger_true_ending` at 100/100.
-  - Manual CLI play went through `force_gate` -> `listen_below_gate` ->
-    `force_gate_after_echo` -> `brace_gate_and_retreat`, then gathered the
-    proper supplies and reached `true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T21-14-04-352Z.md`. Its health checks
+    were green, random and coverage samples both visited
+    `passenger_counted_manifest_intercom`, MCP validation passed with 85
+    reachable scenes and no warnings, the MCP route reached `true_ending` at
+    100/100, and the adaptive route reached `passenger_true_ending` at
+    100/100 after reviewing the manifest count.
+  - Manual CLI play followed `review_open_manifest_count` ->
+    `board_after_manifest_count` -> `listen_to_counted_manifest_intercom` ->
+    `pull_release_after_counted_manifest_goodbye` and reached
+    `passenger_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The collapse scene makes the danger tactile and explicit without removing
-    the intentional bad-ending choice.
-  - The recovery path cleanly returns players to actionable objectives in the
-    service room and prevents the forced-gate loop after backing away.
+  - The new intercom makes the reviewed count feel remembered in the third car:
+    Mara names the ordinary passenger proofs again, and the passengers begin
+    checking one another home before the final release.
+  - The route still offers the direct manifest release from `train_car`, so the
+    extra beat is enrichment rather than a required step.
   - Automated and manual play found no unreachable scenes, unfinished routes,
     stale objectives, or score regressions.
 - Follow-up:
-  - Core route metrics are healthy; next value is likely stronger character or
-    ending texture rather than another warning-only pass.
+  - Watch whether counted-manifest routes should later diverge into a conductor
+    or keepsake-specific ending variant.
 - Risks:
-  - The gate route now has three warnings before failure. Keep future early-game
-    changes focused so the opening does not become over-confirmed.
+  - Late passenger routes are already dense; the new beat must stay optional
+    and avoid crowding the shared train-car choice list.
 
 ## Last Completed Cycle
 

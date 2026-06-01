@@ -1938,7 +1938,59 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_counted_manifest_intercom"
+    );
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+  });
+
+  it("pays off the reviewed manifest count in the third car", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "board_after_manifest_count",
+      "listen_to_counted_manifest_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
+    expect(observation.scene.text).toContain("reviewed count");
+    expect(observation.scene.text).toContain("newspaper, lunch tin");
+    expect(observation.scene.text).toContain("counting one another home");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_counted_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
   it("lets Mara's manifest handoff lead directly to its third-car intercom", async () => {
@@ -3309,6 +3361,7 @@ describe("demo story critical paths", () => {
 
     expect(choiceIds).toContain("listen_to_mara_intercom");
     expect(choiceIds).not.toContain("listen_to_mara_manifest_intercom");
+    expect(choiceIds).not.toContain("listen_to_counted_manifest_intercom");
   });
 
   it("reveals the emergency release after clearing Mara even without the radio route", async () => {
