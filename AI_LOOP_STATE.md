@@ -12,70 +12,71 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a richer answered-manifest handoff beat before the shared
-  passenger true-ending release.
-- Why this matters: Route health is strong, with all scenes reachable and no
-  unfinished random runs. The highest-value next improvement is story depth on
-  a healthy route: players who watch Mara call the opened manifest and hear the
-  passengers answer should feel that handoff before the final intercom, instead
-  of jumping straight from boarding to release instructions.
+- Main objective: Add a matched-keepsake boarding beat before the keepsake
+  intercom/release.
+- Why this matters: Core route health is strong, so the best next value is
+  richer story depth on an already playable branch. The matched-keepsake route
+  has a strong platform handoff, but leading those passengers to the third car
+  previously jumped back to the generic train-car room before the keepsakes
+  answered. A short boarding scene lets the lunch tin, newspaper, and umbrellas
+  carry directly into the final release choices.
 - Tasks:
-  - Add a `passenger_answered_handoff_roll_call` scene after boarding from the
-    Mara manifest handoff plus passenger-answer route.
-  - Preserve the existing `passenger_answered_handoff_intercom` as the direct
-    pre-release intercom and keep the train-car listen route intact.
-  - Update regression coverage for the new intermediate scene, flag state, and
-    full-score ending.
-  - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
-    playthrough through the revised branch.
+  - Add `passenger_keepsake_boarding` after the matched-keepsake platform
+    handoff.
+  - Preserve the existing keepsake intercom, roll-call, and true-ending routes.
+  - Add regression coverage for the new scene, direct release, intercom
+    continuation, flags, and full-score ending.
+  - Run focused tests, validation, playtest sampling, full health,
+    evidence-only `ai:cycle`, and a real CLI/MCP playthrough.
 - Evidence:
-  - Added `passenger_answered_handoff_roll_call`, reached from
-    `board_after_passenger_answers` when players have both watched Mara call
-    the opened manifest and heard the passengers answer.
-  - The new scene sets up the existing `passenger_answered_handoff_intercom`
-    through `listen_to_answered_handoff_after_roll_call`, keeping Mara's final
-    goodbye flag on the intercom rather than the boarding step.
-  - Preserved the existing train-car `listen_to_answered_handoff_passengers`
-    route for players who board first and listen from the car.
+  - Added `passenger_keepsake_boarding`, reached from
+    `lead_keepsake_passengers_to_third_car`.
+  - The new scene can either release directly through
+    `pull_release_after_keepsake_boarding` or continue to the existing
+    `passenger_keepsake_intercom` through
+    `listen_to_keepsakes_answer_from_boarding`.
   - Focused story-path tests passed with 97 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 80
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 81
     reachable scenes and 12 endings.
+  - A 100-run random playtest ended every run, visited all scenes including
+    `passenger_keepsake_boarding`, kept best score 100/100, and averaged
+    78.25.
+  - A 100-run coverage playtest visited all 81 scenes, had no unfinished
+    completed routes, kept best score 100/100, and averaged 99.58.
   - `npm run health` passed with formatting, TypeScript, 118 tests,
-    validation, and coverage playtest. Coverage visited all 80 scenes,
-    including `passenger_answered_handoff_roll_call`, with best score 100/100
-    and average score 99.58.
-  - A 100-run random playtest ended every run, visited all scenes including the
-    new scene, kept best score 100/100, and averaged 78.25.
+    validation, and coverage playtest. Health coverage visited all 81 scenes,
+    including `passenger_keepsake_boarding`, with best score 100/100 and
+    average score 99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T20-17-53-099Z.md`; its random and
-    coverage samples both visited `passenger_answered_handoff_roll_call`, had
-    no unvisited scenes, ended every random run, kept best score 100/100, and
+    report `ai-runs/cycle-2026-06-01T20-29-27-395Z.md`; its random and
+    coverage samples both visited `passenger_keepsake_boarding`, had no
+    unvisited scenes, ended every random run, kept best score 100/100, and
     averaged 78.25 random / 99.58 coverage.
-  - Evidence-cycle MCP validation passed with 80 reachable scenes and no
+  - Evidence-cycle MCP validation passed with 81 reachable scenes and no
     warnings. Its required MCP playthrough reached `true_ending` at 100/100,
     and its adaptive exploratory route reached `passenger_true_ending` at
     100/100.
-  - Manual CLI play followed `watch_mara_open_manifest` ->
-    `continue_manifest_handoff_roll_call` -> `board_after_passenger_answers`
-    -> `listen_to_answered_handoff_after_roll_call` ->
-    `pull_release_after_answered_handoff_intercom` and reached
-    `passenger_true_ending` at 100/100 with no objectives.
+  - Manual CLI play followed `match_manifest_keepsakes` ->
+    `lead_keepsake_passengers_to_third_car` ->
+    `listen_to_keepsakes_answer_from_boarding` ->
+    `hear_final_keepsake_roll_call` ->
+    `pull_release_after_keepsake_roll_call` and reached
+    `passenger_keepsake_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new beat makes boarding feel like a public handoff: Mara starts the
-    roll call, but the passengers answer before the line can turn the pause
-    into waiting again.
-  - The existing intercom still works as the final release instruction, so the
-    route gains texture without adding another ending branch.
-  - Manual play felt coherent: the extra scene did not add a navigation loop,
-    and the ending still landed at full score with no stale objectives.
+  - Automated evidence shows the new scene is reachable in normal random play
+    and does not create unfinished routes.
+  - The route now carries matched objects into the third car before the final
+    intercom/release, avoiding a thin transition from platform handoff to
+    generic train-car text.
+  - Manual play felt coherent: the new boarding scene immediately followed the
+    keepsake handoff, then the existing intercom and final roll call escalated
+    cleanly to the keepsake ending.
 - Follow-up:
-  - Consider whether the generic direct manifest release should gain a small
-    optional late beat if future playtests make it feel thin beside the richer
-    handoff, conductor, keepsake, mitten, newspaper, and lunch-tin routes.
+  - Consider whether route-family reporting should group the many passenger
+    true-ending variants so future cycle reports stay readable.
 - Risks:
-  - The passenger true-ending family now has several optional intercom beats.
-    Keep future additions route-specific and avoid bloating the train-car
-    choice list.
+  - Late passenger routes are already dense; keep future additions
+    route-specific and avoid bloating the shared train-car choice list.
 
 ## Last Completed Cycle
 

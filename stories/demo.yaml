@@ -1136,7 +1136,26 @@ scenes:
     choices:
       - id: lead_keepsake_passengers_to_third_car
         label: Lead the matched passengers to the third car
-        to: train_car
+        to: passenger_keepsake_boarding
+
+  passenger_keepsake_boarding:
+    text: >
+      The third car fills by object before it fills by name. The lunch tin
+      worker sets his tin under the first seat where the release waits, the
+      newspaper woman tucks her transfer column against the window, and each
+      umbrella hooks over a rail with its initials facing out. Mara starts to
+      read the manifest again, then stops when the ordinary things answer for
+      the people holding them.
+    choices:
+      - id: listen_to_keepsakes_answer_from_boarding
+        label: Listen as the keepsakes answer from the third car
+        to: passenger_keepsake_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: pull_release_after_keepsake_boarding
+        label: Pull the release while every keepsake has its owner
+        to: passenger_keepsake_true_ending
 
   passenger_farewell:
     text: >

@@ -2623,13 +2623,15 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "lead_keepsake_passengers_to_third_car");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("passenger_keepsake_boarding");
+    expect(observation.scene.text).toContain("fills by object before it fills by name");
+    expect(observation.scene.text).toContain("the ordinary things answer");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_matched_keepsakes",
-      "pull_release_after_matching_keepsakes"
+      "listen_to_keepsakes_answer_from_boarding",
+      "pull_release_after_keepsake_boarding"
     ]);
 
-    state = choose(story, state, "pull_release_after_matching_keepsakes");
+    state = choose(story, state, "pull_release_after_keepsake_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
@@ -2664,7 +2666,7 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers",
       "match_manifest_keepsakes",
       "lead_keepsake_passengers_to_third_car",
-      "listen_to_matched_keepsakes"
+      "listen_to_keepsakes_answer_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2713,7 +2715,7 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers",
       "match_manifest_keepsakes",
       "lead_keepsake_passengers_to_third_car",
-      "listen_to_matched_keepsakes",
+      "listen_to_keepsakes_answer_from_boarding",
       "hear_final_keepsake_roll_call"
     ]) {
       state = choose(story, state, choiceId);
