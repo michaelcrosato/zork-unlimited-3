@@ -4,6 +4,80 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Cleared Ledger Finale Focus
+
+### Current Plan
+
+- Main objective: Make the earned true-ending finale decisive after Mara's
+  ledger entry has been cleared.
+- Why this matters: Evidence showed a player could do the complete true-ending
+  setup, clear Mara from the ledger, then still lose by choosing the HOME-sign
+  trap in the train car.
+- Tasks:
+  - Hide the train-car HOME-sign trap once `freed_mara` is true.
+  - Keep the sign warning and lesser endings reachable on underprepared routes.
+  - Update regression coverage for the cleared-Mara finale.
+  - Verify health, random play behavior, and a real playthrough.
+- Risks:
+  - The finale should not become automatic before the player has earned it, so
+    this gate only applies after the ledger is cleared.
+
+### Work Completed
+
+- Changes made:
+  - Added `notFlag: freed_mara` to the train-car `look_at_sign` choice.
+  - Updated the cleared-Mara train-car test to expect only the release-focused
+    finale, with no map escape or sign trap.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused choice-surfacing improvement.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run health`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - Manual CLI route through notice, token, map, radio, locker, fuse, signal
+    booth, ledger clear, and emergency release.
+- Quantitative metrics:
+  - Story-path tests: 17 passing.
+  - Health: format check, lint, 25 tests, validation, and coverage playtest all
+    pass.
+  - Coverage playtest from health: all scenes visited, `true_ending` reached
+    10 times, 18 unfinished.
+  - Random playtest, 250 runs: 249 ended, 1 unfinished, all scenes visited,
+    `true_ending` reached 19 times, average score 40.82.
+  - Manual CLI route: `train_car` offered only `pull_release` after clearing
+    Mara, then reached `true_ending` at 100/100.
+- What worked:
+  - The true-ending setup now pays off cleanly instead of offering a late trap
+    after Mara has already been cleared.
+  - The sign warning, `lost_ending`, and `good_ending` remain reachable through
+    routes where Mara has not been cleared.
+- What felt bad/confusing:
+  - The train-car prose still mentions the HOME sign even when the sign choice
+    is hidden. It reads as pressure rather than a broken affordance, but scene
+    variants would make this cleaner.
+  - Coverage still reports 18 unfinished runs.
+- Bugs found:
+  - No runtime bugs.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect unfinished coverage traces and remove one
+  remaining repetitive hub loop.
+- Reason: The finale distraction is fixed, but coverage still exits 18 runs by
+  step budget rather than endings.
+- Planned action:
+  - Run coverage with full traces, identify the dominant unfinished route, and
+    add a narrow state-aware requirement or route-shortening choice.
+
 ## 2026-06-01 - Lit Platform Return Clarity
 
 ### Current Plan

@@ -384,6 +384,8 @@ scenes:
       - id: look_at_sign
         label: Look directly at the destination sign
         to: sign_warning
+        requires:
+          notFlag: freed_mara
 
   gate_warning:
     text: >

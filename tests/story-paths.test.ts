@@ -206,7 +206,7 @@ describe("demo story critical paths", () => {
 
     expect(choiceIds).toContain("pull_release");
     expect(choiceIds).not.toContain("ride_with_map");
-    expect(choiceIds).toContain("look_at_sign");
+    expect(choiceIds).not.toContain("look_at_sign");
   });
 
   it("reveals the emergency release after clearing Mara even without the radio route", async () => {

@@ -10,28 +10,30 @@ preserving normal-play true-ending discoverability.
 ## Active Cycle
 
 - Date: 2026-06-01
-- Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Remove stale platform prose and repeated fuse installation
-  after Platform 13 has already been lit.
-- Outcome: Added state-aware return routes from the tunnel and service room to
-  `lit_platform` whenever `platform_lit` is true, so token-recovery players
-  return to the already powered platform and can use the signal token directly.
+- Status: Completed locally; ready for commit/push.
+- Main objective: Make the earned true-ending finale decisive after Mara's
+  ledger entry has been cleared.
+- Outcome: Hid the HOME-sign trap from the train car once `freed_mara` is true,
+  so players who found the token, lit Platform 13, used the signal booth, and
+  cleared Mara now receive the emergency release as the decisive finale action.
 - Evidence:
-  - Added story-path regression tests for both post-ledger token recovery and
-    service-room returns after the fuse is installed.
+  - Updated the cleared-Mara train-car regression test to prove `look_at_sign`
+    is absent after the ledger is cleared.
   - `npm test -- tests/story-paths.test.ts` passes with 17 tests.
   - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - Random playtest, 100 runs: all scenes visited, 0 unfinished,
-    `true_ending` reached 4 times, average score 40.85.
   - `npm run health` passes with 25 tests and coverage playtest visiting all
-    scenes; coverage still reports 18 unfinished runs.
-  - Manual CLI route boarded before checking the signal booth, followed the
-    directed token recovery to the clock, returned via
-    `follow_arrows_to_lit_platform`, used the signal booth, and reached
-    `true_ending` at 100/100.
-- Follow-up: Coverage strategy still leaves 18 unfinished runs, likely from
-  repeated hub traversal. The next pass should inspect unfinished traces and
-  trim one remaining loop without removing meaningful backtracking.
+    scenes; coverage still reports the known 18 unfinished runs.
+  - Random playtest, 250 runs: all scenes visited, 1 unfinished,
+    `true_ending` reached 19 times, average score 40.82.
+  - Manual CLI route reached `train_car` after clearing Mara with only
+    `pull_release` available, then reached `true_ending` at 100/100.
+- Follow-up: Coverage strategy still leaves 18 unfinished runs from hub
+  traversal. The next pass should inspect those unfinished traces and trim one
+  remaining loop without removing useful backtracking.
+- Risks:
+  - Removing too much agency from the finale could make the true ending feel
+    automatic, so this only applies after the player has already found the
+    token, badge, lit platform, and cleared the ledger.
 
 ## Last Completed Cycle
 
