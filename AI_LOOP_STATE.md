@@ -11,41 +11,40 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve transcript/report clarity for stalled or exploratory
-  routes.
+- Main objective: Add a stronger manifest-route platform payoff after clearing
+  Mara's ledger entry.
 - Why this matters: Current route metrics are healthy and all scenes are
-  reachable. The useful pressure is now evidence quality: when adaptive play
-  stops at a late scene like `signal_booth`, the transcript should show the
-  current objective and legal choices so the next agent can distinguish a real
-  design stall from an unfinished exploratory route.
+  reachable, so the best next improvement is richer payoff on the optional
+  passenger-manifest branch rather than another clue pass. Players who read the
+  manifest should briefly see the people they chose to save before returning to
+  the emergency release.
 - Tasks:
-  - Append a compact final-state audit to rendered transcripts.
-  - Include final scene status, score, objectives, and available choices.
-  - Add regression coverage for stalled exploratory and completed ending
-    transcripts.
-  - Run focused tests, full health, and an actual CLI/MCP-equivalent route that
-    prints the new transcript audit.
+  - Add a focused `passenger_platform` scene between opening the manifest doors
+    and boarding the third car.
+  - Update manifest-route regressions so the new beat remains reachable and the
+    passenger true ending still scores 100/100.
+  - Run focused tests, full health, and an actual CLI route through the updated
+    manifest branch.
 - Evidence:
-  - Added a transcript `Final State` section with scene status, score,
-    objectives, visible choices, inventory, and flags.
-  - Added transcript regression coverage for an in-progress `signal_booth`
-    route and a completed `true_ending` route.
-  - `npm test -- tests/transcript.test.ts` passed with 2 tests.
+  - Added `passenger_platform`, reached after opening every manifest door and
+    before boarding the third car.
+  - Updated manifest-route regression coverage so the new scene is required on
+    the passenger-manifest path and the passenger true ending still reaches
+    100/100.
+  - `npm test -- tests/story-paths.test.ts` passed with 45 tests.
   - `npm run health` passed with formatting, TypeScript, 65 tests, validation,
     and coverage playtest.
-  - Validation reports 36 scenes, 6 endings, and all 36 reachable.
-  - Coverage playtest reports 0 unfinished runs, all scenes visited, best score
-    100/100, and average score 77.91.
-  - Manual CLI route to `signal_booth` produced a transcript ending with the
-    active ledger objective and legal choices `inspect_signal_ledger` and
-    `read_passenger_manifest`.
-  - Manual CLI route to `true_ending` reached 100/100 and produced a transcript
-    ending with no remaining objectives or choices.
-- Follow-up: Use the new final-state audit in the next evidence cycle to decide
-  whether adaptive route depth still needs tuning.
+  - Validation reports 37 scenes, 6 endings, and all 37 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 37 scenes visited, best
+    score 100/100, and average score 77.92.
+  - Manual CLI route through `passenger_platform` and
+    `mara_manifest_intercom` reached `passenger_true_ending` at 100/100.
+- Follow-up: If the added step noticeably lowers random max-score completion,
+  keep the scene text but consider merging it with `passengers_released`.
 - Risks:
-  - Transcript output is intentionally longer; keep the audit compact so
-    report tails still show the actionable state.
+  - Adding a required beat to the optional manifest branch slightly lengthens
+    one max-score route. Health and playtest summaries must confirm the branch
+    still ends reliably.
 
 ## Last Completed Cycle
 

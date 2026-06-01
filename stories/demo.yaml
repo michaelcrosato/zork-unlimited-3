@@ -638,7 +638,19 @@ scenes:
       the line steady while they find the morning."
     choices:
       - id: board_after_releasing_passengers
-        label: Board the third car as the platform fills
+        label: Cross the platform as the passengers gather
+        to: passenger_platform
+
+  passenger_platform:
+    text: >
+      The platform is no longer empty. People step out of the manifest doors
+      carrying ordinary burdens: a folded newspaper, a paper sack darkened by
+      rain, the mitten you saw pinned beside a name. None of them look at the
+      destination sign. They look to Mara's speaker, then to you, waiting for
+      the last door to open.
+    choices:
+      - id: board_third_car_with_passengers
+        label: Board the third car and reach the release
         to: train_car
 
   train_car:

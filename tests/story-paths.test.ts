@@ -761,6 +761,7 @@ describe("demo story critical paths", () => {
       "inspect_signal_ledger",
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
+      "board_third_car_with_passengers",
       "pull_release_with_manifest"
     ]) {
       state = choose(story, state, choiceId);
@@ -796,6 +797,7 @@ describe("demo story critical paths", () => {
       "inspect_signal_ledger",
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
+      "board_third_car_with_passengers",
       "listen_to_mara_manifest_intercom"
     ]) {
       state = choose(story, state, choiceId);
@@ -1323,7 +1325,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release");
   });
 
-  it("adds a manifest-specific release beat after clearing Mara's ledger entry", async () => {
+  it("adds a manifest-specific platform beat after clearing Mara's ledger entry", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -1365,6 +1367,15 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual(["board_after_releasing_passengers"]);
 
     state = choose(story, state, "board_after_releasing_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.scene.text).toContain("a paper sack darkened by rain");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "board_third_car_with_passengers"
+    ]);
+
+    state = choose(story, state, "board_third_car_with_passengers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
