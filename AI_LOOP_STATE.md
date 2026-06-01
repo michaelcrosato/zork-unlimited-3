@@ -11,14 +11,49 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Stop prepared players from boarding the unlit train when they
+- Main objective: Make the early forced-gate bad-ending confirmation read as
+  unmistakably final, without removing the alternate ending.
+- Outcome: The `gate_warning` scene now explicitly says the control panel is
+  offering one last chance to stop making noise and gather supplies, while the
+  destructive confirmation is labeled as ignoring the final warning. Players can
+  still choose the bad ending, but the recovery route is clearer.
+- Evidence:
+  - Added regression coverage proving `gate_warning` keeps the recovery choice,
+    includes the "one last chance" warning text, and labels the destructive
+    confirmation as "Ignore the final warning and force the gate anyway".
+  - `npm test -- tests/story-paths.test.ts` passed with 27 tests.
+  - `npm run health` passed with 37 tests, validation clean, all 25 scenes
+    reachable, and coverage playtest visiting every scene.
+  - Manual CLI route forced the gate, backed away from the final warning,
+    collected the map, radio route, fuse, badge, and token, restored the
+    platform, cleared Mara, and reached `true_ending` at 100/100.
+  - Evidence-only `npm run ai:cycle` passed health, MCP tool verification, MCP
+    validation, MCP playtests, and an actual MCP true-ending playthrough at
+    100/100.
+  - Evidence cycle random playtest, 100 runs: 99 ended, all scenes visited,
+    `true_ending` reached 49 times, `bad_ending` reached 17 times, best score
+    100/100, average score 65.8.
+  - Evidence cycle MCP random playtest, 250 runs: all ended, all scenes
+    visited, `true_ending` reached 118 times, `bad_ending` reached 51 times,
+    best score 100/100, average score 64.44.
+  - Coverage playtest, 316 runs: all scenes visited, 296 ended, 20 unfinished
+    frontier samples remain, `true_ending` reached 72 times, best score
+    100/100, average score 53.61.
+  - Adaptive exploratory MCP route still intentionally chose the final forced
+    gate warning and reached `bad_ending`, confirming the alternate ending
+    remains available.
+- Follow-up: Inspect the remaining 20 coverage unfinished frontier samples and
+  decide whether they are harmless budget exits or a remaining hub loop worth
+  smoothing.
+- Risks:
+  - Content-only warning text cannot stop random strategies from choosing the
+    bad ending; the goal is human-player clarity, not removing risk.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Stopped prepared players from boarding the unlit train when they
   already carry the platform fuse.
-- Outcome: The unlit platform now treats direct train boarding as an
-  underprepared map-only escape route. Once players have the fuse, the platform
-  focuses them on installing it, which keeps the token, badge, and ledger chain
-  from being bypassed by an obsolete good/lost-ending branch. Fully prepared
-  players also no longer see the stale map-escape objective when early boarding
-  has been removed.
 - Evidence:
   - Added regression coverage proving fuse carriers at the unlit platform see
     `install_fuse` and no longer see `board_train`.

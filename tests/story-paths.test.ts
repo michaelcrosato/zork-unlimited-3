@@ -46,7 +46,13 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    expect(observe(story, state).scene.id).toBe("gate_warning");
+    const warning = observe(story, state);
+    expect(warning.scene.id).toBe("gate_warning");
+    expect(warning.scene.text).toContain("one last chance");
+    expect(warning.choices.map((choice) => choice.label)).toContain(
+      "Ignore the final warning and force the gate anyway"
+    );
+    expect(warning.choices.map((choice) => choice.id)).toContain("back_away_from_gate");
 
     state = choose(story, state, "back_away_from_gate");
     expect(observe(story, state).scene.id).toBe("service_room");
