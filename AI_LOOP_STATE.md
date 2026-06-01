@@ -11,49 +11,44 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Smooth the optional passenger-manifest branch so it returns
-  directly to Mara's ledger row.
-- Why this matters: Cycle evidence showed an exploratory route stopping at
-  `passenger_manifest` even though the next progress action was available.
-  Removing the signal-booth bounce makes the manifest payoff read as part of
-  the final ledger resolution rather than a detour through a hub.
+- Main objective: Smooth map-warning recovery so late-game explorers return
+  directly to the solved platform state.
+- Why this matters: Cycle evidence showed the adaptive exploratory route
+  stopping at `signal_map_warning` after a fully useful warning. Sending the
+  player back through the service-room hub just to take the known marked map
+  added friction without adding a meaningful decision.
 - Tasks:
-  - Let `passenger_manifest` offer the passenger-echo beat directly.
-  - Route manifest and echo returns straight to `signal_ledger`, setting the
-    ledger-inspected flag so objectives and choices stay coherent.
-  - Update regression coverage for manifest, mapless recovery, objective, and
-    passenger-ending paths.
+  - Change `return_for_map_from_signal_warning` to recover the marked map and
+    return directly to `lit_platform`.
+  - Preserve the risky unprepared route into `signal_booth`.
+  - Update regression coverage for the streamlined recovery path.
 - Evidence:
-  - Added `listen_to_manifest_doors_from_manifest`, so players can hear the
-    kept passengers without first returning to `signal_booth`.
-  - Changed `return_to_signal_ledger_from_manifest` and
-    `return_from_passenger_echoes` to land on `signal_ledger` and mark
-    `inspected_signal_ledger`.
-  - Updated story-path regressions so manifest readers can proceed directly to
-    `clear_manifest_and_mara_from_ledger`, while mapless recovery still points
-    back to the marked map.
+  - `signal_map_warning` now offers "Recover the marked map and return to the
+    gate control", adds the map, and lands on `lit_platform`.
+  - After recovery, `lit_platform` exposes only `use_token_slot`, keeping the
+    player focused on the signal-booth objective.
   - `npm test -- tests/story-paths.test.ts` passed with 48 tests.
   - `npm run health` passed with formatting, TypeScript, 68 tests, validation,
     and coverage playtest.
   - Validation reports 38 scenes, 6 endings, and all 38 reachable.
   - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
     score 100/100, average score 82.25, and 960 max-score runs.
-  - Manual CLI route read the manifest, listened to passenger echoes directly
-    from that scene, returned to `signal_ledger`, cleared every manifest door,
-    and reached `passenger_true_ending` at 100/100.
+  - Manual CLI route deliberately triggered `signal_map_warning`, recovered the
+    map directly back to `lit_platform`, opened the signal booth, took the
+    thumbprint memory, and reached `true_ending` at 100/100.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
     verification, MCP validation, MCP random/coverage/goal playtests, and an
     actual MCP true-ending playthrough at 100/100.
   - Post-change adaptive exploratory play no longer stops at
-    `passenger_manifest`; it now stops at `signal_booth` with
+    `signal_map_warning`; it now stops at `signal_booth` with
     `inspect_signal_ledger` and `read_passenger_manifest` both visible.
 - Follow-up: Inspect whether the adaptive `signal_booth` stop is a route-depth
-  limitation or whether the booth should more strongly prioritize the ledger
+  limitation or whether the booth should more strongly prioritize Mara's ledger
   entry after the player is fully prepared.
 - Risks:
-  - Moving manifest returns out of `signal_booth` changes a late-game route
-    shape. Focused tests, full health, and manual play confirm the branch
-    remains reachable and finishable.
+  - Recovering the map from the warning is slightly abstracted compared with a
+    literal service-room return. Focused tests, full health, and manual play
+    confirm the branch remains coherent and finishable.
 
 ## Last Completed Cycle
 

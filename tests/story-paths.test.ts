@@ -1207,8 +1207,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_for_map_from_signal_warning");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("service_room");
-    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.inventory).toContain("map");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["use_token_slot"]);
   });
 
   it("replaces broad survival guidance after players read the signal ledger", async () => {

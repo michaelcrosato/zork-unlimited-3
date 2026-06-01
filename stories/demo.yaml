@@ -477,8 +477,12 @@ scenes:
       without the marked map.
     choices:
       - id: return_for_map_from_signal_warning
-        label: Return to the service room for the marked map
-        to: service_room
+        label: Recover the marked map and return to the gate control
+        to: lit_platform
+        effects:
+          addItem: map
+          set:
+            knows_platform: true
       - id: continue_to_signal_booth_unprepared
         label: Continue into the booth without the map
         to: signal_booth
