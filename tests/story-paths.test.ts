@@ -962,6 +962,68 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("inspect_signal_ledger");
   });
 
+  it("adds an optional newspaper memory without consuming passenger help choices", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds[0]).toBe("ask_newspaper_woman_about_stop");
+    expect(choiceIds).toContain("match_manifest_keepsakes");
+    expect(choiceIds).toContain("help_passengers_gather");
+
+    state = choose(story, state, "ask_newspaper_woman_about_stop");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_memory");
+    expect(observation.scene.text).toContain("Warden Street, then morning transfer");
+    expect(observation.scene.text).toContain("the route has started existing again");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_lost_mitten_after_newspaper_memory",
+      "match_keepsakes_after_newspaper_memory",
+      "help_passengers_after_newspaper_memory",
+      "board_after_newspaper_memory"
+    ]);
+
+    for (const choiceId of [
+      "help_passengers_after_newspaper_memory",
+      "pull_release_after_gathered_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("still lets gate-control players install only the fuse when the token is missing", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1783,6 +1845,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(choiceIds).toEqual([
+      "ask_newspaper_woman_about_stop",
       "ask_conductor_to_call_platform_clear",
       "return_lost_mitten",
       "match_manifest_keepsakes",
@@ -1970,6 +2033,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_newspaper_woman_about_stop",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",
@@ -3496,6 +3560,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_newspaper_woman_about_stop",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",

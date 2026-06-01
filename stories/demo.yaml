@@ -891,6 +891,14 @@ scenes:
       destination sign. They look to Mara's speaker, then to you, waiting for
       the last door to open.
     choices:
+      - id: ask_newspaper_woman_about_stop
+        label: Ask the newspaper woman which stop she was trying to reach
+        to: passenger_newspaper_memory
+        requires:
+          notFlag: heard_newspaper_memory
+        effects:
+          set:
+            heard_newspaper_memory: true
       - id: ask_conductor_to_call_platform_clear
         label: Ask the old conductor to call the platform clear
         to: passenger_conductor_signal
@@ -929,6 +937,61 @@ scenes:
           set:
             helped_passengers_gather: true
       - id: board_third_car_with_passengers
+        label: Board the third car and reach the release
+        to: train_car
+
+  passenger_newspaper_memory:
+    text: >
+      The woman smooths the wet newspaper against her sleeve until the ink
+      remembers a date. "Warden Street, then morning transfer," she says,
+      pointing to a column where every arrival after 1:13 has been left blank.
+      "I kept reading it because the paper was the only thing that still
+      believed trains went anywhere." Behind her, the old conductor leans close
+      enough to see the schedule and nods once, as if the route has started
+      existing again.
+    choices:
+      - id: ask_conductor_after_newspaper_memory
+        label: Ask the old conductor to call the platform clear
+        to: passenger_conductor_intercom
+        requires:
+          all:
+            - flag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+      - id: return_lost_mitten_after_newspaper_memory
+        label: Return the lost mitten and lead the child to the third car
+        to: passenger_gathered_intercom
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+      - id: match_keepsakes_after_newspaper_memory
+        label: Match the manifest keepsakes on the way to the third car
+        to: passenger_keepsake_intercom
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+      - id: help_passengers_after_newspaper_memory
+        label: Help the kept passengers gather into the third car
+        to: passenger_gathered_intercom
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+      - id: board_after_newspaper_memory
         label: Board the third car and reach the release
         to: train_car
 

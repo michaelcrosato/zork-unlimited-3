@@ -11,6 +11,65 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a small passenger-platform character beat that deepens
+  the released crowd without changing the healthy route metrics.
+- Why this matters: Current evidence shows core routing, ending discovery, and
+  completion are healthy. The highest-value next improvement is richer story
+  texture on a normal ideal route, especially giving one manifest passenger a
+  personal moment before the final release.
+- Tasks:
+  - Add one optional newspaper-woman memory from `passenger_platform`.
+  - Ensure it flows directly into the existing passenger-help payoff choices
+    without consuming unrelated help routes.
+  - Add regression coverage for the new scene, flag, direct payoff choices, and
+    max-score completion after taking the beat.
+  - Fix the current formatting failure in `AI_LOOP_STATE.md`.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI or MCP playthrough through the updated route.
+- Evidence:
+  - Added `passenger_newspaper_memory`, reached from `passenger_platform` after
+    opening the manifest doors.
+  - The new beat gives the newspaper woman a personal schedule memory:
+    Warden Street, the morning transfer, and the belief that trains still went
+    somewhere after 1:13.
+  - The newspaper beat now routes directly into existing third-car payoff
+    families: conductor clear signal, mitten, keepsakes, gathered passengers,
+    or direct boarding.
+  - Added regression coverage for the new choice, scene text,
+    `heard_newspaper_memory`, direct post-memory choices, and 100/100
+    completion through `passenger_helped_true_ending`.
+  - Focused story-path and playtest tests passed with 94 tests.
+  - Validation passed with 69 scenes, 10 endings, and all 69 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 69 scenes, had no
+    unvisited scenes, kept best score 100/100, averaged 78.2, and reached max
+    score in 72 runs.
+  - A 100-run coverage sample visited all 69 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 99.21, and 184464 max-score
+    runs.
+  - `npm run health` passed with formatting, TypeScript, 109 tests,
+    validation, and coverage playtest.
+  - Manual CLI play took the newspaper memory, helped the gathered passengers
+    into the third car, and reached `passenger_helped_true_ending` at 100/100
+    with no objectives.
+- Playtest notes:
+  - The new scene adds a concrete passenger voice without changing the main
+    manifest-clearing objective.
+  - The first implementation added too much route depth and produced unfinished
+    coverage samples under the 50-step regression budget; direct routing into
+    third-car payoffs fixed that.
+  - The shorter route reads naturally: the newspaper schedule prompts the crowd
+    to move toward the third car instead of sending the player through another
+    platform loop.
+- Follow-up: Watch whether late-game passenger choices become too dense as more
+  crowd-specific beats are added.
+- Risks:
+  - Additional optional passenger scenes can make the late-game route busier;
+    keep this one short and do not gate any ending behind it.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Strengthen the recovery guidance after the player listens
   beneath the forced gate.
 - Why this matters: The exploratory MCP route showed the forced-gate branch is
@@ -30,9 +89,8 @@ preserving normal-play true-ending discoverability.
   - Revised `gate_echo` so the deeper warning names the practical recovery
     path: fuse for light, badge for proof, map for the route, and token for the
     booth.
-  - Renamed the cautious recovery choice to `Back away and gather the four
-    answers`, while keeping `force_gate_after_echo` available for the bad
-    ending.
+  - Renamed the cautious recovery choice and kept `force_gate_after_echo`
+    available for the bad ending.
   - Added regression coverage for the new text, choice label, flagging, return
     to the service-room objective loop, and unchanged bad-ending route.
   - Focused story-path tests passed with 87 tests.
