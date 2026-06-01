@@ -214,10 +214,11 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     path.push(state.currentScene);
   }
 
+  const observation = observe(story, state);
   return {
     run,
-    ended: false,
-    finalScene: state.currentScene,
+    ended: observation.scene.ending,
+    finalScene: observation.scene.id,
     steps: maxSteps,
     path,
     ...scoreOnly(state)
@@ -274,10 +275,11 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
     path.push(state.currentScene);
   }
 
+  const observation = observe(story, state);
   return {
     run,
-    ended: false,
-    finalScene: state.currentScene,
+    ended: observation.scene.ending,
+    finalScene: observation.scene.id,
     steps: maxSteps,
     path,
     ...scoreOnly(state)

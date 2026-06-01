@@ -4,6 +4,90 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Platform 13 Poster Beat
+
+### Current Plan
+
+- Main objective: Add a focused late-game story beat that clarifies Mara's badge
+  and ledger stakes without blocking the true-ending route.
+- Why this matters: Platform 13 already showed Mara's missing-person posters,
+  but players could not inspect them. The badge-ledger connection depended
+  mostly on earlier service-room clues, so the lit platform missed a chance to
+  reinforce the final objective in-world.
+- Tasks:
+  - Add a one-time poster inspection scene from the lit platform.
+  - Return cleanly to the gate control without creating a repeat loop.
+  - Add regression coverage for the new beat.
+  - Fix any playtest reporting issue exposed by the new route.
+- Risks:
+  - Adding optional late-game content can dilute route focus. The scene must be
+    one-time and leave the signal-booth route available.
+
+### Work Completed
+
+- Changes made:
+  - Added `mara_posters`, a short Platform 13 inspection scene that reframes
+    Mara as "in transit" and explicitly ties her badge to proof of service.
+  - Added `inspect_mara_posters` as a one-time lit-platform choice.
+  - Fixed random and goal playtest reporting so endings reached on the final
+    allowed step are counted as ended.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/playtest.ts`
+  - `tests/story-paths.test.ts`
+  - `tests/playtest.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - One new reachable story scene: `mara_posters`.
+  - Two small playtest edge-case regressions.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/playtest.test.ts tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random --summary --json`
+  - `npm run health`
+  - Manual CLI route through notice, token, map, radio, locker, lit platform,
+    poster inspection, signal booth, ledger clear, and true ending.
+- Quantitative metrics:
+  - Focused tests: 25 passing.
+  - Full health: format check, lint, 31 tests, validation, and coverage playtest
+    pass.
+  - Validation: 24 scenes, 5 endings, 24 reachable scenes.
+  - Random playtest, 100 runs: 100 ended, 0 unfinished, all scenes visited,
+    `true_ending` reached 14 times, average score 49.6, max-score runs 8.
+  - Coverage playtest in health: 243 runs, 224 ended, 19 unfinished frontier
+    reports, all scenes visited, `true_ending` reached 40 times, average score
+    54.22, max-score runs 24.
+  - Manual CLI route: inspected `mara_posters`, returned to `lit_platform`, then
+    reached `true_ending` at 100/100.
+- What worked:
+  - The poster scene gives the platform a stronger Mara-focused beat before the
+    signal booth.
+  - The one-time flag prevents repeated poster inspection loops.
+  - The playtest report no longer mislabels final-step endings as unfinished.
+- What felt bad/confusing:
+  - Coverage still reports non-ending frontier samples as unfinished, which is
+    technically accurate for that strategy but easy to confuse with failed
+    player runs.
+- Bugs found:
+  - Random playtest reporting marked a run as unfinished even though its final
+    recorded scene was `escape_ending`. Observing the final state after the step
+    budget fixed the false unfinished result.
+
+### Next Iteration
+
+- Highest-priority next task: Improve coverage report semantics for frontier
+  samples.
+- Reason: The remaining 19 unfinished coverage reports are useful exploration
+  markers, but they read like failed playthroughs in cycle summaries.
+- Planned action:
+  - Separate coverage frontier observations from genuinely exhausted or
+    no-choice unfinished runs, then update summaries/tests so AI agents can
+    critique pacing without misreading coverage artifacts as playability bugs.
+
 ## 2026-06-01 - Fully Equipped Service-Room Launch
 
 ### Current Plan

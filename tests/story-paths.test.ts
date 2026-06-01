@@ -481,6 +481,40 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("board_before_clearing_ledger");
   });
 
+  it("adds a one-time Platform 13 poster beat that reinforces Mara's badge", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "inspect_mara_posters"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_posters");
+    expect(observation.scene.text).toContain("proof of service");
+    expect(observation.state.flags.inspected_mara_posters).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+
+    state = choose(story, state, "return_to_lit_platform_after_posters");
+    observation = observe(story, state);
+
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(choiceIds).not.toContain("inspect_mara_posters");
+    expect(choiceIds).toContain("return_from_lit_platform");
+  });
+
   it("focuses signal-booth choices on Mara when carrying her badge", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

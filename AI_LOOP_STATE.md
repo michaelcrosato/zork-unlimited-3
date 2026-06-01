@@ -11,38 +11,34 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve recovery clarity for players who discover Platform 13
-  before collecting the marked map and other preparation tools.
-- Outcome: After an underprepared player reaches Platform 13 and backs away
-  from the forced-gate warning, the service-room objective list now explicitly
-  tells them to recover the marked Platform 13 map before boarding, while still
-  surfacing token and fuse preparation.
+- Main objective: Add one late-game story beat that clarifies Mara's badge and
+  ledger stakes on Platform 13, while improving playtest report accuracy.
+- Outcome: Lit Platform 13 now has a one-time missing-person poster inspection
+  scene that reinforces Mara's "in transit" status and explains why her proof
+  of service matters before the signal booth. Random and goal playtests now
+  correctly count endings reached on the final allowed step instead of
+  reporting them as unfinished.
 - Evidence:
-  - Added regression coverage for the underprepared platform recovery route,
-    proving the player returns to the service room with the marked-map
-    objective visible and `take_map` available.
-  - Updated the forced-gate retreat label to reinforce gathering proper supplies.
-  - `npm test -- tests/story-paths.test.ts` passes with 20 tests.
-  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - `npm run health` passes with 28 tests and coverage playtest visiting all
-    scenes.
-  - Random playtest, 100 runs: all 100 ended, all scenes visited,
-    `true_ending` reached 12 times, average score 48.4, best score 100.
-  - Coverage playtest, 170 runs: 152 ended, 18 unfinished reporting samples
-    remain, `true_ending` reached 20 times, average score 48.82.
-  - Manual CLI route intentionally reached Platform 13 underprepared, forced the
-    gate warning, backed away, confirmed the new map objective appeared first in
-    the service room, then recovered all preparation tools and reached
-    `true_ending` at 100/100.
-  - `npm run ai:cycle` wrote ignored report artifacts but was interrupted after
-    the nested agent recursively launched another `ai:cycle`; direct health,
-    random playtest, and manual CLI play were completed afterward.
-- Follow-up: Coverage still reports 18 unfinished exploration samples. Inspect
-  those traces next and decide whether they are useful coverage-frontier reports
-  or player-facing loops worth smoothing.
+  - Added regression coverage for the `mara_posters` scene proving it is
+    one-time, sets Mara context, and returns to the lit platform.
+  - Added playtest regression coverage for final-step endings in random and goal
+    strategies.
+  - `npm test -- tests/playtest.test.ts tests/story-paths.test.ts` passes with
+    25 tests.
+  - Validation passes: 24 scenes, 5 endings, 24 reachable scenes.
+  - Random playtest, 100 runs: all 100 ended, all scenes visited including
+    `mara_posters`, `true_ending` reached 14 times, average score 49.6.
+  - `npm run health` passes with 31 tests and coverage playtest visiting all
+    scenes. Coverage sample: 243 runs, 224 ended, 19 unfinished frontier
+    reports, `true_ending` reached 40 times, average score 54.22.
+  - Manual CLI route inspected the new poster scene, returned to the lit
+    platform, cleared Mara's ledger, and reached `true_ending` at 100/100.
+- Follow-up: Coverage's unfinished reports are still frontier samples from the
+  coverage strategy. Inspect whether those should be labeled separately from
+  genuinely unfinished playthroughs.
 - Risks:
-  - The objective list is capped at four items, so objective ordering must still
-    surface token, fuse, and badge goals when they matter.
+  - The new poster beat adds one optional lit-platform choice. It is one-time,
+    but future passes should keep late-game choice lists focused.
 
 ## Last Completed Cycle
 

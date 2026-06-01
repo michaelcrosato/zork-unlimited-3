@@ -326,6 +326,15 @@ scenes:
         to: signal_booth
         requires:
           item: token
+      - id: inspect_mara_posters
+        label: Inspect Mara's missing-person posters
+        to: mara_posters
+        requires:
+          notFlag: inspected_mara_posters
+        effects:
+          set:
+            inspected_mara_posters: true
+            met_mara: true
       - id: board_before_clearing_ledger
         label: Board before checking the signal booth
         to: ledger_warning
@@ -340,6 +349,17 @@ scenes:
       - id: flee_platform
         label: Run back to the street
         to: escape_ending
+
+  mara_posters:
+    text: >
+      Up close, every poster has been altered by the same careful hand. The
+      printed word MISSING is crossed out and replaced with IN TRANSIT. Mara's
+      badge number is penciled under each photograph, followed by a note:
+      "The ledger will not release a dispatcher without her proof of service."
+    choices:
+      - id: return_to_lit_platform_after_posters
+        label: Return to the gate control
+        to: lit_platform
 
   ledger_warning:
     text: >
