@@ -12,71 +12,64 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a matched-keepsake boarding beat before the keepsake
-  intercom/release.
-- Why this matters: Core route health is strong, so the best next value is
-  richer story depth on an already playable branch. The matched-keepsake route
-  has a strong platform handoff, but leading those passengers to the third car
-  previously jumped back to the generic train-car room before the keepsakes
-  answered. A short boarding scene lets the lunch tin, newspaper, and umbrellas
-  carry directly into the final release choices.
+- Main objective: Add a direct answered-passenger boarding beat before the
+  manifest-passenger intercom/release.
+- Why this matters: Core route health is strong and all scenes are reachable,
+  so the next useful improvement is route-specific story depth. The direct
+  answered-passenger path currently benefits from the roll-call scene, but
+  boarding drops into the generic third-car text before the passenger intercom.
+  A short boarding beat can carry the child's answer, newspaper stop, and
+  conductor count directly into the release choice.
 - Tasks:
-  - Add `passenger_keepsake_boarding` after the matched-keepsake platform
-    handoff.
-  - Preserve the existing keepsake intercom, roll-call, and true-ending routes.
-  - Add regression coverage for the new scene, direct release, intercom
-    continuation, flags, and full-score ending.
-  - Run focused tests, validation, playtest sampling, full health,
-    evidence-only `ai:cycle`, and a real CLI/MCP playthrough.
+  - Add `passenger_answered_boarding` after direct boarding from
+    `passenger_answers`.
+  - Preserve the existing `passenger_answered_intercom` continuation and add a
+    direct release option from the new scene.
+  - Add regression coverage for the intercom continuation and direct release.
+  - Run focused tests, validation, playtest sampling, full health, an
+    evidence-gathering cycle, and a real CLI/MCP playthrough.
 - Evidence:
-  - Added `passenger_keepsake_boarding`, reached from
-    `lead_keepsake_passengers_to_third_car`.
-  - The new scene can either release directly through
-    `pull_release_after_keepsake_boarding` or continue to the existing
-    `passenger_keepsake_intercom` through
-    `listen_to_keepsakes_answer_from_boarding`.
-  - Focused story-path tests passed with 97 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 81
+  - Added `passenger_answered_boarding`, reached from direct
+    `board_after_answered_passengers`.
+  - The new scene can continue through the existing
+    `passenger_answered_intercom` via
+    `listen_to_answered_passengers_from_boarding`, or release directly through
+    `pull_release_after_answered_boarding`.
+  - Focused story-path tests passed with 98 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 82
     reachable scenes and 12 endings.
-  - A 100-run random playtest ended every run, visited all scenes including
-    `passenger_keepsake_boarding`, kept best score 100/100, and averaged
-    78.25.
-  - A 100-run coverage playtest visited all 81 scenes, had no unfinished
-    completed routes, kept best score 100/100, and averaged 99.58.
-  - `npm run health` passed with formatting, TypeScript, 118 tests,
-    validation, and coverage playtest. Health coverage visited all 81 scenes,
-    including `passenger_keepsake_boarding`, with best score 100/100 and
-    average score 99.58.
+  - `npm run health` passed with formatting, TypeScript, 119 tests,
+    validation, and 100-run coverage playtest. Coverage visited all 82 scenes,
+    including `passenger_answered_boarding`, kept best score 100/100, and
+    averaged 99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T20-29-27-395Z.md`; its random and
-    coverage samples both visited `passenger_keepsake_boarding`, had no
-    unvisited scenes, ended every random run, kept best score 100/100, and
-    averaged 78.25 random / 99.58 coverage.
-  - Evidence-cycle MCP validation passed with 81 reachable scenes and no
+    report `ai-runs/cycle-2026-06-01T20-39-49-645Z.md`. Its 100-run random
+    and coverage samples both visited `passenger_answered_boarding`, had no
+    unvisited scenes, kept best score 100/100, and averaged 78.25 random /
+    99.58 coverage.
+  - Evidence-cycle MCP validation passed with 82 reachable scenes and no
     warnings. Its required MCP playthrough reached `true_ending` at 100/100,
     and its adaptive exploratory route reached `passenger_true_ending` at
     100/100.
-  - Manual CLI play followed `match_manifest_keepsakes` ->
-    `lead_keepsake_passengers_to_third_car` ->
-    `listen_to_keepsakes_answer_from_boarding` ->
-    `hear_final_keepsake_roll_call` ->
-    `pull_release_after_keepsake_roll_call` and reached
-    `passenger_keepsake_true_ending` at 100/100 with no objectives.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `board_after_answered_passengers` ->
+    `listen_to_answered_passengers_from_boarding` ->
+    `pull_release_after_answered_intercom` and reached
+    `passenger_true_ending` at 100/100 with no objectives.
 - Playtest notes:
+  - The direct answered-passenger route now keeps the child, newspaper woman,
+    and conductor in focus between the roll call and the final intercom.
   - Automated evidence shows the new scene is reachable in normal random play
     and does not create unfinished routes.
-  - The route now carries matched objects into the third car before the final
-    intercom/release, avoiding a thin transition from platform handoff to
-    generic train-car text.
-  - Manual play felt coherent: the new boarding scene immediately followed the
-    keepsake handoff, then the existing intercom and final roll call escalated
-    cleanly to the keepsake ending.
+  - Manual play felt coherent: the new boarding beat carried naturally into
+    the existing answered-passenger intercom, then resolved at the passenger
+    manifest ending with full score.
 - Follow-up:
-  - Consider whether route-family reporting should group the many passenger
-    true-ending variants so future cycle reports stay readable.
+  - Watch whether the direct answered-passenger route now feels distinct enough
+    from the handoff-specific answered route.
 - Risks:
-  - Late passenger routes are already dense; keep future additions
-    route-specific and avoid bloating the shared train-car choice list.
+  - Late passenger routes are already dense; keep the new beat route-specific
+    and avoid increasing the shared train-car choice list.
 
 ## Last Completed Cycle
 

@@ -971,9 +971,29 @@ scenes:
             heard_answered_passengers: true
       - id: board_after_answered_passengers
         label: Board the third car while the roll call holds
-        to: train_car
+        to: passenger_answered_boarding
         requires:
           notFlag: saw_mara_manifest_handoff
+
+  passenger_answered_boarding:
+    text: >
+      The answered passengers board by repeating themselves softly enough that
+      the train cannot turn the words into a command. The child says present at
+      each doorway, the newspaper woman keeps Warden Street folded under one
+      thumb, and the old conductor checks the aisle without asking for tickets.
+      By the first seat, Mara's speaker has gone quiet. The people she called
+      are carrying their own names now, and the emergency release waits beneath
+      their feet.
+    choices:
+      - id: listen_to_answered_passengers_from_boarding
+        label: Listen once more as the answered passengers settle
+        to: passenger_answered_intercom
+        effects:
+          set:
+            heard_answered_passengers: true
+      - id: pull_release_after_answered_boarding
+        label: Pull the release while the answered names hold
+        to: passenger_true_ending
 
   passenger_platform:
     text: >
