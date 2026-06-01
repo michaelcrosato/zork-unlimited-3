@@ -1593,6 +1593,63 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("adds an optional lost-mitten passenger beat without blocking boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_lost_mitten",
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
+    ]);
+
+    state = choose(story, state, "return_lost_mitten");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_memory");
+    expect(observation.scene.text).toContain("Then we will find it in the morning");
+    expect(observation.scene.text).toContain("beginning to look after one another");
+    expect(observation.state.flags.returned_lost_mitten).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "lead_mitten_child_to_third_car"
+    ]);
+
+    state = choose(story, state, "lead_mitten_child_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_gathering_passengers"
+    );
+  });
+
   it("adds a final gathered-passenger intercom beat before the helped ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -2819,6 +2876,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_lost_mitten",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);

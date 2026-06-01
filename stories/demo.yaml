@@ -888,6 +888,15 @@ scenes:
       destination sign. They look to Mara's speaker, then to you, waiting for
       the last door to open.
     choices:
+      - id: return_lost_mitten
+        label: Return the lost mitten to the child
+        to: passenger_mitten_memory
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
       - id: help_passengers_gather
         label: Help the kept passengers gather by the open doors
         to: passenger_farewell
@@ -898,6 +907,19 @@ scenes:
             helped_passengers_gather: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
+        to: train_car
+
+  passenger_mitten_memory:
+    text: >
+      The child accepts the mitten with both hands, then turns it inside out to
+      show a transit stamp older than anyone on the platform should remember.
+      "My mother told me not to lose the other one," he says, and the woman
+      with the newspaper kneels before Mara can answer. "Then we will find it
+      in the morning," she tells him. The crowd shifts closer, not as passengers
+      waiting to be counted, but as people beginning to look after one another.
+    choices:
+      - id: lead_mitten_child_to_third_car
+        label: Lead the child and gathered passengers to the third car
         to: train_car
 
   passenger_farewell:

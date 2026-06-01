@@ -11,55 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a final optional Mara intercom beat for players who watch
-  her leave the signal booth before taking the non-manifest true-ending route.
+- Main objective: Add a focused passenger memory beat on the manifest route
+  without weakening route completion.
 - Why this matters: Current evidence shows the core route metrics are healthy,
-  so the best next improvement is richer character payoff. Careful players who
-  watched Mara step away from the booth previously lost access to the final
-  Mara intercom beat in the third car, leaving the direct route with more
-  closing texture than the more attentive route.
+  so the best next improvement is richer character payoff. The manifest route
+  already used the lost mitten as a recurring passenger detail, but players
+  could not act on it before opening every door.
 - Tasks:
-  - Add a new optional `mara_handoff_intercom` scene from `train_car`.
-  - Keep the direct `pull_release` route available for players who want to end
-    immediately.
-  - Add regression coverage for the handoff route and final release.
+  - Add a new optional `passenger_mitten_memory` scene from
+    `passenger_platform`.
+  - Preserve direct boarding and the existing helped-passenger route from the
+    platform.
+  - Keep exhaustive coverage bounded by letting the mitten beat gather the
+    passengers and continue to the third car instead of looping back to the
+    same branch point.
+  - Add regression coverage for the optional scene and direct boarding access.
   - Run focused tests, validation/playtest sampling, full health, and an actual
     CLI playthrough through the new scene.
 - Evidence:
-  - `train_car` now offers `listen_to_mara_after_handoff` plus the existing
-    direct `pull_release` after players watch Mara leave the signal booth.
-  - Added `mara_handoff_intercom`, a short optional closing beat where Mara
-    speaks from the platform side of the release instead of from the booth.
-  - Added regression coverage for the new handoff-intercom route and preserved
-    direct-release access.
-  - Increased the coverage-strategy test timeout to 10 seconds because the
-    exhaustive demo coverage test now sometimes exceeds Vitest's 5-second
-    default as the story grows.
-  - `npm test -- tests/story-paths.test.ts` passed with 75 tests.
-  - `npm test -- tests/playtest.test.ts` passed with 6 tests.
-  - Focused validation passed with 55 scenes, 7 endings, and all 55 reachable.
-  - A 100-run random sample ended 100/100 runs, visited all 55 scenes, kept
+  - `passenger_platform` now offers `return_lost_mitten` alongside the existing
+    `help_passengers_gather` and `board_third_car_with_passengers` choices.
+  - Added `passenger_mitten_memory`, where returning the child's mitten becomes
+    a concrete way to help the released passengers start caring for one another.
+  - The mitten choice sets `returned_lost_mitten` and
+    `helped_passengers_gather`, then leads to `train_car`; direct boarding and
+    the prior helped route remain available from `passenger_platform`.
+  - Added story-path regression coverage for the optional mitten scene,
+    its state flags, and continued access to the release route.
+  - `npm test -- tests/story-paths.test.ts` passed with 76 tests.
+  - Focused validation passed with 56 scenes, 7 endings, and all 56 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 56 scenes, kept
     best score 100/100, and averaged 78.2.
-  - `npm run health` passed with formatting, TypeScript, 96 tests, validation,
+  - A focused coverage sample visited all 56 scenes with 0 unfinished routes,
+    best score 100/100, average score 98.09, and 74664 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 97 tests, validation,
     and coverage playtest.
-  - Health coverage playtest visited all 55 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 97.11, and 48312 max-score runs.
-  - Manual CLI play took the non-manifest route, watched Mara leave the signal
-    booth, listened to the new handoff intercom, and reached `true_ending` at
-    100/100.
+  - Health coverage playtest visited all 56 scenes with 0 unfinished routes,
+    best score 100/100, average score 98.09, and 74664 max-score runs.
+  - Manual CLI play took the manifest route, returned the lost mitten, listened
+    to the gathered passengers and final roll call, and reached
+    `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The new beat closes the careful non-manifest route with Mara acting from
-    the platform instead of only as a speaker voice.
-  - The direct release remains available in the third car, so the new scene is
-    player-paced and does not lengthen the required true-ending route.
+  - Returning the mitten gives the manifest route a small, playable act of care
+    rather than only another observation.
+  - The first implementation returned to `passenger_platform` and caused
+    coverage-route pressure; making the scene a specific helped-passenger route
+    fixed that while preserving immediate direct boarding.
   - The transcript ended cleanly with no lingering objectives and all score
     achievements earned.
-- Follow-up: Re-check random route length after adding any optional late-game
-  beat; keep the direct release route covered.
+- Follow-up: Keep watching coverage run count as late-game optional story beats
+  accumulate; prefer optional beats that advance to a new commitment point.
 - Risks:
-  - This adds one optional late-game step. The direct release route remains
-    available so the successful ending path is not lengthened unless the player
-    chooses the extra beat.
+  - This adds another optional late-game branch. It is bounded by moving
+    directly to the third car, and direct boarding remains covered.
 
 ## Last Completed Cycle
 
