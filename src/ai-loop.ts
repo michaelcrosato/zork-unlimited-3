@@ -366,7 +366,7 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
     suggestions.push(`Fix coverage gaps for: ${coverage.unvisitedScenes.join(", ")}.`);
   }
 
-  const trueEndingRate = endingRate(random, "true_ending");
+  const idealRate = idealEndingRate(random);
   const maxScoreRate = random?.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
   if (
     random &&
@@ -374,7 +374,7 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
     random.unfinished === 0 &&
     !random.unvisitedScenes?.length &&
     !coverage.unvisitedScenes?.length &&
-    trueEndingRate >= 0.35 &&
+    idealRate >= 0.35 &&
     maxScoreRate >= 0.25
   ) {
     suggestions.push(
@@ -445,7 +445,7 @@ function renderEffectivenessSignals(
     return "- Summary data was unavailable; repair report parsing before using long-run trends.";
   }
 
-  const trueEndingRate = endingRate(random, "true_ending");
+  const idealRate = idealEndingRate(random);
   const badEndingRate = endingRate(random, "bad_ending");
   const lostEndingRate = endingRate(random, "lost_ending");
   const escapeEndingRate = endingRate(random, "escape_ending");
@@ -454,7 +454,9 @@ function renderEffectivenessSignals(
   const exploratoryComplete = mcpEvidence.exploratory?.ok === true;
 
   return [
-    `- Random true-ending rate: ${formatPercent(trueEndingRate)}.`,
+    `- Random ideal-ending rate: ${formatPercent(idealRate)} (${formatIdealEndingBreakdown(
+      random
+    )}).`,
     `- Random non-ideal ending pressure: bad ${formatPercent(badEndingRate)}, lost ${formatPercent(
       lostEndingRate
     )}, escape ${formatPercent(escapeEndingRate)}.`,
@@ -487,7 +489,7 @@ function identifyLongRunPressure(
   if (!exploratoryComplete) {
     return "smooth the route where adaptive play stalls, especially repeated hub returns.";
   }
-  if (endingRate(random, "true_ending") >= 0.35 && (random.averageScore ?? 0) >= 60) {
+  if (idealEndingRate(random) >= 0.35 && (random.averageScore ?? 0) >= 60) {
     return "core guidance is healthy; invest in richer story depth, endings, or systems.";
   }
   return "improve normal-player discoverability for the true ending.";
@@ -499,6 +501,27 @@ function endingRate(
 ): number {
   if (!summary?.runs) return 0;
   return Number(summary.endings?.[endingId] ?? 0) / summary.runs;
+}
+
+const idealEndingIds = ["true_ending", "passenger_true_ending"];
+
+export function idealEndingRate(
+  summary: { runs?: number; endings?: Record<string, number> } | undefined
+): number {
+  if (!summary?.runs) return 0;
+  const idealEndings = idealEndingIds.reduce(
+    (total, endingId) => total + Number(summary.endings?.[endingId] ?? 0),
+    0
+  );
+  return idealEndings / summary.runs;
+}
+
+export function formatIdealEndingBreakdown(
+  summary: { endings?: Record<string, number> } | undefined
+): string {
+  return idealEndingIds
+    .map((endingId) => `${endingId}: ${Number(summary?.endings?.[endingId] ?? 0)}`)
+    .join(", ");
 }
 
 function formatPercent(value: number): string {

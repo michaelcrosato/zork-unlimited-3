@@ -11,21 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make loop evidence understand both true-ending variants.
+- Why this matters: The game now has the original `true_ending` and the
+  manifest-aware `passenger_true_ending`, both max-score ideal outcomes. The
+  loop report was still calculating normal-play success from `true_ending`
+  alone, which made healthy discoverability look weaker than it was and could
+  steer future agents toward unnecessary clue churn.
+- Tasks:
+  - Report the combined ideal-ending rate for `true_ending` and
+    `passenger_true_ending`.
+  - Keep the ending breakdown visible so agents can still see which variant is
+    being reached.
+  - Teach the goal playtest strategy that `passenger_true_ending` is an ideal
+    destination.
+  - Add regression coverage for the new evidence math and goal-strategy
+    ranking.
+  - Run focused tests, full health, and an actual playthrough.
+- Evidence:
+  - Added ideal-ending evidence helpers that combine `true_ending` and
+    `passenger_true_ending` while preserving a visible per-ending breakdown.
+  - Updated long-run effectiveness reporting and next-action heuristics to use
+    the combined ideal-ending rate.
+  - Updated the goal playtest destination score so `passenger_true_ending` is
+    ranked as strongly as `true_ending`.
+  - Added regression coverage for ideal-ending evidence math and manifest true
+    ending goal-strategy ranking.
+  - `npm test -- tests/ai-loop.test.ts` passed with 6 tests.
+  - `npm test -- tests/playtest.test.ts` passed with 6 tests.
+  - `npm run health` passed with formatting, TypeScript, 60 tests, validation,
+    and coverage playtest.
+  - Manual CLI route through `read_passenger_manifest` and
+    `pull_release_with_manifest` reached `passenger_true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
+    MCP validation, MCP playtests, and actual MCP playthrough.
+  - The regenerated report now shows `Random ideal-ending rate: 54%
+(true_ending: 27, passenger_true_ending: 27)` and identifies the adaptive
+    route stopping at `lit_platform` as the main remaining pressure.
+- Follow-up: After verification, inspect the next report to confirm the primary
+  long-run pressure shifts away from false true-ending discoverability concern
+  when the combined ideal-ending rate is healthy.
+- Risks:
+  - This touches loop runtime code, so the outer loop should restart after the
+    commit to pick up fresh evidence-generation behavior.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Pay off the optional passenger manifest in the final release.
 - Main objective: Pay off the optional passenger manifest in the final release.
 - Why this matters: Route metrics are healthy and all scenes are reachable, so
   the highest-value next improvement is emotional payoff rather than another
   clue-only routing pass. The manifest now broadens the stakes before Mara's
   ledger row; the ending should acknowledge those specific passengers when the
   player chose to read it.
-- Tasks:
-  - Add a manifest-aware true-ending variant reached by release choices only
-    after `read_passenger_manifest`.
-  - Keep the existing `true_ending` route unchanged for players who skip the
-    optional manifest.
-  - Update scoring so both true-ending variants award max score.
-  - Add regression coverage for the direct release and Mara-intercom manifest
-    routes.
-  - Run focused tests, full health, and an actual playthrough.
 - Evidence:
   - Added `passenger_true_ending`, reached only when the player read
     `passenger_manifest` before pulling the release.

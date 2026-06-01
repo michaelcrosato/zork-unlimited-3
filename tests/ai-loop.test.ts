@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
+  idealEndingRate,
   parsePorcelainPaths,
   requiresLoopRestart,
   restartRequestedExitCode
@@ -33,5 +35,19 @@ describe("AI loop restart detection", () => {
     expect(
       parsePorcelainPaths(" M src/ai-loop.ts\n?? OUTPUTLOG.md\nR  old.md -> new.md\n")
     ).toEqual(["src/ai-loop.ts", "OUTPUTLOG.md", "old.md", "new.md"]);
+  });
+
+  it("counts both true-ending variants as ideal endings in loop evidence", () => {
+    const summary = {
+      runs: 100,
+      endings: {
+        true_ending: 27,
+        passenger_true_ending: 28,
+        good_ending: 20
+      }
+    };
+
+    expect(idealEndingRate(summary)).toBe(0.55);
+    expect(formatIdealEndingBreakdown(summary)).toBe("true_ending: 27, passenger_true_ending: 28");
   });
 });

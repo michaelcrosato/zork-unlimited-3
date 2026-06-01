@@ -66,6 +66,43 @@ describe("playtest strategies", () => {
     });
   });
 
+  it("goal strategy treats the manifest true ending as an ideal destination", () => {
+    const story: Story = {
+      id: "manifest-goal",
+      title: "Manifest Goal",
+      start: "start",
+      scenes: {
+        start: {
+          text: "Start.",
+          ending: false,
+          choices: [
+            { id: "safe_exit", label: "Leave safely", to: "good_ending" },
+            {
+              id: "release_manifest",
+              label: "Release the manifest",
+              to: "passenger_true_ending"
+            }
+          ]
+        },
+        good_ending: {
+          text: "Safe.",
+          ending: true,
+          choices: []
+        },
+        passenger_true_ending: {
+          text: "All clear.",
+          ending: true,
+          choices: []
+        }
+      }
+    };
+
+    const report = runRandomPlaytests(story, 1, 1, "goal");
+
+    expect(report.summary.endings.passenger_true_ending).toBe(1);
+    expect(report.runs[0].finalScene).toBe("passenger_true_ending");
+  });
+
   it("counts only genuine step-limit runs as unfinished", () => {
     const story: Story = {
       id: "loop",
