@@ -1048,8 +1048,33 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: board_with_echoed_manifest
+        label: Board as the door echoes follow you
+        to: passenger_echoed_boarding
+        requires:
+          all:
+            - flag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
+        to: train_car
+        requires:
+          any:
+            - notFlag: heard_passenger_echoes
+            - flag: heard_passenger_answers
+            - flag: helped_passengers_gather
+
+  passenger_echoed_boarding:
+    text: >
+      The passengers board quietly, but the sounds you heard behind the stamped
+      doors come with them: thermos cap, folded paper, the soft knock of a
+      mitten against the third-car frame. None of them look surprised that you
+      recognize the rhythm. Mara leaves the speaker open, as if the train needs
+      to hear that waiting has turned into boarding.
+    choices:
+      - id: reach_release_with_echoed_manifest
+        label: Follow the familiar echoes to the emergency release
         to: train_car
 
   passenger_newspaper_memory:

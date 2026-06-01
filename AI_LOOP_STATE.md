@@ -12,6 +12,66 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the echoed manifest payoff easier to notice during
+  normal direct passenger-manifest play.
+- Why this matters: The route-specific
+  `passenger_echoed_manifest_intercom` payoff is authored and covered, but
+  random play can still board straight past it because the reminder only appears
+  as one optional third-car choice. A short boarding beat for players who heard
+  the stamped-door echoes keeps the path playable while surfacing why the
+  optional intercom matters.
+- Tasks:
+  - Add a gated `passenger_echoed_boarding` scene before the third car when the
+    player heard passenger echoes but has not gathered or answered passengers.
+  - Keep normal, answered, and gathered passenger boarding routes separate.
+  - Update regression coverage for the new boarding beat and the final echoed
+    intercom payoff.
+  - Run focused tests, full health, and a real playthrough through the changed
+    branch.
+- Evidence:
+  - Added `passenger_echoed_boarding` as a visible bridge from
+    `passenger_platform` to `train_car` for direct echoed-manifest play.
+  - Split the direct passenger-platform boarding choice so echoed direct routes
+    use the new bridge, while non-echoed, answered, and gathered routes keep the
+    normal third-car route.
+  - Updated story-path regression coverage for the new bridge and final
+    `passenger_echoed_manifest_intercom` payoff.
+  - Focused story-path tests passed with 103 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+    validation, and coverage playtest.
+  - Health validation reports 89 scenes, 12 endings, and all 89 reachable.
+  - Health coverage visited all 89 scenes, including
+    `passenger_echoed_boarding` and `passenger_echoed_manifest_intercom`, with
+    zero unfinished runs, best score 100/100, and average score 99.51.
+  - Targeted CLI play followed `board_with_echoed_manifest` ->
+    `reach_release_with_echoed_manifest` ->
+    `listen_to_echoed_manifest_intercom` and reached
+    `passenger_true_ending` at 100/100 with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T22-14-01-681Z.md`. Its health checks
+    were green, random play visited `passenger_echoed_boarding` and
+    `passenger_echoed_manifest_intercom`, and coverage visited all 89 scenes.
+- Playtest notes:
+  - The new boarding beat makes the earlier door-listening choice visible again
+    just before the train car, so the final optional intercom no longer appears
+    as an isolated extra button.
+  - The direct release remains available from the third car after the bridge,
+    preserving player agency and avoiding a forced extra lore beat.
+  - Answered and gathered passenger routes still have their own stronger
+    boarding/intercom variants; the new bridge is limited to the direct echoed
+    route.
+- Follow-up:
+  - Watch random samples to confirm `passenger_echoed_boarding` and
+    `passenger_echoed_manifest_intercom` both show up without crowding the
+    answered/gathered passenger routes.
+- Risks:
+  - The passenger-manifest branch already has several optional beats; keep this
+    bridge short and limited to the direct echoed route.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Make the HOME-sign lost route fairer by adding one final
   map-based recovery beat before the player loses their name.
 - Why this matters: Random play still finds a small number of `lost_ending`

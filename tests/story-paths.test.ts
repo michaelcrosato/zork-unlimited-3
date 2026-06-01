@@ -1808,7 +1808,8 @@ describe("demo story critical paths", () => {
     for (const choiceId of [
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
-      "board_third_car_with_passengers",
+      "board_with_echoed_manifest",
+      "reach_release_with_echoed_manifest",
       "pull_release_with_manifest"
     ]) {
       state = choose(story, state, choiceId);
@@ -1905,13 +1906,30 @@ describe("demo story critical paths", () => {
       "listen_to_manifest_doors_from_manifest",
       "return_from_passenger_echoes",
       "clear_manifest_and_mara_from_ledger",
-      "board_after_releasing_passengers",
-      "board_third_car_with_passengers"
+      "board_after_releasing_passengers"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("board_with_echoed_manifest");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "board_third_car_with_passengers"
+    );
+
+    state = choose(story, state, "board_with_echoed_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.scene.text).toContain("sounds you heard behind the stamped");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "reach_release_with_echoed_manifest"
+    ]);
+
+    state = choose(story, state, "reach_release_with_echoed_manifest");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
