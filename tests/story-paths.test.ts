@@ -113,6 +113,28 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain("inspect_clock");
   });
 
+  it("makes the clock token the only clock action after Mara's file explains it", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file",
+      "return_to_tunnel",
+      "inspect_clock"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
+  });
+
   it("warns before the sign trap ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

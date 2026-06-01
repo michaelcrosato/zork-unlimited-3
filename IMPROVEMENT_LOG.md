@@ -4,6 +4,80 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Clock Token Follow-Through
+
+### Current Plan
+
+- Main objective: Reduce a normal-player miss where the player learns the signal
+  token is hidden in the stopped clock, inspects the clock, then leaves without
+  taking it.
+- Why this matters: The true-ending path depends on the signal booth token.
+  Evidence showed players could gather the right clue and still drift back into
+  service-room/platform loops or force the gate.
+- Tasks:
+  - Mark the token location as known when Mara explicitly reveals it.
+  - Prevent the "leave the clock alone" action after that clue is known.
+  - Add regression coverage for the guided clock state.
+  - Verify health and an actual route through the changed flow.
+- Risks:
+  - This removes one avoidant choice in a specific informed state, so alternate
+    endings must remain reachable before the clue is known.
+
+### Work Completed
+
+- Changes made:
+  - Added `knows_token_location` when players read Mara's personnel file or hear
+    Mara's direct warning.
+  - Gated `leave_clock` behind `notFlag: knows_token_location`, making
+    `take_token` the only clock action after the player has the precise clue.
+  - Added a story-path regression test for the file clue into clock inspection.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused affordance and clue-follow-through pass.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run health`
+  - CLI route through Mara's file, clock token, signal booth, ledger clear, and
+    emergency release.
+- Quantitative metrics:
+  - Story-path tests: 13 passing.
+  - Health: format check, lint, 21 tests, validation, and coverage playtest all
+    pass.
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Coverage playtest: all scenes visited, `true_ending` reached 8 times, best
+    score 100/100.
+  - Manual CLI route: `true_ending`, 100/100.
+- What worked:
+  - After reading Mara's file and inspecting the clock, the observation exposes
+    only `take_token`, closing the easy-to-miss skip.
+  - The guided file route reaches the signal booth and true ending cleanly.
+  - Earlier uninformed clock visits can still leave the token behind, preserving
+    a meaningful choice before the clue is learned.
+- What felt bad/confusing:
+  - Coverage playtest still reports 18 unfinished runs, so service-room/platform
+    loops remain the next systemic target.
+- Bugs found:
+  - None in this pass.
+
+### Next Iteration
+
+- Highest-priority next task: Reduce repetitive service-room/platform
+  backtracking in exploratory and coverage runs.
+- Reason: Token follow-through is tighter now, but unfinished coverage runs
+  still point to loops around utility scenes.
+- Planned action:
+  - Inspect unfinished run transcripts or playtest traces, then add one
+    state-aware return choice or pruning rule that shortens repeated
+    service-room, tunnel, locker, and platform cycling.
+
 ## 2026-06-01 - Release After Ledger Clear
 
 ### Current Plan

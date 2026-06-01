@@ -11,11 +11,30 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Make the true-ending release action discoverable after players
-  clear Mara's ledger, even if they skipped the radio route note.
-- Outcome: The train car now exposes `pull_release` whenever Mara has been
-  cleared, and objectives collapse to the release action instead of continuing
-  to ask for the radio clue.
+- Main objective: Reduce a normal-player miss where the player learns the
+  signal token is hidden in the clock, inspects the clock, then leaves without
+  taking it and drifts toward forcing the gate.
+- Outcome: Added a `knows_token_location` story flag from Mara's personnel file
+  and Mara's explicit warning, then gated `leave_clock` so the token becomes the
+  only clock action after that clue is known.
+- Evidence:
+  - Added a story-path regression test that verifies the clock offers only
+    `take_token` after Mara's file explains the token location.
+  - `npm test -- tests/story-paths.test.ts` passes with 13 tests.
+  - `npm run health` passes with 21 tests, validation, and coverage playtest.
+  - CLI route through Mara's file, the stopped clock, the signal booth, and the
+    emergency release reaches `true_ending`.
+  - The clock observation after the file clue exposes only `take_token`, proving
+    the earlier skip is closed.
+- Follow-up: Compare random/coverage ending distribution and continue reducing
+  noisy loops around service room/platform travel without deleting meaningful
+  backtracking.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made the true-ending release action discoverable after players clear
+  Mara's ledger, even if they skipped the radio route note.
 - Evidence:
   - `npm run health` passes with 20 tests.
   - Story validation passes: 23 scenes, 5 endings, 23 reachable scenes.
@@ -31,7 +50,7 @@ the third car.` as the active objective in `train_car`, then reaches
   dominate random play. The next pass should reduce repetitive service-room and
   platform backtracking without deleting meaningful alternate endings.
 
-## Last Completed Cycle
+## Prior Completed Cycle
 
 - Date: 2026-06-01
 - Change: Upgraded Vitest to remove the Vite/esbuild audit finding, optimized
