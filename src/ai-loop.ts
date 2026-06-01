@@ -110,7 +110,7 @@ async function main(): Promise<void> {
     const agentPath = `ai-runs/cycle-${stamp}-agent.md`;
     const postAgentPath = `ai-runs/cycle-${stamp}-post-agent.md`;
 
-    const artifacts = await runCycle(cycle);
+    const artifacts = await runCycleWithRecovery(cycle);
     await writeText(reportPath, artifacts.report);
     await writeText(promptPath, artifacts.prompt);
     console.log(`Wrote ${reportPath}`);
@@ -155,6 +155,18 @@ async function main(): Promise<void> {
   } while (!stopped);
 }
 
+async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
+  try {
+    return await runCycle(cycle);
+  } catch (error) {
+    const report = renderCycleFailureReport(cycle, error);
+    return {
+      report,
+      prompt: await renderAgentPrompt(cycle, report)
+    };
+  }
+}
+
 async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const commands = [
     "npm run format:check",
@@ -173,21 +185,44 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
   const mcpEvidence = await runMcpEvidence(cycle);
-  if (mcpEvidence.error) {
-    throw new Error(`MCP validation or playtest failed: ${mcpEvidence.error}`);
-  }
   const mcpPlay = await runMcpPlaythrough();
-  if (!mcpPlay.ok) {
-    throw new Error(
-      `True ending regression play failed: ${mcpPlay.error ?? "true_ending was not reached"}`
-    );
-  }
   const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpEvidence, mcpPlay);
 
   return {
     report,
     prompt: await renderAgentPrompt(cycle, report)
   };
+}
+
+function renderCycleFailureReport(cycle: number, error: unknown): string {
+  const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
+
+  return `# AI Loop Cycle ${cycle}
+
+Generated: ${new Date().toISOString()}
+
+## Loop Failure
+
+The pre-agent evidence phase threw before it could produce a normal report.
+The outer loop is preserving this as an actionable cycle instead of exiting.
+
+\`\`\`text
+${message.slice(-6000)}
+\`\`\`
+
+## AI Feedback
+
+- Treat this as the highest-priority blocker for the next autonomous change.
+- Inspect the failing loop, story, MCP server, and tests.
+- Make the smallest fix that restores a complete plan/build/health/play cycle.
+- Run \`npm run health\` and actually play the game through MCP or the CLI before finishing.
+
+## Suggested Next Actions
+
+- Reproduce the failure locally.
+- Fix the loop or game regression that prevented evidence gathering.
+- Add or update a regression test when practical.
+`;
 }
 
 function renderReport(

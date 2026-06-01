@@ -202,6 +202,37 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("go_to_platform");
   });
 
+  it("makes the missing map obvious after Mara's other proof is gathered", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "enter_dark",
+      "answer_voice",
+      "promise_to_help",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "return_to_tunnel",
+      "inspect_clock",
+      "take_token",
+      "open_service_door"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const mapChoice = observation.choices.find((choice) => choice.id === "take_map");
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.promised_mara).toBe(true);
+    expect(observation.state.inventory).toEqual(["badge", "fuse", "token"]);
+    expect(observation.objectives[0]).toBe("Recover the marked Platform 13 map before boarding.");
+    expect(mapChoice?.label).toBe("Take the marked Platform 13 map Mara asked for");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("go_to_platform");
+  });
+
   it("keeps Mara-promising players from following the arrows without the map", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

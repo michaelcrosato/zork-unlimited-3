@@ -24,6 +24,9 @@ Environment:
   AI_LOOP_AUTO_COMMIT   Commit verified agent changes. Default: 1.
   AI_LOOP_AUTO_PUSH     Push verified commits. Default: 1.
   AI_LOOP_AUTO_RESTART  Restart after loop runtime changes. Default: 1.
+  AI_LOOP_EXIT_ON_ERROR Exit instead of retrying after unexpected loop failure. Default: 0.
+  AI_LOOP_RETRY_DELAY_MS
+                        Delay before retrying unexpected loop failure. Default: 60000.
   AI_LOOP_ALLOW_DIRTY_BASELINE
                         Allow auto-commit from a dirty starting tree. Default: 0.
 
@@ -103,6 +106,17 @@ while true; do
   if [[ "$status" == "$RESTART_EXIT_CODE" && "${AI_LOOP_AUTO_RESTART:-1}" != "0" ]]; then
     echo "AI loop requested a fresh process after runtime changes; restarting ./loop.sh."
     exec "$0" "$@"
+  fi
+
+  if [[ "$status" != "0" && "${AI_LOOP_EXIT_ON_ERROR:-0}" != "1" ]]; then
+    retry_delay_ms="${AI_LOOP_RETRY_DELAY_MS:-60000}"
+    retry_delay_s=$((retry_delay_ms / 1000))
+    if [[ "$retry_delay_s" -lt 1 ]]; then
+      retry_delay_s=1
+    fi
+    echo "AI loop exited with status $status; retrying in ${retry_delay_s}s. Set AI_LOOP_EXIT_ON_ERROR=1 to stop on errors."
+    sleep "$retry_delay_s"
+    continue
   fi
 
   exit "$status"

@@ -183,7 +183,7 @@ scenes:
       red pencil.
     choices:
       - id: take_map
-        label: Take the marked map
+        label: Take the marked Platform 13 map Mara asked for
         to: service_room
         requires:
           notItem: map

@@ -11,6 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the final missing map action clearer after promising
+  Mara, and harden the autonomous loop so long AFK runs recover from evidence
+  failures instead of stopping.
+- Why this matters: The latest adaptive route correctly blocks platform travel
+  when the player has promised Mara and gathered badge, fuse, and token but not
+  the map. That state is mechanically safe, but the next action should read as
+  the obvious fulfillment of Mara's request, not just another generic pickup in
+  the service room. The interrupted loop output also showed a brittle failure
+  mode: a true-ending MCP route mismatch could throw before the agent received a
+  repair prompt.
+- Tasks:
+  - Rename the map pickup so it explicitly references Platform 13 and Mara's
+    request.
+  - Add regression coverage for the promised-Mara state where badge, fuse, and
+    token are gathered but the map is still missing.
+  - Convert pre-agent evidence failures into actionable cycle reports/prompts.
+  - Make `loop.sh` retry unexpected Node loop exits with a configurable backoff.
+  - Run story-path tests, full health, an evidence-only AI cycle, and an actual
+    route through the game.
+- Evidence:
+  - Updated `take_map` label to "Take the marked Platform 13 map Mara asked
+    for".
+  - Added a regression asserting that the exact final-missing-map state shows
+    the map objective first, exposes the clearer map label, and still withholds
+    `go_to_platform`.
+  - `src/ai-loop.ts` now reports MCP/evidence failures in the normal cycle
+    report instead of throwing before the agent prompt is written.
+  - `loop.sh` now retries unexpected `npm run ai:loop` exits unless
+    `AI_LOOP_EXIT_ON_ERROR=1` is set.
+  - `npm run health` passed with formatting, TypeScript, 52 tests, validation,
+    and coverage playtest.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and the
+    actual MCP playthrough reached `true_ending`.
+  - Manual CLI route collected the map, cleared Mara, listened to the intercom,
+    and reached `true_ending` at 100/100.
+- Follow-up: Add higher-level progress metrics so very long runs can avoid
+  low-impact story churn and prioritize larger design gains.
+- Risks:
+  - This is intentionally a copy-level guidance change. It should not affect
+    reachability, but transcript fixture labels and any brittle label checks may
+    need updating if they are tracked later.
+  - The retry wrapper keeps the unattended run alive after unexpected exits, so
+    persistent failures should remain visible in `ai-runs/` instead of silently
+    stopping.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made Mara's explicit map request affect platform routing.
 - Main objective: Make Mara's explicit map request affect platform routing.
 - Why this matters: Current evidence showed players can promise Mara they will
   find the map, walk to Platform 13 without any useful tool, and then force the
@@ -18,14 +67,7 @@ preserving normal-play true-ending discoverability.
   could still be bypassed by taking only the fuse and badge, restoring the
   platform, and fleeing without the map. After a promise, the hub should
   reinforce Mara's specific map request before Platform 13 travel.
-- Tasks:
-  - Hide no-tool platform travel after `promise_to_help` until the player has
-    the map.
-  - Preserve early no-tool platform exploration before Mara is contacted.
-  - Add regression coverage for promise-specific service-room and tunnel
-    routing.
-  - Run health and an actual route through the changed promise branch.
-- Evidence so far:
+- Evidence:
   - Added `notFlag: promised_mara` to the no-tool `go_to_platform` allowance.
   - Added the same promise-aware gating to the tunnel `follow_arrows` route so
     players cannot bypass the service-room guidance without the map.

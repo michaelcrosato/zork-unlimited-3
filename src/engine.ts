@@ -149,6 +149,10 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find a reliable way to see in the underpass.");
   }
 
+  if (flag("promised_mara") && !has("map")) {
+    objectives.push("Recover the marked Platform 13 map before boarding.");
+  }
+
   if (!flag("knows_platform")) {
     objectives.push("Find out where the chalk arrows and old line are leading.");
   }
@@ -162,7 +166,7 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
-  if ((flag("knows_platform") || flag("promised_mara")) && !has("map")) {
+  if (flag("knows_platform") && !flag("promised_mara") && !has("map")) {
     objectives.push("Recover the marked Platform 13 map before boarding.");
   }
 
