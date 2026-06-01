@@ -11,56 +11,54 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce excessive late-route loops without removing meaningful
-  exploration or clue discovery.
-- Why this matters: Cycle evidence showed all scenes reachable and the ideal
-  endings discoverable, but larger random samples still found max-step runs
-  caused by repeated service-room, tunnel, lit-platform, and train-car optional
-  beats. The best next improvement was to suppress redundant backtracking once
-  the player already knows the next concrete objective.
+- Main objective: Make the missing-map signal-booth warning easier to discover
+  during normal play.
+- Why this matters: Cycle 18 evidence showed all systems healthy, but the
+  100-run random playtest missed `signal_map_warning` while coverage could only
+  find it through a narrower lit-platform token route. The warning is valuable
+  because it catches players who have the signal token and fuse but skipped the
+  marked map, then redirects them before they board underprepared.
 - Tasks:
-  - Hide `return_to_lit_platform` and `follow_arrows_to_lit_platform` while the
-    signal token is missing and the player already knows it is in the stopped
-    clock.
-  - Keep lit-platform revisits available for token-uninformed players who still
-    need clues.
-  - Hide redundant train-car intercom goodbyes after the player has already
-    taken Mara's handoff, passenger-answer, or passenger-farewell beat.
-  - Add focused regression coverage for the new gating.
+  - Add a direct gate-control choice for players carrying the fuse and signal
+    token without the map.
+  - Route that choice to `signal_map_warning` while restoring platform power.
+  - Keep the existing fuse-install route available before the token is found.
+  - Add regression coverage for both the new warning route and the preserved
+    no-token fuse install route.
   - Run focused tests, full health, an actual CLI playthrough, and commit/push
     if green.
 - Evidence:
-  - Reproduced the loop pressure with a 1000-run random playtest: 18 unfinished
-    max-step runs before changes.
-  - Gated lit-platform returns for players who already know the token location,
-    leaving token-uninformed clue revisits intact.
-  - Gated redundant train-car goodbye choices after equivalent late character
-    beats so the release becomes the only remaining action.
-  - The focused 1000-run random sample improved from 18 unfinished runs to 10,
-    with all scenes still visited and max-score runs rising from 623 to 684.
-  - `npm test -- tests/story-paths.test.ts` passed with 65 tests.
-  - `npm run health` passed with formatting, TypeScript, 86 tests, validation,
+  - Added `install_fuse_and_try_token_without_map` to `gate_control`, requiring
+    fuse + token + no map and sending the player to `signal_map_warning`.
+  - Narrowed `install_fuse_from_gate_control` so it remains the no-token fuse
+    install route instead of competing with the warning route.
+  - Added focused story-path tests for the direct warning and preserved no-token
+    install behavior.
+  - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed.
+  - A focused 250-run random playtest passed with 0 unfinished runs, all 49
+    scenes visited, and `signal_map_warning` reached.
+  - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
     and coverage playtest.
   - Validation reports 49 scenes, 6 endings, and all 49 reachable.
   - Health coverage playtest reports 0 unfinished routes, all 49 scenes
     visited, best score 100/100, average score 93.22, and 25452 max-score
     runs.
-  - Manual CLI play reached the lit platform without the token, returned to the
-    tunnel for the stopped clock, took the token, followed the lit-platform
-    route back, cleared the passenger manifest, and reached
-    `passenger_true_ending` at 100/100.
+  - Manual CLI play used the new gate-control warning route, recovered the map,
+    cleared the passenger manifest, and reached `passenger_true_ending` at
+    100/100.
 - Playtest notes:
-  - The service-room return now better matches the objective text: if the token
-    location is known, the available route points back to the clock instead of
-    another lit-platform lap.
-  - The passenger-answer route no longer offers a second equivalent goodbye in
-    the train car, making the final release feel more decisive.
-- Follow-up: Inspect the remaining 10/1000 random max-step runs; they appear to
-  be long exploratory routes rather than coverage dead ends.
+  - The new choice reads like the natural continuation of the gate-control
+    diagram: restore lights, try the token, then get warned about the missing
+    map.
+  - The warning now appears before a lit-platform detour, making the map
+    recovery objective harder to miss.
+- Follow-up: Consider whether the warning should set a dedicated flag if future
+  transcript reports need to distinguish map recovery from ordinary map pickup.
 - Risks:
-  - Over-gating optional beats can make the route feel narrower. The regression
-    tests preserve clue revisits for players who have not yet learned where the
-    token is.
+  - The direct warning abstracts the act of trying the token immediately after
+    installing the fuse. The label and regression test keep that transition
+    explicit.
 
 ## Last Completed Cycle
 

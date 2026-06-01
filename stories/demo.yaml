@@ -418,15 +418,25 @@ scenes:
         effects:
           set:
             platform_lit: true
+      - id: install_fuse_and_try_token_without_map
+        label: Install the fuse, then try the signal token before recovering the map
+        to: signal_map_warning
+        requires:
+          all:
+            - item: fuse
+            - item: token
+            - notItem: map
+        effects:
+          set:
+            platform_lit: true
+            knows_platform: true
       - id: install_fuse_from_gate_control
         label: Install the platform fuse while the access plate is open
         to: lit_platform
         requires:
           all:
             - item: fuse
-            - any:
-                - notItem: token
-                - notItem: map
+            - notItem: token
         effects:
           set:
             platform_lit: true

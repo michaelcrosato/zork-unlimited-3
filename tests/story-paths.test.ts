@@ -1917,6 +1917,69 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual(["use_token_slot"]);
   });
 
+  it("surfaces the missing-map warning directly from the gate control", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "inspect_gate_control"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("gate_control");
+    expect(choiceIds).toContain("install_fuse_and_try_token_without_map");
+    expect(choiceIds).not.toContain("install_fuse_from_gate_control");
+
+    state = choose(story, state, "install_fuse_and_try_token_without_map");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_map_warning");
+    expect(observation.state.flags.platform_lit).toBe(true);
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+  });
+
+  it("still lets players install the gate-control fuse before finding the token", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "inspect_gate_control",
+      "install_fuse_from_gate_control"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.state.flags.platform_lit).toBe(true);
+    expect(choiceIds).toContain("return_from_lit_platform");
+    expect(choiceIds).toContain("flee_platform");
+  });
+
   it("replaces broad survival guidance after players read the signal ledger", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
