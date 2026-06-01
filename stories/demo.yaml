@@ -985,6 +985,19 @@ scenes:
       fingers find an emergency release. The blank destination sign begins to
       spell HOME one letter at a time.
     choices:
+      - id: listen_to_mara_thumbprint_intercom
+        label: Listen as Mara remembers the torn thumbprint
+        to: mara_thumbprint_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: saw_mara_handoff
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_to_mara_intercom
         label: Listen to Mara before pulling the release
         to: mara_intercom
@@ -993,6 +1006,7 @@ scenes:
             - flag: freed_mara
             - notFlag: heard_mara_goodbye
             - notFlag: read_passenger_manifest
+            - notFlag: read_mara_thumbprint
             - notFlag: saw_mara_handoff
         effects:
           set:
@@ -1266,6 +1280,18 @@ scenes:
         to: true_ending
         requires:
           notFlag: read_passenger_manifest
+
+  mara_thumbprint_intercom:
+    text: >
+      Mara's voice steadies when the train shudders around the torn thumbprint
+      memory. "I left that mark because the line wanted a last dispatcher more
+      than it wanted passengers home," she says. "You cleared the name it could
+      hold, and the release will do what I could not finish from the booth: all
+      doors, all at once."
+    choices:
+      - id: pull_release_after_thumbprint_goodbye
+        label: Pull the release for every door Mara held open
+        to: true_ending
 
   mara_handoff_intercom:
     text: >
