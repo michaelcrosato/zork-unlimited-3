@@ -1058,6 +1058,21 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_answered_handoff_passengers
+        label: Listen as Mara and the answered passengers board
+        to: passenger_answered_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: saw_mara_manifest_handoff
+            - flag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_answered_passengers
+        effects:
+          set:
+            heard_answered_passengers: true
+            heard_mara_goodbye: true
       - id: listen_to_answered_passengers
         label: Listen as the answered passengers board
         to: passenger_answered_intercom
@@ -1066,6 +1081,7 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: heard_passenger_answers
+            - notFlag: saw_mara_manifest_handoff
             - notFlag: helped_passengers_gather
             - notFlag: heard_answered_passengers
         effects:
@@ -1361,6 +1377,20 @@ scenes:
     choices:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
+        to: passenger_true_ending
+
+  passenger_answered_handoff_intercom:
+    text: >
+      The third car fills with the rhythm Mara began at the opened manifest:
+      her voice offering each name, each passenger answering before the line
+      can turn them back into entries. The child says present with both hands
+      on the returned doorway, the newspaper woman answers for the stop she
+      almost forgot, and Mara lets their voices outrun hers at last. "They can
+      answer for themselves now," she says. "Pull the release while they still
+      believe it."
+    choices:
+      - id: pull_release_after_answered_handoff_intercom
+        label: Pull the release while Mara's handoff holds
         to: passenger_true_ending
 
   passenger_answered_intercom:
