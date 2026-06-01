@@ -527,13 +527,24 @@ scenes:
     choices:
       - id: return_for_map_from_signal_warning
         label: Recover the marked map and return to the half-open booth
-        to: signal_booth
+        to: signal_map_recovered
         effects:
           addItem: map
           set:
             knows_platform: true
       - id: continue_to_signal_booth_unprepared
         label: Continue into the booth without the map
+        to: signal_booth
+
+  signal_map_recovered:
+    text: >
+      The marked map feels heavier when you bring it back to the half-open
+      booth. Its pencil route ends at Platform 13, then hooks upward to the
+      signal window as if the mapmaker knew the ledger would ask for proof
+      before the train could ask for passengers.
+    choices:
+      - id: enter_signal_booth_after_map
+        label: Open the booth fully and read the ledger
         to: signal_booth
 
   escape_warning:

@@ -1934,6 +1934,16 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_for_map_from_signal_warning");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("signal_map_recovered");
+    expect(observation.scene.text).toContain("Its pencil route ends at Platform 13");
+    expect(observation.state.inventory).toContain("map");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "enter_signal_booth_after_map"
+    ]);
+
+    state = choose(story, state, "enter_signal_booth_after_map");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("signal_booth");
     expect(observation.state.inventory).toContain("map");
     expect(observation.choices.map((choice) => choice.id)).toContain("inspect_signal_ledger");

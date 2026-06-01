@@ -11,20 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Give the missing-map signal warning a clearer recovery payoff.
+- Why this matters: Cycle evidence showed the core true-ending route is healthy,
+  with `signal_map_warning` as the remaining normal-play discoverability point
+  worth smoothing. The warning already prevents mapless token use, but recovering
+  the marked map jumped straight back into the booth without acknowledging what
+  changed.
+- Tasks:
+  - Add a short `signal_map_recovered` transition after the player heeds the
+    map warning.
+  - Keep the branch bounded with one direct choice back into the signal booth.
+  - Update regression coverage for the warning recovery route.
+  - Run focused tests, full health, an actual playthrough, and commit/push if
+    green.
+- Evidence:
+  - Added `signal_map_recovered`, a short transition after heeding the
+    missing-map warning from the lit platform or gate control.
+  - `return_for_map_from_signal_warning` now recovers the map, lands on the new
+    transition, and then gives one direct choice into `signal_booth`.
+  - Updated the warning regression to verify the new scene text, one-step
+    continuation, recovered map, and normal booth choices.
+  - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
+  - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
+    and coverage playtest.
+  - Validation reports 51 scenes, 7 endings, and all 51 reachable.
+  - Health coverage playtest visited all 51 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 91.91, and 15372 max-score runs.
+  - Manual CLI play deliberately triggered `signal_map_warning`, recovered the
+    map through `signal_map_recovered`, cleared Mara's ledger, and reached
+    `true_ending` at 100/100.
+- Playtest notes:
+  - The warning recovery now has visible feedback: the map feels like a concrete
+    proof item instead of silently appearing before the booth opens.
+  - The added beat stayed bounded because it has exactly one onward choice and
+    does not create a new hub loop.
+  - The focused route remained finishable at full score with no objectives
+    lingering.
+  - No bugs surfaced in the focused route.
+- Follow-up: Watch random-route scene coverage and route length; this adds one
+  beat to a recovery route that should remain easy to finish.
+- Risks:
+  - Adding another scene can lengthen a random route, so coverage must confirm
+    the branch remains bounded and fully reachable.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Smoothed the stairwell escape-warning recovery route.
 - Main objective: Smooth the stairwell escape-warning recovery route.
 - Why this matters: The adaptive exploratory route showed a player wavering at
   the stairs after powering the platform without the signal token. Mara's
   warning correctly named the stopped clock, but the recovery choice returned
   to the lit platform, forcing extra hub navigation before the player could act
   on the clue.
-- Tasks:
-  - Route `return_from_stairwell_call` directly to the stopped clock.
-  - Preserve player agency by allowing escape directly from Mara's stairwell
-    call.
-  - Update regression coverage for token recovery and the still-available
-    escape branch.
-  - Run focused tests, full health, an actual playthrough, and commit/push if
-    green.
 - Evidence:
   - `return_from_stairwell_call` now sends players directly to `clock`, where
     `take_token` is immediately available.
