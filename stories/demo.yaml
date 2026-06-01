@@ -352,7 +352,7 @@ scenes:
           set:
             left_unprepared_platform: true
       - id: force_gate
-        label: Force the rusted gate
+        label: Force the rusted gate without the fuse
         to: gate_warning
         requires:
           all:

@@ -11,18 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the deliberate forced-gate failure read as risky before
+  players enter its confirmation scene.
+- Why this matters: The adaptive exploratory route can still reach the bad
+  ending by forcing the gate. That branch is useful, but the first choice should
+  clearly say the player is trying it without the missing fuse so the failure
+  feels earned rather than like a neutral inspection option.
+- Tasks:
+  - Clarify the first forced-gate choice label.
+  - Add regression coverage for the risk-forward label and existing warning.
+  - Run health and an actual route that exercises the warning recovery.
+- Evidence so far:
+  - Changed the `force_gate` label to "Force the rusted gate without the fuse"
+    so players see the missing-tool risk before the warning scene.
+  - Updated the forced-gate regression to assert the risk-forward label appears
+    on Platform 13, then still verifies the one-last-chance warning and recovery
+    choice.
+  - `npm test -- tests/story-paths.test.ts` passed with 32 tests.
+  - Manual CLI route exercised the new label, entered `gate_warning`, backed
+    away for supplies, collected the map, radio route, fuse, badge, and token,
+    cleared Mara, listened to her intercom beat, and reached `true_ending` at
+    100/100.
+  - `npm run health` passed with formatting, TypeScript, 48 tests, validation,
+    and coverage playtest.
+  - Coverage playtest remained stable: 695 runs, 672 ended, 0 unfinished, 23
+    frontier samples, all 28 scenes visited, and best score 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - MCP random playtest, 250 runs: all ended, all 28 scenes visited,
+    `true_ending` reached 132 times, best score 100/100, average score 67.84.
+  - Adaptive exploratory MCP route still reached `bad_ending` after choosing
+    the clearer forced-gate label and then ignoring the final warning.
+- Follow-up: The bad ending remains reachable and fairer, but automated
+  exploratory play still selects it. Consider nudging early platform explorers
+  toward `inspect_gate_control` before force-gate temptation if human playtests
+  continue to over-sample the bad branch.
+- Risks:
+  - This is a copy-level guidance change; it should improve fairness without
+    reducing branch coverage or removing the deliberate bad ending.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made the early true-ending clue chain more discoverable by letting
+  careful players inspect the back of the old transit notice.
 - Main objective: Make the early true-ending clue chain more discoverable by
   letting careful players inspect the back of the old transit notice.
 - Why this matters: The story later says Mara's badge number matches a blank
   line on the notice, but players could not inspect that side themselves. Adding
   the clue makes the badge and ledger requirement feel earned earlier instead
   of appearing only once the locker or personnel file explains it.
-- Tasks:
-  - Add an optional notice-back scene with a badge-proof clue.
-  - Carry that clue into the objective system.
-  - Add regression coverage for the new early clue.
-  - Run health and an actual route that uses the new clue.
-- Evidence so far:
+- Evidence:
   - Added `notice_back`, reached from `notice` by `inspect_notice_back`.
   - Added `knows_badge_proof` so the objective list can ask players to find
     proof of Mara Vale's identity after they discover the notice-back clue.

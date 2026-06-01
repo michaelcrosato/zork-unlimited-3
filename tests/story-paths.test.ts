@@ -44,11 +44,18 @@ describe("demo story critical paths", () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
-    for (const choiceId of ["take_lantern", "follow_arrows", "force_gate"]) {
+    for (const choiceId of ["take_lantern", "follow_arrows"]) {
       state = choose(story, state, choiceId);
     }
 
-    const warning = observe(story, state);
+    let warning = observe(story, state);
+    expect(warning.choices.map((choice) => choice.label)).toContain(
+      "Force the rusted gate without the fuse"
+    );
+
+    state = choose(story, state, "force_gate");
+
+    warning = observe(story, state);
     expect(warning.scene.id).toBe("gate_warning");
     expect(warning.scene.text).toContain("one last chance");
     expect(warning.choices.map((choice) => choice.label)).toContain(
