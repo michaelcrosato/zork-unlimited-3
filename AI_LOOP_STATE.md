@@ -11,52 +11,55 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Strengthen the generic passenger-gathering route with a more
-  concrete lunch-tin character beat.
+- Main objective: Give the newspaper passenger's help route a specific
+  late-game payoff.
 - Why this matters: Current evidence shows core routing, ending discovery, and
-  completion are healthy. The highest-value next improvement is richer story
-  texture on a normal ideal route without adding more late-game choice density.
+  completion are healthy. The best next improvement is character texture on an
+  already playable ideal route, so the newspaper woman's remembered stop should
+  matter after the player uses it to help the crowd gather.
 - Tasks:
-  - Revise `passenger_farewell` so the existing generic help route gives the
-    lunch-tin owner a personal, practical moment.
-  - Keep the route length, scoring, endings, and available late-game choices
-    unchanged.
-  - Update regression coverage for the revised scene text and max-score
-    completion through the helped-passenger ending.
+  - Route `help_passengers_after_newspaper_memory` into a newspaper-specific
+    intercom scene.
+  - Keep the helped-passenger ending, scoring, and final roll-call option
+    intact.
+  - Update regression coverage for the new scene text, route flags, choices,
+    and max-score completion.
   - Run focused tests, validation/playtest sampling, full health, and an actual
     CLI or MCP playthrough through the updated route.
 - Evidence:
-  - Revised `passenger_farewell` so the generic passenger-help route now
-    starts with the lunch-tin owner, his missed double shift, and the tin latch
-    giving the crowd a practical rhythm for boarding.
-  - Kept the same route shape: `help_passengers_gather` still leads through
-    `passenger_farewell` to `train_car`, then into the existing gathered
-    intercom and `passenger_helped_true_ending` payoff.
-  - Added regression coverage for the new lunch-tin text and preserved
-    max-score completion through `passenger_helped_true_ending`.
+  - Added `passenger_newspaper_intercom`, reached when players ask the
+    newspaper woman about her stop and then help the crowd gather.
+  - The new intercom pays off her Warden Street morning-transfer memory by
+    turning the transfer column into the crowd's timetable.
+  - Kept the existing helped-passenger ending, score path, and optional final
+    roll-call choice intact.
+  - Updated story-path regression coverage for the new scene text, route
+    flags, choice list, and max-score completion through
+    `passenger_helped_true_ending`.
   - Focused story-path tests passed with 88 tests.
-  - Validation passed with 69 scenes, 10 endings, and all 69 reachable.
-  - A 100-run random sample ended 100/100 runs, visited all 69 scenes, had no
-    unvisited scenes, kept best score 100/100, averaged 78.2, and reached max
-    score in 72 runs.
-  - A 100-run coverage sample visited all 69 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 99.21, and 184464 max-score
-    runs.
+  - Validation passed with 70 scenes, 10 endings, and all 70 reachable.
+  - A 100-run random sample ended 100/100 runs, kept best score 100/100,
+    averaged 78.2, and reached max score in 72 runs.
+  - A 100-run coverage sample visited all 70 scenes with 0 unfinished
+    completed routes, best score 100/100, average score 99.21, and 184464
+    max-score runs.
   - `npm run health` passed with formatting, TypeScript, 109 tests,
     validation, and coverage playtest.
-  - Manual CLI play took the revised passenger-gathering route, reached
-    `passenger_helped_true_ending`, scored 100/100, and left no objectives.
+  - Manual CLI play took the newspaper-memory route through the new intercom
+    and final roll call, reached `passenger_helped_true_ending`, scored
+    100/100, and left no objectives.
 - Playtest notes:
-  - The revised beat makes the generic help route feel less abstract: the
-    lunch tin gives the crowd a concrete sound and motion before boarding.
-  - The route still moves quickly into the third car and the gathered-passenger
-    intercom, so the late game did not gain another choice layer.
+  - The newspaper woman's remembered transfer now carries forward into the
+    finale instead of being only an optional aside.
+  - The route still moves quickly to the release because the new scene reuses
+    the existing final roll-call and release choices.
   - No bugs or confusing objectives appeared during the manual route.
-- Follow-up: Watch whether passenger-specific details remain balanced across
-  the generic help, keepsake, mitten, conductor, and newspaper routes.
+- Follow-up: Check whether the newspaper route now feels distinct from the
+  generic gathered-passenger route without making late game pacing busy.
 - Risks:
-  - Adding more individual passenger texture can make the late game feel busy;
-    this pass reuses an existing scene instead of adding another choice.
+  - Route-specific texture can fragment the passenger finale if every optional
+    memory demands a separate branch; keep this branch short and reuse the
+    existing helped ending.
 
 ## Last Completed Cycle
 

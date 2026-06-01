@@ -1011,12 +1011,20 @@ describe("demo story critical paths", () => {
       "board_after_newspaper_memory"
     ]);
 
-    for (const choiceId of [
-      "help_passengers_after_newspaper_memory",
+    state = choose(story, state, "help_passengers_after_newspaper_memory");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_intercom");
+    expect(observation.scene.text).toContain("becomes the crowd's timetable");
+    expect(observation.scene.text).toContain("Warden Street, then morning transfer");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_passenger_roll_call",
       "pull_release_after_gathered_intercom"
-    ]) {
-      state = choose(story, state, choiceId);
-    }
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathered_intercom");
 
     observation = observe(story, state);
 

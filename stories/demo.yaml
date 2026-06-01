@@ -984,7 +984,7 @@ scenes:
             heard_gathered_passengers: true
       - id: help_passengers_after_newspaper_memory
         label: Help the kept passengers gather into the third car
-        to: passenger_gathered_intercom
+        to: passenger_newspaper_intercom
         requires:
           notFlag: helped_passengers_gather
         effects:
@@ -1512,6 +1512,26 @@ scenes:
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+
+  passenger_newspaper_intercom:
+    text: >
+      The newspaper woman's transfer column becomes the crowd's timetable.
+      She reads Warden Street, then morning transfer, and the old conductor
+      answers each stop with a clear signal while the lunch-tin latch keeps
+      time beside her. Mara lets the schedule carry through the speaker.
+      "Good," she says. "Let the line hear them naming where they are going."
+    choices:
+      - id: hear_final_passenger_roll_call
+        label: Hear the gathered passengers answer one last roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_gathered_intercom
+        label: Pull the release while the passengers hold the doors
+        to: passenger_helped_true_ending
 
   passenger_keepsake_intercom:
     text: >
