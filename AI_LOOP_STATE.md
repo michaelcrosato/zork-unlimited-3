@@ -11,6 +11,48 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make late-game objectives more precise after players inspect
+  Mara's signal-ledger row.
+- Why this matters: The adaptive exploratory route stalled after reading the
+  signal records while the objective list could still include the broad "learn
+  how to survive" prompt. Once the player has read the ledger or manifest, the
+  UI should point at the exact remaining blocker: recover the marked map or
+  clear Mara's row with her badge proof.
+- Tasks:
+  - Suppress the broad train-survival objective after the player has inspected
+    signal-ledger or manifest records.
+  - Replace the generic signal-booth objective with a direct badge-proof ledger
+    objective when the player has map, badge, token, and a read ledger row.
+  - Add focused regression coverage for both the mapless ledger-stall state and
+    the fully prepared ledger-clear state.
+- Evidence:
+  - Added `hasReadSignalRecords` objective-state detection in `src/engine.ts`.
+  - Added `Clear Mara's ledger entry with her badge proof.` as the precise
+    objective for prepared players after `inspect_signal_ledger`.
+  - Added a regression proving mapless signal-ledger players no longer see the
+    stale broad survival objective.
+  - Updated the badge-proof regression to require the new precise objective.
+  - `npm test -- tests/story-paths.test.ts` passed with 47 tests.
+  - `npm run health` passed with formatting, TypeScript, 67 tests, validation,
+    and coverage playtest.
+  - Validation reports 37 scenes, 6 endings, and all 37 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 37 scenes visited, best
+    score 100/100, average score 72.73, and 480 max-score runs.
+  - Manual CLI route deliberately entered the signal booth without the map,
+    confirmed the `signal_ledger` objectives were only "Recover the marked
+    Platform 13 map before boarding." and "Use the signal booth to resolve
+    Mara's ledger entry.", recovered the map, reopened the ledger, and reached
+    `passenger_true_ending` at 100/100.
+- Follow-up: Consider adding a compact transcript diff/audit mode for objective
+  changes so future playtest reports call out stale guidance automatically.
+- Risks:
+  - This changes derived objective text, so transcript expectations and
+    objective-order assumptions need full health coverage.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Required the marked map before ledger release.
 - Main objective: Prevent mapless signal-booth routes from clearing Mara's
   ledger and reaching a low-score ideal ending.
 - Why this matters: The adaptive exploratory evidence reached
@@ -18,13 +60,6 @@ preserving normal-play true-ending discoverability.
   though the story repeatedly frames the map as required for safe boarding.
   The fix keeps the exploratory branch playable while preserving the map as a
   real progression requirement for the true-ending family.
-- Tasks:
-  - Require the marked map before either ledger-clearing action can release
-    Mara or the manifest passengers.
-  - Add an explicit `return_for_marked_map` recovery choice from
-    `signal_ledger` for players who pushed into the signal booth without it.
-  - Add regression coverage for the mapless manifest route and verify the route
-    can recover to a 100/100 passenger true ending.
 - Evidence:
   - Added an `item: map` requirement to `mark_mara_clear_from_ledger` and
     `clear_manifest_and_mara_from_ledger`.

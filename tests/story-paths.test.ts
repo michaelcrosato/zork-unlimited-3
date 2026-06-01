@@ -1165,6 +1165,43 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
   });
 
+  it("replaces broad survival guidance after players read the signal ledger", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "try_token_without_map",
+      "continue_to_signal_booth_unprepared",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "inspect_signal_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(observation.objectives).toContain(
+      "Use the signal booth to resolve Mara's ledger entry."
+    );
+    expect(observation.objectives).not.toContain(
+      "Learn how to survive the driverless train before boarding it."
+    );
+  });
+
   it("focuses fully prepared lit-platform players on the signal booth", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1329,6 +1366,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("signal_ledger");
     expect(observation.scene.text).toContain("more than another name");
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
+    expect(observation.objectives).toEqual(["Clear Mara's ledger entry with her badge proof."]);
     expect(choiceIds).toEqual(["mark_mara_clear_from_ledger"]);
   });
 

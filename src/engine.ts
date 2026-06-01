@@ -144,6 +144,10 @@ function getObjectives(state: GameState): string[] {
   const objectives: string[] = [];
   const has = (item: string) => state.inventory.includes(item);
   const flag = (name: string) => state.flags[name] === true;
+  const hasReadSignalRecords =
+    flag("inspected_signal_ledger") ||
+    flag("read_passenger_manifest") ||
+    flag("heard_passenger_echoes");
 
   if (!has("lantern") && !flag("lights_on")) {
     objectives.push("Find a reliable way to see in the underpass.");
@@ -161,6 +165,7 @@ function getObjectives(state: GameState): string[] {
     flag("knows_platform") &&
     !flag("knows_release") &&
     !flag("freed_mara") &&
+    !hasReadSignalRecords &&
     !(has("map") && has("token") && has("fuse") && has("badge"))
   ) {
     objectives.push("Learn how to survive the driverless train before boarding it.");
@@ -197,7 +202,11 @@ function getObjectives(state: GameState): string[] {
   }
 
   if (flag("platform_lit") && has("token") && !flag("freed_mara")) {
-    objectives.push("Use the signal booth to resolve Mara's ledger entry.");
+    if (flag("inspected_signal_ledger") && has("map") && has("badge")) {
+      objectives.push("Clear Mara's ledger entry with her badge proof.");
+    } else {
+      objectives.push("Use the signal booth to resolve Mara's ledger entry.");
+    }
   }
 
   if (flag("freed_mara")) {
