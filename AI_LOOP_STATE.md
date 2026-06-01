@@ -11,6 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add optional late-game passenger-manifest lore in the signal
+  booth.
+- Why this matters: Route metrics are healthy and all scenes are reachable, so
+  the highest-value next improvement is story depth on the successful route
+  rather than another clue-only routing pass. The signal booth currently jumps
+  straight from "many passengers were kept" to Mara's single row; a brief
+  optional manifest makes the true-ending stakes feel broader without blocking
+  the critical path.
+- Tasks:
+  - Add a one-time optional `passenger_manifest` scene from the signal booth.
+  - Keep `inspect_signal_ledger` first so the direct true-ending route remains
+    focused.
+  - Add regression coverage proving the detour returns to the ledger path and
+    still reaches the true ending at max score.
+  - Run focused tests, full health, and an actual playthrough.
+- Evidence:
+  - Added `passenger_manifest`, reached by `read_passenger_manifest` from
+    `signal_booth` and returning through `return_to_signal_ledger_from_manifest`.
+  - The direct `inspect_signal_ledger` action remains first in the signal-booth
+    choice list.
+  - Added regression coverage for the optional manifest detour and adjusted the
+    existing badge-proof test to allow the new optional action.
+  - `npm test -- tests/story-paths.test.ts` passed with 41 tests.
+  - `npm run health` passed with formatting, TypeScript, 57 tests, validation,
+    and coverage playtest.
+  - Validation now reports 32 scenes, 5 endings, all 32 reachable.
+  - Coverage playtest visits `passenger_manifest`, has 0 unfinished runs, and
+    keeps best score at 100/100.
+  - Manual CLI route through `read_passenger_manifest` and
+    `return_to_signal_ledger_from_manifest` reached `true_ending` at 100/100
+    with `read_passenger_manifest` set.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
+    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
+    and an actual MCP true-ending playthrough at 100/100.
+  - Final evidence random playtest, 100 runs: all ended, all 32 scenes visited,
+    `true_ending` reached 54 times, best score 100/100, average score 70.7.
+  - Final MCP random playtest, 250 runs: all ended, all 32 scenes visited,
+    `true_ending` reached 139 times, best score 100/100, average score 70.78.
+- Follow-up: The adaptive exploratory route still stops at fully prepared
+  `lit_platform` with `use_token_slot` as the obvious next action, suggesting
+  the next useful work is either adaptive route continuation/depth or another
+  small story payoff that does not add route ambiguity.
+- Risks:
+  - Adding an optional signal-booth choice can slightly lengthen random runs and
+    reduce max-score rate if it distracts route selection, so the direct ledger
+    action stays first and must remain healthy in playtests.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Let Mara's optional intercom goodbye flow directly into the final
+  release.
 - Main objective: Let Mara's optional intercom goodbye flow directly into the
   final release.
 - Why this matters: Current route metrics are healthy, but the adaptive
@@ -18,12 +70,6 @@ preserving normal-play true-ending discoverability.
   train car, and stopped one step short of the true ending. The intercom beat
   is good character payoff, but bouncing back to the same release prompt adds a
   low-value final click exactly where the game should be closing.
-- Tasks:
-  - Route Mara's intercom goodbye to a direct final release action.
-  - Preserve the direct `pull_release` option for players who skip the optional
-    goodbye.
-  - Update regression coverage for the intercom path.
-  - Run focused tests, full health, and an actual playthrough.
 - Evidence:
   - Changed `mara_intercom` so its sole choice is
     `pull_release_after_mara_goodbye`, leading directly to `true_ending`.

@@ -4,6 +4,89 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Signal-Booth Manifest Beat
+
+### Current Plan
+
+- Main objective: Add an optional kept-passenger manifest scene in the signal
+  booth.
+- Why this matters: The latest evidence showed healthy route metrics and no
+  unvisited scenes, so the best next improvement is richer story payoff on the
+  successful path. The signal booth names Mara's ledger row, but it does not
+  linger on the many people the true ending will release.
+- Tasks:
+  - Add a one-time optional manifest scene from `signal_booth`.
+  - Keep the direct Mara-ledger action first.
+  - Add regression coverage for the optional detour and true-ending recovery.
+  - Run health and an actual route through the new scene.
+- Risks: An extra choice in a critical late-game scene could lower random
+  true-ending rate or distract automated players if the direct ledger path is
+  not still clearly prioritized.
+
+### Work Completed
+
+- Changes made:
+  - Added `passenger_manifest`, an optional lore scene that shows ordinary
+    kept-passenger details and points back to Mara's still-shut door.
+  - Added `read_passenger_manifest` from `signal_booth`, gated by a one-time
+    flag.
+  - Added `return_to_signal_ledger_from_manifest` so the detour returns to the
+    existing signal-booth flow.
+  - Added a regression proving the detour returns, disappears after reading,
+    and still reaches `true_ending` at max score.
+  - Updated the existing badge-proof test so the new optional signal-booth beat
+    does not invalidate the direct ledger path.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - New optional late-game lore scene: `passenger_manifest`.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through `passenger_manifest`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+- What worked:
+  - Focused story-path tests pass with 41 tests.
+  - Full health passes with formatting, TypeScript, 57 tests, validation, and
+    coverage playtest.
+  - Validation now reports 32 scenes, 5 endings, all 32 reachable.
+  - Coverage playtest visits `passenger_manifest`, has 0 unfinished runs, and
+    keeps best score at 100/100.
+  - The direct `inspect_signal_ledger` action remains first in the signal booth.
+  - The optional manifest sets `read_passenger_manifest`, returns to
+    `signal_booth`, and does not reappear.
+  - Manual CLI play through the manifest route reached `true_ending` at 100/100.
+  - Evidence-only cycle passed health, MCP validation, MCP random/coverage/goal
+    playtests, and an actual MCP true-ending playthrough at 100/100.
+  - Random metrics stayed stable: 100/100 random runs ended, all 32 scenes were
+    visited, `true_ending` reached 54 times, and average score remained 70.7.
+- What felt bad/confusing:
+  - The adaptive exploratory route still stops at fully prepared `lit_platform`
+    with map, token, fuse, and badge. The choice list is already focused there,
+    so this looks more like route-depth/continuation pressure than a content
+    signposting bug.
+- Bugs found:
+  - One older test assumed `signal_booth` had exactly one choice. The assertion
+    was too narrow for optional late-game story content and now checks that the
+    ledger path remains first.
+
+### Next Iteration
+
+- Highest-priority next task: Decide whether to tune adaptive route continuation
+  or add another focused story payoff.
+- Reason: The change touches a late critical-path scene and must stay clear in
+  direct play while preserving route metrics.
+- Planned action:
+  - Inspect whether the adaptive route needs a deeper step budget/continuation
+    once it reaches a one-choice late-game state, or add another small story
+    payoff that preserves focused route choices.
+
 ## 2026-06-01 - Last-Missing-Map Focus
 
 ### Current Plan

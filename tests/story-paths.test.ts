@@ -671,6 +671,61 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    expect(observation.scene.id).toBe("signal_booth");
+    expect(observation.choices.map((choice) => choice.id)).toContain("read_passenger_manifest");
+
+    state = choose(story, state, "read_passenger_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest");
+    expect(observation.scene.text).toContain("Mara's door is the only one still shut");
+    expect(observation.state.flags.read_passenger_manifest).toBe(true);
+
+    state = choose(story, state, "return_to_signal_ledger_from_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_booth");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("read_passenger_manifest");
+    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_signal_ledger");
+
+    for (const choiceId of [
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("reveals the emergency release after clearing Mara even without the radio route", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1092,7 +1147,8 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("signal_booth");
-    expect(choiceIds).toEqual(["inspect_signal_ledger"]);
+    expect(choiceIds[0]).toBe("inspect_signal_ledger");
+    expect(choiceIds).toContain("read_passenger_manifest");
 
     state = choose(story, state, "inspect_signal_ledger");
     observation = observe(story, state);

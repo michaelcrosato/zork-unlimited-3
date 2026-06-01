@@ -522,11 +522,30 @@ scenes:
         effects:
           set:
             inspected_signal_ledger: true
+      - id: read_passenger_manifest
+        label: Read the kept-passenger manifest
+        to: passenger_manifest
+        requires:
+          notFlag: read_passenger_manifest
+        effects:
+          set:
+            read_passenger_manifest: true
       - id: reopen_signal_ledger
         label: Reopen Mara's ledger row
         to: signal_ledger
         requires:
           flag: inspected_signal_ledger
+
+  passenger_manifest:
+    text: >
+      The earlier pages are not a passenger list so much as a weather report:
+      umbrellas left dripping by the stairs, lunch tins still warm, a child's
+      mitten pinned beside a transfer. Each name has a tiny door stamped beside
+      it. Mara's door is the only one still shut.
+    choices:
+      - id: return_to_signal_ledger_from_manifest
+        label: Return to Mara's open ledger row
+        to: signal_booth
 
   signal_ledger:
     text: >
