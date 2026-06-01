@@ -231,7 +231,41 @@ describe("demo story critical paths", () => {
     expect(observation.state.inventory).toEqual(["badge", "fuse", "token"]);
     expect(observation.objectives[0]).toBe("Recover the marked Platform 13 map before boarding.");
     expect(mapChoice?.label).toBe("Take the marked Platform 13 map Mara asked for");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("return_to_tunnel");
     expect(observation.choices.map((choice) => choice.id)).not.toContain("go_to_platform");
+  });
+
+  it("focuses players on the map when it is the last missing preparation item", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "enter_dark",
+      "answer_voice",
+      "promise_to_help",
+      "tune_radio",
+      "note_radio_route",
+      "read_personnel_file",
+      "keep_mara_file",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "return_to_tunnel",
+      "inspect_clock",
+      "take_token",
+      "open_service_door"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.inventory).toEqual(["badge", "fuse", "token"]);
+    expect(observation.state.flags.read_mara_file).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_map"]);
+    expect(observation.objectives[0]).toBe("Recover the marked Platform 13 map before boarding.");
   });
 
   it("keeps Mara-promising players from following the arrows without the map", async () => {

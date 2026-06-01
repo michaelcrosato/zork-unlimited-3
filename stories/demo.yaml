@@ -230,7 +230,6 @@ scenes:
         to: tunnel
         requires:
           any:
-            - notItem: map
             - notItem: token
             - notItem: fuse
             - notItem: badge

@@ -4,6 +4,80 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Last-Missing-Map Focus
+
+### Current Plan
+
+- Main objective: Remove the late-game service-room bounce when the marked map
+  is the last missing preparation item.
+- Why this matters: The adaptive exploratory route had already collected Mara's
+  badge, the platform fuse, and the signal token, but kept returning to the
+  tunnel instead of taking the map. That made the next objective technically
+  visible but mechanically easy to ignore.
+- Tasks:
+  - Hide `return_to_tunnel` once the map is the only missing preparation item.
+  - Preserve tunnel return while the token, fuse, or badge can still be found.
+  - Add regression coverage for the adaptive stall state.
+  - Run health and a real CLI route through the changed moment.
+- Risks: Removing a backtrack could accidentally block token recovery if the
+  condition is too broad.
+
+### Work Completed
+
+- Changes made:
+  - `return_to_tunnel` now depends on missing token, fuse, or badge, not merely
+    missing map.
+  - Added regression coverage for the exact state with `promised_mara`,
+    `knows_release`, `read_mara_file`, badge, fuse, and token.
+  - Strengthened the existing missing-map test to ensure the stale tunnel
+    return is absent.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is a route-focus polish pass for the service-room hub.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+  - Manual CLI route through the former adaptive stall and on to `true_ending`
+- What worked:
+  - Story-path tests pass with 39 tests.
+  - Full health passes with formatting, TypeScript, 55 tests, validation, and
+    coverage playtest.
+  - Coverage playtest remains stable: 698 runs, 672 ended, 0 unfinished, all 31
+    scenes visited, best score 100/100.
+  - At the former stall, the service room now offered exactly `take_map`.
+  - Continuing from that state reached `true_ending` at 100/100 after the Mara
+    intercom beat.
+  - Evidence-only cycle passed health, MCP validation, MCP
+    random/coverage/goal playtests, and an actual MCP true-ending playthrough
+    at 100/100.
+  - The adaptive route now takes the map and reaches the gate-control clue
+    before stopping back in the service room with all four tools.
+- What felt bad/confusing:
+  - The service-room prose is still generic when only the map is missing. The
+    choice list is now clear, but a future content pass could add state-aware
+    hub text if the engine gains support for it.
+- Bugs found:
+  - No new bug found. The old loop was a stale recovery option rather than a
+    broken transition.
+
+### Next Iteration
+
+- Highest-priority next task: Smooth the fully equipped service-room handoff
+  after the gate-control clue if repeated evidence keeps stopping there.
+- Reason: The map stall is gone, but the adaptive route now pauses one step
+  later with every required tool and `go_to_platform` as the obvious next move.
+- Planned action:
+  - Inspect the exact choice list in that state, then decide whether stronger
+    choice text or adaptive playtest tuning is the right fix.
+
 ## 2026-06-01 - Long-Run Loop Hardening
 
 ### Current Plan

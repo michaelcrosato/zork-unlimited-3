@@ -11,6 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Remove the late-game service-room bounce when the marked map
+  is the last missing preparation item.
+- Why this matters: The latest adaptive exploratory route stopped after the
+  player had Mara's badge, the platform fuse, and the signal token but kept
+  bouncing between the service room and tunnel without taking the map. At that
+  point the tunnel has no remaining useful work, so the service room should
+  focus the player on the one unresolved promise.
+- Tasks:
+  - Hide `return_to_tunnel` once map is the only missing preparation item.
+  - Preserve tunnel return while the token, fuse, or badge can still be found.
+  - Add regression coverage for the exact adaptive stall state.
+  - Run story-path tests, full health, an actual CLI playthrough, and the
+    evidence cycle.
+- Evidence:
+  - Removed `notItem: map` from the `return_to_tunnel` availability check, so
+    the tunnel return remains available for missing token/fuse/badge recovery
+    but disappears when only the marked map is missing.
+  - Added a regression that recreates the adaptive stall state with
+    `promised_mara`, `knows_release`, `read_mara_file`, badge, fuse, and token;
+    the only available service-room choice is now `take_map`.
+  - Strengthened the existing missing-map regression to ensure `return_to_tunnel`
+    is absent in the same last-missing-map pressure point.
+  - `npm test -- tests/story-paths.test.ts` passed with 39 tests.
+  - `npm run health` passed with formatting, TypeScript, 55 tests, validation,
+    and coverage playtest.
+  - Manual CLI route verified the last-missing-map service-room state offers
+    exactly `take_map`, then continued through the signal booth, Mara intercom
+    beat, and `pull_release` to `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
+    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
+    and an actual MCP true-ending playthrough at 100/100.
+  - Final evidence random playtest, 100 runs: all ended, all 31 scenes visited,
+    `true_ending` reached 56 times, best score 100/100, average score 71.4.
+  - Final MCP random playtest, 250 runs: all ended, all 31 scenes visited,
+    `true_ending` reached 142 times, best score 100/100, average score 71.2.
+  - The adaptive route advanced past the old map stall, took the marked map,
+    visited Platform 13, inspected the gate control, and stopped back in the
+    service room with badge, fuse, map, and token.
+- Follow-up: The next pressure point is a fully equipped service-room return
+  after `inspect_gate_control`; check whether the route should auto-focus
+  `go_to_platform` more strongly or whether the adaptive step budget simply
+  expired at a good handoff.
+- Risks:
+  - This removes one low-value backtrack when only the map is missing. It should
+    not affect token recovery because `return_to_tunnel` is still available
+    until the token has been collected.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added a stronger character payoff after clearing Mara's signal ledger
+  entry.
 - Main objective: Add a stronger character payoff after clearing Mara's signal
   ledger entry.
 - Why this matters: Current route metrics are healthy and the latest guidance
@@ -18,13 +70,6 @@ preserving normal-play true-ending discoverability.
   next step is a small story-depth improvement on the core successful route so
   the ledger action feels like freeing a person, not just flipping a puzzle
   flag.
-- Tasks:
-  - Add a short required scene after `mark_mara_clear_from_ledger`.
-  - Route that scene back into the existing third-car finale.
-  - Add regression coverage for the new transition and update affected true
-    route tests.
-  - Run story-path tests, full health, and an actual CLI playthrough to
-    `true_ending`.
 - Evidence:
   - Added `mara_released`, a required aftermath scene after Mara's ledger entry
     is cleared.
