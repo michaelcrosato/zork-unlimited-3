@@ -418,7 +418,7 @@ scenes:
       heard the metal scream.
     choices:
       - id: back_away_from_gate
-        label: Back away and return to the service room
+        label: Back away and gather proper supplies
         to: service_room
         effects:
           set:

@@ -162,6 +162,10 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
+  if (flag("knows_platform") && !has("map")) {
+    objectives.push("Recover the marked Platform 13 map before boarding.");
+  }
+
   if (
     (flag("knows_shutdown") ||
       flag("met_mara") ||

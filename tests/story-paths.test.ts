@@ -53,6 +53,30 @@ describe("demo story critical paths", () => {
     expect(state.flags.backed_away_from_gate).toBe(true);
   });
 
+  it("points underprepared platform explorers back to the marked map", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "open_service_door",
+      "tune_radio",
+      "note_radio_route",
+      "go_to_platform",
+      "force_gate",
+      "back_away_from_gate"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
+  });
+
   it("removes the forced-gate loop after players back away once", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

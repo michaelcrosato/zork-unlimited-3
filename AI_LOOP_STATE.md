@@ -11,40 +11,38 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the fully equipped service-room state read as a clear
-  launch point for Platform 13 instead of another clue-gathering hub.
-- Outcome: Once players carry the map, signal token, platform fuse, and Mara's
-  badge, the service room now offers only `go_to_platform`; the stale
-  learn-the-release objective is suppressed, and scoring awards the release
-  route when Mara is cleared so no-radio true-ending routes still reach 100/100.
+- Main objective: Improve recovery clarity for players who discover Platform 13
+  before collecting the marked map and other preparation tools.
+- Outcome: After an underprepared player reaches Platform 13 and backs away
+  from the forced-gate warning, the service-room objective list now explicitly
+  tells them to recover the marked Platform 13 map before boarding, while still
+  surfacing token and fuse preparation.
 - Evidence:
-  - Added regression coverage proving a fully equipped service-room state
-    exposes only `go_to_platform`, hides the optional radio/file/tunnel actions,
-    and points objectives toward powering Platform 13.
-  - Added score coverage proving the no-radio ledger route reaches max score
-    after `pull_release`.
-  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts` passes with
-    21 tests.
+  - Added regression coverage for the underprepared platform recovery route,
+    proving the player returns to the service room with the marked-map
+    objective visible and `take_map` available.
+  - Updated the forced-gate retreat label to reinforce gathering proper supplies.
+  - `npm test -- tests/story-paths.test.ts` passes with 20 tests.
   - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - Goal playtest, 10 runs: all 10 reached `true_ending` at 100/100.
-  - Random playtest, 250 runs: all scenes visited, 249/250 ended, `true_ending`
-    reached 27 times, average score 47.1, max-score runs improved to 18.
-  - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
-    samples remain, `true_ending` reached 20 times, average score 48.82,
-    max-score runs improved to 12.
-  - `npm run health` passes with 27 tests and coverage playtest visiting all
+  - `npm run health` passes with 28 tests and coverage playtest visiting all
     scenes.
-  - Manual CLI route collected the map, token, fuse, and badge, confirmed the
-    service room offered only `go_to_platform`, showed objectives for restoring
-    power/token use, then reached `true_ending` at 100/100 while intentionally
-    skipping the radio and file.
+  - Random playtest, 100 runs: all 100 ended, all scenes visited,
+    `true_ending` reached 12 times, average score 48.4, best score 100.
+  - Coverage playtest, 170 runs: 152 ended, 18 unfinished reporting samples
+    remain, `true_ending` reached 20 times, average score 48.82.
+  - Manual CLI route intentionally reached Platform 13 underprepared, forced the
+    gate warning, backed away, confirmed the new map objective appeared first in
+    the service room, then recovered all preparation tools and reached
+    `true_ending` at 100/100.
+  - `npm run ai:cycle` wrote ignored report artifacts but was interrupted after
+    the nested agent recursively launched another `ai:cycle`; direct health,
+    random playtest, and manual CLI play were completed afterward.
 - Follow-up: Coverage still reports 18 unfinished exploration samples. Inspect
   those traces next and decide whether they are useful coverage-frontier reports
   or player-facing loops worth smoothing.
 - Risks:
-  - Fully equipped players can no longer return to the clock from the service
-    room or read optional service-room clues before going forward, but they
-    already have the required tools and the route still reaches max score.
+  - The objective list is capped at four items, so objective ordering must still
+    surface token, fuse, and badge goals when they matter.
 
 ## Last Completed Cycle
 
