@@ -1540,8 +1540,7 @@ describe("demo story critical paths", () => {
       "listen_to_passenger_answers",
       "return_from_passenger_answers",
       "help_passengers_gather",
-      "return_from_passenger_farewell",
-      "board_third_car_with_passengers"
+      "return_from_passenger_farewell"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1578,8 +1577,7 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
       "help_passengers_gather",
-      "return_from_passenger_farewell",
-      "board_third_car_with_passengers"
+      "return_from_passenger_farewell"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -1621,7 +1619,6 @@ describe("demo story critical paths", () => {
       "return_from_passenger_answers",
       "help_passengers_gather",
       "return_from_passenger_farewell",
-      "board_third_car_with_passengers",
       "listen_to_gathered_passengers"
     ]) {
       state = choose(story, state, choiceId);
@@ -2632,8 +2629,45 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("present finally means something again");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "return_from_passenger_answers"
+      "return_from_passenger_answers",
+      "board_after_passenger_answers"
     ]);
+
+    state = choose(story, state, "board_after_passenger_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["pull_release_with_manifest"]);
+
+    state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
 
     state = choose(story, state, "return_from_passenger_answers");
     observation = observe(story, state);
@@ -2691,14 +2725,6 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
 
     state = choose(story, state, "return_from_passenger_farewell");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_platform");
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "board_third_car_with_passengers"
-    ]);
-
-    state = choose(story, state, "board_third_car_with_passengers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");

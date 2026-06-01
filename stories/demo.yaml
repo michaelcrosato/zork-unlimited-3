@@ -876,6 +876,9 @@ scenes:
       - id: return_from_passenger_answers
         label: Cross through the answered crowd as they gather
         to: passenger_platform
+      - id: board_after_passenger_answers
+        label: Board the third car while the roll call holds
+        to: train_car
 
   passenger_platform:
     text: >
@@ -905,8 +908,8 @@ scenes:
       yet. They are saving their voices for the morning.
     choices:
       - id: return_from_passenger_farewell
-        label: Return to the third car before the line closes again
-        to: passenger_platform
+        label: Lead the gathered passengers to the third car
+        to: train_car
 
   train_car:
     text: >

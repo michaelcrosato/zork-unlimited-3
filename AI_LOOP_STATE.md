@@ -11,19 +11,63 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Shorten late manifest-route pacing so successful passenger
+  routes are less likely to stop one choice before the ending.
+- Why this matters: Cycle evidence showed remaining random unfinished pressure
+  near `passenger_answers` and `passenger_gathered_intercom`, both successful
+  late-game routes that could still hit the step cap after exploratory detours.
+- Tasks:
+  - Add a direct third-car boarding choice from `passenger_answers` so hearing
+    the roll call can flow straight to the manifest release.
+  - Route `passenger_farewell` directly to `train_car` after the player helps
+    passengers gather, removing an extra return through `passenger_platform`.
+  - Update regression coverage for the direct answer release route and the
+    shortened helped-passenger route.
+  - Run focused tests, validation, random/coverage playtest sampling, full
+    health, and an actual CLI playthrough.
+- Evidence:
+  - `passenger_answers` now offers `board_after_passenger_answers` alongside
+    the existing crowd-gathering route.
+  - `return_from_passenger_farewell` now leads directly to `train_car`, where
+    helped-passenger players can listen to the gathered intercom or pull the
+    helped release.
+  - `npm test -- tests/story-paths.test.ts` passed with 73 tests.
+  - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
+  - A 500-run random sample improved from 498/500 ended to 499/500 ended while
+    keeping all 53 scenes visited, best score 100/100, and average score 78.9.
+  - Focused coverage playtest kept all 53 scenes visited, 0 unfinished completed
+    routes, best score 100/100, average score 96.31, and 37332 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 94 tests, validation,
+    and coverage playtest.
+  - Manual CLI play took the manifest route, listened to passenger answers,
+    boarded directly with `board_after_passenger_answers`, and reached
+    `passenger_true_ending` at 100/100.
+- Playtest notes:
+  - The answer beat now lets players act immediately on the roll call instead
+    of requiring a platform detour before release.
+  - The helped-passenger route still preserves the farewell and gathered
+    intercom payoff, but no longer asks players to reselect the third-car board
+    action after helping the crowd.
+  - Remaining random step-limit pressure is rare and still lands one choice
+    before a successful release after many optional detours.
+- Follow-up: Investigate early service-room/tunnel/platform revisits that can
+  consume many random steps before the late manifest sequence.
+- Risks:
+  - The helped-passenger route is slightly more directed after the farewell
+    beat, but it still gives the player both the optional gathered intercom and
+    direct helped-release choices in the train car.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Removed the empty service-room loop for fully prepared unlit-platform
+  players.
 - Main objective: Remove the empty service-room loop for fully prepared
   unlit-platform players.
 - Why this matters: Cycle evidence still showed occasional random unfinished
   runs. Replaying a 500-run sample exposed a concrete loop where players who
   already held the map, token, fuse, and badge could keep bouncing between the
   unlit platform and the service room even though no preparation remained.
-- Tasks:
-  - Gate `return_to_service_room` on the unlit platform so it appears only while
-    at least one core prep item is missing.
-  - Add regression coverage proving fully prepared platform players see
-    `install_fuse` without another empty prep-room return.
-  - Run focused tests, validation, random playtest sampling, full health, and an
-    actual CLI playthrough.
 - Evidence:
   - `return_to_service_room` from `platform` now requires a missing map, token,
     fuse, or badge.
