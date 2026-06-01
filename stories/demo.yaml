@@ -942,8 +942,11 @@ scenes:
       let another worker hold the line.
     choices:
       - id: follow_conductor_signal_to_third_car
-        label: Follow the conductor's signal to the third car
-        to: train_car
+        label: Follow the conductor's clear signal into the third car
+        to: passenger_conductor_intercom
+        effects:
+          set:
+            heard_conductor_clearance: true
 
   passenger_mitten_memory:
     text: >
@@ -1068,21 +1071,6 @@ scenes:
         effects:
           set:
             heard_answered_passengers: true
-      - id: listen_to_conductor_clearance
-        label: Listen for the conductor's platform-clear signal
-        to: passenger_conductor_intercom
-        requires:
-          all:
-            - flag: freed_mara
-            - flag: read_passenger_manifest
-            - flag: conductor_cleared_platform
-            - flag: helped_passengers_gather
-            - notFlag: matched_manifest_keepsakes
-            - notFlag: returned_lost_mitten
-            - notFlag: heard_conductor_clearance
-        effects:
-          set:
-            heard_conductor_clearance: true
       - id: listen_to_gathered_passengers
         label: Listen to the gathered passengers before the release
         to: passenger_gathered_intercom
@@ -1391,11 +1379,12 @@ scenes:
   passenger_conductor_intercom:
     text: >
       The conductor's borrowed signal carries into the third car before Mara
-      speaks. "Platform clear," he calls again, softer this time, and the
-      answered passengers echo it down the aisle until it stops sounding like
-      an order and starts sounding like a promise. Mara lets the old worker's
-      voice hold the line. "He remembers the way out," she says. "Pull the
-      release on his clear."
+      speaks. Under the first seat, the emergency release waits in your hand.
+      "Platform clear," he calls again, softer this time, and the answered
+      passengers echo it down the aisle until it stops sounding like an order
+      and starts sounding like a promise. Mara lets the old worker's voice hold
+      the line. "He remembers the way out," she says. "Pull the release on his
+      clear."
     choices:
       - id: pull_release_after_conductor_clearance
         label: Pull the release on the conductor's clear signal

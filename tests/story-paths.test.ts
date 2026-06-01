@@ -1796,18 +1796,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "follow_conductor_signal_to_third_car");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_conductor_clearance",
-      "listen_to_gathered_passengers",
-      "pull_release_after_gathering_passengers"
-    ]);
-
-    state = choose(story, state, "listen_to_conductor_clearance");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_conductor_intercom");
     expect(observation.scene.text).toContain("Platform clear");
+    expect(observation.scene.text).toContain("emergency release waits in your hand");
     expect(observation.scene.text).toContain("Pull the release on his clear");
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([

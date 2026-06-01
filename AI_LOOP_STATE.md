@@ -11,58 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a conductor-specific third-car payoff after players ask
-  the old conductor to clear the platform.
-- Why this matters: The conductor route has a strong platform moment, but it
-  previously collapsed back into the generic gathered-passenger intercom after
-  boarding. A route-specific payoff makes the player's trust in another transit
-  worker feel acknowledged without changing the main route or score economy.
+- Main objective: Make the conductor-clearance payoff naturally occur once
+  players ask the old conductor to clear the platform.
+- Why this matters: Random play already showed the conductor intercom could be
+  missed after the player chose the conductor route. The conductor's clear
+  signal is the emotional point of that path, so routing directly into the
+  payoff improves normal-play discovery and removes a small late-game choice
+  wrinkle.
 - Tasks:
-  - Set a conductor-route flag when the player asks for the platform-clear
-    signal.
-  - Add an optional conductor-clearance intercom in the third car while
-    preserving generic gathered-passenger and direct release choices.
-  - Add regression coverage for choice ordering, route flags, scene text, and
-    max-score completion.
+  - Route `follow_conductor_signal_to_third_car` directly to
+    `passenger_conductor_intercom`.
+  - Remove the redundant train-car conductor-clearance choice.
+  - Keep the release physically grounded in the conductor intercom text.
+  - Update regression coverage for the new route shape.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI playthrough.
+    CLI or MCP playthrough.
 - Evidence:
-  - Added `conductor_cleared_platform` when players ask the old conductor to
-    call the answered platform clear.
-  - Added `passenger_conductor_intercom`, an optional third-car scene that
-    pays off the conductor's platform-clear signal before
-    `passenger_helped_true_ending`.
-  - Preserved the generic gathered-passenger intercom and direct helped release
-    choices from the third car.
-  - Added story-path regression coverage for conductor route choice ordering,
-    flags, scene text, and max-score completion.
+  - `follow_conductor_signal_to_third_car` now routes directly to
+    `passenger_conductor_intercom` and sets `heard_conductor_clearance`.
+  - Removed the redundant `listen_to_conductor_clearance` choice from
+    `train_car`, reducing late-game choice noise on the conductor route.
+  - Updated the conductor intercom text so the emergency release is physically
+    present even though this route no longer stops on the generic train-car
+    scene.
+  - Updated story-path regression coverage for the direct conductor signal
+    route through `passenger_helped_true_ending`.
   - Focused story-path tests passed with 86 tests.
   - Validation passed with 67 scenes, 10 endings, and all 67 reachable.
-  - A 100-run random sample ended 100/100 runs, kept best score 100/100,
-    averaged 78.2, and reached max score in 72 runs; the new optional
-    conductor intercom did not appear in that small random sample.
-  - A 100-run coverage sample visited all 67 scenes, including
-    `passenger_conductor_intercom`, with 0 unfinished completed routes, best
-    score 100/100, average score 98.82, and 122976 max-score runs.
+  - A 100-run random sample ended 100/100 runs, visited
+    `passenger_conductor_intercom`, had no unvisited scenes, kept best score
+    100/100, averaged 78.2, and reached max score in 72 runs.
+  - A 100-run coverage sample visited all 67 scenes with 0 unfinished
+    completed routes, best score 100/100, average score 98.69, and 109800
+    max-score runs.
   - `npm run health` passed with formatting, TypeScript, 107 tests,
     validation, and coverage playtest.
-  - Manual CLI play asked the old conductor to clear the platform, boarded the
-    third car, heard the new conductor-clearance intercom, and reached
+  - Manual CLI play asked the old conductor to clear the platform, followed
+    his clear signal directly into the conductor intercom, and reached
     `passenger_helped_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The conductor route now has a clear emotional throughline: answer roll
-    call, let another transit worker organize the platform, hear that signal
-    carried into the train, then release the doors on his clear.
-  - The third-car choice list is one item longer on this specific route, but
-    the route-specific label is distinct and does not remove the generic
-    gathered-passenger beat.
-  - No validation, score, completion, or coverage regression surfaced.
-- Follow-up: Verify that route-specific late-game intercoms remain legible in
-  transcript and playtest summaries as scene count grows.
+  - The conductor route now reads as a single continuous action: ask for the
+    platform clear, follow that signal into the third car, then pull the
+    release on his clear.
+  - The new intercom wording keeps the release handle visible, so skipping the
+    generic `train_car` scene did not make the final action feel ungrounded.
+  - Random play now reaches the conductor intercom in the same deterministic
+    100-run sample that previously missed it.
+- Follow-up: Recheck whether random play now visits
+  `passenger_conductor_intercom` more often in small samples.
 - Risks:
-  - Another optional late-game intercom can add choice noise in the third car;
-    keep it narrowly gated to the conductor route and preserve existing
-    alternatives.
+  - Direct routing removes the generic third-car choice list from this one
+    route, so the conductor intercom must clearly mention the release handle.
 
 ## Last Completed Cycle
 
