@@ -5,61 +5,67 @@ This file is the handoff point for future autonomous agents.
 ## Current Objective
 
 Keep the autonomous CYOA engine maintainable, secure, and playable while
-preserving normal-play true-ending discoverability.
+preserving normal-play true-ending discoverability and improving passenger
+story depth where the route is already healthy.
 
 ## Active Cycle
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the old conductor's clearance route visible directly
-  from the answered-passenger roll call.
-- Why this matters: The conductor scenes were already reachable, but normal
-  random play could miss them because the player had to back out from
-  `passenger_answers` to `passenger_platform` before asking for the conductor's
-  signal. The conductor payoff is stronger when it appears at the exact moment
-  the passengers have answered and need someone to call them clear.
+- Main objective: Add a brief opened-manifest count so the passenger rescue
+  route has a clearer emotional pause after the ledger doors open.
+- Why this matters: Current random and coverage evidence is healthy, so the
+  highest-value next step is richer story pacing rather than more clue pressure.
+  The new beat lets Mara frame the passengers as people with ordinary objects
+  and needs before the player chooses roll call, platform help, or direct
+  boarding.
 - Tasks:
-  - Add a direct conductor option to `passenger_answers`.
-  - Preserve the existing platform conductor route and other passenger-answer
-    choices.
-  - Update story-path regression coverage for the new route and final payoff.
+  - Add an optional `passenger_manifest_count` scene from `passengers_released`.
+  - Preserve the existing passenger-answer, platform, and direct boarding
+    branches.
+  - Add regression coverage for the new scene and all three exits.
   - Run focused tests, validation/playtest sampling, full health, `ai:cycle`,
-    and a real CLI playthrough through the new route.
+    and a real CLI playthrough through the new beat.
 - Evidence:
-  - Added `ask_conductor_from_answers`, which routes from `passenger_answers`
-    to `passenger_conductor_signal` and sets `helped_passengers_gather` plus
-    `conductor_cleared_platform`.
-  - The existing return-to-platform conductor choice remains available, so the
-    older route is preserved.
-  - Updated story-path coverage to assert the new passenger-answer choice list,
-    the direct conductor route, `heard_conductor_clearance`, and the
-    `passenger_helped_true_ending` payoff.
-  - Focused story-path tests passed: 90 tests.
-  - Validation reports 72 scenes, 11 endings, and all 72 reachable.
-  - A 250-run random sample ended every run, visited every scene including
-    `passenger_conductor_signal` and `passenger_conductor_intercom`, kept best
-    score 100/100, averaged 79.94, and reached max score in 183 runs.
-  - `npm run health` passed with formatting, TypeScript, 111 tests,
-    validation, and coverage playtest.
+  - Added `passenger_manifest_count`, reached from `passengers_released` via
+    `review_open_manifest_count`, with a one-time
+    `reviewed_open_manifest_count` flag.
+  - The new beat preserves exits into `passenger_answers`,
+    `passenger_platform`, and `train_car`, so the existing passenger-answer,
+    platform-help, and direct manifest release branches remain available.
+  - Added story-path regression coverage for the new scene, its text, flag, and
+    all three exits; focused story-path tests passed with 91 tests.
+  - Validation reports 73 scenes, 11 endings, and all 73 reachable.
+  - A 250-run random sample ended every run, visited `passenger_manifest_count`,
+    kept best score 100/100, averaged 79.94, and reached max score in 183 runs.
+  - `npm run health` passed with formatting, TypeScript, 112 tests,
+    validation, and coverage playtest. Coverage visited all 73 scenes with 0
+    unfinished completed routes, best score 100/100, average score 99.52, and
+    297776 max-score runs.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    `ai-runs/cycle-2026-06-01T17-41-33-981Z.md`; its 100-run random sample
-    visited both conductor scenes and reached `passenger_helped_true_ending` 7
-    times.
-  - Manual CLI play followed `listen_to_passenger_answers` ->
-    `ask_conductor_from_answers` -> `passenger_conductor_signal` ->
-    `passenger_conductor_intercom` -> `passenger_helped_true_ending` at
-    100/100 with no objectives.
+    `ai-runs/cycle-2026-06-01T17-52-12-475Z.md`; its 100-run random sample
+    visited `passenger_manifest_count` and kept the random max-score rate at
+    71%.
+  - Manual CLI play followed `review_open_manifest_count` ->
+    `listen_after_manifest_count` -> `ask_conductor_from_answers` ->
+    `passenger_conductor_intercom` -> `passenger_helped_true_ending` at 100/100
+    with no objectives.
 - Playtest notes:
-  - The new choice feels better placed because the old conductor can respond to
-    passengers immediately after they answer roll call.
-  - The route reads as one continuous action: answer roll call, call the
-    platform clear, follow the signal, pull the release.
-  - The only tradeoff is a denser `passenger_answers` menu with five choices,
-    but random sampling still reached all passenger-specialized endings.
-- Follow-up: Watch whether the five-choice `passenger_answers` menu starts to
-  dilute the newspaper or farewell choices in smaller samples.
+  - The new count beat works as a short breath between opening every manifest
+    door and hearing the passengers answer. It clearly names the newspaper,
+    lunch tin, mitten, and conductor's punch as ordinary anchors for the crowd.
+  - The route still flows into the stronger conductor payoff without extra
+    mechanical friction: count the manifest, listen to names, call the platform
+    clear, pull the release.
+  - A 250-run random sample missed only the rare
+    `passenger_answered_handoff_intercom`; the full coverage strategy still
+    reached every scene.
+- Follow-up: Watch whether the added optional `passengers_released` choice
+  dilutes normal discovery of `listen_to_passenger_answers` in smaller random
+  samples.
 - Risks:
-  - Late-game choice density is slightly higher at `passenger_answers`.
+  - `passengers_released` gains one more optional choice, so random samples may
+    distribute slightly more broadly before boarding.
 
 ## Last Completed Cycle
 

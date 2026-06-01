@@ -1736,6 +1736,76 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("board_after_releasing_passengers");
   });
 
+  it("adds an optional opened-manifest count before the passenger roll call", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds[0]).toBe("review_open_manifest_count");
+    expect(choiceIds).toContain("listen_to_passenger_answers");
+    expect(choiceIds).toContain("board_after_releasing_passengers");
+
+    state = choose(story, state, "review_open_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_count");
+    expect(observation.scene.text).toContain("newspaper, lunch tin, child's mitten");
+    expect(observation.scene.text).toContain("They need more than clearance");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_manifest_count",
+      "cross_after_manifest_count",
+      "board_after_manifest_count"
+    ]);
+
+    const countedState = state;
+
+    state = choose(story, countedState, "listen_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("follow_newspaper_answer");
+    expect(observation.choices.map((choice) => choice.id)).toContain("ask_conductor_from_answers");
+
+    state = choose(story, countedState, "cross_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("match_manifest_keepsakes");
+
+    state = choose(story, countedState, "board_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+  });
+
   it("lets Mara's manifest handoff lead directly to its third-car intercom", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3627,6 +3697,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(choiceIds).toEqual([
+      "review_open_manifest_count",
       "watch_mara_open_manifest",
       "listen_to_passenger_answers",
       "board_after_releasing_passengers"

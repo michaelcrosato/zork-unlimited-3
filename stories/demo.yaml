@@ -832,6 +832,14 @@ scenes:
       ribs. Mara breathes through the speaker and says, "Third car. I can hold
       the line steady while they find the morning."
     choices:
+      - id: review_open_manifest_count
+        label: Review the opened manifest count with Mara
+        to: passenger_manifest_count
+        requires:
+          notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
         to: mara_manifest_handoff
@@ -851,6 +859,29 @@ scenes:
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
+
+  passenger_manifest_count:
+    text: >
+      Mara checks the opened manifest before anyone moves. The doors are no
+      longer stamped shut, but the page still remembers what each person
+      carried into the line: newspaper, lunch tin, child's mitten, conductor's
+      punch. "They need more than clearance," Mara says. "They need one another
+      to answer when the train tries to count them again."
+    choices:
+      - id: listen_after_manifest_count
+        label: Listen as the counted passengers answer their names
+        to: passenger_answers
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
+      - id: cross_after_manifest_count
+        label: Cross through the counted crowd as they gather
+        to: passenger_platform
+      - id: board_after_manifest_count
+        label: Board the third car while Mara holds the count
+        to: train_car
 
   mara_manifest_handoff:
     text: >
