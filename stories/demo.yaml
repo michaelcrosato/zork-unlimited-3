@@ -1635,8 +1635,30 @@ scenes:
       the line. "He remembers the way out," she says. "Pull the release on his
       clear."
     choices:
+      - id: hear_final_conductor_roll_call
+        label: Hear the conductor call the final platform clear
+        to: passenger_conductor_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
       - id: pull_release_after_conductor_clearance
         label: Pull the release on the conductor's clear signal
+        to: passenger_conductor_true_ending
+
+  passenger_conductor_roll_call:
+    text: >
+      The conductor walks the aisle one last time, not punching tickets, only
+      touching each open pole and calling the doors clear. The answered
+      passengers repeat him in their own voices: clear for the child with both
+      hands on the frame, clear for the newspaper woman with her transfer
+      folded safe, clear for Mara listening from the speaker without having to
+      carry the count alone. By the time he reaches the first seat, his signal
+      sounds less like permission than release.
+    choices:
+      - id: pull_release_after_conductor_roll_call
+        label: Pull the release after the conductor's final clear call
         to: passenger_conductor_true_ending
 
   passenger_gathered_intercom:

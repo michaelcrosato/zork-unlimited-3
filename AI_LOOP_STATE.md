@@ -12,66 +12,65 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve normal-play discovery of the lunch-tin passenger
-  payoff from `passenger_answers`.
-- Why this matters: The lunch-tin intercom was reachable and covered, but the
-  previous 100-run random evidence sample missed it because normal play had to
-  route through the broader `passenger_farewell` fork before choosing the
-  lunch-tin-paced branch. Giving players a direct, in-fiction count option from
-  the answered-name scene makes that payoff easier to find without adding new
-  endings or weakening the existing passenger routes.
+- Main objective: Give the conductor passenger route a distinct final roll-call
+  payoff before its ending.
+- Why this matters: Core route guidance and ending discovery are healthy, so the
+  best current value is story depth on strong passenger paths. The conductor
+  route already lets another worker hold the line, but unlike the lunch-tin,
+  mitten, newspaper, and keepsake routes it had no optional final roll-call beat
+  before the release. Adding one makes the conductor path feel equally complete
+  without changing its ending or weakening the direct release.
 - Tasks:
-  - Add a direct `passenger_answers` choice that lets the lunch-tin worker
-    count the answered passengers aboard.
-  - Reuse the existing `steadied_lunch_tin_worker` flag so the route lands in
-    `passenger_lunch_tin_intercom` rather than creating another parallel scene.
-  - Add regression coverage for the new choice label, flag effects, intercom,
-    and full-score helped-passenger ending.
-  - Run focused tests, validation, random sampling, full health,
-    evidence-only `ai:cycle`, and a real CLI playthrough through the new
-    shortcut.
+  - Add an optional `passenger_conductor_roll_call` scene from
+    `passenger_conductor_intercom`.
+  - Preserve the direct conductor release path for players who do not want the
+    extra beat.
+  - Reuse `heard_final_roll_call` so the new scene behaves like the other
+    optional final roll-call branches.
+  - Add regression coverage for the new choice, flag effect, conductor
+    roll-call text, and full-score conductor ending.
+  - Run focused tests, validation, full health, evidence-only `ai:cycle`, and a
+    real CLI playthrough through the new branch.
 - Evidence:
-  - Added `let_lunch_tin_worker_keep_count`, visible from
-    `passenger_answers`, which routes to `train_car` while setting
-    `helped_passengers_gather` and `steadied_lunch_tin_worker`.
-  - Focused story-path test passed with 96 tests after adding the direct-route
-    regression.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 77 scenes,
-    12 endings, and all 77 reachable.
-  - A focused 250-run random sample ended every run, visited all 77 scenes
-    including `passenger_lunch_tin_intercom`, kept best score 100/100, and
-    averaged 79.94.
+  - Added `passenger_conductor_roll_call`, reached by choosing
+    `hear_final_conductor_roll_call` from `passenger_conductor_intercom`.
+  - Preserved the original direct conductor release choice
+    `pull_release_after_conductor_clearance`.
+  - Focused story-path test passed with 96 tests after adding assertions for
+    the new conductor roll-call branch and the preserved direct branch.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 78 scenes,
+    12 endings, and all 78 reachable.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `follow_conductor_signal_to_third_car` ->
+    `hear_final_conductor_roll_call` ->
+    `pull_release_after_conductor_roll_call` to
+    `passenger_conductor_true_ending` at 100/100 with no objectives.
   - `npm run health` passed with formatting, TypeScript, 117 tests,
     validation, and coverage playtest.
-  - Validation reports 77 scenes, 12 endings, and all 77 reachable.
-  - Coverage playtest visited all 77 scenes, including both
-    `passenger_gathered_intercom` and `passenger_lunch_tin_intercom`, with best
-    score 100/100 and average score 99.57.
+  - Health coverage playtest visited all 78 scenes, including
+    `passenger_conductor_roll_call`, with best score 100/100 and average score
+    99.59.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T19-19-59-259Z.md`; its 100-run random
-    sample ended every run, visited `passenger_lunch_tin_intercom`, had no
-    unvisited scenes, kept best score 100/100, and averaged 78.25.
-  - Manual CLI play followed `listen_to_passenger_answers` ->
-    `let_lunch_tin_worker_keep_count` -> `listen_to_lunch_tin_worker` ->
-    `hear_final_lunch_tin_roll_call` -> `pull_release_after_final_roll_call`
-    to `passenger_helped_true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T19-31-02-304Z.md`; its health checks
+    passed, MCP validation reported 78 reachable scenes, MCP random visited the
+    new `passenger_conductor_roll_call`, and MCP coverage visited all 78 scenes.
 - Playtest notes:
-  - The new direct option reads naturally after the passengers answer roll
-    call: the player can move from named people to the worker's practical
-    count without detouring through the broader platform farewell.
-  - The existing lunch-tin intercom and final roll-call epilogue still carry
-    the payoff cleanly into `passenger_helped_true_ending`.
-  - The broader `passenger_farewell` and generic gathered-passenger intercom
-    remain reachable for players who explore from `passenger_platform`.
-  - No bugs found in focused tests, full health, evidence cycle, or manual CLI
-    play.
-- Follow-up: Review whether the answer-scene choice list now has one too many
-  passenger-specific branches, or whether the extra agency improves pacing
-  enough to keep.
+  - The new conductor scene makes the borrowed worker signal feel like a final
+    act instead of only a pre-release instruction.
+  - The route now mirrors the other passenger-specific paths: intercom, optional
+    final roll call, then tailored ending.
+  - The direct release remains available and still reaches
+    `passenger_conductor_true_ending` cleanly.
+  - No bugs found in focused tests, validation, full health, evidence cycle, or
+    manual CLI play.
+- Follow-up: The 100-run random report generated by `ai:cycle` missed the new
+  optional scene while the MCP 250-run random and coverage runs reached it. Watch
+  whether this should remain an optional depth beat or receive a more attractive
+  label later.
 - Risks:
-  - Adding another attractive branch at `passenger_answers` may slightly dilute
-    the conductor and newspaper routes, though automated coverage and manual
-    play still show all branches remain healthy.
+  - Another optional final roll-call scene adds graph surface area; coverage and
+    regression tests cover it, but future route additions should avoid making
+    the third-car choice list feel repetitive.
 
 ## Last Completed Cycle
 

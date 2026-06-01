@@ -2215,9 +2215,31 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Pull the release on his clear");
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_conductor_roll_call",
       "pull_release_after_conductor_clearance"
     ]);
 
+    const conductorIntercomState = state;
+
+    state = choose(story, conductorIntercomState, "hear_final_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    expect(observation.scene.text).toContain("not punching tickets");
+    expect(observation.scene.text).toContain("clear for Mara");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.text).toContain("conductor's clear signal");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = conductorIntercomState;
     state = choose(story, state, "pull_release_after_conductor_clearance");
     observation = observe(story, state);
 
