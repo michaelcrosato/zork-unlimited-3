@@ -11,49 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Smooth the fully prepared gate-control route into the signal
-  booth.
-- Why this matters: The latest adaptive route reached the lit platform with the
-  fuse, map, token, and badge already gathered, then stopped before the ledger
-  sequence. When the access plate is open and every signal-booth tool is in
-  hand, splitting fuse installation and token insertion into two prompts adds a
-  low-value beat on the main route.
+- Main objective: Make the optional passenger manifest pay off before the final
+  train car.
+- Why this matters: Route metrics are healthy and the manifest already changes
+  the ending, so the highest-value next improvement is emotional continuity. A
+  player who reads the kept-passenger manifest should see those passengers begin
+  to release when Mara's ledger row is cleared, not only after the emergency
+  release is pulled.
 - Tasks:
-  - Add a combined gate-control action for players carrying the fuse, token,
-    and map.
-  - Preserve the existing fuse-only install path for players still missing the
-    token or map.
-  - Add regression coverage for both prepared and underprepared gate-control
-    states.
+  - Add a manifest-specific ledger-clear action gated by
+    `read_passenger_manifest`.
+  - Keep the existing Mara-only `mara_released` aftermath for players who skip
+    the manifest.
+  - Add regression coverage for the new manifest aftermath route and update
+    existing manifest true-ending paths.
   - Run focused tests, full health, and an actual playthrough through the new
-    route.
+    branch.
 - Evidence:
-  - Added `install_fuse_and_insert_token`, available from `gate_control` when
-    the player has the fuse, map, and token, routing directly to
-    `signal_booth` while setting `platform_lit`.
-  - Narrowed `install_fuse_from_gate_control` so it remains available only when
-    the player has the fuse but still lacks the map or token.
-  - Updated story path coverage for the fully prepared direct signal-booth
-    route and the token-missing fuse-only route.
-  - `npm test -- tests/story-paths.test.ts` passed with 43 tests.
-  - `npm run health` passed with formatting, TypeScript, 61 tests,
-    validation, and coverage playtest.
-  - Manual MCP route through `inspect_gate_control`,
-    `install_fuse_and_insert_token`, `read_passenger_manifest`, and
-    `pull_release_with_manifest` reached `passenger_true_ending` at 100/100.
+  - Added `passengers_released`, reached only when the player read
+    `passenger_manifest` before clearing Mara's ledger row.
+  - Split the ledger-clear choice so non-manifest players still use
+    `mark_mara_clear_from_ledger` and manifest readers use
+    `clear_manifest_and_mara_from_ledger`.
+  - Updated manifest true-ending regressions to route through
+    `passengers_released` and added a focused test for the new aftermath beat.
+  - `npm test -- tests/story-paths.test.ts` passed with 44 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 34 scenes,
+    6 endings, and all 34 reachable.
+  - Random playtest, 100 runs: all ended, all 34 scenes visited, best score
+    100/100, average score 70.7.
+  - Coverage playtest, 988 generated runs: 960 ended, 0 unfinished, all 34
+    scenes visited, best score 100/100, average score 72.75.
+  - `npm run health` passed with formatting, TypeScript, 62 tests, validation,
+    and coverage playtest.
+  - Manual CLI route through `install_fuse_and_insert_token`,
+    `read_passenger_manifest`, `clear_manifest_and_mara_from_ledger`,
+    `board_after_releasing_passengers`, `listen_to_mara_intercom`, and
+    `pull_release_after_manifest_goodbye` reached `passenger_true_ending` at
+    100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
     MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
     and an actual MCP true-ending playthrough at 100/100.
-  - The regenerated adaptive route now reaches `signal_booth` instead of
-    stopping at `lit_platform`, with the combined action visible in the
-    transcript.
-- Follow-up: The adaptive route still stops before the ending because the
-  exploratory route has a 30-step cap; next work can either continue smoothing
-  the ledger sequence or improve exploratory route depth/reporting.
+  - The evidence report's adaptive exploratory route now stops at
+    `signal_booth` with badge, fuse, map, token, and platform power restored.
+- Follow-up: The manifest route now has stronger payoff. The next useful work
+  is either smoothing the `signal_booth` choice focus for fully prepared
+  exploratory players or improving adaptive route/report depth so playthroughs
+  critique pacing after the booth.
 - Risks:
-  - This bypasses the lit-platform prompt for one prepared gate-control path,
-    so tests must keep underprepared lit-platform recovery and escape routes
-    available.
+  - The manifest branch adds another late-game scene and choice id, so future
+    route tests need to keep both the manifest and non-manifest ledger clears
+    covered.
 
 ## Last Completed Cycle
 

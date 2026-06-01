@@ -743,8 +743,8 @@ describe("demo story critical paths", () => {
 
     for (const choiceId of [
       "inspect_signal_ledger",
-      "mark_mara_clear_from_ledger",
-      "board_after_clearing_mara",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
       "pull_release_with_manifest"
     ]) {
       state = choose(story, state, choiceId);
@@ -778,8 +778,8 @@ describe("demo story critical paths", () => {
       "read_passenger_manifest",
       "return_to_signal_ledger_from_manifest",
       "inspect_signal_ledger",
-      "mark_mara_clear_from_ledger",
-      "board_after_clearing_mara",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
       "listen_to_mara_intercom"
     ]) {
       state = choose(story, state, choiceId);
@@ -1271,6 +1271,54 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release");
+  });
+
+  it("adds a manifest-specific release beat after clearing Mara's ledger entry", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "inspect_signal_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(choiceIds).toEqual(["clear_manifest_and_mara_from_ledger"]);
+
+    state = choose(story, state, "clear_manifest_and_mara_from_ledger");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.scene.text).toContain("every tiny stamped door");
+    expect(observation.state.flags.freed_mara).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(choiceIds).toEqual(["board_after_releasing_passengers"]);
+
+    state = choose(story, state, "board_after_releasing_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
   });
 
   it("keeps badge-less ledger states recoverable", async () => {

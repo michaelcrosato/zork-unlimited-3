@@ -574,7 +574,19 @@ scenes:
         label: Enter Mara's badge number and clear her name
         to: mara_released
         requires:
-          item: badge
+          all:
+            - item: badge
+            - notFlag: read_passenger_manifest
+        effects:
+          set:
+            freed_mara: true
+      - id: clear_manifest_and_mara_from_ledger
+        label: Enter Mara's badge number and open every manifest door
+        to: passengers_released
+        requires:
+          all:
+            - item: badge
+            - flag: read_passenger_manifest
         effects:
           set:
             freed_mara: true
@@ -593,6 +605,18 @@ scenes:
     choices:
       - id: board_after_clearing_mara
         label: Board the third car while Mara holds the line
+        to: train_car
+
+  passengers_released:
+    text: >
+      When Mara's badge number touches the ledger, every tiny stamped door in
+      the manifest clicks open at once. The booth fills with ordinary sounds:
+      a lunch tin latch, a child's laugh, umbrellas shaking rain from their
+      ribs. Mara breathes through the speaker and says, "Third car. I can hold
+      the line steady while they find the morning."
+    choices:
+      - id: board_after_releasing_passengers
+        label: Board the third car as the platform fills
         to: train_car
 
   train_car:
