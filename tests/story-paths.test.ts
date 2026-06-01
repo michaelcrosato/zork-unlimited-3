@@ -296,8 +296,7 @@ describe("demo story critical paths", () => {
       "take_fuse",
       "take_badge",
       "close_locker",
-      "return_to_tunnel",
-      "inspect_clock",
+      "go_to_stopped_clock",
       "take_token",
       "open_service_door"
     ]) {
@@ -800,6 +799,44 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds).toContain("take_map");
     expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).toContain("go_to_stopped_clock");
+  });
+
+  it("lets token-informed players go straight from the service room to the stopped clock", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(choiceIds).toContain("go_to_stopped_clock");
+    expect(choiceIds).not.toContain("return_to_tunnel");
+
+    state = choose(story, state, "go_to_stopped_clock");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(choiceIds).toEqual(["take_token"]);
+
+    state = choose(story, state, "take_token");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toContain("token");
+    expect(choiceIds).not.toContain("inspect_clock");
   });
 
   it("lets prepared players continue directly from the inspected gate control to the signal booth", async () => {
@@ -895,16 +932,16 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.platform_lit).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.state.inventory).not.toContain("token");
-    expect(choiceIds).toContain("return_to_tunnel");
+    expect(choiceIds).toContain("go_to_stopped_clock");
+    expect(choiceIds).not.toContain("return_to_tunnel");
     expect(choiceIds).not.toContain("return_to_lit_platform");
 
-    state = choose(story, state, "return_to_tunnel");
+    state = choose(story, state, "go_to_stopped_clock");
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("tunnel");
-    expect(choiceIds).toContain("inspect_clock");
-    expect(choiceIds).not.toContain("follow_arrows_to_lit_platform");
+    expect(observation.scene.id).toBe("clock");
+    expect(choiceIds).toEqual(["take_token"]);
   });
 
   it("still lets token-uninformed players revisit the lit platform for clues", async () => {
@@ -991,7 +1028,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.has_light).toBe(true);
   });
 
-  it("lets players return from the service room to recover the token clue", async () => {
+  it("focuses players on the stopped clock after the service room reveals the token clue", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -1000,15 +1037,15 @@ describe("demo story critical paths", () => {
       "open_service_door",
       "read_personnel_file",
       "keep_mara_file",
-      "return_to_tunnel"
+      "go_to_stopped_clock"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     const observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("tunnel");
-    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_clock");
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
   });
 
   it("makes the clock token the only clock action after Mara's file explains it", async () => {
@@ -1020,8 +1057,7 @@ describe("demo story critical paths", () => {
       "open_service_door",
       "read_personnel_file",
       "keep_mara_file",
-      "return_to_tunnel",
-      "inspect_clock"
+      "go_to_stopped_clock"
     ]) {
       state = choose(story, state, choiceId);
     }

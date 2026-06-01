@@ -11,37 +11,84 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Reduce service-room/tunnel churn after the player learns the
+  signal token is hidden in the stopped clock.
+- Why this matters: Current evidence shows ideal endings are discoverable, but
+  random suspicious paths still bounce repeatedly through the service room,
+  tunnel, and platform before recovering the token. Once a clue names the
+  stopped clock, the service room should offer a direct actionable route
+  instead of a generic tunnel detour.
+- Tasks:
+  - Add a direct `go_to_stopped_clock` choice from the service room when
+    `knows_token_location` is true and the token has not been recovered.
+  - Hide the generic tunnel return while the explicit clock-token objective is
+    active, then let normal tunnel navigation resume after the token is found.
+  - Add regression coverage for clue-informed direct token recovery and the
+    lit-platform recovery route.
+  - Run focused tests, full health, an actual CLI/MCP playthrough, and
+    commit/push if green.
+- Evidence:
+  - Added `go_to_stopped_clock`, a service-room choice shown only when
+    `knows_token_location` is true and the token has not been recovered.
+  - Hid `return_to_tunnel` while that explicit clock-token objective is active,
+    preventing the known-token route from bouncing through the generic tunnel
+    hub.
+  - Normal tunnel navigation remains available before the token clue is known
+    and after the token is recovered.
+  - Added story-path regression coverage for direct service-room clock routing,
+    gate-control clue recovery, lit-platform recovery, and updated focused
+    token paths.
+  - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
+  - `npm test -- tests/story-paths.test.ts` passed with 71 tests.
+  - A 250-run random sample visited all 53 scenes, had 1 unfinished run, best
+    score 100/100, average score 80.02, and 184 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 92 tests, validation,
+    and coverage playtest.
+  - Health coverage playtest visited all 53 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 96.48, and 37332 max-score runs.
+  - Manual CLI play used `go_to_stopped_clock` after reading Mara's personnel
+    file and reached `true_ending` at 100/100.
+- Playtest notes:
+  - The direct clock choice made the personnel-file clue immediately actionable
+    without requiring a service-room-to-tunnel-to-clock detour.
+  - After taking the token, the route naturally returned to the tunnel and
+    reopened the service room, so the player still had to gather the map,
+    release route, fuse, and badge.
+  - The final state had no lingering objectives and retained all five key
+    inventory items.
+  - No bugs surfaced in the focused route.
+- Follow-up: Recheck random playtest unfinished/loop pressure after the direct
+  clock route is available from the service-room hub.
+- Risks:
+  - A direct clock choice can make the map/file clues feel more like task-list
+    routing than exploration, so it remains gated behind explicit token clues
+    and only replaces `return_to_tunnel` while token recovery is the active
+    blocker.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Added a final gathered-passenger intercom beat before the helped
+  manifest ending.
 - Main objective: Add a final gathered-passenger intercom beat before the
   helped manifest ending.
-- Why this matters: Core route metrics are healthy, so the best next
-  improvement is richer payoff on the strongest successful route. Players who
-  help the kept passengers gather currently move from the third car straight to
-  the final release; a short optional intercom beat lets the crowd answer Mara
-  together before the player opens every door.
-- Tasks:
-  - Add a one-time optional `passenger_gathered_intercom` scene from the
-    helped-passenger train car.
-  - Keep the direct helped-passenger release available for players who want to
-    finish immediately.
-  - Add regression coverage for the new beat and its final release.
-  - Run focused tests, full health, an actual CLI playthrough, and commit/push
-    if green.
+- Why this matters: Core route metrics were healthy, so the best next
+  improvement was richer payoff on the strongest successful route. Players who
+  help the kept passengers gather previously moved from the third car straight
+  to the final release; a short optional intercom beat lets the crowd answer
+  Mara together before the player opens every door.
 - Evidence:
   - Added `passenger_gathered_intercom`, reached from the helped-passenger
     train car after the player gathers the released crowd.
-  - The new `listen_to_gathered_passengers` choice sets
+  - The `listen_to_gathered_passengers` choice sets
     `heard_gathered_passengers`, then flows directly to
     `passenger_helped_true_ending`.
   - The direct `pull_release_after_gathering_passengers` route remains
     available from the train car.
   - Added story-path regression coverage for the new intercom beat, final
     release, and continued direct helped-ending release access.
-  - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
-  - `npm test -- tests/story-paths.test.ts` passed with 70 tests.
   - `npm run health` passed with formatting, TypeScript, 91 tests,
     validation, and coverage playtest.
-  - Health coverage playtest visited all 53 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 96.35, and 37332 max-score runs.
   - Manual CLI play took the manifest handoff, passenger answers, passenger
     gathering, new gathered-passenger intercom, and reached
     `passenger_helped_true_ending` at 100/100.
@@ -50,16 +97,9 @@ preserving normal-play true-ending discoverability.
     instead of leaving Mara as the only voice of coordination.
   - The helped route still has a direct release choice, so the extra scene is
     player-paced rather than mandatory.
-  - The final state had no lingering objectives and retained all five key
-    inventory items.
-  - No bugs surfaced in the focused route.
-- Follow-up: Watch whether the helped route feels too long after several
-  optional manifest beats; the direct release remains available to keep pacing
-  under player control.
 - Risks:
-  - Another optional late-game beat can slow careful routes, so tests and
-    playthrough should confirm direct release still works and no final choices
-    loop.
+  - Another optional late-game beat can slow careful routes, so direct release
+    access remains covered by regression tests.
 
 ## Last Completed Cycle
 

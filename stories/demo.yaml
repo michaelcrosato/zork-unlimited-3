@@ -246,14 +246,25 @@ scenes:
           set:
             knows_platform: true
             platform_lit: true
+      - id: go_to_stopped_clock
+        label: Go straight to the stopped clock for the signal token
+        to: clock
+        requires:
+          all:
+            - flag: knows_token_location
+            - notItem: token
       - id: return_to_tunnel
         label: Return to the tunnel
         to: tunnel
         requires:
-          any:
-            - notItem: token
-            - notItem: fuse
-            - notItem: badge
+          all:
+            - any:
+                - notItem: token
+                - notItem: fuse
+                - notItem: badge
+            - any:
+                - item: token
+                - notFlag: knows_token_location
       - id: go_to_platform
         label: Go to Platform 13
         to: platform
