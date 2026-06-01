@@ -390,6 +390,33 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("lit_platform");
   });
 
+  it("focuses fully equipped service-room players on Platform 13", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(choiceIds).toContain("go_to_platform");
+    expect(choiceIds).not.toContain("return_to_tunnel");
+  });
+
   it("steers token carriers toward the signal booth from the lit platform", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

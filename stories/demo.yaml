@@ -188,6 +188,12 @@ scenes:
       - id: return_to_tunnel
         label: Return to the tunnel
         to: tunnel
+        requires:
+          any:
+            - notItem: map
+            - notItem: token
+            - notItem: fuse
+            - notItem: badge
       - id: go_to_platform
         label: Go to Platform 13
         to: platform

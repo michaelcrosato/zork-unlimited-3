@@ -11,34 +11,56 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce repeated forced-gate warning loops without removing the
-  bad ending or meaningful underprepared exploration.
-- Outcome: After players force the rusted gate and choose to back away, the
+- Main objective: Reduce late service-room wandering once players have assembled
+  the map, signal token, platform fuse, and Mara's badge.
+- Outcome: The service-room hub now hides the generic tunnel return after all
+  four true-ending tools are collected, leaving Platform 13 as the clear forward
+  route while preserving earlier tunnel recovery.
+- Evidence:
+  - Added a story-path regression test proving a fully equipped service-room
+    state keeps `go_to_platform` available and removes `return_to_tunnel`.
+  - `npm test -- tests/story-paths.test.ts` passes with 19 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: all scenes visited, 249/250 ended, `true_ending`
+    reached 27 times, average score 47.14.
+  - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
+    samples remain, `true_ending` reached 20 times, average score 48.24.
+  - `npm run health` passes with 27 tests and coverage playtest visiting all
+    scenes.
+  - Manual CLI route collected the map, token, fuse, and badge, confirmed the
+    service room no longer offered `return_to_tunnel`, then reached
+    `true_ending` at 90/100 while intentionally skipping the radio clue.
+- Follow-up: The service-room route still offers optional radio/file inspection
+  after the player is mechanically ready. Consider state-aware labels or scene
+  variants that make those choices feel like deliberate lore/score pursuits
+  rather than competing next-step commands.
+- Risks:
+  - Fully equipped players can no longer return to the clock from the service
+    room, but they already have the token; future content that adds late tunnel
+    interactions should relax or replace this requirement.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: After players force the rusted gate and choose to back away, the
   platform records that caution and no longer offers the same force-gate warning
   loop on later visits.
 - Evidence:
   - Added a story-path regression test proving `force_gate` disappears after
     `back_away_from_gate`, while the warning still preserves the immediate
     `force_gate_anyway` bad-ending route.
-  - `npm test -- tests/story-paths.test.ts` passes with 18 tests.
-  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - `npm test -- tests/story-paths.test.ts` passed with 18 tests.
+  - Validation passed: 23 scenes, 5 endings, 23 reachable scenes.
   - Random playtest, 250 runs: all scenes visited, unfinished dropped from 2 to
     1 in the deterministic sample, `bad_ending` dropped from 65 to 54,
     `true_ending` reached 32 times, average score rose to 47.88.
   - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
     samples remain, `true_ending` reached 20 times, average score 48.24.
-  - `npm run health` passes with 26 tests and coverage playtest visiting all
+  - `npm run health` passed with 26 tests and coverage playtest visiting all
     scenes.
   - Manual CLI route forced the gate, backed away, confirmed `force_gate` was
     removed from the next platform visit, then continued to `true_ending` at
     100/100.
-- Follow-up: The remaining random unfinished sample is a broader
-  service-room/platform/tunnel wander after the player has many tools but still
-  postpones map/train actions. Consider making `return_to_service_room` less
-  prominent once the player has the fuse, badge, token, and map.
-- Risks:
-  - If future content expects the gate warning to be repeatable, it should check
-    or clear `backed_away_from_gate` intentionally.
 
 ## Last Completed Cycle
 

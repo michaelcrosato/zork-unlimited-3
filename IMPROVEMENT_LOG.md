@@ -4,6 +4,84 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Fully Equipped Service-Room Focus
+
+### Current Plan
+
+- Main objective: Reduce late service-room wandering once players have assembled
+  the core true-ending tools.
+- Why this matters: The current evidence still pointed to service-room,
+  platform, and tunnel wandering after players had enough equipment to make
+  progress. The generic tunnel return competed with the correct platform route
+  even when the tunnel had no remaining required pickup.
+- Tasks:
+  - Hide `return_to_tunnel` from the service room after the player has the map,
+    token, fuse, and badge.
+  - Preserve earlier tunnel recovery for players still missing any of those
+    tools.
+  - Add regression coverage, run health, and manually play the focused route.
+- Risks:
+  - This narrows fully equipped navigation. Future late-game tunnel content
+    should add a new explicit route or relax the requirement.
+
+### Work Completed
+
+- Changes made:
+  - Added an item-based requirement to the service-room `return_to_tunnel`
+    choice so it disappears once all four core tools are held.
+  - Added a story-path regression test for the fully equipped service-room
+    choice list.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused pacing and objective-surfacing change.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 170 --strategy coverage --summary --json`
+  - `npm run health`
+  - Manual CLI route through notice, token, map, locker, focused service room,
+    platform lighting, signal booth, ledger clear, and true ending.
+- Quantitative metrics:
+  - Story-path tests: 19 passing.
+  - Health: format check, lint, 27 tests, validation, and coverage playtest all
+    pass.
+  - Random playtest, 250 runs: 249 ended, 1 unfinished, all scenes visited,
+    `true_ending` reached 27 times, average score 47.14.
+  - Coverage playtest, 170 runs: 152 ended, 18 unfinished, all scenes visited,
+    `true_ending` reached 20 times, average score 48.24.
+  - Manual CLI route: the fully equipped service room offered `go_to_platform`
+    but not `return_to_tunnel`, then reached `true_ending` at 90/100 while
+    intentionally skipping the radio clue.
+- What worked:
+  - The service-room hub no longer invites a low-value return to the clock after
+    the token has already been collected.
+  - Earlier token and tool recovery routes remain available because the tunnel
+    return only disappears when all four core tools are present.
+- What felt bad/confusing:
+  - The ready-state service room still offers optional radio and file actions,
+    so a future pass could make those read as deliberate lore/score routes
+    instead of equally urgent navigation choices.
+- Bugs found:
+  - No runtime bugs.
+
+### Next Iteration
+
+- Highest-priority next task: Improve ready-state service-room wording or
+  choice labels.
+- Reason: The main navigation loop is trimmed, but optional lore choices still
+  compete visually with the platform route after the player has enough gear.
+- Planned action:
+  - Add state-aware labels or a small ready-state scene variant that frames the
+    radio/file as optional before heading to Platform 13.
+
 ## 2026-06-01 - Locker Loop Trim
 
 ### Current Plan
