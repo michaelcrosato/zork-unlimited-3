@@ -11,6 +11,61 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make Mara's manifest-handoff intercom easier to discover in
+  normal play.
+- Why this matters: Random play can miss `mara_manifest_handoff_intercom`
+  because players who watch Mara open the manifest have to return to the
+  platform, cross into the passenger crowd, and then board before the
+  handoff-specific third-car payoff appears. A direct board choice keeps the
+  careful handoff action connected to its intercom reward.
+- Tasks:
+  - Add a direct third-car choice from `mara_manifest_handoff`.
+  - Preserve the existing return-to-opened-doors route for players who still
+    want passenger-answer or gathering beats.
+  - Add regression coverage for direct handoff-to-intercom routing.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    CLI or MCP playthrough.
+- Evidence:
+  - Added `board_after_mara_manifest_handoff`, a direct route from Mara's
+    opened-door handoff to the third car.
+  - The existing `return_from_mara_manifest_handoff` route remains available
+    for players who want to listen to passenger answers or gather the released
+    crowd.
+  - Added story-path regression coverage that verifies direct handoff boarding
+    exposes `listen_to_mara_manifest_handoff_intercom` beside the direct
+    manifest release.
+  - Focused story-path tests passed with 86 tests.
+  - Validation passed with 66 scenes, 10 endings, and all 66 reachable.
+  - A 250-run random sample ended 250/250 runs, visited all 66 scenes including
+    `mara_manifest_handoff_intercom`, kept best score 100/100, averaged 79.4,
+    and reached max score in 182 runs.
+  - A 100-run coverage sample visited all 66 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.63, and 105408 max-score
+    runs.
+  - `npm run health` passed with formatting, TypeScript, 107 tests,
+    validation, and coverage playtest.
+  - Manual CLI play watched Mara open the manifest, boarded directly from the
+    handoff scene, heard the handoff-specific intercom, and reached
+    `passenger_true_ending` at 100/100 with no objectives.
+- Playtest notes:
+  - The new direct choice keeps the emotional beat contiguous: Mara calls the
+    opened doors, the player boards while she keeps calling, and the train-car
+    intercom immediately pays that off.
+  - The platform-return route still supports richer passenger exploration, so
+    the change improves discoverability without removing the slower route.
+  - No validation, score, completion, or coverage regression surfaced.
+- Follow-up: Recheck random playtest samples for whether
+  `mara_manifest_handoff_intercom` appears more naturally without reducing
+  passenger-route variety.
+- Risks:
+  - The new direct choice could compete with passenger-platform exploration;
+    keep the return route available and verify random ending spread remains
+    healthy.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a handoff-specific intercom payoff after watching Mara
   open the manifest doors.
 - Why this matters: Players who choose to watch Mara personally call the opened

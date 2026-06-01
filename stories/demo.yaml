@@ -861,6 +861,9 @@ scenes:
       handed from name to name. By the time she reaches her own row, the
       speaker is full of people breathing with her instead of waiting for her.
     choices:
+      - id: board_after_mara_manifest_handoff
+        label: Board the third car while Mara keeps calling names
+        to: train_car
       - id: return_from_mara_manifest_handoff
         label: Return to the opened manifest doors
         to: passengers_released

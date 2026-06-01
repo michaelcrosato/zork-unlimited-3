@@ -1542,6 +1542,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_handoff");
     expect(observation.scene.text).toContain("steadiness can be handed from name to name");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "board_after_mara_manifest_handoff",
+      "return_from_mara_manifest_handoff"
+    ]);
 
     state = choose(story, state, "return_from_mara_manifest_handoff");
     observation = observe(story, state);
@@ -1551,6 +1555,52 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("watch_mara_open_manifest");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
+  });
+
+  it("lets Mara's manifest handoff lead directly to its third-car intercom", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "board_after_mara_manifest_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_manifest_handoff_intercom",
+      "pull_release_with_manifest"
+    ]);
+
+    state = choose(story, state, "listen_to_mara_manifest_handoff_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.scene.text).toContain("called every stamped door");
   });
 
   it("pays off Mara's manifest handoff before a direct passenger release", async () => {
