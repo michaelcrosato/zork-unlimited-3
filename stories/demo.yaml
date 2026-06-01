@@ -414,6 +414,12 @@ scenes:
       - id: return_to_service_room
         label: Return to the service room and prepare
         to: service_room
+        requires:
+          any:
+            - notItem: map
+            - notItem: token
+            - notItem: fuse
+            - notItem: badge
         effects:
           set:
             left_unprepared_platform: true

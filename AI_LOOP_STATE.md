@@ -11,55 +11,54 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Keep the stairwell escape-warning route discoverable after
-  players inspect Mara's posters.
-- Why this matters: Cycle evidence showed `escape_ending` and
-  `mara_stairwell_call` were reachable but relatively rare in normal random
-  play. Inspecting the posters is a natural hesitation beat on the lit platform,
-  but it previously hid the stairwell route. Players who still lack the signal
-  token should be able to flee, hear Mara's final warning, and recover directly
-  through the stopped-clock clue.
+- Main objective: Remove the empty service-room loop for fully prepared
+  unlit-platform players.
+- Why this matters: Cycle evidence still showed occasional random unfinished
+  runs. Replaying a 500-run sample exposed a concrete loop where players who
+  already held the map, token, fuse, and badge could keep bouncing between the
+  unlit platform and the service room even though no preparation remained.
 - Tasks:
-  - Allow `flee_platform` from the lit platform whenever the token is missing,
-    even after the poster beat has been inspected.
-  - Add regression coverage for the poster-to-stairwell-to-clock recovery route.
-  - Update the existing poster regression so posters remain one-time while the
-    stairwell hesitation route stays available.
-  - Run focused tests, random playtest sampling, full health, and an actual CLI
-    playthrough.
+  - Gate `return_to_service_room` on the unlit platform so it appears only while
+    at least one core prep item is missing.
+  - Add regression coverage proving fully prepared platform players see
+    `install_fuse` without another empty prep-room return.
+  - Run focused tests, validation, random playtest sampling, full health, and an
+    actual CLI playthrough.
 - Evidence:
-  - `flee_platform` now requires only that the signal token is still missing,
-    so the stairwell remains visible after `inspect_mara_posters`.
-  - Added story-path regression coverage that inspects posters, returns to the
-    lit platform, flees to the stairwell, listens to Mara, and lands directly at
-    the stopped clock with only `take_token` available.
-  - Updated the existing poster regression to assert `inspect_mara_posters`
-    remains one-time while `flee_platform` remains available.
+  - `return_to_service_room` from `platform` now requires a missing map, token,
+    fuse, or badge.
+  - Added story-path regression coverage for a fully prepared platform state:
+    inventory is badge, fuse, lantern, map, token; choices include
+    `install_fuse` and `inspect_gate_control`; choices do not include
+    `return_to_service_room`.
   - Focused validation passed with 53 scenes, 7 endings, and all 53 reachable.
-  - `npm test -- tests/story-paths.test.ts` passed with 72 tests.
-  - A 250-run random sample visited all 53 scenes, including
-    `mara_stairwell_call`, with 249/250 ended, best score 100/100, average
-    score 79.36, and 181 max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 93 tests, validation,
+  - `npm test -- tests/story-paths.test.ts` passed with 73 tests.
+  - A 500-run random sample improved from 497/500 ended to 498/500 ended and
+    removed the prior repeated platform/service-room max-step loop. Remaining
+    unfinished samples were late-route cases at `passenger_gathered_intercom`
+    and `passenger_answers`, both close to successful endings.
+  - `npm run health` passed with formatting, TypeScript, 94 tests, validation,
     and coverage playtest.
   - Health coverage playtest visited all 53 scenes with 0 unfinished completed
     routes, best score 100/100, average score 96.31, and 37332 max-score runs.
-  - Manual CLI play followed the posters -> stairwell warning -> clock recovery
-    route and reached `passenger_helped_true_ending` at 100/100.
+  - Manual CLI play confirmed the fully prepared unlit platform now offers only
+    `inspect_gate_control` and `install_fuse`, then continued through the signal
+    booth to `true_ending` at 100/100.
 - Playtest notes:
-  - The poster scene now strengthens the emotional reason to hesitate without
-    closing off the stairwell pressure valve.
-  - Mara's stairwell line cleanly converts panic into an actionable stopped-clock
-    objective.
-  - The route still supports the escape ending because `leave_after_stairwell_call`
-    remains available.
-  - No bugs surfaced in the focused route.
-- Follow-up: Investigate the remaining occasional random unfinished run and
-  decide whether another late-game loop needs a direct recovery route.
+  - The platform now behaves like a commitment point once the player has every
+    required tool; the next meaningful action is restoring power.
+  - Underprepared players can still return to the service room to gather missing
+    supplies.
+  - The remaining step-limit pressure is not the same empty hub loop; it comes
+    from optional late manifest-route beats landing just before an ending.
+- Follow-up: Consider a later pass on late manifest-route pacing, especially
+  whether `passenger_answers` should offer a more direct release route after the
+  passengers answer.
 - Risks:
-  - Making the stairwell available after posters slightly increases escape-route
-    branching from the lit platform, but it is still gated by the missing token
-    and preserves the recovery path.
+  - Fully prepared players can no longer voluntarily retreat from the unlit
+    platform to the service room, but at that point the service room has no
+    remaining critical preparation and the player can still inspect the gate
+    control before installing the fuse.
 
 ## Last Completed Cycle
 

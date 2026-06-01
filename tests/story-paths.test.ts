@@ -511,6 +511,35 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("board_train");
   });
 
+  it("keeps fully prepared platform players from looping back to an empty prep room", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(observation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);
+    expect(choiceIds).toContain("install_fuse");
+    expect(choiceIds).toContain("inspect_gate_control");
+    expect(choiceIds).not.toContain("return_to_service_room");
+  });
+
   it("removes stale map escape objectives once true-ending tools are gathered", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
