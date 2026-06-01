@@ -2046,8 +2046,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(choiceIds).toEqual([
-      "listen_to_gathered_passengers",
+      "listen_to_lunch_tin_worker",
       "pull_release_after_gathering_passengers"
     ]);
 
@@ -2082,8 +2083,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(choiceIds).toEqual([
-      "listen_to_gathered_passengers",
+      "listen_to_lunch_tin_worker",
       "pull_release_after_gathering_passengers"
     ]);
   });
@@ -2268,7 +2270,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "return_from_passenger_farewell"
+      "return_from_passenger_farewell",
+      "lead_gathered_passengers_without_lunch_tin_pace"
     ]);
 
     state = choose(story, state, "return_from_passenger_farewell");
@@ -2276,7 +2279,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers",
+      "listen_to_lunch_tin_worker",
       "pull_release_after_gathering_passengers"
     ]);
   });
@@ -2677,28 +2680,72 @@ describe("demo story critical paths", () => {
       "return_from_passenger_answers",
       "help_passengers_gather",
       "return_from_passenger_farewell",
-      "listen_to_gathered_passengers"
+      "listen_to_lunch_tin_worker"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_intercom");
-    expect(observation.scene.text).toContain("the old conductor answers each number");
-    expect(observation.scene.text).toContain("they can move together");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+    expect(observation.scene.text).toContain("the line counts");
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "hear_final_passenger_roll_call",
-      "pull_release_after_gathered_intercom"
+      "hear_final_lunch_tin_roll_call",
+      "pull_release_after_lunch_tin_intercom"
     ]);
 
-    state = choose(story, state, "pull_release_after_gathered_intercom");
+    state = choose(story, state, "pull_release_after_lunch_tin_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("lunch-tin worker's latch");
     expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("keeps the broader gathered-passenger intercom reachable without the lunch-tin pace", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "return_from_passenger_answers",
+      "help_passengers_gather",
+      "lead_gathered_passengers_without_lunch_tin_pace",
+      "listen_to_gathered_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("the old conductor answers each number");
+    expect(observation.scene.text).toContain("they can move together");
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_passenger_roll_call",
+      "pull_release_after_gathered_intercom"
+    ]);
   });
 
   it("adds an optional final roll call before the helped passenger ending", async () => {
@@ -2727,8 +2774,8 @@ describe("demo story critical paths", () => {
       "return_from_passenger_answers",
       "help_passengers_gather",
       "return_from_passenger_farewell",
-      "listen_to_gathered_passengers",
-      "hear_final_passenger_roll_call"
+      "listen_to_lunch_tin_worker",
+      "hear_final_lunch_tin_roll_call"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -3974,9 +4021,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).not.toContain(
       "pull_release_with_manifest"
     );
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_gathered_passengers"
-    );
+    expect(observation.choices.map((choice) => choice.id)).toContain("listen_to_lunch_tin_worker");
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_gathering_passengers"
     );
@@ -3986,7 +4031,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("already helped them find one another");
+    expect(observation.scene.text).toContain("lunch-tin worker's latch");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

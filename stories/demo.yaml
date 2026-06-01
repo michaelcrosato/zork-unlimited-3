@@ -1132,6 +1132,12 @@ scenes:
       - id: return_from_passenger_farewell
         label: Lead the gathered passengers to the third car
         to: train_car
+        effects:
+          set:
+            steadied_lunch_tin_worker: true
+      - id: lead_gathered_passengers_without_lunch_tin_pace
+        label: Lead the gathered passengers aboard together
+        to: train_car
 
   train_car:
     text: >
@@ -1256,6 +1262,22 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
+            - notFlag: matched_manifest_keepsakes
+            - notFlag: returned_lost_mitten
+            - notFlag: steadied_lunch_tin_worker
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: listen_to_lunch_tin_worker
+        label: Listen as the lunch-tin worker keeps time
+        to: passenger_lunch_tin_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - flag: steadied_lunch_tin_worker
             - notFlag: matched_manifest_keepsakes
             - notFlag: returned_lost_mitten
             - notFlag: heard_gathered_passengers
@@ -1635,6 +1657,27 @@ scenes:
         requires:
           flag: returned_lost_mitten
 
+  passenger_lunch_tin_intercom:
+    text: >
+      The lunch-tin worker reaches the third car last, because he keeps stopping
+      to count the people who fall into step behind him. His tin latch clicks
+      once for each open door, plain and steady enough that Mara stops reading
+      names and lets the sound mark time. "He carried lunch for a shift that
+      never ended," she says through the speaker. "Let that be the last thing
+      the line counts. Pull the release while they are moving together."
+    choices:
+      - id: hear_final_lunch_tin_roll_call
+        label: Hear the lunch-tin worker set the final roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_lunch_tin_intercom
+        label: Pull the release while the lunch tin keeps time
+        to: passenger_helped_true_ending
+
   passenger_mitten_intercom:
     text: >
       The child stands in the third-car doorway with both mittens pressed
@@ -1855,10 +1898,10 @@ scenes:
   passenger_helped_true_ending:
     ending: true
     text: >
-      The release opens every door at once, and the passengers move because you
-      already helped them find one another. The child with the mitten walks
-      between two adults who know his name now; the old conductor holds the
-      morning doors until the last umbrella clears the rain. Mara thanks each
+      The release opens every door at once, and the lunch-tin worker's latch
+      becomes the first ordinary sound of morning. The child with the mitten
+      walks between two adults who know his name now; the old conductor holds
+      the doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
     choices: []
 

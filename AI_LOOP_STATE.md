@@ -12,54 +12,61 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the old conductor branch its own final ending payoff.
-- Why this matters: The route already had a distinct signal and third-car
-  intercom, but it collapsed into the generic helped-passenger ending. With the
-  true-ending route healthy, a tailored ending adds meaningful character payoff
-  without changing the puzzle structure.
+- Main objective: Give the generic helped-passenger route a clearer lunch-tin
+  worker payoff before the shared helped ending.
+- Why this matters: The main and passenger true-ending routes are already
+  healthy. The remaining generic helped-passenger path begins with the warm
+  lunch tin, but its late train-car beat previously broadened out immediately.
+  Carrying that worker into the final intercom makes the route feel less like a
+  fallback and more like a character-specific payoff.
 - Tasks:
-  - Route `pull_release_after_conductor_clearance` to a new
-    `passenger_conductor_true_ending`.
-  - Count the new ending as a max-score/ideal ending in score, playtest, and AI
-    loop reporting.
-  - Add regression coverage for the conductor route and update ending-count
-    tests.
+  - Add a `passenger_lunch_tin_intercom` scene after `passenger_farewell`.
+  - Preserve the older `passenger_gathered_intercom` through an alternate
+    boarding choice so existing route texture remains reachable.
+  - Update `passenger_helped_true_ending` to acknowledge the lunch-tin worker.
+  - Add regression coverage for the new tailored path and the preserved generic
+    gathered-passenger path.
   - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
-    playthrough through the conductor branch.
+    playthrough through the lunch-tin branch.
 - Evidence:
-  - Added `passenger_conductor_true_ending`, preserving the existing conductor
-    signal and intercom but giving the old conductor a final clear-signal
-    resolution.
-  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
-    ending remains a full 100/100 ideal ending in scoring and reports.
-  - Focused story-path, playtest, and AI loop tests passed with 107 tests.
-  - `npm run health` passed with formatting, TypeScript, 115 tests,
+  - Added `passenger_lunch_tin_intercom`, reached after
+    `return_from_passenger_farewell`, where the lunch-tin latch sets the final
+    boarding rhythm before the release.
+  - Added `steadied_lunch_tin_worker` to distinguish the tailored route from
+    the broader gathered-passenger route.
+  - Added `lead_gathered_passengers_without_lunch_tin_pace` so
+    `passenger_gathered_intercom` remains reachable and intentionally tested.
+  - Focused story-path tests pass with 95 tests, including direct coverage for
+    the new lunch-tin intercom route and the preserved generic gathered route.
+  - `npm run health` passed with formatting, TypeScript, 116 tests,
     validation, and coverage playtest.
-  - Validation reports 76 scenes, 12 endings, and all 76 reachable.
-  - Coverage playtest visited all 76 scenes, including
-    `passenger_conductor_true_ending`, with best score 100/100 and average
-    score 99.49.
+  - Validation reports 77 scenes, 12 endings, and all 77 reachable.
+  - Coverage playtest visited all 77 scenes, including
+    `passenger_lunch_tin_intercom`, with best score 100/100 and average score
+    99.57.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T18-50-37-660Z.md`; its 100-run random
-    sample reached `passenger_conductor_true_ending` 8 times, ended every run,
-    kept best score 100/100, and averaged 78.25.
-  - Manual CLI play followed `ask_conductor_from_answers` ->
-    `follow_conductor_signal_to_third_car` ->
-    `pull_release_after_conductor_clearance` and reached
-    `passenger_conductor_true_ending` at 100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T18-57-33-801Z.md`; its 100-run random
+    sample ended every run, kept best score 100/100, averaged 78.25, and missed
+    `passenger_lunch_tin_intercom` in that small random sample while coverage
+    reached it.
+  - Manual CLI play followed `help_passengers_gather` ->
+    `return_from_passenger_farewell` -> `listen_to_lunch_tin_worker` ->
+    `hear_final_lunch_tin_roll_call` -> `pull_release_after_final_roll_call`
+    and reached `passenger_helped_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The conductor path now feels like the old worker actually takes over a
-    piece of the line instead of merely decorating the generic helped ending.
-  - The route remains compact: passenger answers, conductor signal, conductor
-    intercom, then the conductor-specific ending.
-  - The generic `passenger_helped_true_ending` still serves the non-conductor
-    gathered-passenger route.
-- Follow-up: Consider whether `passenger_helped_true_ending` should mention the
-  lunch-tin worker more directly now that conductor, mitten, newspaper, and
-  keepsake routes all have specific payoffs.
+  - The lunch-tin worker now carries through from `passenger_farewell` into the
+    third car and final ending, making the helped-passenger path feel less like
+    a generic fallback.
+  - The optional final roll call still lands cleanly after the new intercom.
+  - The alternate "aboard together" choice preserves the broader gathered
+    intercom, but its label should be watched for redundancy in future route
+    playtests.
+- Follow-up: After evidence, check whether the extra boarding choice in
+  `passenger_farewell` feels meaningfully different or should be relabeled.
 - Risks:
-  - Another ending ID increases reporting surface area, so future ideal-ending
-    helpers must keep this variant included.
+  - Adding a parallel boarding choice could feel slightly redundant if the
+    labels do not clearly distinguish lunch-tin pacing from the broader crowd
+    route.
 
 ## Last Completed Cycle
 
