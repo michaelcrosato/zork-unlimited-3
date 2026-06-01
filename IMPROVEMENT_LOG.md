@@ -4,6 +4,72 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Transcript Final-State Audit
+
+### Current Plan
+
+- Main objective: Improve transcript/report clarity for stalled or exploratory
+  routes.
+- Why this matters: Current route metrics are healthy. When adaptive play stops
+  before an ending, the transcript should expose the current objective and legal
+  choices so future cycles can tell whether the route is actually blocked or
+  simply unfinished.
+- Tasks:
+  - Add a compact final-state audit to transcript output.
+  - Cover both an in-progress signal-booth route and a completed true-ending
+    route.
+  - Run full health and manually inspect generated CLI transcripts.
+- Risks: Longer transcripts could bury useful information in report tails, so
+  the audit needs to remain compact and placed at the end.
+
+### Work Completed
+
+- Changes made:
+  - `renderTranscript` now appends final scene status, score, objectives,
+    available choices, inventory, and flags.
+  - Added transcript tests for a stalled `signal_booth` route and a completed
+    `true_ending` route.
+- Files/systems touched:
+  - `src/transcript.ts`
+  - `tests/transcript.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Transcript final-state audit for MCP and CLI review workflows.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/transcript.test.ts`
+  - `npm run health`
+  - CLI route to `signal_booth` followed by transcript inspection
+  - CLI route to `true_ending` followed by transcript inspection
+- What worked:
+  - Focused transcript tests passed with 2 tests.
+  - Full health passed with 65 tests, validation, and coverage playtest.
+  - Validation reports 36 scenes, 6 endings, and all 36 reachable.
+  - Coverage playtest reports 0 unfinished runs, all scenes visited, and best
+    score 100/100.
+  - The signal-booth transcript ends with the active ledger objective and the
+    two legal progress/lore choices.
+  - The true-ending transcript ends with `Score: 100/100`, no objectives, and
+    no available choices.
+- What felt bad/confusing:
+  - The signal-booth stall is now readable as an unfinished exploratory route,
+    not a broken or hidden-progression state.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Use the clearer transcript tail in the next
+  adaptive-route report before deciding whether to tune exploratory depth.
+- Reason: Evidence quality is now better; the next cycle can make a more
+  grounded call between route tuning and another story-depth improvement.
+- Planned action:
+  - Run the normal AI evidence cycle and inspect whether adaptive stops still
+    lack actionable choices after the transcript audit.
+
 ## 2026-06-01 - Signal-Booth Manifest Beat
 
 ### Current Plan

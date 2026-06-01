@@ -11,56 +11,41 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional passenger-echo beat after reading the kept
-  manifest.
-- Why this matters: Route metrics are healthy, so the best next improvement was
-  richer payoff rather than another routing-only clue. The manifest route now
-  lets players hear the people behind the stamped doors before they clear
-  Mara's row, making the passenger ending feel less abstract while preserving
-  the direct critical path.
+- Main objective: Improve transcript/report clarity for stalled or exploratory
+  routes.
+- Why this matters: Current route metrics are healthy and all scenes are
+  reachable. The useful pressure is now evidence quality: when adaptive play
+  stops at a late scene like `signal_booth`, the transcript should show the
+  current objective and legal choices so the next agent can distinguish a real
+  design stall from an unfinished exploratory route.
 - Tasks:
-  - Add a gated optional `passenger_echoes` scene after
-    `read_passenger_manifest`.
-  - Ensure the scene can only be heard once and returns cleanly to the signal
-    booth.
-  - Update regression coverage for the manifest route through the new beat.
-  - Run focused tests, full health, evidence gathering, and an actual CLI
-    playthrough through the new branch.
+  - Append a compact final-state audit to rendered transcripts.
+  - Include final scene status, score, objectives, and available choices.
+  - Add regression coverage for stalled exploratory and completed ending
+    transcripts.
+  - Run focused tests, full health, and an actual CLI/MCP-equivalent route that
+    prints the new transcript audit.
 - Evidence:
-  - Added `passenger_echoes`, available after `read_passenger_manifest` and
-    hidden after `heard_passenger_echoes` is set.
-  - Updated the manifest route regression to visit `passenger_echoes`, verify
-    the new flag, return to `signal_booth`, and continue to
-    `passenger_true_ending`.
-  - `npm test -- tests/story-paths.test.ts` passed with 45 tests.
-  - Validation reports 36 scenes, 6 endings, and all 36 reachable.
-  - Random playtest, 100 runs: all ended, 0 unfinished, all 36 scenes visited,
-    `passenger_echoes` reached, best score 100/100, average score 70.7.
-  - Coverage playtest, 1278 generated runs: 1248 ended, 0 unfinished, all 36
-    scenes visited, best score 100/100, average score 77.91.
-  - Manual CLI route through `read_passenger_manifest`,
-    `listen_to_manifest_doors`, `clear_manifest_and_mara_from_ledger`,
-    `listen_to_mara_manifest_intercom`, and
-    `pull_release_after_manifest_goodbye` reached `passenger_true_ending` at
-    100/100 with `heard_passenger_echoes` set.
-  - `npm run health` passed with formatting, TypeScript, 63 tests, validation,
+  - Added a transcript `Final State` section with scene status, score,
+    objectives, visible choices, inventory, and flags.
+  - Added transcript regression coverage for an in-progress `signal_booth`
+    route and a completed `true_ending` route.
+  - `npm test -- tests/transcript.test.ts` passed with 2 tests.
+  - `npm run health` passed with formatting, TypeScript, 65 tests, validation,
     and coverage playtest.
-  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
-    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
-    and an actual MCP true-ending playthrough at 100/100.
-  - Final MCP random playtest, 250 runs: all ended, all 36 scenes visited,
-    `true_ending` reached 63 times, `passenger_true_ending` reached 76 times,
-    best score 100/100, average score 70.78.
-  - Adaptive exploratory MCP route stopped at `signal_booth` with score 75/100;
-    visible progress choices remained available, so this still looks like a
-    depth/continuation pressure rather than a broken route.
-- Follow-up: The next useful work is improving adaptive route continuation or
-  route-report clarity around `signal_booth`, since exploratory play can still
-  stop there before choosing the ledger progress action.
+  - Validation reports 36 scenes, 6 endings, and all 36 reachable.
+  - Coverage playtest reports 0 unfinished runs, all scenes visited, best score
+    100/100, and average score 77.91.
+  - Manual CLI route to `signal_booth` produced a transcript ending with the
+    active ledger objective and legal choices `inspect_signal_ledger` and
+    `read_passenger_manifest`.
+  - Manual CLI route to `true_ending` reached 100/100 and produced a transcript
+    ending with no remaining objectives or choices.
+- Follow-up: Use the new final-state audit in the next evidence cycle to decide
+  whether adaptive route depth still needs tuning.
 - Risks:
-  - The new optional scene increases coverage-branch count around the signal
-    booth; keep late-game choices focused so it does not become another bounce
-    for normal players.
+  - Transcript output is intentionally longer; keep the audit compact so
+    report tails still show the actionable state.
 
 ## Last Completed Cycle
 
