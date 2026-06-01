@@ -11,6 +11,52 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Make the lit-platform escape branch feel more deliberate and
+  recoverable.
+- Why this matters: The adaptive exploratory route can do meaningful setup,
+  restore Platform 13, then immediately run to `escape_ending`. That branch is
+  useful, but a brief hesitation beat should clarify that leaving is a conscious
+  abandonment of Mara's unresolved thread rather than the next normal objective.
+- Tasks:
+  - Add a warning scene before the street escape from the lit platform.
+  - Preserve the deliberate escape ending.
+  - Add regression coverage for both confirming the escape and returning to the
+    lit platform.
+  - Run health and an actual route that exercises the new warning recovery.
+- Evidence so far:
+  - Selected the lit-platform escape branch based on the latest adaptive
+    exploratory route reaching `escape_ending` immediately after platform power
+    was restored.
+  - Added `escape_warning`, reached from `flee_platform`, with choices to return
+    to the lit platform or confirm the escape.
+  - Updated path coverage for the escape branch and added a recovery regression.
+  - `npm test -- tests/story-paths.test.ts` passed with 34 tests.
+  - `npm run health` passed with formatting, TypeScript, 50 tests, validation,
+    and coverage playtest.
+  - Validation passed: 30 scenes, 5 endings, 30 reachable, no warnings.
+  - Coverage playtest remained stable: 697 runs, 672 ended, 0 unfinished, 25
+    frontier samples, all 30 scenes visited, and best score 100/100.
+  - Manual MCP route triggered `escape_warning`, returned to the lit platform,
+    recovered the map and token, cleared Mara, listened to the intercom beat,
+    and reached `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - MCP random playtest, 250 runs: all ended, all 30 scenes visited,
+    `true_ending` reached 138 times, best score 100/100, average score 69.28.
+- Follow-up: The adaptive exploratory route now highlights the remaining
+  `bad_ending` pattern: players can promise Mara they will find the map, leave
+  without it, and force the gate after one final warning.
+- Risks:
+  - Adding one confirmation scene increases branch count and could slightly
+    reduce direct access to `escape_ending`; the ending remains available one
+    choice later.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made late-game signal-booth entry clearer when players have the token
+  but not the marked map.
 - Main objective: Make late-game signal-booth entry clearer when players have
   the token but not the marked map.
 - Why this matters: The true-ending chain depends on clearing Mara's ledger
@@ -19,37 +65,17 @@ preserving normal-play true-ending discoverability.
   the map and only see the score/objective gap indirectly. A short warning at
   the gate control should make the missing navigation tool feel intentional and
   recoverable.
-- Tasks:
-  - Add a map warning before unprepared signal-booth entry.
-  - Keep the deliberate unprepared continuation and existing recovery path
-    available.
-  - Add regression coverage for the warning and recovery.
-  - Run health and an actual route that exercises the new warning recovery.
-- Evidence so far:
-  - Selected a focused late-game clarity improvement based on the existing
-    playtest evidence and story structure.
-  - Initial badge-warning idea did not match normal play because the locker
-    intentionally cannot be closed after taking only the fuse. Adjusted the
-    warning to the reachable missing-map case instead.
+- Evidence:
   - Added `signal_map_warning`, reached when players try the signal token
     without the marked map.
   - Updated the prepared signal-booth choice label to say the map is ready.
   - Added regression coverage proving the warning appears, reinforces the map
     objective, and routes back to the service room for recovery.
-  - `npm test -- tests/story-paths.test.ts` passed with 33 tests.
   - `npm run health` passed with formatting, TypeScript, 49 tests, validation,
     and coverage playtest.
-  - Validation passed: 29 scenes, 5 endings, 29 reachable, no warnings.
-  - Coverage playtest remained stable: 696 runs, 672 ended, 0 unfinished, 24
-    frontier samples, all 29 scenes visited, and best score 100/100.
-  - Manual CLI route triggered `signal_map_warning`, returned for the map,
-    cleared Mara, listened to her intercom beat, and reached `true_ending` at
-    100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
     tool verification, MCP validation, MCP random/coverage/goal playtests, and
     an actual MCP true-ending playthrough at 100/100.
-  - MCP random playtest, 250 runs: all ended, all 29 scenes visited,
-    `true_ending` reached 132 times, best score 100/100, average score 68.12.
 - Follow-up: The adaptive exploratory route still reaches `bad_ending` after
   ignoring multiple warnings and forcing the gate without the fuse. Consider
   nudging early platform explorers toward the service room or gate-control

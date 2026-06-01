@@ -420,8 +420,8 @@ scenes:
             - notItem: token
             - notItem: badge
       - id: flee_platform
-        label: Run back to the street
-        to: escape_ending
+        label: Run for the stairs before the train chooses you
+        to: escape_warning
         requires:
           all:
             - notItem: token
@@ -451,6 +451,20 @@ scenes:
       - id: continue_to_signal_booth_unprepared
         label: Continue into the booth without the map
         to: signal_booth
+
+  escape_warning:
+    text: >
+      The stairwell back to Warden Street is still open, but the lit platform
+      makes the empty train look less like a ghost story and more like unfinished
+      work. Mara's posters flutter in the tunnel wind, and the token slot keeps
+      tapping for a signal key you have not found.
+    choices:
+      - id: return_to_lit_platform_from_escape_warning
+        label: Return to the gate control and keep searching
+        to: lit_platform
+      - id: confirm_flee_platform
+        label: Leave Mara calling and run back to the street
+        to: escape_ending
 
   ledger_warning:
     text: >
