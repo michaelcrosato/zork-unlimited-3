@@ -730,6 +730,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("lit_platform");
     expect(choiceIds).not.toContain("inspect_mara_posters");
     expect(choiceIds).toContain("return_from_lit_platform");
+    expect(choiceIds).not.toContain("flee_platform");
   });
 
   it("focuses signal-booth choices on Mara when carrying her badge", async () => {

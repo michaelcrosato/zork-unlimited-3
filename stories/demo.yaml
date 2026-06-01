@@ -387,7 +387,9 @@ scenes:
         label: Run back to the street
         to: escape_ending
         requires:
-          notItem: token
+          all:
+            - notItem: token
+            - notFlag: inspected_mara_posters
 
   mara_posters:
     text: >

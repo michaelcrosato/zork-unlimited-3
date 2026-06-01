@@ -11,13 +11,46 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Keep clue-informed players from walking straight into the
+- Main objective: Keep the post-poster lit-platform beat focused on helping
+  Mara instead of offering an abrupt street escape after the player has just
+  learned her ledger clue.
+- Outcome: `flee_platform` now remains available as an early lit-platform escape
+  before the signal token is recovered, but disappears after players inspect
+  Mara's posters and learn the proof-of-service clue.
+- Evidence:
+  - Added regression coverage proving `flee_platform` is not offered after
+    `inspect_mara_posters`, while the existing safety regression still proves
+    the escape ending is available before the token is recovered.
+  - `npm test -- tests/story-paths.test.ts` passed with 29 tests.
+  - `npm run health` passed with formatting, TypeScript, 40 tests, validation,
+    and coverage playtest.
+  - Validation passed: 25 scenes, 5 endings, 25 reachable, no warnings.
+  - Coverage playtest now reports 548 runs, 528 ended, 0 unfinished, 20
+    frontier samples, all 25 scenes visited, `escape_ending` still reached 64
+    times, and best score 100/100.
+  - Manual CLI route inspected Mara's posters, confirmed the lit platform
+    offered only `return_from_lit_platform` afterward, then collected the map,
+    radio clue, and token and reached `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP playtests, and an actual MCP
+    true-ending playthrough at 100/100.
+  - Evidence cycle random playtest, 100 runs: all ended, all scenes visited,
+    `true_ending` reached 52 times, `escape_ending` reached 10 times, best score
+    100/100, average score 67.4.
+  - Evidence cycle MCP random playtest, 250 runs: all ended, all scenes visited,
+    `true_ending` reached 132 times, `escape_ending` reached 25 times, best
+    score 100/100, average score 68.08.
+- Follow-up: Watch whether escape-ending frequency remains healthy without
+  distracting players who already saw the Mara proof-of-service clue.
+- Risks:
+  - This narrows one optional ending branch after the player reads an important
+    true-ending clue; the earlier escape branch remains available.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Kept clue-informed players from walking straight into the
   unprepared Platform 13 gate trap after they already know Mara's route.
-- Outcome: The service room now allows the first exploratory Platform 13 visit
-  only before the player has read Mara's personnel file or written down the
-  radio route. Once those route clues are known, `go_to_platform` stays hidden
-  until the player collects a useful platform tool: the marked map or the
-  platform fuse.
 - Evidence:
   - Added regression coverage proving clue-informed service-room players who
     have read Mara's file and written down the radio route see `take_map` and
@@ -28,7 +61,7 @@ preserving normal-play true-ending discoverability.
   - `npm run health` passed with formatting, TypeScript, 40 tests, story
     validation, and coverage playtest.
   - Validation passed: 25 scenes, 5 endings, 25 reachable, no warnings.
-  - Coverage playtest remains stable: 612 runs, 592 ended, 0 unfinished, 20
+  - Coverage playtest remained stable: 612 runs, 592 ended, 0 unfinished, 20
     frontier samples, all 25 scenes visited, best score 100/100.
   - Random playtest, 250 runs: all ended, all scenes visited, `true_ending`
     reached 121 times, `bad_ending` reached 43 times, best score 100/100,

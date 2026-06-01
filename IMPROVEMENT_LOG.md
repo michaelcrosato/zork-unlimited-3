@@ -4,6 +4,78 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Post-Poster Route Focus
+
+### Current Plan
+
+- Main objective: Keep the post-poster lit-platform beat focused on helping
+  Mara instead of offering an abrupt street escape after the player has just
+  learned her ledger clue.
+- Why this matters: The latest exploratory route reached `escape_ending` after
+  finding the fuse, badge, radio clue, file clue, and poster clue. The escape is
+  a useful alternate ending early, but after the proof-of-service clue it reads
+  like a distracting quit option rather than a meaningful branch.
+- Tasks:
+  - Hide `flee_platform` after `inspect_mara_posters`.
+  - Preserve the earlier escape ending before the token is recovered.
+  - Add or update regression coverage for the focused post-poster choice list.
+  - Run health, `ai:cycle`, and a manual route through the changed moment.
+- Risks: Removing the duplicate late escape branch could make `escape_ending`
+  too rare if no earlier lit-platform escape remains reachable.
+
+### Work Completed
+
+- Changes made:
+  - Added `notFlag: inspected_mara_posters` to the `flee_platform` requirements.
+  - Extended the poster-beat regression to prove the lit platform no longer
+    offers `flee_platform` after the player reads the posters.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is route focus for an existing story beat.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+  - Manual CLI route that inspected posters, returned for missing tools, and
+    reached the true ending
+- What worked:
+  - Story-path tests pass with 29 tests.
+  - Full health passes with 40 tests, clean validation, and all 25 scenes
+    reachable.
+  - Coverage playtest reports 548 runs, 528 ended, 0 unfinished, 20 frontier
+    samples, all scenes visited, `escape_ending` still reachable 64 times, and
+    best score 100/100.
+  - Evidence cycle MCP random playtest ended all 250 runs, visited every scene,
+    reached `true_ending` 132 times, and still reached `escape_ending` 25 times.
+  - Manual CLI play confirmed the changed lit-platform menu offered only
+    `return_from_lit_platform` after the posters, then reached `true_ending` at
+    100/100 after collecting the map, route clue, and token.
+- What felt bad/confusing:
+  - The post-poster return is now clear, but the label still says "before
+    boarding" even when the immediate task is to find the token. A future pass
+    could make that return label more context-specific if the rules support it.
+- Bugs found:
+  - None.
+
+### Next Iteration
+
+- Highest-priority next task: Improve the token-recovery handoff after players
+  have map, fuse, and badge but still lack the signal token.
+- Reason: The route works and the objective mentions the tunnel clock, but the
+  service-room return remains generic in the exact state where token recovery is
+  the only missing critical step.
+- Planned action:
+  - Inspect whether a token-specific service-room return choice can replace the
+    generic tunnel return without creating unreachable scenes or excess state
+    branches.
+
 ## 2026-06-01 - Clue-Informed Platform Steering
 
 ### Current Plan
