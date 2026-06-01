@@ -509,6 +509,7 @@ const idealEndingIds = [
   "mara_handoff_true_ending",
   "passenger_true_ending",
   "passenger_helped_true_ending",
+  "passenger_keepsake_true_ending",
   "passenger_mitten_true_ending"
 ];
 

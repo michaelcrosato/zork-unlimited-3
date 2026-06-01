@@ -11,6 +11,67 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a distinct matched-keepsake true ending.
+- Why this matters: The matched-keepsake route now has bespoke handoff,
+  intercom, and final roll-call beats, but before this cycle the actual release
+  still resolved into the generic helped-passenger ending. Careful players who
+  match the lunch tin, newspaper, and umbrellas should see those details carry
+  through the ending itself.
+- Tasks:
+  - Route direct matched-keepsake release choices to a new keepsake-specific
+    ideal ending.
+  - Preserve the generic helped-passenger ending for players who gather the
+    crowd without matching keepsakes.
+  - Count the new ending as a max-score ideal true-ending variant in scoring,
+    playtest goal ranking, and AI-loop evidence.
+  - Add/update regression coverage for direct, intercom, and final-roll-call
+    keepsake releases.
+  - Run validation, automated playtests, full health, and an actual playthrough
+    through the new ending.
+- Evidence:
+  - Added `passenger_keepsake_true_ending`, reached from the direct matched
+    release, the keepsake intercom release, and the keepsake final roll-call
+    release.
+  - `pull_release_after_gathering_passengers` now excludes
+    `matched_manifest_keepsakes`, while matched players see
+    `pull_release_after_matching_keepsakes`.
+  - Updated `score.ts`, goal-oriented playtest destination scoring, and
+    AI-loop ideal-ending reporting so `passenger_keepsake_true_ending` counts
+    as an ideal max-score completion.
+  - Focused story/playtest/AI-loop tests passed with 94 tests.
+  - Validation passed with 62 scenes, 10 endings, and all 62 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 62 scenes, kept
+    best score 100/100, averaged 78.2, and reached
+    `passenger_keepsake_true_ending` 8 times.
+  - Coverage playtest visited all 62 scenes with 0 unfinished completed routes,
+    best score 100/100, average score 98.58, and 101016 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 102 tests,
+    validation, and coverage playtest.
+  - MCP play reached `passenger_keepsake_true_ending` through the matched
+    keepsake intercom and final roll call. The already-loaded MCP scorer still
+    reported 90/100, but the local CLI/current process verified the same route
+    at 100/100 with no objectives after the scorer update.
+- Playtest notes:
+  - The matched-keepsake route now pays off the lunch tin, newspaper, and
+    umbrellas at the final release instead of collapsing into generic crowd
+    language.
+  - Choice clarity improved in the third car: matched players now see a direct
+    keepsake-specific release option alongside the optional intercom beat.
+  - The generic helped-passenger route remains available and tested for players
+    who simply gather the crowd.
+- Follow-up: The growing number of ideal ending variants is improving payoff
+  but making reports busier; a future reporting pass should group ideal endings
+  by route family.
+- Risks:
+  - Adding another ending label requires future score/playtest/reporting
+    classifiers to stay synchronized.
+  - Long-lived MCP servers may need a restart after scorer changes; the CLI
+    route verified the current code path at 100/100.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a keepsake-specific final roll-call payoff after the
   matched-keepsake intercom.
 - Why this matters: The previous cycle added a strong matched-keepsake

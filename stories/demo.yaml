@@ -1041,7 +1041,17 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
+            - notFlag: matched_manifest_keepsakes
             - notFlag: returned_lost_mitten
+      - id: pull_release_after_matching_keepsakes
+        label: Pull the release after the keepsakes steady every name
+        to: passenger_keepsake_true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: helped_passengers_gather
+            - flag: matched_manifest_keepsakes
       - id: pull_release_after_returning_mitten
         label: Pull the release after returning the lost mitten
         to: passenger_mitten_true_ending
@@ -1304,7 +1314,7 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_keepsake_intercom
         label: Pull the release while the keepsakes hold the names steady
-        to: passenger_helped_true_ending
+        to: passenger_keepsake_true_ending
 
   passenger_keepsake_roll_call:
     text: >
@@ -1317,7 +1327,7 @@ scenes:
     choices:
       - id: pull_release_after_keepsake_roll_call
         label: Pull the release after every keepsake answers
-        to: passenger_helped_true_ending
+        to: passenger_keepsake_true_ending
 
   passenger_roll_call_epilogue:
     text: >
@@ -1452,6 +1462,17 @@ scenes:
       between two adults who know his name now; the old conductor holds the
       morning doors until the last umbrella clears the rain. Mara thanks each
       passenger by name, then saves one quiet thank-you for you.
+    choices: []
+
+  passenger_keepsake_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the matched keepsakes cross the
+      threshold with the people they remembered. The lunch tin rides against
+      its owner's coat, the newspaper woman carries two transfer columns into
+      daylight, and the rain-dark umbrellas open only after every initial has
+      cleared the doors. Mara reads the final name, then lets the ordinary
+      things answer back.
     choices: []
 
   passenger_mitten_true_ending:

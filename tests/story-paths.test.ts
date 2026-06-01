@@ -1743,18 +1743,20 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_matched_keepsakes",
-      "pull_release_after_gathering_passengers"
+      "pull_release_after_matching_keepsakes"
     ]);
 
-    state = choose(story, state, "pull_release_after_gathering_passengers");
+    state = choose(story, state, "pull_release_after_matching_keepsakes");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("matched keepsakes cross the");
+    expect(observation.scene.text).toContain("lets the ordinary things answer back");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
-  it("adds a keepsake-specific intercom beat before the helped passenger ending", async () => {
+  it("adds a keepsake-specific intercom beat before the keepsake ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -1798,7 +1800,7 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_keepsake_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
@@ -1847,7 +1849,7 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_keepsake_roll_call");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
