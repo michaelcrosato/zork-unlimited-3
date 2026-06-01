@@ -11,6 +11,59 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Focus fully prepared lit-platform players on the signal
+  booth.
+- Why this matters: Current route metrics are healthy, and the latest handoff
+  identifies late lit-platform focus as the next pressure point. Once the
+  player has the map, token, fuse, and badge, optional poster lore competes
+  with the high-signal signal-booth action even though the posters primarily
+  teach a badge clue the player has already solved.
+- Tasks:
+  - Hide the one-time poster inspection once the player is fully equipped for
+    the signal booth.
+  - Preserve the poster beat for earlier underprepared lit-platform states.
+  - Add/update regression coverage for the fully equipped lit-platform choice
+    set.
+  - Run focused tests, full health, and an actual playthrough.
+- Evidence:
+  - Updated `inspect_mara_posters` so it remains available only while the
+    player is missing at least one of the map, token, or badge.
+  - Updated the fully prepared lit-platform regression to require
+    `use_token_slot` as the only visible choice.
+  - `npm test -- tests/story-paths.test.ts` passed with 40 tests.
+  - `npm run health` passed with formatting, TypeScript, 56 tests, validation,
+    and coverage playtest.
+  - Manual CLI route reached the fully prepared `lit_platform` state with
+    badge, fuse, lantern, map, and token; the only visible choice was
+    `use_token_slot`.
+  - Manual CLI route then continued through the signal booth, cleared Mara's
+    ledger row, and reached `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
+    MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
+    and an actual MCP true-ending playthrough at 100/100.
+  - Final evidence random playtest, 100 runs: all ended, all 31 scenes visited,
+    `true_ending` reached 54 times, best score 100/100, average score 70.7.
+  - Final MCP random playtest, 250 runs: all ended, all 31 scenes visited,
+    `true_ending` reached 139 times, best score 100/100, average score 70.78.
+  - A normal `npm run ai:cycle` attempt also ran its nested agent, but its
+    post-agent automation refused to auto-commit because this worktree was
+    already dirty before that nested agent started.
+- Follow-up: The adaptive exploratory route still stops at `lit_platform` after
+  collecting badge, fuse, map, and token. Since the only visible choice there
+  is now `use_token_slot`, the next cycle should inspect whether the adaptive
+  route/reporting needs one more continuation step or whether a small story
+  payoff is now higher value.
+- Risks:
+  - Narrowing a lore choice can reduce incidental exposure to Mara's poster
+    beat if players collect all tools before restoring the platform. The beat
+    remains reachable in earlier lit-platform states and covered by regression
+    tests.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Removed the fully equipped gate-control bounce before platform power
+  restoration.
 - Main objective: Remove the fully equipped gate-control bounce before platform
   power restoration.
 - Why this matters: The latest handoff noted that the adaptive exploratory
@@ -19,14 +72,6 @@ preserving normal-play true-ending discoverability.
   and token. Once the player has the fuse and the gate-control access plate is
   open, routing them back through the hub before installing it adds a low-value
   extra step on the main route.
-- Tasks:
-  - Add a direct fuse-install choice to the inspected gate control when the
-    player carries the platform fuse.
-  - Preserve the existing return-to-service-room recovery path for players who
-    still need parts.
-  - Add regression coverage for the fully equipped gate-control route.
-  - Run focused tests, full health, an actual CLI playthrough, and the evidence
-    cycle.
 - Evidence:
   - Added `install_fuse_from_gate_control`, available from `gate_control` when
     the player has the fuse, routing directly to `lit_platform` and setting
@@ -57,8 +102,8 @@ preserving normal-play true-ending discoverability.
   high-signal action once the player has map, token, fuse, badge, and release
   knowledge.
 - Risks:
-  - Adding a second fuse-install route touches the critical true-ending path and
-    must stay scored identically to the existing platform install action.
+  - Adding a second fuse-install route touched the critical true-ending path and
+    needed to stay scored identically to the existing platform install action.
 
 ## Last Completed Cycle
 

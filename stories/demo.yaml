@@ -409,7 +409,12 @@ scenes:
         label: Inspect Mara's missing-person posters
         to: mara_posters
         requires:
-          notFlag: inspected_mara_posters
+          all:
+            - notFlag: inspected_mara_posters
+            - any:
+                - notItem: map
+                - notItem: token
+                - notItem: badge
         effects:
           set:
             inspected_mara_posters: true

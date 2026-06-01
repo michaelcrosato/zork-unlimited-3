@@ -965,8 +965,7 @@ describe("demo story critical paths", () => {
     const choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("lit_platform");
-    expect(choiceIds).toContain("use_token_slot");
-    expect(choiceIds).toContain("inspect_mara_posters");
+    expect(choiceIds).toEqual(["use_token_slot"]);
     expect(choiceIds).not.toContain("return_from_lit_platform");
     expect(choiceIds).not.toContain("flee_platform");
   });
