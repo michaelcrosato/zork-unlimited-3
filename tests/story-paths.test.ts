@@ -1877,6 +1877,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_after_manifest_count",
+      "ask_conductor_after_manifest_count",
       "cross_after_manifest_count",
       "board_after_manifest_count"
     ]);
@@ -2287,8 +2288,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "review_open_manifest_count",
-      "listen_after_manifest_count",
-      "ask_conductor_from_answers",
+      "ask_conductor_after_manifest_count",
       "follow_conductor_signal_to_third_car"
     ]) {
       state = choose(story, state, choiceId);
@@ -2298,6 +2298,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_intercom");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_counted_conductor_roll_call",
       "pull_release_after_conductor_clearance"

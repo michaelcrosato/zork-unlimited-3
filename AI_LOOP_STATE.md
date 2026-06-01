@@ -11,33 +11,60 @@ payoffs where the core guidance is already healthy.
 ## Active Cycle
 
 - Date: 2026-06-01
-- Status: In progress.
-- Main objective: Give the optional reviewed-manifest-count scene a conductor
-  route payoff before the passenger conductor ending.
-- Why this matters: Current route health is strong, so the best next value is
-  richer story depth. `passenger_manifest_count` asks players to notice what
-  each kept passenger carried; the conductor route can now acknowledge that
-  extra attention instead of using only the generic final conductor roll call.
+- Status: Completed locally; ready for commit/push.
+- Main objective: Make the reviewed-manifest-count conductor payoff easier to
+  discover in normal play.
+- Why this matters: Current route health is strong, but the prior random
+  evidence missed `passenger_conductor_count_roll_call`. Players who pause to
+  review Mara's opened manifest count should see an obvious conductor follow-up
+  without having to route through the generic passenger-answer scene first.
 - Tasks:
-  - Add a `passenger_conductor_count_roll_call` scene from the conductor
-    intercom when `reviewed_open_manifest_count` is set.
-  - Keep the existing generic conductor roll-call scene for players who did not
-    review the count.
-  - Add regression coverage for the counted conductor route and full-score
-    ending.
-  - Run focused tests, validation, full health, and a real playthrough through
-    the revised branch.
+  - Add a direct conductor choice from `passenger_manifest_count`.
+  - Preserve the existing generic passenger-answer conductor route and generic
+    final conductor roll call.
+  - Update regression coverage for the direct counted-conductor route and
+    full-score ending.
+  - Run focused tests, validation, full health, evidence-only `ai:cycle`, and a
+    real playthrough through the revised branch.
 - Evidence:
-  - Pending verification.
+  - Added `ask_conductor_after_manifest_count`, which routes from the opened
+    manifest count to `passenger_conductor_signal` while setting the answered
+    passenger, gathered passenger, and conductor-clearance flags needed for the
+    counted conductor path.
+  - Focused story-path tests passed with 97 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 79
+    reachable scenes and 12 endings.
+  - `npm run health` passed with formatting, TypeScript, 118 tests,
+    validation, and coverage playtest.
+  - A 250-run random playtest ended every run, visited all scenes including
+    `passenger_conductor_count_roll_call`, kept best score 100/100, and
+    averaged 79.94.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T20-06-43-248Z.md`; its 100-run random
+    sample visited `passenger_conductor_count_roll_call`, had no unvisited
+    scenes, ended every run, kept best score 100/100, and averaged 78.25.
+  - Manual CLI play followed `review_open_manifest_count` ->
+    `ask_conductor_after_manifest_count` ->
+    `follow_conductor_signal_to_third_car` ->
+    `hear_counted_conductor_roll_call` ->
+    `pull_release_after_conductor_count` and reached
+    `passenger_conductor_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - Pending verification.
+  - The new direct choice makes the conductor feel like the natural answer to
+    Mara's warning that the train may try to count the passengers again.
+  - The counted roll-call scene now appears in the fresh 100-run random sample,
+    addressing the prior normal-play miss.
+  - The route still lands cleanly in the existing conductor intercom and ending,
+    so the release remains physically grounded under the first seat.
 - Follow-up:
-  - Recheck whether the counted conductor roll-call text feels distinct enough
-    from the generic final conductor roll call after actual play.
+  - Consider whether the generic `passenger_conductor_signal` text should gain
+    a counted-manifest variant if future playtests find its "answered
+    passengers" phrasing too broad after the direct count choice.
 - Risks:
-  - Adding another optional late passenger beat increases graph surface area;
-    keep it routed to the existing conductor ending rather than adding another
-    ending family.
+  - The direct branch sets `heard_passenger_answers` without showing the full
+    passenger-answer scene; current text supports that abstraction, but this
+    should be watched if the passenger-answer scene later carries exclusive
+    story facts.
 
 ## Last Completed Cycle
 
