@@ -739,7 +739,23 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("signal_booth");
     expect(observation.choices.map((choice) => choice.id)).not.toContain("read_passenger_manifest");
+    expect(observation.choices.map((choice) => choice.id)).toContain("listen_to_manifest_doors");
     expect(observation.choices.map((choice) => choice.id)).toContain("inspect_signal_ledger");
+
+    state = choose(story, state, "listen_to_manifest_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoes");
+    expect(observation.scene.text).toContain("asking whether the next stop has rain");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+
+    state = choose(story, state, "return_from_passenger_echoes");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_booth");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "listen_to_manifest_doors"
+    );
 
     for (const choiceId of [
       "inspect_signal_ledger",

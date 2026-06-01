@@ -545,6 +545,16 @@ scenes:
         effects:
           set:
             read_passenger_manifest: true
+      - id: listen_to_manifest_doors
+        label: Listen to the marked passenger doors
+        to: passenger_echoes
+        requires:
+          all:
+            - flag: read_passenger_manifest
+            - notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_passenger_echoes: true
       - id: reopen_signal_ledger
         label: Reopen Mara's ledger row
         to: signal_ledger
@@ -560,6 +570,18 @@ scenes:
     choices:
       - id: return_to_signal_ledger_from_manifest
         label: Return to Mara's open ledger row
+        to: signal_booth
+
+  passenger_echoes:
+    text: >
+      Behind the stamped doors, the kept passengers are not wailing. They are
+      waiting in the small noises people make when they expect a train to be
+      late: a thermos cup unscrewed, newspaper pages folded twice, a child
+      asking whether the next stop has rain. When Mara's page rustles, every
+      door falls silent for her answer.
+    choices:
+      - id: return_from_passenger_echoes
+        label: Return to Mara's ledger row
         to: signal_booth
 
   signal_ledger:
