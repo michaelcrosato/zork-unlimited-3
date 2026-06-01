@@ -11,59 +11,54 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a focused passenger memory beat on the manifest route
-  without weakening route completion.
+- Main objective: Add a distinct payoff ending for the optional Mara handoff
+  route without weakening normal completion.
 - Why this matters: Current evidence shows the core route metrics are healthy,
-  so the best next improvement is richer character payoff. The manifest route
-  already used the lost mitten as a recurring passenger detail, but players
-  could not act on it before opening every door.
+  so the best next improvement is richer character payoff. Players can already
+  watch Mara step away from the signal booth, but the final ending text did not
+  acknowledge that choice.
 - Tasks:
-  - Add a new optional `passenger_mitten_memory` scene from
-    `passenger_platform`.
-  - Preserve direct boarding and the existing helped-passenger route from the
-    platform.
-  - Keep exhaustive coverage bounded by letting the mitten beat gather the
-    passengers and continue to the third car instead of looping back to the
-    same branch point.
-  - Add regression coverage for the optional scene and direct boarding access.
+  - Route `pull_release_after_handoff_goodbye` to a new handoff-aware ending.
+  - Keep the direct Mara-only release route and manifest endings unchanged.
+  - Count the new ending as a max-score true-ending outcome.
+  - Add regression coverage for the new payoff.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI playthrough through the new scene.
+    CLI playthrough through the handoff route.
 - Evidence:
-  - `passenger_platform` now offers `return_lost_mitten` alongside the existing
-    `help_passengers_gather` and `board_third_car_with_passengers` choices.
-  - Added `passenger_mitten_memory`, where returning the child's mitten becomes
-    a concrete way to help the released passengers start caring for one another.
-  - The mitten choice sets `returned_lost_mitten` and
-    `helped_passengers_gather`, then leads to `train_car`; direct boarding and
-    the prior helped route remain available from `passenger_platform`.
-  - Added story-path regression coverage for the optional mitten scene,
-    its state flags, and continued access to the release route.
-  - `npm test -- tests/story-paths.test.ts` passed with 76 tests.
-  - Focused validation passed with 56 scenes, 7 endings, and all 56 reachable.
-  - A 100-run random sample ended 100/100 runs, visited all 56 scenes, kept
-    best score 100/100, and averaged 78.2.
-  - A focused coverage sample visited all 56 scenes with 0 unfinished routes,
-    best score 100/100, average score 98.09, and 74664 max-score runs.
-  - `npm run health` passed with formatting, TypeScript, 97 tests, validation,
+  - Added `mara_handoff_true_ending`, reached only when players watch Mara
+    leave the booth, board the third car, listen for her after the handoff, and
+    then pull the release.
+  - Updated score and playtest routing so `mara_handoff_true_ending` counts as
+    an ideal max-score completion.
+  - Updated AI-loop ideal-ending reporting to include the new ending label.
+  - Added story-path regression coverage for the new ending and updated the
+    existing Mara handoff intercom expectation.
+  - Focused tests passed: `npm test -- tests/story-paths.test.ts
+tests/playtest.test.ts tests/ai-loop.test.ts` with 90 tests.
+  - Validation passed with 57 scenes, 8 endings, and all 57 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 57 scenes, kept
+    best score 100/100, averaged 78.2, and reached
+    `mara_handoff_true_ending` 7 times.
+  - A focused coverage sample visited all 57 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.09, and 74664 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 98 tests, validation,
     and coverage playtest.
-  - Health coverage playtest visited all 56 scenes with 0 unfinished routes,
-    best score 100/100, average score 98.09, and 74664 max-score runs.
-  - Manual CLI play took the manifest route, returned the lost mitten, listened
-    to the gathered passengers and final roll call, and reached
-    `passenger_helped_true_ending` at 100/100.
+  - Manual CLI play took the Mara handoff route through
+    `mara_handoff_intercom` and reached `mara_handoff_true_ending` at 100/100
+    with no lingering objectives.
 - Playtest notes:
-  - Returning the mitten gives the manifest route a small, playable act of care
-    rather than only another observation.
-  - The first implementation returned to `passenger_platform` and caused
-    coverage-route pressure; making the scene a specific helped-passenger route
-    fixed that while preserving immediate direct boarding.
-  - The transcript ended cleanly with no lingering objectives and all score
-    achievements earned.
-- Follow-up: Keep watching coverage run count as late-game optional story beats
-  accumulate; prefer optional beats that advance to a new commitment point.
+  - The new ending makes the optional handoff choice visible in the final
+    payoff: Mara is physically holding the far doors instead of only speaking
+    through the intercom.
+  - Direct `pull_release` from the train car still reaches `true_ending`, so
+    the added payoff remains player-paced.
+  - No route completion regression surfaced in random, coverage, or manual
+    play.
+- Follow-up: Keep watching ending distribution now that the Mara-only handoff
+  route has its own ending label.
 - Risks:
-  - This adds another optional late-game branch. It is bounded by moving
-    directly to the third car, and direct boarding remains covered.
+  - This adds another ending label, so score and playtest expectations must
+    treat it as an ideal completion.
 
 ## Last Completed Cycle
 

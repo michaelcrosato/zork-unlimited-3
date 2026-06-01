@@ -1334,6 +1334,44 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual(["listen_to_mara_after_handoff", "pull_release"]);
   });
 
+  it("pays off Mara's handoff with a distinct ending after her final intercom", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "watch_mara_leave_booth",
+      "return_from_mara_handoff",
+      "board_after_clearing_mara",
+      "listen_to_mara_after_handoff",
+      "pull_release_after_handoff_goodbye"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara is not only a voice");
+    expect(observation.scene.text).toContain("holding them open");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -2736,8 +2774,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_handoff_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara is not only a voice");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

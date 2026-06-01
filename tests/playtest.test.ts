@@ -155,6 +155,7 @@ describe("playtest strategies", () => {
 function trueEndingCount(endings: Record<string, number>): number {
   return (
     (endings.true_ending ?? 0) +
+    (endings.mara_handoff_true_ending ?? 0) +
     (endings.passenger_true_ending ?? 0) +
     (endings.passenger_helped_true_ending ?? 0)
   );

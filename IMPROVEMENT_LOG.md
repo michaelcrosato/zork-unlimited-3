@@ -4,6 +4,86 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Mara Handoff Ending
+
+### Current Plan
+
+- Main objective: Add a distinct payoff ending for the optional Mara handoff
+  route without weakening normal completion.
+- Why this matters: Core route metrics are healthy, so the best next
+  improvement is richer character payoff. Players could already watch Mara
+  step away from the booth, but the final ending did not acknowledge that
+  choice.
+- Tasks:
+  - Route the handoff intercom release to a new ending.
+  - Count the new ending as an ideal max-score completion.
+  - Cover the new route with regression tests.
+- Risks: Adding another ending label can skew ideal-ending reporting unless
+  score, playtest strategy, and AI-loop summaries all recognize it.
+
+### Work Completed
+
+- Changes made:
+  - Added `mara_handoff_true_ending`.
+  - Routed `pull_release_after_handoff_goodbye` to the new ending.
+  - Updated score, playtest destination scoring, and AI-loop ideal-ending
+    reporting.
+  - Added and updated story-path, playtest, and AI-loop tests.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/score.ts`
+  - `src/playtest.ts`
+  - `src/ai-loop.ts`
+  - `tests/story-paths.test.ts`
+  - `tests/playtest.test.ts`
+  - `tests/ai-loop.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A handoff-specific true ending where Mara physically holds the far doors
+    open after leaving the booth.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts
+tests/ai-loop.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random
+--summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage
+--summary --json`
+  - `npm run health`
+  - Manual CLI route through Mara's handoff, final intercom, and
+    `mara_handoff_true_ending`
+- What worked:
+  - Focused tests passed with 90 tests.
+  - Full health passed with formatting, TypeScript, 98 tests, validation, and
+    coverage playtest.
+  - Validation reports 57 scenes, 8 endings, and all 57 reachable.
+  - Random playtest ended 100/100 runs, visited all scenes, reached the new
+    ending 7 times, and preserved 72 max-score runs.
+  - Coverage playtest visited all scenes with best score 100/100, average score
+    98.09, and 74664 max-score runs.
+  - Manual CLI play reached `mara_handoff_true_ending` at 100/100 with no
+    lingering objectives.
+- What felt bad/confusing:
+  - No new confusion surfaced. The handoff payoff is clearer, while the direct
+    `true_ending` route remains available for players who skip the intercom.
+- Bugs found:
+  - Existing tests and ideal-ending helpers initially assumed the handoff
+    intercom still ended at `true_ending`; those assumptions were updated.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether the increasing number of ideal
+  ending labels makes reports harder to scan.
+- Reason: The route quality improved, but summary readability can degrade as
+  ending variants accumulate.
+- Planned action:
+  - Consider grouping ideal endings in reports while preserving individual
+    ending counts.
+
 ## 2026-06-01 - Stairwell Clock Recovery
 
 ### Current Plan

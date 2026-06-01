@@ -299,6 +299,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
 function scoreDestination(sceneId: string): number {
   if (
     sceneId === "true_ending" ||
+    sceneId === "mara_handoff_true_ending" ||
     sceneId === "passenger_true_ending" ||
     sceneId === "passenger_helped_true_ending"
   ) {

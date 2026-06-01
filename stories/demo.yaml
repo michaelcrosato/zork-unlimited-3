@@ -1197,7 +1197,7 @@ scenes:
     choices:
       - id: pull_release_after_handoff_goodbye
         label: Pull the release while Mara opens the far door
-        to: true_ending
+        to: mara_handoff_true_ending
 
   mara_manifest_intercom:
     text: >
@@ -1327,6 +1327,15 @@ scenes:
       The release opens every door at once. Names vanish from the signal ledger
       as passengers step into rain-bright morning. Mara's voice thanks you from
       the speaker, finally close enough to sound alive.
+    choices: []
+
+  mara_handoff_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once. Names vanish from the signal ledger
+      as passengers step into rain-bright morning, and Mara is not only a voice
+      thanking them from the speaker. She stands at the far doors with one hand
+      on the rail, holding them open until the last name leaves the line behind.
     choices: []
 
   passenger_true_ending:
