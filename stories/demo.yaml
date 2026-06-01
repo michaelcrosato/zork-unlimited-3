@@ -220,14 +220,14 @@ scenes:
     choices:
       - id: take_fuse
         label: Take the platform fuse
-        to: service_room
+        to: locker
         requires:
           notItem: fuse
         effects:
           addItem: fuse
       - id: take_badge
         label: Take Mara's badge
-        to: service_room
+        to: locker
         requires:
           notItem: badge
         effects:
@@ -268,24 +268,51 @@ scenes:
     text: >
       The platform lights buzz awake. Every advertisement shows the same face:
       Mara Vale, smiling from a missing-person poster dated forty-three years
-      ago. The train sign flickers between HOME and WARDEN STREET.
+      ago. The train sign flickers between HOME and WARDEN STREET, but the
+      gate control keeps tapping its token slot like a telegraph key.
     choices:
       - id: use_token_slot
         label: Drop the maintenance token into the gate control
         to: signal_booth
         requires:
           item: token
-      - id: board_from_lit_platform
-        label: Board the train carefully
-        to: train_car
+      - id: board_before_clearing_ledger
+        label: Board before checking the signal booth
+        to: ledger_warning
         requires:
-          item: map
+          all:
+            - item: map
+            - notFlag: freed_mara
+            - notItem: token
       - id: return_from_lit_platform
         label: Return to the service room before boarding
         to: service_room
       - id: flee_platform
         label: Run back to the street
         to: escape_ending
+
+  ledger_warning:
+    text: >
+      One foot crosses the train threshold, and the public-address speaker
+      coughs up Mara's badge number. The blank destination sign waits, but the
+      signal booth above the track is still lit, its ledger bell ringing for an
+      uncleared name.
+    choices:
+      - id: check_signal_booth
+        label: Check the signal booth before boarding
+        to: signal_booth
+        requires:
+          item: token
+      - id: return_for_signal_token
+        label: Return to the tunnel and find the signal token
+        to: tunnel
+        requires:
+          notItem: token
+      - id: board_without_clearing_mara
+        label: Board with only the map to guide you
+        to: train_car
+        requires:
+          item: map
 
   signal_booth:
     text: >
