@@ -1640,7 +1640,19 @@ scenes:
         label: Hear the conductor call the final platform clear
         to: passenger_conductor_roll_call
         requires:
-          notFlag: heard_final_roll_call
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: hear_counted_conductor_roll_call
+        label: Hear the conductor call the counted manifest clear
+        to: passenger_conductor_count_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - flag: reviewed_open_manifest_count
         effects:
           set:
             heard_final_roll_call: true
@@ -1660,6 +1672,20 @@ scenes:
     choices:
       - id: pull_release_after_conductor_roll_call
         label: Pull the release after the conductor's final clear call
+        to: passenger_conductor_true_ending
+
+  passenger_conductor_count_roll_call:
+    text: >
+      The conductor walks the aisle with Mara's opened count folded against his
+      punch. He does not ask for tickets. He reads what each passenger carried
+      back into the morning: newspaper, lunch tin, child's mitten, conductor's
+      punch, then a clear call after every answer. Mara stays on the speaker,
+      but she is not carrying the manifest alone anymore. By the time the
+      conductor reaches the first seat, the count has become a crowd instead of
+      a claim.
+    choices:
+      - id: pull_release_after_conductor_count
+        label: Pull the release after the counted clear call
         to: passenger_conductor_true_ending
 
   passenger_gathered_intercom:

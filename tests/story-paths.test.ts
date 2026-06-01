@@ -2264,6 +2264,65 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("pays off the reviewed manifest count on the conductor route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "listen_after_manifest_count",
+      "ask_conductor_from_answers",
+      "follow_conductor_signal_to_third_car"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_intercom");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_counted_conductor_roll_call",
+      "pull_release_after_conductor_clearance"
+    ]);
+
+    state = choose(story, state, "hear_counted_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
+    expect(observation.scene.text).toContain("opened count folded against his punch");
+    expect(observation.scene.text).toContain("newspaper, lunch tin, child's mitten");
+    expect(observation.scene.text).toContain("the count has become a crowd");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("pays off answered passenger roll call before a direct manifest release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
