@@ -930,6 +930,15 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: let_lunch_tin_worker_keep_count
+        label: Let the lunch-tin worker count the answered passengers aboard
+        to: train_car
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
       - id: ask_conductor_from_answers
         label: Ask the old conductor to call the answered passengers clear
         to: passenger_conductor_signal

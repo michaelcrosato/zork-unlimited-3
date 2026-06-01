@@ -12,51 +12,66 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Clarify the late helped-passenger boarding fork after
-  `passenger_farewell`.
-- Why this matters: The lunch-tin payoff is now playable and covered, but the
-  two choices that preserve the tailored lunch-tin route and the broader
-  gathered-passenger route used similar "lead the gathered passengers" wording.
-  Clearer labels make the player-facing branch understandable without changing
-  the healthy story graph.
+- Main objective: Improve normal-play discovery of the lunch-tin passenger
+  payoff from `passenger_answers`.
+- Why this matters: The lunch-tin intercom was reachable and covered, but the
+  previous 100-run random evidence sample missed it because normal play had to
+  route through the broader `passenger_farewell` fork before choosing the
+  lunch-tin-paced branch. Giving players a direct, in-fiction count option from
+  the answered-name scene makes that payoff easier to find without adding new
+  endings or weakening the existing passenger routes.
 - Tasks:
-  - Rename the lunch-tin-paced boarding choice so it explicitly centers the
-    worker setting the pace.
-  - Rename the preserved generic gathered route so it reads as intentionally
-    boarding without waiting for that count.
-  - Add regression assertions for the two player-visible labels.
-  - Run focused tests, full health, evidence-only `ai:cycle`, and a real CLI
-    playthrough through the clarified fork.
+  - Add a direct `passenger_answers` choice that lets the lunch-tin worker
+    count the answered passengers aboard.
+  - Reuse the existing `steadied_lunch_tin_worker` flag so the route lands in
+    `passenger_lunch_tin_intercom` rather than creating another parallel scene.
+  - Add regression coverage for the new choice label, flag effects, intercom,
+    and full-score helped-passenger ending.
+  - Run focused tests, validation, random sampling, full health,
+    evidence-only `ai:cycle`, and a real CLI playthrough through the new
+    shortcut.
 - Evidence:
-  - Focused story-path test passed with 95 tests after the label assertions.
-  - `npm run health` passed with formatting, TypeScript, 116 tests,
+  - Added `let_lunch_tin_worker_keep_count`, visible from
+    `passenger_answers`, which routes to `train_car` while setting
+    `helped_passengers_gather` and `steadied_lunch_tin_worker`.
+  - Focused story-path test passed with 96 tests after adding the direct-route
+    regression.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 77 scenes,
+    12 endings, and all 77 reachable.
+  - A focused 250-run random sample ended every run, visited all 77 scenes
+    including `passenger_lunch_tin_intercom`, kept best score 100/100, and
+    averaged 79.94.
+  - `npm run health` passed with formatting, TypeScript, 117 tests,
     validation, and coverage playtest.
   - Validation reports 77 scenes, 12 endings, and all 77 reachable.
   - Coverage playtest visited all 77 scenes, including both
     `passenger_gathered_intercom` and `passenger_lunch_tin_intercom`, with best
     score 100/100 and average score 99.57.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T19-08-25-746Z.md`; its 100-run random
-    sample ended every run, kept best score 100/100, averaged 78.25, and missed
-    `passenger_lunch_tin_intercom` while coverage reached it.
-  - Manual CLI play reached `passenger_farewell`, confirmed the two visible
-    labels are distinct, then followed `return_from_passenger_farewell` ->
-    `listen_to_lunch_tin_worker` -> `hear_final_lunch_tin_roll_call` ->
-    `pull_release_after_final_roll_call` to `passenger_helped_true_ending` at
-    100/100 with no objectives.
+    report `ai-runs/cycle-2026-06-01T19-19-59-259Z.md`; its 100-run random
+    sample ended every run, visited `passenger_lunch_tin_intercom`, had no
+    unvisited scenes, kept best score 100/100, and averaged 78.25.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `let_lunch_tin_worker_keep_count` -> `listen_to_lunch_tin_worker` ->
+    `hear_final_lunch_tin_roll_call` -> `pull_release_after_final_roll_call`
+    to `passenger_helped_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The revised choice labels make the branch intention clearer: wait for the
-    lunch-tin worker's count for the tailored payoff, or move the whole crowd
-    aboard without that pacing for the preserved gathered-passenger route.
-  - The lunch-tin-paced route still reads cleanly into the final roll call and
-    helped-passenger ending.
+  - The new direct option reads naturally after the passengers answer roll
+    call: the player can move from named people to the worker's practical
+    count without detouring through the broader platform farewell.
+  - The existing lunch-tin intercom and final roll-call epilogue still carry
+    the payoff cleanly into `passenger_helped_true_ending`.
+  - The broader `passenger_farewell` and generic gathered-passenger intercom
+    remain reachable for players who explore from `passenger_platform`.
   - No bugs found in focused tests, full health, evidence cycle, or manual CLI
     play.
-- Follow-up: Watch whether the generic preserved route still earns its place in
-  future playtests or should become a more distinct crowd-action beat.
+- Follow-up: Review whether the answer-scene choice list now has one too many
+  passenger-specific branches, or whether the extra agency improves pacing
+  enough to keep.
 - Risks:
-  - This is a polish-focused cycle, so the impact depends on the choice labels
-    being noticed during normal play rather than on new scene coverage.
+  - Adding another attractive branch at `passenger_answers` may slightly dilute
+    the conductor and newspaper routes, though automated coverage and manual
+    play still show all branches remain healthy.
 
 ## Last Completed Cycle
 

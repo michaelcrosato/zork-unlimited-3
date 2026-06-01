@@ -2090,6 +2090,68 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("lets answer listeners follow the lunch-tin count directly into the third car", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "let_lunch_tin_worker_keep_count"
+    );
+    expect(
+      observation.choices.find((choice) => choice.id === "let_lunch_tin_worker_keep_count")?.label
+    ).toBe("Let the lunch-tin worker count the answered passengers aboard");
+
+    state = choose(story, state, "let_lunch_tin_worker_keep_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_lunch_tin_worker",
+      "pull_release_after_gathering_passengers"
+    ]);
+
+    state = choose(story, state, "listen_to_lunch_tin_worker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+
+    state = choose(story, state, "pull_release_after_lunch_tin_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -2124,6 +2186,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "follow_newspaper_answer",
       "gather_answered_passengers",
+      "let_lunch_tin_worker_keep_count",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
       "board_after_answered_passengers"
@@ -3908,6 +3971,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "follow_newspaper_answer",
       "gather_answered_passengers",
+      "let_lunch_tin_worker_keep_count",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
       "board_after_answered_passengers"
