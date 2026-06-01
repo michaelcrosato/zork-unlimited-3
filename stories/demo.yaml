@@ -1174,6 +1174,20 @@ scenes:
             - notFlag: heard_mara_goodbye
             - notFlag: read_passenger_manifest
             - flag: saw_mara_handoff
+            - notFlag: read_mara_thumbprint
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_mara_thumbprint_after_handoff
+        label: Listen as Mara carries the torn thumbprint out
+        to: mara_thumbprint_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - flag: saw_mara_handoff
         effects:
           set:
             heard_mara_goodbye: true
@@ -1515,6 +1529,18 @@ scenes:
     choices:
       - id: pull_release_after_handoff_goodbye
         label: Pull the release while Mara opens the far door
+        to: mara_handoff_true_ending
+
+  mara_thumbprint_handoff_intercom:
+    text: >
+      The speaker opens on the sound of Mara touching the far doors with the
+      same hand that tore the ledger. "The line wanted my print to mean I
+      stayed," she says, no longer behind glass. "Let it mean I witnessed the
+      last door open instead. Pull the release while I am still on this side
+      of the threshold."
+    choices:
+      - id: pull_release_after_thumbprint_handoff_goodbye
+        label: Pull the release while Mara witnesses the last door
         to: mara_handoff_true_ending
 
   mara_manifest_handoff_intercom:

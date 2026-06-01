@@ -1551,6 +1551,63 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("pays off the torn thumbprint when Mara leaves the booth", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger",
+      "watch_mara_leave_booth",
+      "return_from_mara_handoff",
+      "board_after_clearing_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_thumbprint_after_handoff",
+      "pull_release"
+    ]);
+
+    state = choose(story, state, "listen_to_mara_thumbprint_after_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
+    expect(observation.scene.text).toContain("same hand that tore the ledger");
+    expect(observation.scene.text).toContain("witnessed the last door open");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_thumbprint_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
