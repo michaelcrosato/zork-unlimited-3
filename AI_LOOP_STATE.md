@@ -12,63 +12,52 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Give the direct release after reviewing Mara's opened
-  manifest count its own true-ending payoff.
-- Why this matters: Core route metrics are healthy, so the highest-value
-  improvement is route-specific story depth. The player can deliberately review
-  the opened manifest count, board while Mara holds that count, and pull the
-  release without the extra intercom listen; that direct action had bespoke
-  setup but still resolved into the generic passenger ending. A distinct ending
-  makes the reviewed-count choice feel remembered while preserving the deeper
-  intercom-count variant.
+- Main objective: Improve long-run evidence readability by grouping ideal
+  ending variants into route families.
+- Why this matters: Core route metrics are healthy and the passenger ending
+  list has grown. The raw ending IDs should remain available, but the AI loop's
+  headline evidence needs clearer route-family totals so future agents can
+  judge whether Mara, manifest, roll-call, or keepsake routes need attention.
 - Tasks:
-  - Add `passenger_reviewed_count_true_ending`.
-  - Add a reviewed-count direct-release choice from `train_car` and keep the
-    generic manifest release for unrevised manifest routes.
-  - Count the new ending as full-score and ideal in score, playtest, and loop
-    evidence helpers.
-  - Update focused, playtest, and AI-loop regression coverage.
-  - Run full health and a targeted real playthrough.
+  - Group ideal-ending evidence into Mara and passenger route families.
+  - Preserve exact per-ending counts inside each family.
+  - Update AI-loop regression coverage for the new breakdown string.
+  - Run full health and a real playthrough.
 - Evidence:
-  - Added `passenger_reviewed_count_true_ending` as a distinct terminal payoff
-    for reviewing Mara's opened manifest count, boarding while that count holds,
-    and pulling the release directly.
-  - Gated the generic `pull_release_with_manifest` choice away from the
-    reviewed-count state so the player sees a specific direct-release action
-    after choosing `review_open_manifest_count`.
-  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
-    ending counts as a full-score ideal passenger ending.
-  - Updated story-path, playtest, and AI-loop regression coverage so the new
-    ending appears in route tests, true-ending counts, and ideal-ending
-    breakdowns.
-  - `npm test` passed with 126 tests.
+  - Reworked `formatIdealEndingBreakdown` so ideal-ending evidence is grouped
+    into route families while preserving exact ending-ID counts.
+  - Passenger ideal endings now report as Core, Manifest, Roll call, and
+    Keepsakes families, making long-run pressure easier to scan as variants
+    grow.
+  - Updated AI-loop regression coverage for the grouped breakdown format.
+  - Focused `npm test -- tests/ai-loop.test.ts` passed with 7 tests.
   - `npm run health` passed with formatting, TypeScript, 126 tests, story
     validation, and coverage playtest.
   - Validation reports 99 scenes, 21 endings, all 99 reachable, and no
     warnings.
-  - Health coverage visited all 99 scenes, including
-    `passenger_reviewed_count_true_ending`, with zero unfinished runs, best
-    score 100/100, average score 99.51, and 342040 max-score runs.
-  - Targeted CLI play followed `review_open_manifest_count` ->
-    `board_after_manifest_count` ->
-    `pull_release_after_reviewed_manifest_count` and reached
-    `passenger_reviewed_count_true_ending` at 100/100 with no objectives.
+  - Health coverage visited all 99 scenes with zero unfinished runs, best score
+    100/100, average score 99.51, and 342040 max-score runs.
+  - Targeted CLI play reached `true_ending` at 100/100 with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-01T23-39-16-776Z.md`.
+  - The generated report's long-run signals now show random ideal endings as
+    Mara 26 and Passengers 49, with passenger subgroups Core 16, Manifest 9,
+    Roll call 9, and Keepsakes 15.
+  - Evidence-cycle MCP play reached `true_ending` at 100/100, and the adaptive
+    route reached `passenger_helped_true_ending` at 100/100.
 - Playtest notes:
-  - The reviewed-count direct release now pays off the player checking what
-    each passenger carried before boarding, without requiring the optional
-    third-car intercom listen.
-  - The deeper `listen_to_counted_manifest_intercom` route still reaches
-    `passenger_counted_true_ending`, so both the direct action and extra-listen
-    branch remain distinct.
-  - Coverage reached the new ending without harming scene reachability,
-    completion, or score distribution.
+  - The maintained true-ending route remains clear and finishes cleanly after
+    the reporting change.
+  - The grouped long-run line is easier to scan than the previous flat
+    passenger ending list while still exposing exact counts for debugging.
+  - No gameplay bugs were found; this cycle did not change story data or engine
+    behavior.
 - Follow-up:
-  - Watch whether the growing passenger-ending list stays readable in reports;
-    future payoff variants should remain tied to clearly distinct player
-    actions, or reporting should group subvariants more aggressively.
+  - Use grouped route totals to steer future content work before adding more
+    ending variants.
 - Risks:
-  - The game now has another ideal ending ID; future additions should keep
-    report grouping and test helpers current.
+  - Reporting-only changes still touch `src/ai-loop.ts`, so the outer loop may
+    need to restart after this milestone.
 
 ## Last Completed Cycle
 
