@@ -1181,6 +1181,67 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("lets ledger-first players pivot to the kept-passenger manifest before clearing Mara", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.choices.map((choice) => choice.id)).toContain("read_manifest_from_ledger");
+
+    state = choose(story, state, "read_manifest_from_ledger");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest");
+    expect(observation.state.flags.read_passenger_manifest).toBe(true);
+    expect(observation.scene.text).toContain("Mara's door is the only one still shut");
+
+    state = choose(story, state, "return_to_signal_ledger_from_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "clear_manifest_and_mara_from_ledger"
+    );
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "mark_mara_clear_from_ledger"
+    );
+
+    for (const choiceId of [
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "board_third_car_with_passengers",
+      "pull_release_with_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds an optional thumbprint memory without blocking Mara's ledger clear", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -1209,6 +1270,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("signal_ledger");
     expect(choiceIds).toContain("inspect_mara_thumbprint");
+    expect(choiceIds).toContain("read_manifest_from_ledger");
     expect(choiceIds).toContain("mark_mara_clear_from_ledger");
 
     state = choose(story, state, "inspect_mara_thumbprint");
@@ -1224,6 +1286,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("signal_ledger");
     expect(choiceIds).not.toContain("inspect_mara_thumbprint");
+    expect(choiceIds).not.toContain("read_manifest_from_ledger");
     expect(choiceIds).toContain("mark_mara_clear_from_ledger");
 
     state = choose(story, state, "mark_mara_clear_from_ledger");
@@ -1877,7 +1940,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("more than another name");
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
     expect(observation.objectives).toEqual(["Clear Mara's ledger entry with her badge proof."]);
-    expect(choiceIds).toEqual(["inspect_mara_thumbprint", "mark_mara_clear_from_ledger"]);
+    expect(choiceIds).toEqual([
+      "inspect_mara_thumbprint",
+      "read_manifest_from_ledger",
+      "mark_mara_clear_from_ledger"
+    ]);
   });
 
   it("adds an aftermath beat after clearing Mara's ledger entry", async () => {
@@ -1990,7 +2057,7 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("signal_ledger");
-    expect(choiceIds).toEqual(["inspect_mara_thumbprint", "clear_manifest_and_mara_from_ledger"]);
+    expect(choiceIds).toEqual(["clear_manifest_and_mara_from_ledger"]);
 
     state = choose(story, state, "clear_manifest_and_mara_from_ledger");
     observation = observe(story, state);

@@ -669,9 +669,21 @@ scenes:
           all:
             - item: badge
             - notFlag: read_mara_thumbprint
+            - notFlag: read_passenger_manifest
         effects:
           set:
             read_mara_thumbprint: true
+      - id: read_manifest_from_ledger
+        label: Check the kept-passenger manifest before clearing Mara
+        to: passenger_manifest
+        requires:
+          all:
+            - item: badge
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_passenger_manifest
+        effects:
+          set:
+            read_passenger_manifest: true
       - id: mark_mara_clear_from_ledger
         label: Enter Mara's badge number and clear her name
         to: mara_released

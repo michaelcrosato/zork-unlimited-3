@@ -11,52 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve the HOME sign trap payoff.
-- Why this matters: Current evidence shows completion and true-ending
-  discoverability are healthy, so the next valuable improvement is polish on a
-  recurring non-ideal route. The HOME sign already warns players once, but the
-  previous fail path moved too quickly from temptation to lost ending. Adding a
-  final recoverable beat should make the failure feel fair while preserving the
-  map-only safe escape.
+- Main objective: Let ledger-first players discover the kept-passenger manifest
+  before clearing Mara.
+- Why this matters: Cycle evidence showed the core route is healthy and all
+  scenes are reachable, so the best next improvement was a focused late-game
+  depth pass. Players who read Mara's ledger first could immediately clear her
+  name, but the passenger manifest was only obvious from the signal-booth hub.
+  Adding a bounded pivot from the ledger row makes the richer passenger ending
+  more naturally discoverable without adding another scene.
 - Tasks:
-  - Add a bounded `home_sign_echo` warning after players keep staring at HOME.
-  - Let players recover by covering the sign with the map, or commit to the
-    revised `lost_ending`.
-  - Add focused regression coverage for the new warning and lost-ending payoff.
+  - Add a `read_manifest_from_ledger` choice from `signal_ledger` when the
+    player has Mara's badge and has not already taken another ledger lore beat.
+  - Keep `mara_thumbprint` and the new manifest pivot mutually exclusive so
+    optional late-game content stays bounded under coverage playtest limits.
+  - Add focused regression coverage for the ledger-first manifest route and
+    update affected choice-order expectations.
   - Run focused tests, full health, an actual CLI playthrough, and commit/push
     if green.
 - Evidence:
-  - Added `home_sign_echo`, reached from `sign_warning` when the player keeps
-    staring at HOME.
-  - The new scene gives a final choice between covering the sign with the map
-    for a bounded `good_ending` recovery or letting the sign finish into
-    `lost_ending`.
-  - Revised `lost_ending` so the marked map falls unread, paying off that the
-    player ignored the practical escape route.
-  - Initial coverage exposed 24 unfinished routes when the recovery branch
-    returned to `morning_transfer`; resolving the recovery directly to
-    `good_ending` restored bounded coverage.
-  - `npm test -- tests/story-paths.test.ts` passed with 60 tests.
-  - `npm run health` passed with formatting, TypeScript, 81 tests, validation,
+  - Added `read_manifest_from_ledger`, returning to the existing
+    `passenger_manifest` scene and setting `read_passenger_manifest`.
+  - The new choice appears only with Mara's badge and only before either the
+    manifest or thumbprint has been read.
+  - Updated `inspect_mara_thumbprint` to hide once the manifest has been read,
+    preventing the longest optional route from stacking both ledger lore beats.
+  - Initial health exposed 6 max-step coverage runs ending at
+    `mara_manifest_intercom`; making the ledger lore beats mutually exclusive
+    restored 0 unfinished coverage runs.
+  - `npm test -- tests/story-paths.test.ts` passed with 61 tests.
+  - `npm run health` passed with formatting, TypeScript, 82 tests, validation,
     and coverage playtest.
   - Validation reports 49 scenes, 6 endings, and all 49 reachable.
-  - Health coverage playtest stayed stable with 0 unfinished routes, all 49
-    scenes visited, best score 100/100, average score 96.8, and 58176
-    max-score runs.
-  - Manual CLI play took the map-only train route through `sign_warning` and
-    `home_sign_echo`, ignored the final warning, and reached `lost_ending` at
-    15/100.
+  - Health coverage playtest reports 0 unfinished routes, all 49 scenes
+    visited, best score 100/100, average score 95.06, and 36360 max-score
+    runs.
+  - Manual CLI play read Mara's ledger first, pivoted to the kept-passenger
+    manifest through `read_manifest_from_ledger`, listened to the manifest
+    doors, cleared the manifest and Mara, and reached `passenger_true_ending`
+    at 100/100.
 - Playtest notes:
-  - The sign trap now reads as a fairer failure: the map is physically present
-    in the warning scene, Mara gives one last simple instruction, and the
-    player must explicitly ignore both to become lost.
-  - Returning the recovery path directly to `good_ending` kept transcript
-    readability and avoided multiplying optional morning-platform branches.
-- Follow-up: Watch whether non-ideal route polish keeps adding branches near
-  existing hubs; prefer bounded resolution scenes when adding final warnings.
+  - The ledger-first route now feels less like an accidental fork: after
+    reading Mara's row, players can still notice the wider passenger obligation
+    before committing to the clear action.
+  - Suppressing the thumbprint after the manifest is read keeps the route from
+    turning into a checklist of every optional late-game beat.
+- Follow-up: Consider whether the passenger ending should get a tiny scoring or
+  transcript distinction in a future cycle; the current score intentionally
+  remains shared with `true_ending`.
 - Risks:
-  - Extra warning scenes can inflate coverage route counts if they re-enter
-    branchy hubs; keep checking coverage unfinished counts after each addition.
+  - Late-game optional choices near `signal_ledger` can quickly exceed the
+    50-step coverage budget if they stack. Keep new lore beats mutually
+    exclusive or directly resolving.
 
 ## Last Completed Cycle
 
