@@ -105,6 +105,30 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("return_to_service_room");
   });
 
+  it("prevents empty platform return loops until players collect a useful tool", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "follow_arrows", "return_to_service_room"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.left_unprepared_platform).toBe(true);
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    state = choose(story, state, "take_map");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("go_to_platform");
+  });
+
   it("removes the destructive gate option after players find the fuse", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

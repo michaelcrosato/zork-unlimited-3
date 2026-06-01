@@ -214,6 +214,10 @@ scenes:
             - any:
                 - flag: has_light
                 - flag: lights_on
+            - any:
+                - notFlag: left_unprepared_platform
+                - item: map
+                - item: fuse
             - notFlag: platform_lit
         effects:
           set:
@@ -317,6 +321,9 @@ scenes:
       - id: return_to_service_room
         label: Return to the service room and prepare
         to: service_room
+        effects:
+          set:
+            left_unprepared_platform: true
       - id: force_gate
         label: Force the rusted gate
         to: gate_warning

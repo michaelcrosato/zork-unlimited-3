@@ -11,29 +11,35 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make coverage playtest reports distinguish scene-discovery
-  frontier samples from genuine unfinished/stuck runs.
-- Outcome: `PlaytestRun` entries now carry a `status` of `ending`, `frontier`,
-  `dead_end`, or `max_steps`. Coverage first-seen scene samples are counted as
-  `frontierSamples`, while `unfinished` now reflects only real dead-end or
-  step-limit failures.
+- Main objective: Reduce empty mid-game platform loops after players discover
+  Platform 13 without supplies.
+- Outcome: Returning from the unpowered platform now marks that the player left
+  underprepared. The service room withholds an immediate empty `go_to_platform`
+  repeat until the player collects a useful next tool: the marked map or the
+  platform fuse.
 - Evidence:
-  - Added regression coverage proving step-limit random runs are still counted
-    as unfinished and coverage frontier samples are not.
-  - `npm test -- tests/playtest.test.ts` passed with 5 tests.
-  - `npm run health` passed with formatting, TypeScript, 38 tests, story
+  - Added regression coverage proving an unprepared platform return removes
+    `go_to_platform`, keeps preparation choices available, and restores
+    `go_to_platform` after taking the map.
+  - `npm test -- tests/story-paths.test.ts` passed with 28 tests.
+  - Validation passed: 25 scenes, 5 endings, 25 reachable, no warnings.
+  - Random playtest, 250 runs: all ended, all scenes visited, `true_ending`
+    reached 125 times, `bad_ending` dropped to 44, best score 100/100, average
+    score 66.14.
+  - `npm run health` passed with formatting, TypeScript, 39 tests, story
     validation, and coverage playtest.
-  - Coverage summary now reports 316 runs, 296 ended, 0 unfinished, 20
-    frontier samples, all 25 scenes visited, `true_ending` reached 72 times,
-    and best score 100/100.
-  - Manual CLI route through the gate-control clue, radio route, locker, stopped
-    clock, poster beat, signal booth, and release reached `true_ending` at
-    100/100.
-- Follow-up: Watch future random summaries for genuine `max_steps` unfinished
-  runs now that coverage frontier samples are separated.
+  - Coverage playtest now reports 612 runs, 592 ended, 0 unfinished, 20 frontier
+    samples, all 25 scenes visited, `true_ending` reached 144 times, and best
+    score 100/100.
+  - Manual CLI route intentionally visited Platform 13 unprepared, returned for
+    supplies, then collected the map, radio route, fuse, badge, token, cleared
+    Mara, and reached `true_ending` at 100/100.
+- Follow-up: Watch coverage runtime because the new underprepared flag increases
+  the number of distinct states the coverage strategy explores.
 - Risks:
-  - Consumers that treated coverage first-seen samples as unfinished need to use
-    `frontierSamples` for that diagnostic count instead.
+  - The loop-prevention flag deliberately focuses players who backed away from
+    the empty platform. The map-only good/lost branch remains available after
+    taking the map, and the fuse path remains available after taking the fuse.
 
 ## Last Completed Cycle
 
