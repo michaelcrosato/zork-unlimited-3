@@ -350,11 +350,11 @@ scenes:
         requires:
           all:
             - item: badge
-            - notItem: fuse
             - notFlag: inspected_badge_back
         effects:
           set:
             inspected_badge_back: true
+            knows_badge_proof: true
             knows_release: true
       - id: close_locker
         label: Close the locker
@@ -369,8 +369,8 @@ scenes:
       The badge is heavier than it should be. On the back, under Mara Vale's
       number, someone scratched a route in tiny block letters: LAST TRAIN,
       THIRD CAR, FIRST SEAT RELEASE. A second hand added one more line later:
-      DO NOT CLEAR ME BEFORE THE OTHERS. The metal is worn smooth where a thumb
-      worried the edge for years.
+      BADGE PROOF OPENS THE LEDGER. DO NOT CLEAR ME BEFORE THE OTHERS. The
+      metal is worn smooth where a thumb worried the edge for years.
     choices:
       - id: return_from_badge_memory
         label: Put the badge with the other supplies
@@ -1640,12 +1640,12 @@ scenes:
 
   mara_badge_proof_intercom:
     text: >
-      The ceiling speaker warms before Mara speaks. "You found the line on the
-      notice back," she says. "Badge proof required. For forty-three years that
-      sounded like a lock. Tonight you made it an answer." The badge in your
-      pocket ticks once against the release handle, and her voice steadies
-      around the old number. "Pull now. Let the proof open something instead of
-      holding me in place."
+      The ceiling speaker warms before Mara speaks. "You found the proof line,"
+      she says. "Badge proof required. For forty-three years that sounded like
+      a lock. Tonight you made it an answer." The badge in your pocket ticks
+      once against the release handle, and her voice steadies around the old
+      number. "Pull now. Let the proof open something instead of holding me in
+      place."
     choices:
       - id: pull_release_after_badge_proof_goodbye
         label: Pull the release while the badge proof answers

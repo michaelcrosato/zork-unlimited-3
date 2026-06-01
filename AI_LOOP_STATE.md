@@ -12,55 +12,58 @@ payoffs where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Pay off the early notice-back badge proof clue in Mara's
-  final no-manifest release route.
-- Why this matters: Normal-play guidance and ending coverage are healthy, so
-  the best next improvement is route texture. The notice backing already teaches
-  that Mara needs badge proof, but that optional clue did not change the final
-  Mara goodbye. A small proof-aware intercom makes careful early reading feel
-  remembered without changing the solution.
+- Main objective: Make the badge-proof payoff easier to discover through normal
+  locker play without making it mandatory.
+- Why this matters: The previous cycle added a strong
+  `mara_badge_proof_intercom`, but random play still rarely reaches it because
+  `knows_badge_proof` mostly comes from the optional notice-back detour. The
+  badge itself is a natural clue source, so reading its back should teach the
+  same proof concept and remain available after gathering both locker supplies.
 - Tasks:
-  - Add a `mara_badge_proof_intercom` scene gated by `knows_badge_proof`.
-  - Keep the generic `mara_intercom` for players who read only the front notice.
-  - Add regression coverage for the proof-aware route and full-score ending.
-  - Run focused tests, full health, evidence gathering, and a real CLI/MCP route
-    through the new branch.
+  - Let `badge_memory` set `knows_badge_proof` in addition to `knows_release`.
+  - Keep `inspect_badge_back` available after taking both the fuse and badge.
+  - Update regression coverage for the expanded badge-memory clue.
+  - Run focused tests, full health, and a real CLI/MCP route through the
+    badge-memory proof branch.
 - Evidence:
-  - Added `mara_badge_proof_intercom` from `train_car` for freed-Mara,
-    no-manifest routes where the player checked the notice back.
-  - Tightened `listen_to_mara_intercom` so it remains the generic no-manifest
-    branch for players without `knows_badge_proof`.
-  - Focused story-path tests passed with 101 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 86
-    reachable scenes and 12 endings.
-  - `npm run health` passed with formatting, TypeScript, 122 tests,
+  - Updated `badge_memory` so reading the badge back now sets
+    `knows_badge_proof` as well as `knows_release`.
+  - Removed the `notItem: fuse` gate from `inspect_badge_back`, keeping the
+    optional clue available after players collect both locker supplies.
+  - Revised the proof-aware Mara intercom wording from notice-specific to
+    source-neutral, so it works whether the clue came from the notice backing
+    or the badge back.
+  - Focused story-path tests passed with 102 tests.
+  - `npm run health` passed with formatting, TypeScript, 123 tests,
     validation, and coverage playtest.
-  - Health coverage visited all 86 scenes, including
-    `mara_badge_proof_intercom`, with best score 100/100 and average score
-    99.58.
+  - Health coverage visited all 86 scenes, including both
+    `mara_badge_proof_intercom` and the generic `mara_intercom`, with best
+    score 100/100 and average score 99.58.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-01T21-25-48-562Z.md`. Its health checks
+    report `ai-runs/cycle-2026-06-01T21-37-31-202Z.md`. Its health checks
     were green, MCP validation passed with 86 reachable scenes and no warnings,
-    the MCP route reached `true_ending` at 100/100, and the adaptive route
-    reached `passenger_true_ending` at 100/100.
-  - Manual CLI play followed `inspect_notice_back` ->
+    250-run MCP random play visited `mara_badge_proof_intercom` and
+    `mara_intercom`, the required MCP route reached `true_ending` at 100/100,
+    and the adaptive MCP route reached `passenger_helped_true_ending` at
+    100/100.
+  - Targeted CLI play followed `inspect_badge_back` ->
     `listen_to_badge_proof_intercom` ->
     `pull_release_after_badge_proof_goodbye` and reached `true_ending` at
     100/100 with no objectives.
 - Playtest notes:
-  - The new intercom makes the notice-back clue feel remembered: the badge
-    proof changes from a lock into the answer that lets Mara leave.
-  - The branch remains optional and mutually exclusive with thumbprint, handoff,
-    and passenger-manifest variants.
-  - Random playtest samples did not hit the new scene, but coverage and manual
-    play did; this is acceptable for an optional careful-reader payoff, though
-    future cycles can watch whether it should surface more often.
+  - The locker now offers `inspect_badge_back` after both badge and fuse are
+    collected, which feels better than hiding a story clue because the player
+    took supplies in the practical order.
+  - The final badge-proof intercom now reads correctly for both clue sources.
+  - Random MCP sampling now reaches `mara_badge_proof_intercom` while preserving
+    the generic Mara intercom, so the proof branch became more discoverable
+    without becoming mandatory.
 - Follow-up:
-  - Watch whether `mara_badge_proof_intercom` needs slightly stronger
-    normal-play discovery without turning it into a default Mara branch.
+  - Watch random samples to see whether `mara_badge_proof_intercom` appears
+    more often while the generic Mara intercom remains reachable.
 - Risks:
-  - Late Mara branches are already dense; the new branch must remain mutually
-    exclusive with thumbprint, handoff, and passenger-manifest variants.
+  - If every normal route reads the badge back, the generic Mara goodbye could
+    become too rare; keep the proof branch optional.
 
 ## Last Completed Cycle
 

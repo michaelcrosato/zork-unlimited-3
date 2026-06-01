@@ -456,8 +456,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("badge_memory");
     expect(observation.scene.text).toContain("LAST TRAIN");
+    expect(observation.scene.text).toContain("BADGE PROOF OPENS THE LEDGER");
     expect(observation.scene.text).toContain("DO NOT CLEAR ME BEFORE THE OTHERS");
     expect(observation.state.flags.inspected_badge_back).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.state.flags.knows_release).toBe(true);
 
     state = choose(story, state, "return_from_badge_memory");
@@ -474,6 +476,36 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("service_room");
     expect(observation.state.inventory).toEqual(["badge", "fuse", "lantern"]);
+  });
+
+  it("keeps the badge memory available after taking both locker supplies", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("locker");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "inspect_badge_back",
+      "close_locker"
+    ]);
+
+    state = choose(story, state, "inspect_badge_back");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("badge_memory");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.state.flags.knows_release).toBe(true);
   });
 
   it("does not repeat Mara character beats at the posters after reading the badge", async () => {
@@ -4504,6 +4536,6 @@ describe("demo story critical paths", () => {
     choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("locker");
-    expect(choiceIds).toEqual(["close_locker"]);
+    expect(choiceIds).toEqual(["inspect_badge_back", "close_locker"]);
   });
 });
