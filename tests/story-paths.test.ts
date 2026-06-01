@@ -440,6 +440,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("good_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's badge number");
+    expect(observation.scene.text).toContain("less like an ending");
   });
 
   it("lets map-only escape riders turn back for Mara's ledger", async () => {

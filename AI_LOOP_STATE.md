@@ -11,20 +11,64 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Sharpen the safe-but-incomplete map escape ending.
+- Why this matters: Cycle evidence shows the true-ending routes are healthy and
+  normal play reaches ideal endings reliably. The strongest next improvement is
+  story clarity on a non-ideal ending: players who use the marked map to escape
+  should understand the route is safe and intentional, but that Mara and the
+  ledger remain unresolved.
+- Tasks:
+  - Rewrite `good_ending` prose to pay off the new morning-transfer setup while
+    preserving the unresolved ledger consequence.
+  - Add regression coverage for the strengthened ending text.
+  - Run focused tests, full health, an actual CLI playthrough, and an evidence
+    cycle.
+- Evidence:
+  - `good_ending` now frames the marked-map escape as a real morning escape
+    while explicitly leaving Mara's badge number and the ledger unresolved.
+  - Updated story-path coverage asserts that the optional map-study route still
+    reaches `good_ending` and that the ending preserves the unresolved-Mara
+    consequence.
+  - `npm test -- tests/story-paths.test.ts` passed with 53 tests.
+  - `npm run health` passed with formatting, TypeScript, 74 tests, validation,
+    and coverage playtest.
+  - Validation reports 43 scenes, 6 endings, and all 43 reachable.
+  - Health coverage playtest reports 0 unfinished runs, all 43 scenes visited,
+    best score 100/100, average score 95.08, and 9984 max-score runs.
+  - Manual CLI play took the map-only train route through `train_map`,
+    `morning_transfer`, and the revised `good_ending`, ending at 15/100 with
+    missing score beats clearly matching the unresolved ledger path.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, an actual
+    MCP true-ending playthrough at 100/100, and an adaptive exploratory
+    true-ending route at 100/100.
+- Playtest notes:
+  - The revised map-only ending now reads as a survivable retreat rather than a
+    thin success state.
+  - The route's 15/100 score and missing score beats reinforce that the player
+    escaped before solving Mara's ledger thread.
+  - No route bugs were found in focused tests, full health, manual CLI play, or
+    the evidence cycle.
+- Follow-up: Watch whether random route summaries still make the low-score
+  safe escape easy to distinguish from ideal endings.
+- Risks:
+  - Text-only ending polish does not change route metrics. That is intentional:
+    current metrics are healthy, so this cycle favors payoff clarity over new
+    branching.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Smoothed map recovery after players read Mara's ledger without the
+  marked map.
 - Main objective: Smooth map recovery after players read Mara's ledger without
   the marked map.
-- Why this matters: Cycle evidence showed the core route is healthy, but the
+- Why this matters: Cycle evidence showed the core route was healthy, but the
   adaptive exploratory route could still stall after entering the signal booth
   unprepared, reading the ledger, returning for the map, and landing back on the
   lit platform. The warning was useful; the extra service-room and platform
-  hops were not. Recovering the map directly back to Mara's row keeps the
-  player focused on the active ledger objective.
-- Tasks:
-  - Change the mapless `signal_ledger` recovery choice to add the map and
-    return directly to `signal_ledger`.
-  - Update story-path regression coverage for the mapless manifest route.
-  - Run focused tests, full health, an actual CLI playthrough, and an evidence
-    cycle.
+  hops were not. Recovering the map directly back to Mara's row kept the player
+  focused on the active ledger objective.
 - Evidence:
   - `return_for_marked_map` now reads "Recover the marked map and return to
     Mara's ledger row", adds the map, and keeps the player at `signal_ledger`.
@@ -45,13 +89,6 @@ preserving normal-play true-ending discoverability.
     verification, MCP validation, MCP random/coverage/goal playtests, an actual
     MCP true-ending playthrough at 100/100, and an adaptive exploratory
     true-ending route at 100/100.
-- Playtest notes:
-  - The recovery choice now reads as a continuation of the warning rather than
-    a detour through already-solved rooms.
-  - Repeating the same `signal_ledger` prose after map recovery is slightly
-    mechanical, but the newly available clear choice makes the next action
-    obvious.
-  - No route bugs were found in manual CLI play or the evidence cycle.
 - Follow-up: Consider adding a short dedicated "map recovered" ledger beat if
   future transcripts need stronger prose feedback for this direct recovery.
 - Risks:

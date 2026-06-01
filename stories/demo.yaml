@@ -965,9 +965,11 @@ scenes:
   good_ending:
     ending: true
     text: >
-      The marked map shows the safe transfer beneath Warden Street. The train
-      wakes, carries you one stop, and opens onto morning, though the speaker
-      keeps whispering names after you leave.
+      The marked map carries you through one impossible transfer and out to a
+      morning platform where the rain smells real. Behind the closing doors,
+      the underpass speaker keeps reading from the ledger. Mara's badge number
+      is still the clearest name, and the safe route feels less like an ending
+      than a promise you survived long enough to break.
     choices: []
 
   escape_ending:
