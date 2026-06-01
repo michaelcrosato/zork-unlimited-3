@@ -1698,6 +1698,63 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("pays off answered passenger roll call before a direct manifest release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "board_after_passenger_answers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_passengers",
+      "pull_release_with_manifest"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_intercom");
+    expect(observation.scene.text).toContain("The passengers who answered roll call");
+    expect(observation.scene.text).toContain("without asking Mara to prove them twice");
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("adds an optional lost-mitten passenger beat without blocking boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3173,7 +3230,10 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["pull_release_with_manifest"]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_passengers",
+      "pull_release_with_manifest"
+    ]);
 
     state = choose(story, state, "pull_release_with_manifest");
     observation = observe(story, state);
@@ -3218,7 +3278,10 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["pull_release_with_manifest"]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_passengers",
+      "pull_release_with_manifest"
+    ]);
 
     state = initialState(story);
 

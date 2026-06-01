@@ -1036,6 +1036,19 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_answered_passengers
+        label: Listen as the answered passengers board
+        to: passenger_answered_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_answered_passengers
+        effects:
+          set:
+            heard_answered_passengers: true
       - id: listen_to_gathered_passengers
         label: Listen to the gathered passengers before the release
         to: passenger_gathered_intercom
@@ -1314,6 +1327,19 @@ scenes:
     choices:
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
+        to: passenger_true_ending
+
+  passenger_answered_intercom:
+    text: >
+      The passengers who answered roll call board without rushing. The child
+      repeats his own name under his breath, the newspaper woman folds her
+      transfer into a square she can hold, and the old conductor counts the
+      open doors once without asking Mara to prove them twice. "They heard
+      themselves," Mara says through the speaker. "Pull the release before the
+      line teaches them to wait for permission again."
+    choices:
+      - id: pull_release_after_answered_intercom
+        label: Pull the release while the answered names hold
         to: passenger_true_ending
 
   passenger_gathered_intercom:

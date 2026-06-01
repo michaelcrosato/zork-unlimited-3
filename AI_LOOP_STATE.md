@@ -11,51 +11,57 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a thumbprint-specific intercom payoff on the direct Mara
-  route.
-- Why this matters: Careful players can touch Mara's torn thumbprint and hear
-  her rule that no one clears until everyone clears, but the direct release
-  route previously moved into generic intercom text. A small payoff should make
-  that memory feel acknowledged without changing route difficulty.
+- Main objective: Add an answer-listener intercom payoff on the direct manifest
+  release route.
+- Why this matters: Players can pause to hear the opened manifest passengers
+  answer roll call, then board directly without gathering or matching them. That
+  route previously jumped straight to the generic manifest release choice, so
+  the careful roll-call interaction needed a small late-game acknowledgement.
 - Tasks:
-  - Add an optional train-car intercom scene gated by `read_mara_thumbprint`.
-  - Keep the direct release available and preserve the existing generic Mara
-    intercom for players who did not inspect the thumbprint.
-  - Add regression coverage for choice ordering, scene text, and max-score
-    completion.
-  - Run focused tests, full health, and an actual playthrough.
+  - Add an optional train-car intercom scene gated by `heard_passenger_answers`
+    and the ungathered manifest route.
+  - Preserve the direct `pull_release_with_manifest` choice and existing
+    generic Mara manifest intercom for players who did not listen to answers.
+  - Add regression coverage for choice ordering, scene text, route flagging,
+    and max-score completion.
+  - Run focused tests, validation/playtest sampling, full health, and an actual
+    playthrough.
 - Evidence:
-  - Added `mara_thumbprint_intercom`, reached from the train car only after
-    players inspect Mara's torn thumbprint, clear her ledger row, and board
-    without opening the passenger manifest.
-  - The direct `pull_release` choice remains available beside the optional
-    thumbprint intercom, and the existing generic Mara intercom remains
-    available for players who did not inspect the thumbprint.
+  - Added `passenger_answered_intercom`, reached from the train car only after
+    players open the manifest, listen to passenger answers, and board without
+    gathering the crowd.
+  - The direct `pull_release_with_manifest` choice remains available beside the
+    optional answer-listener intercom.
+  - Updated existing direct answer-listener route assertions so both the
+    immediate boarding path and the return-to-platform path expect the new
+    optional intercom before direct release.
   - Added story-path regression coverage for choice ordering, scene text,
-    `heard_mara_goodbye`, and max-score completion through `true_ending`.
-  - Focused story-path tests passed with 83 tests.
-  - Validation passed with 64 scenes, 10 endings, and all 64 reachable.
-  - A 100-run random sample ended 100/100 runs, visited all 64 scenes,
-    reached `mara_thumbprint_intercom`, kept best score 100/100, averaged
+    `heard_answered_passengers`, and max-score completion through
+    `passenger_true_ending`.
+  - Focused story-path tests passed with 84 tests.
+  - Validation passed with 65 scenes, 10 endings, and all 65 reachable.
+  - A 100-run random sample ended 100/100 runs, visited all 65 scenes,
+    reached `passenger_answered_intercom`, kept best score 100/100, averaged
     78.2, and reached max score in 72 runs.
-  - `npm run health` passed with formatting, TypeScript, 104 tests,
+  - `npm run health` passed with formatting, TypeScript, 105 tests,
     validation, and coverage playtest.
-  - Health coverage playtest visited all 64 scenes with 0 unfinished completed
-    routes, best score 100/100, average score 98.58, and 101016 max-score
+  - Health coverage playtest visited all 65 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 98.63, and 105408 max-score
     runs.
-  - Manual CLI play inspected the thumbprint, cleared Mara, listened to the new
-    intercom, and reached `true_ending` at 100/100 with no objectives.
+  - Manual CLI play listened to passenger answers, boarded directly, heard the
+    new answered-passenger intercom, and reached `passenger_true_ending` at
+    100/100 with no objectives.
 - Playtest notes:
-  - The new beat makes the direct Mara route answer the earlier "No one clears
-    until everyone clears" memory before the emergency release.
-  - Keeping the immediate release beside the optional intercom prevents the
-    direct route from feeling padded for players ready to finish.
+  - The new beat gives direct manifest players a clear payoff for listening to
+    the roll call before boarding.
+  - Keeping `pull_release_with_manifest` beside the optional intercom preserves
+    the direct route for players ready to finish.
   - No validation, score, completion, or coverage regression surfaced.
 - Follow-up: Confirm random/coverage play still visits the new scene without
   lowering route completion.
 - Risks:
-  - More optional late-game intercom scenes can make route-family reports and
-    choice ordering busier; keep future additions similarly gated and tested.
+  - Another optional late-game intercom scene can make route-family summaries
+    busier; keep the branch gated to answer-listener direct-manifest play.
 
 ## Last Completed Cycle
 
