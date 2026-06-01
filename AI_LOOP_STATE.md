@@ -11,56 +11,58 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the recoverable forced-gate warning more actionable
-  before players commit to the bad ending.
-- Why this matters: Random evidence still shows meaningful bad-ending pressure
-  around forcing the gate without the fuse. The warning should remain dangerous,
-  but players who back away should learn the concrete recovery set immediately:
-  fuse, badge, map, and the stopped-clock token.
+- Main objective: Preserve the newspaper passenger payoff after players learn
+  the Warden Street transfer-column memory.
+- Why this matters: The newspaper-specific route is discoverable, but normal
+  players can still choose the neutral boarding option immediately after the
+  memory and lose the bespoke newspaper intercom/ending path. A learned
+  character clue should keep shaping the final route.
 - Tasks:
-  - Revise `gate_warning` text and recovery choice label so the first warning
-    names the practical supplies.
-  - Set the stopped-clock token clue when the player studies the failing gate
-    closely enough to trigger the warning.
-  - Update regression coverage for the new text, flag, recovery objective, and
-    preserved bad-ending route.
+  - Route `board_after_newspaper_memory` through the newspaper transfer-column
+    intercom instead of the generic train car.
+  - Set the same gathered-passenger flags as the explicit transfer-column help
+    choice so the resulting state is coherent.
+  - Update regression coverage for the revised label, route, and flags.
   - Run focused tests, validation/playtest sampling, full health, and an actual
-    CLI or MCP playthrough through the updated warning route.
+    CLI or MCP playthrough through the updated newspaper route.
 - Evidence:
-  - `gate_warning` now shows the empty fuse socket sparking and the
-    soot-scratched `CLOCK = TOKEN` clue before the player chooses whether to
-    back away, listen below the platform, or force the bad ending.
-  - Choosing `force_gate` sets `knows_token_location`, so backing away exposes
-    the service-room `go_to_stopped_clock` recovery route and the stopped-clock
-    objective immediately.
-  - The bad-ending choices remain available from both `gate_warning` and
-    `gate_echo`.
+  - `board_after_newspaper_memory` now routes to
+    `passenger_newspaper_intercom` and sets `helped_passengers_gather` plus
+    `heard_gathered_passengers`.
+  - The choice label now says "Board the third car by the transfer column,"
+    making the newspaper clue feel like the route forward.
   - Focused story-path tests passed: 88 tests.
   - Validation reports 72 scenes, 11 endings, and all 72 reachable.
-  - A 250-run random sample with the loop-style 80-step budget ended every run,
-    visited every scene, kept best score 100/100, and reached max score in 182
-    runs.
+  - A default 250-run random sample visited every scene, reached
+    `passenger_newspaper_true_ending` 17 times, kept best score 100/100, and
+    had one default 50-step unfinished run.
+  - The same 250-run random sample with the loop-style 80-step budget ended
+    every run, visited every scene, and reached
+    `passenger_newspaper_true_ending` 17 times.
   - Coverage playtest visited all 72 scenes with 0 unfinished completed routes,
-    best score 100/100, average score 99.16, and 169008 max-score runs.
+    best score 100/100, average score 99.07, and 152912 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 109 tests,
     validation, and coverage playtest.
-  - Manual CLI play forced the gate, backed away from the revised warning,
-    used the newly surfaced stopped-clock route, and reached `true_ending` at
+  - Manual CLI play followed `ask_newspaper_woman_about_stop` ->
+    `board_after_newspaper_memory` -> `passenger_newspaper_intercom` ->
+    `passenger_newspaper_roll_call` -> `passenger_newspaper_true_ending` at
     100/100 with no objectives.
 - Playtest notes:
-  - The warning now teaches the immediate recovery target without making the
-    scene feel safe: the knock below the track and closing train doors still
-    preserve the threat.
-  - The recovery choice label is much clearer than "proper supplies" and maps
-    cleanly to the next service-room objective list.
-  - A default 50-step random sample still had one max-step run after repeated
-    tunnel/service-room backtracking, but that run had already reached
-    `mara_released` at 90/100 and completed under the loop's 80-step budget.
-- Follow-up: Recheck whether random bad-ending pressure drops without making
-  the gate feel harmless.
+  - The revised board label reads naturally after the memory scene because the
+    transfer column is already the active clue.
+  - Boarding through the newspaper intercom makes the route feel continuous:
+    memory, timetable, final roll call, then release.
+  - The generic train-car ending remains available from `passenger_answers` and
+    from `passenger_platform`, so players who do not pursue the newspaper woman
+    are not forced into the specialized branch.
+- Follow-up: Compare random newspaper-ending frequency against the prior
+  250-run sample, where `passenger_newspaper_true_ending` appeared 4 times in
+  MCP random play and 5 times in a focused 250-run sample.
 - Risks:
-  - Too much explicit clueing can flatten the warning's tension; keep the cue
-    diegetic and leave the bad-ending choices intact.
+  - Routing the neutral-looking board choice through the newspaper intercom
+    slightly reduces generic train-car fallback after the memory; keep the
+    direct generic boarding path available from `passenger_answers` and
+    `passenger_platform`.
 
 ## Last Completed Cycle
 

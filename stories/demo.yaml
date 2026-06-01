@@ -1004,8 +1004,12 @@ scenes:
             helped_passengers_gather: true
             heard_gathered_passengers: true
       - id: board_after_newspaper_memory
-        label: Board the third car and reach the release
-        to: train_car
+        label: Board the third car by the transfer column
+        to: passenger_newspaper_intercom
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
 
   passenger_conductor_signal:
     text: >

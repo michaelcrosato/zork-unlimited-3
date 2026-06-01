@@ -1025,6 +1025,9 @@ describe("demo story critical paths", () => {
       observation.choices.find((choice) => choice.id === "help_passengers_after_newspaper_memory")
         ?.label
     ).toBe("Use the transfer column to gather passengers into the third car");
+    expect(
+      observation.choices.find((choice) => choice.id === "board_after_newspaper_memory")?.label
+    ).toBe("Board the third car by the transfer column");
 
     state = choose(story, state, "help_passengers_after_newspaper_memory");
     observation = observe(story, state);
@@ -1072,6 +1075,42 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("blank transfer column fills with destinations");
     expect(observation.scene.text).toContain("folds tomorrow's route into her coat");
     expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "ask_newspaper_woman_about_stop",
+      "board_after_newspaper_memory"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_intercom");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_gathered_intercom"
+    );
   });
 
   it("still lets gate-control players install only the fuse when the token is missing", async () => {
