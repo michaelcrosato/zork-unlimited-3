@@ -2703,8 +2703,10 @@ describe("demo story critical paths", () => {
 
     const observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("answered names can fade");
+    expect(observation.scene.text).toContain("carry it into morning themselves");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
@@ -4485,7 +4487,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_answered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.text).toContain("answered names can fade");
+    expect(observation.scene.text).toContain("carry it into morning themselves");
     expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = initialState(story);

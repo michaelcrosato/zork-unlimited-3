@@ -1005,7 +1005,7 @@ scenes:
             heard_answered_passengers: true
       - id: pull_release_after_answered_boarding
         label: Pull the release while the answered names hold
-        to: passenger_true_ending
+        to: passenger_answered_boarding_true_ending
 
   passenger_platform:
     text: >
@@ -2208,6 +2208,17 @@ scenes:
       already behind her, and the old conductor calls each open door clear
       without touching his punch. Mara listens until their own voices carry the
       last name out of the line.
+    choices: []
+
+  passenger_answered_boarding_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once before the answered names can fade
+      into another roll call. The child keeps saying present until rain answers
+      back from the platform, the newspaper woman carries Warden Street like a
+      folded ticket instead of a summons, and the old conductor clears the aisle
+      by listening for each voice to step through. Mara does not need to repeat
+      the list. The passengers carry it into morning themselves.
     choices: []
 
   passenger_counted_true_ending:

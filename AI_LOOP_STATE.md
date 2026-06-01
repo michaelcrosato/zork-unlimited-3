@@ -12,6 +12,61 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Give the direct answered-passenger boarding route its own
+  final true-ending payoff.
+- Why this matters: Core guidance and true-ending discoverability are healthy,
+  so the useful next improvement is route-specific story depth. The route where
+  the player listens to passengers answer roll call, boards while those answers
+  hold, and immediately pulls the release had bespoke buildup but resolved into
+  the generic passenger ending. A distinct ending makes that direct action feel
+  remembered while preserving the existing extra-listen intercom variant.
+- Tasks:
+  - Add `passenger_answered_boarding_true_ending`.
+  - Route `pull_release_after_answered_boarding` to that ending.
+  - Count the new ending as full-score and ideal in score, playtest, and loop
+    evidence helpers.
+  - Update focused and integrated regression coverage for the answered
+    boarding route.
+  - Run full health and a targeted real playthrough.
+- Evidence:
+  - Added `passenger_answered_boarding_true_ending` as a distinct terminal
+    payoff for pulling the release directly from `passenger_answered_boarding`.
+  - Left `passenger_answered_intercom` routed to
+    `passenger_answered_true_ending`, preserving the deeper listen-once-more
+    variant.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending counts as a full-score ideal passenger ending.
+  - Updated story-path, playtest, and AI-loop regression coverage.
+  - `npm test` passes with 124 tests.
+  - `npm run health` passed with formatting, TypeScript, 124 tests, story
+    validation, and coverage playtest.
+  - `npm run cyoa -- validate stories/demo.yaml --json` reports 96 scenes, 18
+    endings, all 96 reachable, and no warnings.
+  - Health coverage visited all 96 scenes, including
+    `passenger_answered_boarding_true_ending`, with zero unfinished runs, best
+    score 100/100, average score 99.51, and 342040 max-score runs.
+  - Targeted CLI play followed `listen_to_passenger_answers` ->
+    `board_after_answered_passengers` -> `pull_release_after_answered_boarding`
+    and reached `passenger_answered_boarding_true_ending` at 100/100 with no
+    objectives.
+- Playtest notes:
+  - The direct release now pays off the passenger self-naming motif without
+    requiring the extra intercom listen.
+  - The listened branch still reaches `passenger_answered_true_ending`, so the
+    optional intercom beat remains meaningful.
+  - Coverage play reached the new ending without harming full scene
+    reachability, ending completion, or average score.
+- Follow-up:
+  - Watch whether passenger ending variants remain legible in reports; future
+    content should keep variants tied to distinct player actions.
+- Risks:
+  - The game now has many ideal-ending variants, so future additions should
+    avoid generic success endings and keep names/reporting readable.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Status: Completed locally; ready for commit/push.
 - Main objective: Give the echoed-manifest route its own final true-ending
   payoff.
 - Why this matters: Core guidance and true-ending discoverability are healthy,
