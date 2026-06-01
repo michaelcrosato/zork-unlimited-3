@@ -11,17 +11,47 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce low-value locker backtracking seen in exploratory
-  playtests without removing any critical route.
-- Outcome: Kept the maintenance locker open until players take both the
-  platform fuse and Mara's badge, then return them to the service-room hub.
+- Main objective: Reduce repeated forced-gate warning loops without removing the
+  bad ending or meaningful underprepared exploration.
+- Outcome: After players force the rusted gate and choose to back away, the
+  platform records that caution and no longer offers the same force-gate warning
+  loop on later visits.
+- Evidence:
+  - Added a story-path regression test proving `force_gate` disappears after
+    `back_away_from_gate`, while the warning still preserves the immediate
+    `force_gate_anyway` bad-ending route.
+  - `npm test -- tests/story-paths.test.ts` passes with 18 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: all scenes visited, unfinished dropped from 2 to
+    1 in the deterministic sample, `bad_ending` dropped from 65 to 54,
+    `true_ending` reached 32 times, average score rose to 47.88.
+  - Coverage playtest, 170 runs: all scenes visited, 18 unfinished reporting
+    samples remain, `true_ending` reached 20 times, average score 48.24.
+  - `npm run health` passes with 26 tests and coverage playtest visiting all
+    scenes.
+  - Manual CLI route forced the gate, backed away, confirmed `force_gate` was
+    removed from the next platform visit, then continued to `true_ending` at
+    100/100.
+- Follow-up: The remaining random unfinished sample is a broader
+  service-room/platform/tunnel wander after the player has many tools but still
+  postpones map/train actions. Consider making `return_to_service_room` less
+  prominent once the player has the fuse, badge, token, and map.
+- Risks:
+  - If future content expects the gate warning to be repeatable, it should check
+    or clear `backed_away_from_gate` intentionally.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Kept the maintenance locker open until players take both the platform
+  fuse and Mara's badge, then return them to the service-room hub.
 - Evidence:
   - Updated the locker regression test to prove `close_locker` is unavailable
     after taking only the fuse and available after both true-ending tools.
-  - `npm test -- tests/story-paths.test.ts` passes with 17 tests.
-  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
-  - `npm run health` passes with 25 tests and coverage playtest visiting all
-    scenes; coverage still reports the known 18 unfinished runs.
+  - `npm test -- tests/story-paths.test.ts` passed with 17 tests.
+  - Validation passed: 23 scenes, 5 endings, 23 reachable scenes.
+  - `npm run health` passed with 25 tests and coverage playtest visiting all
+    scenes; coverage still reported the known 18 unfinished runs.
   - Random playtest, 250 runs: all scenes visited, 2 unfinished,
     `true_ending` reached 31 times, average score 47.02.
   - Coverage playtest, 192 runs: all scenes visited, 18 unfinished,
@@ -30,13 +60,6 @@ preserving normal-play true-ending discoverability.
   - Manual CLI route confirmed the locker choice list narrows to `take_badge`
     after `take_fuse`, then to `close_locker` after `take_badge`; a full route
     reached `true_ending` at 100/100.
-- Follow-up: Coverage strategy still leaves 18 unfinished runs from hub
-  traversal. After this pass, inspect whether the remaining unfinished traces
-  are harmless coverage-budget exits or another loop worth smoothing.
-- Risks:
-  - Over-guiding item collection could make the locker feel less optional, but
-    both items are useful and carrying the badge has no penalty for lesser
-    endings.
 
 ## Last Completed Cycle
 

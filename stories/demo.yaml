@@ -292,7 +292,9 @@ scenes:
         label: Force the rusted gate
         to: gate_warning
         requires:
-          notItem: fuse
+          all:
+            - notItem: fuse
+            - notFlag: backed_away_from_gate
 
   lit_platform:
     text: >
@@ -400,6 +402,9 @@ scenes:
       - id: back_away_from_gate
         label: Back away and return to the service room
         to: service_room
+        effects:
+          set:
+            backed_away_from_gate: true
       - id: force_gate_anyway
         label: Force the gate anyway
         to: bad_ending

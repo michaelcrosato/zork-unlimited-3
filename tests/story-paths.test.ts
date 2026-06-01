@@ -50,6 +50,29 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "back_away_from_gate");
     expect(observe(story, state).scene.id).toBe("service_room");
+    expect(state.flags.backed_away_from_gate).toBe(true);
+  });
+
+  it("removes the forced-gate loop after players back away once", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "follow_arrows",
+      "force_gate",
+      "back_away_from_gate",
+      "go_to_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(choiceIds).not.toContain("force_gate");
+    expect(choiceIds).toContain("return_to_service_room");
   });
 
   it("removes the destructive gate option after players find the fuse", async () => {
