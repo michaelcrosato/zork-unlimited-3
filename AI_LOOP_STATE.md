@@ -11,17 +11,53 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
+- Main objective: Let adaptive MCP evidence continue through normal late-game
+  detours instead of stopping at a live progress scene.
+- Why this matters: Cycle 12 evidence showed the exploratory route stopping at
+  `signal_booth` with `inspect_signal_ledger` and `read_passenger_manifest`
+  both available. That looked like a gameplay stall, but the 30-step evidence
+  cap was too short for routes that intentionally sample posters, map warnings,
+  manifests, and hub returns before resolving the ledger.
+- Tasks:
+  - Increase the exploratory MCP route budget from 30 to 45 steps.
+  - Add regression coverage so future loop changes keep enough late-game route
+    budget.
+  - Run health and an actual playthrough after the evidence-tooling change.
+- Evidence:
+  - Added `exploratoryMaxSteps = 45` and used it in the adaptive MCP route.
+  - Added a regression confirming exploratory MCP routes keep at least 45 steps
+    of budget for late-game detours.
+  - `npm test -- tests/ai-loop.test.ts` passed with 7 tests.
+  - `npm run health` passed with formatting, TypeScript, 69 tests, validation,
+    and coverage playtest.
+  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reports 0 unfinished runs, all 38 scenes visited, best
+    score 100/100, average score 82.25, and 960 max-score runs.
+  - Manual CLI route deliberately took posters, map-warning recovery,
+    passenger manifest, passenger echoes, Mara's thumbprint memory, and Mara's
+    manifest intercom, then reached `passenger_true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, an actual
+    MCP true-ending playthrough at 100/100, and the adaptive exploratory route
+    now finishes at `true_ending` with 100/100.
+- Follow-up: If the longer exploratory route still stops before an ending,
+  inspect the transcript for a real content-level pacing issue instead of
+  treating the old step cap as evidence.
+- Risks:
+  - Changing `src/ai-loop.ts` is restart-sensitive for the outer AFK loop. Keep
+    the edit small, tested, and committed so the next loop runs fresh code.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Smoothed map-warning recovery so late-game explorers return directly
+  to the solved platform state.
 - Main objective: Smooth map-warning recovery so late-game explorers return
   directly to the solved platform state.
 - Why this matters: Cycle evidence showed the adaptive exploratory route
   stopping at `signal_map_warning` after a fully useful warning. Sending the
   player back through the service-room hub just to take the known marked map
   added friction without adding a meaningful decision.
-- Tasks:
-  - Change `return_for_map_from_signal_warning` to recover the marked map and
-    return directly to `lit_platform`.
-  - Preserve the risky unprepared route into `signal_booth`.
-  - Update regression coverage for the streamlined recovery path.
 - Evidence:
   - `signal_map_warning` now offers "Recover the marked map and return to the
     gate control", adds the map, and lands on `lit_platform`.

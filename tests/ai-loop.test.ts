@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
   idealEndingRate,
@@ -49,5 +50,9 @@ describe("AI loop restart detection", () => {
 
     expect(idealEndingRate(summary)).toBe(0.55);
     expect(formatIdealEndingBreakdown(summary)).toBe("true_ending: 27, passenger_true_ending: 28");
+  });
+
+  it("allows exploratory MCP routes enough steps for late-game detours", () => {
+    expect(exploratoryMaxSteps).toBeGreaterThanOrEqual(45);
   });
 });

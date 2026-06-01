@@ -90,6 +90,7 @@ const allowDirtyBaseline = process.env.AI_LOOP_ALLOW_DIRTY_BASELINE === "1";
 
 const restartSensitivePaths = new Set(["package.json", "package-lock.json", "src/ai-loop.ts"]);
 export const restartRequestedExitCode = 75;
+export const exploratoryMaxSteps = 45;
 
 let stopped = false;
 process.on("SIGINT", () => {
@@ -791,10 +792,9 @@ async function runMcpExploratoryRoute(
     );
 
     const history: string[] = [observation.scene.id];
-    const maxSteps = 30;
     const rng = seededRandom(cycle + 4242);
 
-    for (let step = 0; step < maxSteps; step += 1) {
+    for (let step = 0; step < exploratoryMaxSteps; step += 1) {
       // Repeatedly call get_scene before choices to verify state
       observation = JSON.parse(
         textContent(
