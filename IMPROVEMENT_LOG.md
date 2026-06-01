@@ -4,6 +4,71 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Coverage Frontier Reporting
+
+### Current Plan
+
+- Main objective: Reclassify coverage-strategy frontier samples so reports stop
+  presenting normal scene-discovery evidence as unfinished playthroughs.
+- Why this matters: The current evidence showed 20 coverage "unfinished" runs,
+  but inspection proved they were first-seen scene samples rather than stuck
+  routes. Mislabeling them pushes future agents toward false loop fixes.
+- Tasks:
+  - Add explicit run statuses for endings, frontier samples, dead ends, and
+    step-limit failures.
+  - Keep genuine random/goal max-step failures counted as unfinished.
+  - Update tests around playtest summary semantics.
+  - Run health and play a real route before committing.
+- Risks: Downstream report readers must use `frontierSamples` for coverage
+  discovery samples instead of treating every non-ending sample as unfinished.
+
+### Work Completed
+
+- Changes made:
+  - Added `status` to each playtest run.
+  - Changed summary `unfinished` to count only `dead_end` and `max_steps`
+    statuses.
+  - Added `frontierSamples` to expose coverage first-seen scene samples
+    directly.
+- Files/systems touched:
+  - `src/playtest.ts`
+  - `tests/playtest.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Clearer playtest reporting for autonomous development cycles.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/playtest.test.ts`
+  - Coverage summary via `node --import tsx src/cli.ts playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json`
+  - `npm run health`
+  - Manual CLI route through the gate-control clue, poster beat, signal booth,
+    and true ending
+- What worked:
+  - Focused tests passed with 5 tests.
+  - Full health passed with formatting, TypeScript, 38 tests, validation, and
+    coverage playtest.
+  - Coverage now reports 0 unfinished runs and 20 frontier samples while still
+    visiting every scene and reaching all endings.
+  - The clean CLI playthrough reached `true_ending` at 100/100.
+- What felt bad/confusing:
+  - No gameplay route issue in this pass; the problem was diagnostic clarity.
+- Bugs found:
+  - The previous summary conflated coverage frontier samples with genuinely
+    unfinished playthroughs.
+
+### Next Iteration
+
+- Highest-priority next task: Use the cleaner reporting to identify any true
+  random max-step runs, then improve the underlying route only if one remains.
+- Reason: Future cycles can now separate real player-facing loops from coverage
+  bookkeeping.
+- Planned action:
+  - Inspect random `status: "max_steps"` paths when they occur.
+  - Prefer content steering only when a route is genuinely failing to conclude.
+
 ## 2026-06-01 - Gate Control Readability
 
 ### Current Plan

@@ -11,12 +11,35 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the early forced-gate bad-ending confirmation read as
+- Main objective: Make coverage playtest reports distinguish scene-discovery
+  frontier samples from genuine unfinished/stuck runs.
+- Outcome: `PlaytestRun` entries now carry a `status` of `ending`, `frontier`,
+  `dead_end`, or `max_steps`. Coverage first-seen scene samples are counted as
+  `frontierSamples`, while `unfinished` now reflects only real dead-end or
+  step-limit failures.
+- Evidence:
+  - Added regression coverage proving step-limit random runs are still counted
+    as unfinished and coverage frontier samples are not.
+  - `npm test -- tests/playtest.test.ts` passed with 5 tests.
+  - `npm run health` passed with formatting, TypeScript, 38 tests, story
+    validation, and coverage playtest.
+  - Coverage summary now reports 316 runs, 296 ended, 0 unfinished, 20
+    frontier samples, all 25 scenes visited, `true_ending` reached 72 times,
+    and best score 100/100.
+  - Manual CLI route through the gate-control clue, radio route, locker, stopped
+    clock, poster beat, signal booth, and release reached `true_ending` at
+    100/100.
+- Follow-up: Watch future random summaries for genuine `max_steps` unfinished
+  runs now that coverage frontier samples are separated.
+- Risks:
+  - Consumers that treated coverage first-seen samples as unfinished need to use
+    `frontierSamples` for that diagnostic count instead.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Made the early forced-gate bad-ending confirmation read as
   unmistakably final, without removing the alternate ending.
-- Outcome: The `gate_warning` scene now explicitly says the control panel is
-  offering one last chance to stop making noise and gather supplies, while the
-  destructive confirmation is labeled as ignoring the final warning. Players can
-  still choose the bad ending, but the recovery route is clearer.
 - Evidence:
   - Added regression coverage proving `gate_warning` keeps the recovery choice,
     includes the "one last chance" warning text, and labels the destructive

@@ -6,6 +6,7 @@ export type PlaytestStrategy = "random" | "coverage" | "goal";
 
 export interface PlaytestRun {
   run: number;
+  status: "ending" | "frontier" | "dead_end" | "max_steps";
   ended: boolean;
   finalScene: string;
   steps: number;
@@ -19,6 +20,7 @@ export interface PlaytestReport {
     runs: number;
     ended: number;
     unfinished: number;
+    frontierSamples: number;
     endings: Record<string, number>;
     visitedScenes: string[];
     unvisitedScenes: string[];
@@ -87,6 +89,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
       reportedScenes.add(observation.scene.id);
       runs.push({
         run: runs.length + 1,
+        status: "frontier",
         ended: false,
         finalScene: observation.scene.id,
         steps: current.steps,
@@ -99,6 +102,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
       reportedScenes.add(observation.scene.id);
       runs.push({
         run: runs.length + 1,
+        status: classifyStoppedRun(observation.scene.ending, observation.choices.length, true),
         ended: observation.scene.ending,
         finalScene: observation.scene.id,
         steps: current.steps,
@@ -177,7 +181,9 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
   return {
     runs: runs.length,
     ended: runs.filter((run) => run.ended).length,
-    unfinished: runs.filter((run) => !run.ended).length,
+    unfinished: runs.filter((run) => run.status === "dead_end" || run.status === "max_steps")
+      .length,
+    frontierSamples: runs.filter((run) => run.status === "frontier").length,
     endings,
     visitedScenes,
     unvisitedScenes,
@@ -199,6 +205,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     if (observation.scene.ending || observation.choices.length === 0) {
       return {
         run,
+        status: classifyStoppedRun(observation.scene.ending, observation.choices.length, false),
         ended: observation.scene.ending,
         finalScene: observation.scene.id,
         steps: step,
@@ -217,6 +224,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
   const observation = observe(story, state);
   return {
     run,
+    status: classifyStoppedRun(observation.scene.ending, observation.choices.length, true),
     ended: observation.scene.ending,
     finalScene: observation.scene.id,
     steps: maxSteps,
@@ -237,6 +245,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
     if (observation.scene.ending || observation.choices.length === 0) {
       return {
         run,
+        status: classifyStoppedRun(observation.scene.ending, observation.choices.length, false),
         ended: observation.scene.ending,
         finalScene: observation.scene.id,
         steps: step,
@@ -278,6 +287,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
   const observation = observe(story, state);
   return {
     run,
+    status: classifyStoppedRun(observation.scene.ending, observation.choices.length, true),
     ended: observation.scene.ending,
     finalScene: observation.scene.id,
     steps: maxSteps,
@@ -292,6 +302,16 @@ function scoreDestination(sceneId: string): number {
   if (sceneId === "escape_ending") return 50;
   if (sceneId === "bad_ending" || sceneId === "lost_ending") return -400;
   return 0;
+}
+
+function classifyStoppedRun(
+  ended: boolean,
+  choiceCount: number,
+  hitStepLimit: boolean
+): PlaytestRun["status"] {
+  if (ended) return "ending";
+  if (choiceCount === 0) return "dead_end";
+  return hitStepLimit ? "max_steps" : "frontier";
 }
 
 function scoreChoiceId(choiceId: string): number {

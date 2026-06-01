@@ -28,6 +28,7 @@ describe("playtest strategies", () => {
     expect(report.summary.unfinished).toBe(0);
     expect(report.summary.endings.ending).toBe(1);
     expect(report.runs[0]).toMatchObject({
+      status: "ending",
       ended: true,
       finalScene: "ending",
       steps: 1
@@ -58,8 +59,35 @@ describe("playtest strategies", () => {
     expect(report.summary.unfinished).toBe(0);
     expect(report.summary.endings.true_ending).toBe(1);
     expect(report.runs[0]).toMatchObject({
+      status: "ending",
       ended: true,
       finalScene: "true_ending",
+      steps: 1
+    });
+  });
+
+  it("counts only genuine step-limit runs as unfinished", () => {
+    const story: Story = {
+      id: "loop",
+      title: "Loop",
+      start: "start",
+      scenes: {
+        start: {
+          text: "Start.",
+          ending: false,
+          choices: [{ id: "wait", label: "Wait", to: "start" }]
+        }
+      }
+    };
+
+    const report = runRandomPlaytests(story, 1, 1, "random");
+
+    expect(report.summary.unfinished).toBe(1);
+    expect(report.summary.frontierSamples).toBe(0);
+    expect(report.runs[0]).toMatchObject({
+      status: "max_steps",
+      ended: false,
+      finalScene: "start",
       steps: 1
     });
   });
@@ -68,6 +96,8 @@ describe("playtest strategies", () => {
     const story = await loadStory("stories/demo.yaml");
     const report = runRandomPlaytests(story, 100, 50, "coverage");
 
+    expect(report.summary.unfinished).toBe(0);
+    expect(report.summary.frontierSamples).toBeGreaterThan(0);
     expect(report.summary.unvisitedScenes).toEqual([]);
     expect(report.summary.endings.true_ending).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
