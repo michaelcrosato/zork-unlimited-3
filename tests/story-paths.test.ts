@@ -67,8 +67,6 @@ describe("demo story critical paths", () => {
       "read_notice",
       "take_lantern_after_notice",
       "open_service_door",
-      "tune_radio",
-      "note_radio_route",
       "go_to_platform",
       "force_gate",
       "back_away_from_gate"
@@ -118,6 +116,37 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("service_room");
     expect(observation.state.flags.left_unprepared_platform).toBe(true);
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).not.toContain("go_to_platform");
+
+    state = choose(story, state, "take_map");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("go_to_platform");
+  });
+
+  it("keeps clue-informed players in the service room until they collect a platform tool", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file",
+      "tune_radio",
+      "note_radio_route"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
     expect(choiceIds).toContain("take_map");
     expect(choiceIds).toContain("search_locker");
     expect(choiceIds).not.toContain("go_to_platform");

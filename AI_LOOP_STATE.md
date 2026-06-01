@@ -11,12 +11,43 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Reduce empty mid-game platform loops after players discover
-  Platform 13 without supplies.
-- Outcome: Returning from the unpowered platform now marks that the player left
-  underprepared. The service room withholds an immediate empty `go_to_platform`
-  repeat until the player collects a useful next tool: the marked map or the
+- Main objective: Keep clue-informed players from walking straight into the
+  unprepared Platform 13 gate trap after they already know Mara's route.
+- Outcome: The service room now allows the first exploratory Platform 13 visit
+  only before the player has read Mara's personnel file or written down the
+  radio route. Once those route clues are known, `go_to_platform` stays hidden
+  until the player collects a useful platform tool: the marked map or the
   platform fuse.
+- Evidence:
+  - Added regression coverage proving clue-informed service-room players who
+    have read Mara's file and written down the radio route see `take_map` and
+    `search_locker`, but not `go_to_platform`, until they collect the map.
+  - Updated the existing underprepared-platform regression so it covers early
+    exploration before Mara's route clues are known.
+  - `npm test -- tests/story-paths.test.ts` passed with 29 tests.
+  - `npm run health` passed with formatting, TypeScript, 40 tests, story
+    validation, and coverage playtest.
+  - Validation passed: 25 scenes, 5 endings, 25 reachable, no warnings.
+  - Coverage playtest remains stable: 612 runs, 592 ended, 0 unfinished, 20
+    frontier samples, all 25 scenes visited, best score 100/100.
+  - Random playtest, 250 runs: all ended, all scenes visited, `true_ending`
+    reached 121 times, `bad_ending` reached 43 times, best score 100/100,
+    average score 65.86.
+  - Manual CLI route confirmed the service room withheld `go_to_platform` after
+    Mara's file and radio clue, then collected map/fuse/badge/token and reached
+    `true_ending` at 100/100.
+- Follow-up: Verify the early unprepared platform visit remains available before
+  Mara's route clues are known, while the clue-informed service-room route
+  points to preparation instead of the forced gate.
+- Risks:
+  - This narrows a route for players who learn the warnings first, but keeps the
+    map-only branch, fuse path, and early platform exploration available.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Reduced empty mid-game platform loops after players discover Platform
+  13 without supplies.
 - Evidence:
   - Added regression coverage proving an unprepared platform return removes
     `go_to_platform`, keeps preparation choices available, and restores

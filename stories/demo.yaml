@@ -215,7 +215,10 @@ scenes:
                 - flag: has_light
                 - flag: lights_on
             - any:
-                - notFlag: left_unprepared_platform
+                - all:
+                    - notFlag: left_unprepared_platform
+                    - notFlag: read_mara_file
+                    - notFlag: knows_release
                 - item: map
                 - item: fuse
             - notFlag: platform_lit

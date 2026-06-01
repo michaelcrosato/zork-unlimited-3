@@ -4,6 +4,82 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Clue-Informed Platform Steering
+
+### Current Plan
+
+- Main objective: Keep clue-informed players from walking straight into the
+  unprepared Platform 13 gate trap after they already know Mara's route.
+- Why this matters: The latest exploratory route read Mara's file and heard the
+  radio route, then still went to the platform without map or fuse and chose the
+  forced-gate bad ending. Once the player has enough information to prepare, the
+  hub should emphasize preparation over a noisy failure.
+- Tasks:
+  - Hide `go_to_platform` after Mara's route clues until the player has the
+    marked map or platform fuse.
+  - Preserve early platform exploration before those clues are known.
+  - Add regression coverage for the new service-room choice filtering.
+  - Run health and play a full route through the changed moment.
+- Risks: Narrowing the service-room menu could over-focus players, so the
+  map-only branch, fuse path, and early unprepared exploration must stay
+  reachable.
+
+### Work Completed
+
+- Changes made:
+  - Updated the `go_to_platform` requirements so clue-informed players need the
+    map or fuse before returning to the unlit platform.
+  - Updated an older underprepared-platform regression to represent early
+    exploration before Mara's route clues.
+  - Added a regression proving the clue-informed service room hides
+    `go_to_platform` until the map is collected.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is route steering and choice polish.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - `node --import tsx src/cli.ts playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - Manual CLI route from Mara's file and radio clue through the true ending
+- What worked:
+  - Story-path tests pass with 29 tests.
+  - Full health passes with 40 tests, clean validation, and all 25 scenes
+    reachable.
+  - Coverage remains stable: 612 runs, 592 ended, 0 unfinished, 20 frontier
+    samples, all scenes visited, best score 100/100.
+  - Random 250-run sample ended every run, visited every scene, and reached
+    `true_ending` 121 times.
+  - Manual CLI play confirmed the service room withheld `go_to_platform` after
+    the file and radio clues, then restored it after taking the map and reached
+    `true_ending` at 100/100.
+- What felt bad/confusing:
+  - The route still briefly allows `return_to_tunnel` after the player has map,
+    fuse, and badge but lacks the token; that is useful for token recovery, but
+    it depends on the objective text to make the clock destination obvious.
+- Bugs found:
+  - The first focused test run exposed that an older regression was using the
+    now-invalid clue-informed route to reach the platform. The test was updated
+    to cover early exploration instead.
+
+### Next Iteration
+
+- Highest-priority next task: Improve the token-recovery handoff after players
+  have map, fuse, and badge but still lack the signal token.
+- Reason: The current route works, but the player returns to the generic tunnel
+  and must choose the clock from there; a more explicit handoff could reduce one
+  more moment of late-game ambiguity.
+- Planned action:
+  - Inspect service-room objectives and tunnel choice labels for the
+    fully-equipped-without-token state.
+  - Prefer a small label/objective polish over adding new scenes.
+
 ## 2026-06-01 - Coverage Frontier Reporting
 
 ### Current Plan
