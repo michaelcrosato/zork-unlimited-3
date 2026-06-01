@@ -1959,6 +1959,50 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain("read_passenger_manifest");
   });
 
+  it("lets prepared players trigger the missing-map warning from the service room", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("try_gate_ritual_without_map");
+
+    state = choose(story, state, "try_gate_ritual_without_map");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_map_warning");
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.state.flags.platform_lit).toBe(true);
+    expect(observation.state.inventory).not.toContain("map");
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+
+    state = choose(story, state, "return_for_map_from_signal_warning");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_map_recovered");
+    expect(observation.state.inventory).toContain("map");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "enter_signal_booth_after_map"
+    ]);
+  });
+
   it("surfaces the missing-map warning directly from the gate control", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

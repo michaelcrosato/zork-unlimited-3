@@ -11,48 +11,60 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Remove contradictory manifest wording in the late-game
-  passenger rescue route.
-- Why this matters: The ledger now correctly nudges prepared players toward
-  the kept-passenger manifest, but the manifest scene itself said Mara's door
-  was the only one still shut after the ledger described passenger doors as
-  still stamped shut. That undercut the player's understanding of why opening
-  every manifest door is different from clearing only Mara.
+- Main objective: Improve normal-play discovery of the missing-map signal booth
+  warning.
+- Why this matters: Cycle evidence showed the core route was healthy, but the
+  100-run random playtest missed `signal_map_warning` and
+  `signal_map_recovered`. Those scenes teach that the map is required before
+  the train can safely resolve the ledger, so they should appear in ordinary
+  exploratory play instead of only coverage search.
 - Tasks:
-  - Revise `passenger_manifest` so all passenger doors remain shut until the
-    player opens the manifest.
-  - Keep Mara's dispatcher row narratively distinct without implying the other
-    passengers are already clear.
-  - Update regression coverage for both signal-booth and ledger-first manifest
-    routes.
-  - Run focused tests, full health, an actual playthrough, and commit/push if
-    green.
+  - Add a direct service-room route for players carrying the fuse and token but
+    missing the map.
+  - Preserve the existing focused-map behavior after the personnel file has
+    already made the map the only missing preparation item.
+  - Add regression coverage for the new service-room warning path and map
+    recovery.
+  - Run focused tests, full health, an actual CLI playthrough, and commit/push
+    if green.
 - Evidence:
-  - Revised `passenger_manifest` so each kept-passenger door is still shut, and
-    Mara's dispatcher row is distinct because the badge proof can open the
-    rest.
-  - Updated story-path regression coverage for both direct signal-booth
-    manifest reading and ledger-first manifest pivots.
-  - `npm test -- tests/story-paths.test.ts` passed with 67 tests.
-  - `npm run health` passed with formatting, TypeScript, 88 tests, validation,
+  - Added `try_gate_ritual_without_map` in `service_room`, available only when
+    the player has the fuse and token, lacks the marked map, has not lit the
+    platform, and has not already read Mara's personnel file.
+  - The route sets `knows_platform` and `platform_lit`, then sends the player to
+    the existing `signal_map_warning`; choosing recovery still adds the map and
+    leads through `signal_map_recovered` into `signal_booth`.
+  - Added story-path regression coverage for the direct service-room warning
+    route, map recovery, and platform-lit state.
+  - `npm test -- tests/story-paths.test.ts` passed with 68 tests.
+  - Focused validation passed with 51 scenes, 7 endings, and all 51 reachable.
+  - Focused 100-run random playtest now visits both `signal_map_warning` and
+    `signal_map_recovered`, with 0 unfinished routes, best score 100/100, and
+    average score 77.75.
+  - Focused coverage playtest visited all 51 scenes with 0 unfinished completed
+    routes, best score 100/100, average score 91.91, and 15372 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 89 tests, validation,
     and coverage playtest.
   - Validation reports 51 scenes, 7 endings, and all 51 reachable.
   - Health coverage playtest visited all 51 scenes with 0 unfinished completed
     routes, best score 100/100, average score 91.91, and 15372 max-score runs.
-  - Manual CLI play read the kept-passenger manifest, listened to the marked
-    passenger doors, opened every manifest door, and reached
-    `passenger_true_ending` at 100/100.
+  - Manual CLI play skipped the map, triggered `signal_map_warning` directly
+    from the service room, recovered the map through `signal_map_recovered`,
+    cleared Mara's ledger row, and reached `true_ending` at 100/100.
 - Playtest notes:
-  - The revised manifest beat now lines up with the ledger text and the later
-    `passengers_released` scene: all passenger doors are still closed until the
-    player uses Mara's badge proof.
-  - The manifest route remained clean and ended with no lingering objectives.
-  - No route or scoring bugs surfaced.
-- Follow-up: Watch whether the passenger-manifest copy now reads as a clear
-  rescue objective instead of a lore-only aside.
+  - The new service-room choice makes the fuse/token/map relationship visible
+    without forcing a hub bounce through platform, gate control, and lit
+    platform.
+  - Hiding the shortcut after `read_mara_file` preserves the sharper "take map"
+    focus when the map is truly the last preparation item.
+  - The warning and recovery beat remained actionable and finished with no
+    lingering objectives.
+- Follow-up: Watch whether random-route visits to the signal-map scenes remain
+  stable across future branch additions.
 - Risks:
-  - Copy-only changes should not affect route availability, but tests should
-    still confirm both manifest entry points.
+  - The direct service-room route abstracts walking to the gate, but it reuses
+    the established gate ritual and only appears once the player is carrying
+    the physical fuse and token.
 
 ## Last Completed Cycle
 

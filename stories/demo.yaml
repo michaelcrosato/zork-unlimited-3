@@ -232,6 +232,20 @@ scenes:
             read_mara_file: true
             met_mara: true
             knows_token_location: true
+      - id: try_gate_ritual_without_map
+        label: Try the gate ritual with the fuse and token before taking the map
+        to: signal_map_warning
+        requires:
+          all:
+            - item: fuse
+            - item: token
+            - notItem: map
+            - notFlag: platform_lit
+            - notFlag: read_mara_file
+        effects:
+          set:
+            knows_platform: true
+            platform_lit: true
       - id: return_to_tunnel
         label: Return to the tunnel
         to: tunnel
