@@ -23,6 +23,7 @@ Environment:
   AI_CODEX_SANDBOX      Codex sandbox. Default: workspace-write.
   AI_LOOP_AUTO_COMMIT   Commit verified agent changes. Default: 1.
   AI_LOOP_AUTO_PUSH     Push verified commits. Default: 1.
+  AI_LOOP_AUTO_RESTART  Restart after loop runtime changes. Default: 1.
   AI_LOOP_ALLOW_DIRTY_BASELINE
                         Allow auto-commit from a dirty starting tree. Default: 0.
 
@@ -89,6 +90,20 @@ echo "Press Ctrl-C to stop."
 
 if [[ "$RUN_ONCE" == "1" ]]; then
   exec npm run ai:cycle
-else
-  exec npm run ai:loop
 fi
+
+RESTART_EXIT_CODE=75
+
+while true; do
+  set +e
+  npm run ai:loop
+  status=$?
+  set -e
+
+  if [[ "$status" == "$RESTART_EXIT_CODE" && "${AI_LOOP_AUTO_RESTART:-1}" != "0" ]]; then
+    echo "AI loop requested a fresh process after runtime changes; restarting ./loop.sh."
+    exec "$0" "$@"
+  fi
+
+  exit "$status"
+done

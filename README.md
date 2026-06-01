@@ -80,13 +80,16 @@ Run without allowing an agent to edit the repo:
   returns, it detects repo changes or unpushed commits, reruns `health`, plays
   the game through MCP, commits verified changes, and pushes to GitHub.
 - If a cycle changes loop runtime files such as `src/ai-loop.ts` or
-  `package*.json`, the loop exits after verification and asks you to restart
-  `./loop.sh` so the next cycle runs fresh code.
+  `package*.json`, the Node loop exits with a restart-request code after
+  verification. `./loop.sh` automatically starts a fresh process so unattended
+  runs keep going with the updated code.
 - `AI_LOOP_DELAY_MS` controls the delay between cycles.
 - `AI_LOOP_MAX_CYCLES` limits the loop for dry runs.
 - `AI_AGENT_TIMEOUT_MS` controls the per-agent timeout.
 - `AI_LOOP_AUTO_COMMIT=0` disables the outer-loop commit step.
 - `AI_LOOP_AUTO_PUSH=0` disables the outer-loop push step.
+- `AI_LOOP_AUTO_RESTART=0` disables the `./loop.sh` self-restart behavior after
+  runtime-file changes.
 - `AI_LOOP_ALLOW_DIRTY_BASELINE=1` lets the loop commit even if the repo was
   dirty before the agent started. Leave this off for normal AFK runs.
 - `CODEX_HOME=$PWD/.codex ./loop.sh` makes Codex load this repo's sample MCP

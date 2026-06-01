@@ -58,11 +58,14 @@ After the agent returns, the outer loop is responsible for AFK completion:
 3. Actually play the game through the MCP server.
 4. Commit verified dirty changes.
 5. Push the current branch to `origin`.
+6. Restart itself when loop runtime files changed so the next cycle runs fresh
+   code.
 
 Set `AI_LOOP_AUTO_COMMIT=0` or `AI_LOOP_AUTO_PUSH=0` only when intentionally
-dry-running the loop. Start AFK runs from a clean worktree; the loop refuses to
-auto-commit if files were already dirty before the agent started unless
-`AI_LOOP_ALLOW_DIRTY_BASELINE=1` is explicitly set.
+dry-running the loop. Set `AI_LOOP_AUTO_RESTART=0` only when intentionally
+debugging restart behavior. Start AFK runs from a clean worktree; the loop
+refuses to auto-commit if files were already dirty before the agent started
+unless `AI_LOOP_ALLOW_DIRTY_BASELINE=1` is explicitly set.
 
 ## MCP Play Requirement
 

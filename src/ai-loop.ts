@@ -89,6 +89,7 @@ const autoPush = process.env.AI_LOOP_AUTO_PUSH !== "0";
 const allowDirtyBaseline = process.env.AI_LOOP_ALLOW_DIRTY_BASELINE === "1";
 
 const restartSensitivePaths = new Set(["package.json", "package-lock.json", "src/ai-loop.ts"]);
+export const restartRequestedExitCode = 75;
 
 let stopped = false;
 process.on("SIGINT", () => {
@@ -135,13 +136,15 @@ async function main(): Promise<void> {
       await writeText(postAgentPath, renderPostAgentResult(postAgentResult));
       console.log(`Wrote ${postAgentPath}`);
       const changedPaths = await getChangedPathsSince(baselineHead.output.trim());
-      if (requiresLoopRestart(changedPaths)) {
+      const restartPaths = getRestartSensitiveChangedPaths(changedPaths);
+      if (restartPaths.length > 0) {
         console.log(
-          `Loop runtime changed (${changedPaths
-            .filter((path) => restartSensitivePaths.has(path))
-            .join(", ")}); restart ./loop.sh before the next cycle.`
+          `Loop runtime changed (${restartPaths.join(
+            ", "
+          )}); exiting with code ${restartRequestedExitCode} so ./loop.sh can restart with fresh code.`
         );
         stopped = true;
+        process.exitCode = restartRequestedExitCode;
       }
     } else {
       console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
@@ -857,7 +860,11 @@ async function getChangedPathsSince(baselineHead: string): Promise<string[]> {
 }
 
 export function requiresLoopRestart(changedPaths: string[]): boolean {
-  return changedPaths.some((path) => restartSensitivePaths.has(path));
+  return getRestartSensitiveChangedPaths(changedPaths).length > 0;
+}
+
+export function getRestartSensitiveChangedPaths(changedPaths: string[]): string[] {
+  return changedPaths.filter((path) => restartSensitivePaths.has(path));
 }
 
 function parsePathLines(output: string): string[] {
