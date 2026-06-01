@@ -11,57 +11,50 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional Mara handoff beat after clearing her ledger
-  on the non-manifest true-ending route.
+- Main objective: Add score-beat detail to final transcripts.
 - Why this matters: Current route metrics are healthy and all endings remain
-  discoverable, so the highest-value improvement is emotional payoff rather
-  than more guidance. The manifest route already gives released passengers a
-  small platform moment; the solo Mara route now gets a matching one-time beat
-  without making the ending path longer for players who want to board directly.
+  discoverable, so the next highest-value improvement is evidence quality.
+  Transcripts already show score, objectives, choices, inventory, and flags, but
+  they do not explain which scored story beats were earned or missed. Adding a
+  compact achievement breakdown helps future autonomous agents critique pacing
+  and distinguish partial routes without manually decoding raw flags.
 - Tasks:
-  - Add a one-time optional scene after `mara_released` that shows Mara leaving
-    the signal booth role behind.
-  - Keep direct boarding from `mara_released` available.
-  - Hide the optional handoff after it is seen so returning players are focused
-    on the third car.
-  - Add regression coverage for the optional beat and the direct route.
-  - Run health, an actual CLI playthrough, and the evidence-only AI cycle.
+  - Extend final transcript output with earned and missing score beats.
+  - Preserve existing transcript sections for objectives, choices, inventory,
+    and flags.
+  - Add regression coverage for stalled-route and ending transcript output.
+  - Run health and an actual CLI playthrough.
 - Evidence:
-  - Added `mara_handoff`, reached from `mara_released` by choosing
-    `watch_mara_leave_booth`.
-  - The handoff sets `saw_mara_handoff`, returns to `mara_released`, and then
-    leaves only `board_after_clearing_mara`, preserving the release pacing.
-  - Direct boarding remains available immediately after clearing Mara's ledger.
-  - Updated story-path regression coverage for both the new optional handoff
-    and the unchanged direct boarding route.
-  - `npm test -- tests/story-paths.test.ts` passed with 53 tests.
+  - `renderTranscript` now prints a `Score beats:` section after the final
+    score, listing each achievement as earned or missing with its point value.
+  - The observation score type now exposes achievement details explicitly.
+  - Updated transcript regression coverage for both a stalled signal-booth
+    route with missing beats and a 100/100 true-ending route with no missing
+    beats.
+  - `npm test -- tests/transcript.test.ts` passed with 2 tests.
+  - `npm run lint` passed.
   - `npm run health` passed with formatting, TypeScript, 74 tests, validation,
     and coverage playtest.
   - Validation reports 43 scenes, 6 endings, and all 43 reachable.
   - Health coverage playtest reports 0 unfinished runs, all 43 scenes visited,
     best score 100/100, average score 95.08, and 9984 max-score runs.
-  - Manual CLI route took `watch_mara_leave_booth`, returned to
-    `mara_released`, boarded the third car, and reached `true_ending` at
-    100/100.
-  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP tool
-    verification, MCP validation, MCP random/coverage/goal playtests, and an
-    actual MCP true-ending playthrough at 100/100.
-  - Evidence-cycle random playtest reports 0 unfinished runs, all 43 scenes
-    visited, 64% ideal endings, and 64 max-score runs.
+  - Manual CLI route took the Mara thumbprint and handoff beats, listened to
+    Mara's final intercom, and reached `true_ending` at 100/100.
+  - The rendered CLI transcript final state now includes all earned score beats
+    before objectives, making the payoff auditable without reading raw flags.
 - Playtest notes:
-  - The new beat reads cleanly in transcript: clearing Mara's name, watching
-    her step away from the booth, then crossing to the third car has a stronger
-    emotional progression.
-  - Returning to `mara_released` after the handoff did not create a loop because
-    the handoff choice disappears after use.
-  - No bugs were found in the manual CLI route.
-- Follow-up: Consider whether the passenger-manifest route should get a small
-  post-ending report cue so transcript critiques can distinguish "Mara only"
-  from "Mara plus manifest" payoffs without reading the full transcript.
+  - The completed-route transcript stays readable: `Scene`, `Score`, score
+    beats, objectives, choices, inventory, and flags appear in a logical order.
+  - The score-beat section is useful for stalled routes because it names missed
+    content such as Mara's ledger clear directly instead of requiring flag
+    interpretation.
+  - No route bugs were found in the manual CLI playthrough.
+- Follow-up: Consider whether playtest summaries should also report common
+  missed score beats for unfinished or non-ideal runs.
 - Risks:
-  - The optional scene adds one branch to a late-game route. Regression
-    coverage, full health, and manual play confirm the direct route and ideal
-    ending remain stable.
+  - Transcript output changes may affect snapshot-like consumers. Focused
+    transcript tests cover the new section while preserving existing final-state
+    details.
 
 ## Last Completed Cycle
 

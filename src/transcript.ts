@@ -24,6 +24,12 @@ export function renderTranscript(story: Story, state: GameState): string {
   );
   lines.push(`Score: ${observation.score.score}/${observation.score.maxScore}`);
   lines.push("");
+  lines.push("Score beats:");
+  for (const achievement of observation.score.achievements) {
+    const marker = achievement.earned ? "earned" : "missing";
+    lines.push(`- ${marker}: ${achievement.label} (${achievement.points} pts)`);
+  }
+  lines.push("");
   lines.push("Objectives:");
   if (observation.objectives.length > 0) {
     for (const objective of observation.objectives) {

@@ -23,6 +23,12 @@ export interface Observation {
   score: {
     score: number;
     maxScore: number;
+    achievements: Array<{
+      id: string;
+      label: string;
+      points: number;
+      earned: boolean;
+    }>;
   };
   objectives: string[];
 }
