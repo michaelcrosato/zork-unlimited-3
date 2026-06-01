@@ -11,12 +11,46 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Keep the post-poster lit-platform beat focused on helping
-  Mara instead of offering an abrupt street escape after the player has just
-  learned her ledger clue.
-- Outcome: `flee_platform` now remains available as an early lit-platform escape
-  before the signal token is recovered, but disappears after players inspect
-  Mara's posters and learn the proof-of-service clue.
+- Main objective: Make the late-game signal booth feel like a story payoff
+  instead of a single mechanical "mark Mara clear" click.
+- Outcome: The signal booth now routes players through a one-time
+  `signal_ledger` scene before Mara can be cleared, giving the badge action
+  context and reinforcing that Mara stayed on duty until every passenger could
+  leave.
+- Evidence:
+  - Added regression coverage proving signal-booth players with Mara's badge
+    see `inspect_signal_ledger` first, then the new ledger scene offers
+    `mark_mara_clear_from_ledger`.
+  - Updated true-ending path regressions and the MCP true-ending route to
+    include the new ledger inspection.
+  - `npm test -- tests/story-paths.test.ts` passed with 29 tests.
+  - Validation passed: 26 scenes, 5 endings, 26 reachable, no warnings.
+  - `npm run health` passed with formatting, TypeScript, 40 tests, validation,
+    and coverage playtest.
+  - Coverage playtest reports 549 runs, 528 ended, 0 unfinished, 21 frontier
+    samples, all 26 scenes visited, and best score 100/100.
+  - Manual CLI route read Mara's uncrossed ledger entry, cleared her with the
+    badge, pulled the emergency release, and reached `true_ending` at 100/100.
+  - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
+    tool verification, MCP validation, MCP random/coverage/goal playtests, and
+    an actual MCP true-ending playthrough at 100/100.
+  - Evidence cycle random playtest, 100 runs: all ended, all 26 scenes visited,
+    `true_ending` reached 52 times, best score 100/100, average score 67.4.
+  - Evidence cycle MCP random playtest, 250 runs: all ended, all 26 scenes
+    visited, `true_ending` reached 132 times, best score 100/100, average score
+    68.08.
+- Follow-up: Watch whether the extra required click improves late-game payoff
+  without making the true-ending route feel over-constrained.
+- Risks:
+  - This adds one mandatory late-game beat to the optimal route; the prose needs
+    to justify the added interaction cost.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Kept the post-poster lit-platform beat focused on helping Mara
+  instead of offering an abrupt street escape after the player has just learned
+  her ledger clue.
 - Evidence:
   - Added regression coverage proving `flee_platform` is not offered after
     `inspect_mara_posters`, while the existing safety regression still proves
@@ -25,21 +59,15 @@ preserving normal-play true-ending discoverability.
   - `npm run health` passed with formatting, TypeScript, 40 tests, validation,
     and coverage playtest.
   - Validation passed: 25 scenes, 5 endings, 25 reachable, no warnings.
-  - Coverage playtest now reports 548 runs, 528 ended, 0 unfinished, 20
-    frontier samples, all 25 scenes visited, `escape_ending` still reached 64
-    times, and best score 100/100.
+  - Coverage playtest reported 548 runs, 528 ended, 0 unfinished, 20 frontier
+    samples, all 25 scenes visited, `escape_ending` still reached 64 times, and
+    best score 100/100.
   - Manual CLI route inspected Mara's posters, confirmed the lit platform
     offered only `return_from_lit_platform` afterward, then collected the map,
     radio clue, and token and reached `true_ending` at 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health, MCP
     tool verification, MCP validation, MCP playtests, and an actual MCP
     true-ending playthrough at 100/100.
-  - Evidence cycle random playtest, 100 runs: all ended, all scenes visited,
-    `true_ending` reached 52 times, `escape_ending` reached 10 times, best score
-    100/100, average score 67.4.
-  - Evidence cycle MCP random playtest, 250 runs: all ended, all scenes visited,
-    `true_ending` reached 132 times, `escape_ending` reached 25 times, best
-    score 100/100, average score 68.08.
 - Follow-up: Watch whether escape-ending frequency remains healthy without
   distracting players who already saw the Mara proof-of-service clue.
 - Risks:

@@ -21,7 +21,8 @@ describe("demo story critical paths", () => {
       "go_to_platform",
       "install_fuse",
       "use_token_slot",
-      "mark_mara_clear",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
       "pull_release"
     ];
 
@@ -403,7 +404,8 @@ describe("demo story critical paths", () => {
       "go_to_platform",
       "install_fuse",
       "use_token_slot",
-      "mark_mara_clear"
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -433,7 +435,8 @@ describe("demo story critical paths", () => {
       "go_to_platform",
       "install_fuse",
       "use_token_slot",
-      "mark_mara_clear"
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -733,7 +736,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("flee_platform");
   });
 
-  it("focuses signal-booth choices on Mara when carrying her badge", async () => {
+  it("reveals why Mara's badge matters before clearing the ledger", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -754,9 +757,20 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(choiceIds).toEqual(["mark_mara_clear"]);
+    expect(observation.scene.id).toBe("signal_booth");
+    expect(choiceIds).toEqual(["inspect_signal_ledger"]);
+
+    state = choose(story, state, "inspect_signal_ledger");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.scene.text).toContain("more than another name");
+    expect(observation.state.flags.inspected_signal_ledger).toBe(true);
+    expect(choiceIds).toEqual(["mark_mara_clear_from_ledger"]);
   });
 
   it("keeps the locker open until players take both true-ending tools", async () => {

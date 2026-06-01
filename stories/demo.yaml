@@ -434,19 +434,31 @@ scenes:
       every passenger the line has kept. Mara's name is the last one not crossed
       out, and her badge number is printed in the margin beside it.
     choices:
-      - id: mark_mara_clear
-        label: Mark Mara Vale as cleared
+      - id: inspect_signal_ledger
+        label: Read Mara's uncrossed ledger entry
+        to: signal_ledger
+        requires:
+          notFlag: inspected_signal_ledger
+        effects:
+          set:
+            inspected_signal_ledger: true
+
+  signal_ledger:
+    text: >
+      Mara's row is written in a steadier hand than the others: DISPATCHER
+      REMAINING ON DUTY UNTIL ALL PASSENGERS CLEAR. Beside the badge number,
+      someone has pressed a thumbprint into the ink so hard it tore the page.
+      The booth speaker clicks once, waiting for proof that she is more than
+      another name the line can keep.
+    choices:
+      - id: mark_mara_clear_from_ledger
+        label: Enter Mara's badge number and clear her name
         to: train_car
         requires:
           item: badge
         effects:
           set:
             freed_mara: true
-      - id: leave_ledger
-        label: Leave the ledger untouched and board
-        to: train_car
-        requires:
-          notItem: badge
 
   train_car:
     text: >

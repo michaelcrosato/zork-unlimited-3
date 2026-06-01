@@ -835,7 +835,8 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
     "go_to_platform",
     "install_fuse",
     "use_token_slot",
-    "mark_mara_clear",
+    "inspect_signal_ledger",
+    "mark_mara_clear_from_ledger",
     "pull_release"
   ];
 
