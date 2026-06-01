@@ -4,6 +4,79 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Prepared Gate Affordance
+
+### Current Plan
+
+- Main objective: Reduce prepared-player bad endings caused by forcing the gate
+  after already finding the platform fuse.
+- Why this matters: The latest suspicious random path showed players collecting
+  useful true-ending tools, reaching the platform, then choosing the destructive
+  gate action instead of using the obvious fuse socket. That made normal play
+  feel unfairly noisy rather than meaningfully risky.
+- Tasks:
+  - Keep the forced-gate bad ending reachable for underprepared players.
+  - Hide `force_gate` once the player carries the fuse.
+  - Add regression coverage for the prepared platform choice list.
+  - Verify validation, playtest metrics, health, and an actual MCP route.
+- Risks:
+  - Removing a visible option can make the scene feel less dangerous, so the bad
+    ending should remain available before the fuse is found.
+
+### Work Completed
+
+- Changes made:
+  - Added a `notItem: fuse` requirement to `force_gate`.
+  - Added a story-path test proving prepared players see `install_fuse` and do
+    not see `force_gate`.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scenes; this is a focused choice-surfacing improvement.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 288 --strategy coverage --summary --json`
+  - Manual MCP route through fuse pickup, platform check, ledger warning,
+    token recovery, signal booth, and true ending.
+- Quantitative metrics:
+  - Story-path tests: 15 passing.
+  - Validation: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: 248 ended, 2 unfinished, all scenes visited,
+    `bad_ending` 78, `true_ending` 8, average score 39.96.
+  - Coverage playtest, 288 runs: 270 ended, 18 unfinished, all scenes visited,
+    `bad_ending` 43, `true_ending` 14, average score 50.02.
+- What worked:
+  - At the platform with the fuse, MCP showed `install_fuse`, `board_train`, and
+    `return_to_service_room`; `force_gate` was gone.
+  - The bad ending remains reachable from the platform before the fuse is found.
+  - Coverage bad endings dropped sharply while all scenes stayed reachable.
+- What felt bad/confusing:
+  - Returning from the clock after the platform has already been lit still lands
+    on the base `platform` scene, whose prose says the fuse socket is empty.
+    Reinstalling the fuse works mechanically, but the prose is stale.
+  - Random play still produced 2 unfinished runs in the 250-run sample.
+- Bugs found:
+  - No runtime bugs; found one stale-prose/design issue for the next pass.
+
+### Next Iteration
+
+- Highest-priority next task: Add a state-aware return from the tunnel/platform
+  after `platform_lit` is true.
+- Reason: The manual MCP route exposed stale platform prose and a repeated
+  `install_fuse` step after token recovery.
+- Planned action:
+  - Route `follow_arrows` or the post-token platform return to `lit_platform`
+    when `platform_lit` is already set, with a regression test that avoids
+    reinstalling the fuse.
+
 ## 2026-06-01 - Clock Token Follow-Through
 
 ### Current Plan

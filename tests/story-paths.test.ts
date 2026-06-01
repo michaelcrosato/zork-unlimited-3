@@ -52,6 +52,27 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("service_room");
   });
 
+  it("removes the destructive gate option after players find the fuse", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "close_locker",
+      "go_to_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+
+    expect(choiceIds).toContain("install_fuse");
+    expect(choiceIds).not.toContain("force_gate");
+  });
+
   it("updates objectives after discovering Platform 13 by following arrows", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

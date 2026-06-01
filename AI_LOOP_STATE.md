@@ -11,23 +11,46 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push after final green gate.
-- Main objective: Reduce the repetitive platform/service-room/tunnel loop after
-  the ledger warning tells players they still need the signal token.
-- Outcome: Routed `return_for_signal_token` from the ledger warning directly to
+- Main objective: Reduce prepared-player bad endings caused by forcing the gate
+  after already finding the platform fuse.
+- Outcome: Hid the destructive `force_gate` choice whenever the player carries
+  the fuse, preserving the bad ending for underprepared exploration while
+  steering prepared players toward `install_fuse`.
+- Evidence:
+  - Added a story-path regression test proving `force_gate` is absent at the
+    platform after the fuse is collected.
+  - `npm test -- tests/story-paths.test.ts` passes with 15 tests.
+  - Validation passes: 23 scenes, 5 endings, 23 reachable scenes.
+  - Random playtest, 250 runs: `bad_ending` dropped to 78, `true_ending`
+    reached 8 times, all scenes visited, 2 unfinished.
+  - Coverage playtest, 288 runs: `bad_ending` dropped to 43, `true_ending`
+    reached 14 times, average score rose to 50.02, all scenes visited, 18
+    unfinished.
+  - Manual MCP route verified the prepared platform choice list excludes
+    `force_gate`, then recovered the token through the ledger warning and
+    reached `true_ending` at 90/100 without the optional radio clue.
+- Follow-up: The platform scene still says the fuse socket is empty even after
+  `platform_lit` is already true and the player returns from the clock; the next
+  pass should add a state-aware lit-platform return path or prose variant.
+
+## Last Completed Cycle
+
+- Date: 2026-06-01
+- Change: Routed `return_for_signal_token` from the ledger warning directly to
   the stopped clock instead of the broad tunnel hub, and set
   `knows_token_location` so the clock presents `take_token` as the only action.
 - Evidence:
   - Added a story-path regression test for the directed ledger-warning recovery
     route.
-  - `npm test -- tests/story-paths.test.ts` passes with 14 tests.
-  - `npm run health` passes with 22 tests, validation, and coverage playtest.
+  - `npm test -- tests/story-paths.test.ts` passed with 14 tests.
+  - `npm run health` passed with 22 tests, validation, and coverage playtest.
   - Manual CLI route intentionally boarded before the signal booth, followed the
     new recovery choice to the clock, then reached `true_ending` at 100/100.
 - Follow-up: The coverage strategy still reports 18 unfinished runs out of 288;
   the next pass should inspect whether those are harmless coverage-budget exits
   or remaining loops worth smoothing.
 
-## Last Completed Cycle
+## Prior Completed Cycle
 
 - Date: 2026-06-01
 - Change: Made the true-ending release action discoverable after players clear

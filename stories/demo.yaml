@@ -267,6 +267,8 @@ scenes:
       - id: force_gate
         label: Force the rusted gate
         to: gate_warning
+        requires:
+          notItem: fuse
 
   lit_platform:
     text: >
