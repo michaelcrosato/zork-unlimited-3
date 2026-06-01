@@ -602,9 +602,9 @@ scenes:
       "Some of us have been counted for too long. Just pull the release and let
       the morning do the rest."
     choices:
-      - id: return_to_release
-        label: Return to the emergency release
-        to: train_car
+      - id: pull_release_after_mara_goodbye
+        label: Pull the release and let the morning in
+        to: true_ending
 
   gate_warning:
     text: >

@@ -11,53 +11,46 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Focus fully prepared lit-platform players on the signal
-  booth.
-- Why this matters: Current route metrics are healthy, and the latest handoff
-  identifies late lit-platform focus as the next pressure point. Once the
-  player has the map, token, fuse, and badge, optional poster lore competes
-  with the high-signal signal-booth action even though the posters primarily
-  teach a badge clue the player has already solved.
+- Main objective: Let Mara's optional intercom goodbye flow directly into the
+  final release.
+- Why this matters: Current route metrics are healthy, but the adaptive
+  exploratory route listened to Mara's final intercom beat, returned to the
+  train car, and stopped one step short of the true ending. The intercom beat
+  is good character payoff, but bouncing back to the same release prompt adds a
+  low-value final click exactly where the game should be closing.
 - Tasks:
-  - Hide the one-time poster inspection once the player is fully equipped for
-    the signal booth.
-  - Preserve the poster beat for earlier underprepared lit-platform states.
-  - Add/update regression coverage for the fully equipped lit-platform choice
-    set.
+  - Route Mara's intercom goodbye to a direct final release action.
+  - Preserve the direct `pull_release` option for players who skip the optional
+    goodbye.
+  - Update regression coverage for the intercom path.
   - Run focused tests, full health, and an actual playthrough.
 - Evidence:
-  - Updated `inspect_mara_posters` so it remains available only while the
-    player is missing at least one of the map, token, or badge.
-  - Updated the fully prepared lit-platform regression to require
-    `use_token_slot` as the only visible choice.
+  - Changed `mara_intercom` so its sole choice is
+    `pull_release_after_mara_goodbye`, leading directly to `true_ending`.
+  - Updated the intercom regression to assert the goodbye path reaches
+    `true_ending` at max score.
   - `npm test -- tests/story-paths.test.ts` passed with 40 tests.
   - `npm run health` passed with formatting, TypeScript, 56 tests, validation,
     and coverage playtest.
-  - Manual CLI route reached the fully prepared `lit_platform` state with
-    badge, fuse, lantern, map, and token; the only visible choice was
-    `use_token_slot`.
-  - Manual CLI route then continued through the signal booth, cleared Mara's
-    ledger row, and reached `true_ending` at 100/100.
   - Evidence-only `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` passed health,
     MCP tool verification, MCP validation, MCP random/coverage/goal playtests,
     and an actual MCP true-ending playthrough at 100/100.
+  - Manual CLI route through `listen_to_mara_intercom` and
+    `pull_release_after_mara_goodbye` reached `true_ending` at 100/100 with
+    `heard_mara_goodbye` set.
   - Final evidence random playtest, 100 runs: all ended, all 31 scenes visited,
     `true_ending` reached 54 times, best score 100/100, average score 70.7.
   - Final MCP random playtest, 250 runs: all ended, all 31 scenes visited,
     `true_ending` reached 139 times, best score 100/100, average score 70.78.
-  - A normal `npm run ai:cycle` attempt also ran its nested agent, but its
-    post-agent automation refused to auto-commit because this worktree was
-    already dirty before that nested agent started.
-- Follow-up: The adaptive exploratory route still stops at `lit_platform` after
-  collecting badge, fuse, map, and token. Since the only visible choice there
-  is now `use_token_slot`, the next cycle should inspect whether the adaptive
-  route/reporting needs one more continuation step or whether a small story
-  payoff is now higher value.
+  - Adaptive exploratory MCP route now stops earlier at the fully prepared
+    `lit_platform` state with badge, fuse, map, and token; because that state
+    is already focused to `use_token_slot`, the remaining issue appears to be
+    adaptive route depth/continuation rather than a new choice distraction.
+- Follow-up: Inspect adaptive exploratory route depth/continuation, or add a
+  small story payoff now that the main-route choice set is focused.
 - Risks:
-  - Narrowing a lore choice can reduce incidental exposure to Mara's poster
-    beat if players collect all tools before restoring the platform. The beat
-    remains reachable in earlier lit-platform states and covered by regression
-    tests.
+  - This removes one explicit return-to-release beat. The choice label now
+    carries the release action so players still understand what ends the game.
 
 ## Last Completed Cycle
 
