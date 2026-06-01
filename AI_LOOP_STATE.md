@@ -11,44 +11,49 @@ preserving normal-play true-ending discoverability.
 
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
-- Main objective: Make the newspaper passenger's help route more readable in
-  normal play.
-- Why this matters: The newspaper-specific intercom payoff exists, but the
-  route into it still looked like generic passenger gathering. The choice label
-  should advertise that the player can use her remembered schedule as the tool
-  that organizes the crowd.
+- Main objective: Give the newspaper passenger route its own true-ending
+  payoff.
+- Why this matters: The newspaper route now has a readable memory and intercom
+  sequence, but it still resolved into the generic helped-passenger ending. A
+  route-specific ending makes the remembered transfer column feel like a real
+  tool that carries the passengers into morning.
 - Tasks:
-  - Rename the newspaper-memory help choice so it names the transfer-column
-    tactic.
-  - Update regression coverage so the route label stays specific.
-  - Run focused tests, full health, and an actual CLI or MCP playthrough
-    through the updated route.
+  - Route the newspaper intercom release into a new
+    `passenger_newspaper_true_ending`.
+  - Count the new ending as max-score/ideal passenger success in scoring,
+    playtest ranking, and AI-loop evidence reporting.
+  - Update regression coverage for the new route label, ending text, and full
+    score.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    updated route.
 - Evidence:
-  - Renamed `help_passengers_after_newspaper_memory` to "Use the transfer
-    column to gather passengers into the third car."
-  - Updated story-path regression coverage to assert the newspaper-specific
-    label, preserving the route into `passenger_newspaper_intercom`.
-  - Focused story-path tests passed with 88 tests.
-  - Manual CLI play showed the new label at `passenger_newspaper_memory`, then
-    reached `passenger_helped_true_ending` at 100/100 with no objectives.
+  - Added `passenger_newspaper_true_ending`, reached by pulling the release
+    from `passenger_newspaper_intercom`.
+  - Changed the route's release label to "Pull the release while the transfer
+    column holds."
+  - Updated score, playtest destination ranking, AI-loop ideal-ending
+    grouping, and aggregate tests so the new ending is treated as a full
+    passenger success.
+  - Focused tests passed: 3 files, 101 tests.
+  - Manual CLI play reached `passenger_newspaper_true_ending` at 100/100 with
+    no objectives and a transcript that preserved the schedule motif through
+    the ending.
   - `npm run health` passed with formatting, TypeScript, 109 tests,
     validation, and coverage playtest.
-  - Coverage playtest visited all 70 scenes, including
-    `passenger_newspaper_intercom`, with best score 100/100 and average score
-    99.21.
+  - Validation reports 71 scenes, 11 endings, and all 71 reachable.
+  - Coverage playtest visited every scene, including
+    `passenger_newspaper_true_ending`, with best score 100/100, average score
+    99.21, and 184464 max-score runs.
 - Playtest notes:
-  - The updated option made the intended newspaper-route action readable before
-    selection.
-  - The optional final roll call remained available and still led cleanly to
-    the helped-passenger ending.
-  - No story or objective bugs appeared; the only route interruption was an
-    operator typo in the scripted CLI choice id, corrected by choosing the
-    displayed `pull_release_after_final_roll_call`.
-- Follow-up: Check whether the clearer label is enough, or whether the
-  newspaper memory should later offer a still more direct conductor interaction.
+  - The newspaper route now has a complete emotional arc: memory, crowd
+    timetable, and ending all use the transfer-column image.
+  - The direct release choice no longer feels generic on this path.
+  - No story, scoring, validation, objective, or coverage regressions appeared.
+- Follow-up: Recheck random-play ending distribution after a larger sample to
+  see how often normal play finds the newspaper-specific route.
 - Risks:
-  - Over-specific labels can feel mechanical if every emotional beat becomes a
-    puzzle instruction; keep the phrasing grounded in the story object.
+  - Adding more passenger-specific endings can make reports busier; keep future
+    route payoffs reserved for branches with distinct player action.
 
 ## Last Completed Cycle
 

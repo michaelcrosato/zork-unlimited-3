@@ -1027,12 +1027,18 @@ describe("demo story critical paths", () => {
       "hear_final_passenger_roll_call",
       "pull_release_after_gathered_intercom"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_after_gathered_intercom")
+        ?.label
+    ).toBe("Pull the release while the transfer column holds");
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.text).toContain("blank transfer column fills with destinations");
+    expect(observation.scene.text).toContain("folds tomorrow's route into her coat");
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

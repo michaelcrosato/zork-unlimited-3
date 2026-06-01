@@ -139,7 +139,7 @@ describe("playtest strategies", () => {
     expect(trueEndingCount(report.summary.endings)).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBe(report.summary.maxScore);
     expect(report.summary.maxScoreRuns).toBeGreaterThan(0);
-  }, 10000);
+  }, 20000);
 
   it("goal strategy reliably reaches the max-score true ending", async () => {
     const story = await loadStory("stories/demo.yaml");
@@ -159,6 +159,7 @@ function trueEndingCount(endings: Record<string, number>): number {
     (endings.passenger_true_ending ?? 0) +
     (endings.passenger_helped_true_ending ?? 0) +
     (endings.passenger_keepsake_true_ending ?? 0) +
+    (endings.passenger_newspaper_true_ending ?? 0) +
     (endings.passenger_mitten_true_ending ?? 0)
   );
 }

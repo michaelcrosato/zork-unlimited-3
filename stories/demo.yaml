@@ -1530,8 +1530,8 @@ scenes:
           set:
             heard_final_roll_call: true
       - id: pull_release_after_gathered_intercom
-        label: Pull the release while the passengers hold the doors
-        to: passenger_helped_true_ending
+        label: Pull the release while the transfer column holds
+        to: passenger_newspaper_true_ending
 
   passenger_keepsake_intercom:
     text: >
@@ -1713,6 +1713,17 @@ scenes:
       daylight, and the rain-dark umbrellas open only after every initial has
       cleared the doors. Mara reads the final name, then lets the ordinary
       things answer back.
+    choices: []
+
+  passenger_newspaper_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and the newspaper woman's blank
+      transfer column fills with destinations as the passengers cross into
+      rain-bright morning. Warden Street becomes a place behind them, not a
+      trap beneath their feet. The old conductor reads the final stop aloud,
+      Mara lets the speaker go quiet, and the woman folds tomorrow's route into
+      her coat before stepping through.
     choices: []
 
   passenger_mitten_true_ending:
