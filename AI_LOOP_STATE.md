@@ -1,3 +1,85 @@
+# Cycle 37 Direct Morning Warning Mark
+
+- Date: 2026-06-02
+- Main objective: Make `morning_warning_mark` discoverable directly from the
+  morning transfer platform.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current Cycle 37 evidence is green, but random/MCP samples still miss
+  `morning_warning_mark` even though coverage reaches it. The warning is a
+  strong fair-play beat because it turns the safe escape into an explicit
+  checklist for a future rescuer and gives the current player one more clear
+  chance to turn back.
+- Planned work:
+  - Add a direct `morning_transfer` choice into `morning_warning_mark`.
+  - Reuse the existing `left_morning_warning` flag and recovery routes.
+  - Preserve map-note, door-listening, clock, safe escape, and turn-back
+    branches.
+  - Add regression coverage for the direct morning-transfer warning path.
+  - Run focused tests, full health, and an actual route through the promoted
+    warning beat.
+- Risks:
+  - The morning transfer menu gains one more option. This is acceptable because
+    it promotes a high-signal optional warning without removing the immediate
+    good ending or recovery choices.
+
+# Cycle 38 Direct Morning Warning Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `morning_warning_mark` discoverable directly from the
+  morning-transfer hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current Cycle 33 evidence is green but random samples miss
+  `morning_warning_mark`, while coverage only reaches it after extra optional
+  morning observations. Surfacing the warning at the hub gives map-only escape
+  riders an immediate, player-readable way to understand what the true route
+  requires before they choose to leave or turn back.
+- Planned work:
+  - Add a direct `morning_transfer` choice into `morning_warning_mark`.
+  - Preserve the existing map-note, door-listening, clock, good-ending, and
+    return routes.
+  - Reuse `left_morning_warning` and the established recovery effects so the
+    direct branch stays consistent with older warning paths.
+  - Add regression coverage proving the direct warning branch can recover into
+    `true_ending`.
+  - Run focused tests, full health, and an actual route through the new branch.
+- Risks:
+  - The morning-transfer menu gains one option. This is acceptable because it
+    is a high-signal clarity action at an optional escape hub and does not
+    remove the immediate safe ending.
+- Work completed:
+  - Added `mark_morning_transfer_warning` from `morning_transfer` directly to
+    `morning_warning_mark`.
+  - Preserved existing map-note, door-listening, stopped-clock, good-ending,
+    token-return, and Mara-return routes.
+  - Reused `left_morning_warning` and the established warning recovery effects
+    so the direct route can return for the signal token and continue to the
+    true ending.
+  - Added regression coverage for the direct morning-transfer warning route and
+    recovery into `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 153 tests.
+  - `npm run health` passed: format check, TypeScript, 197 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - A 250-run random sample ended all 250 runs, visited
+    `morning_warning_mark`, and had zero unfinished runs; only
+    `lost_after_dispatch_ending` remained unvisited in that sample.
+  - Actual CLI play followed `ride_with_map` ->
+    `mark_morning_transfer_warning` ->
+    `turn_back_from_warning_mark_for_token`, recovered through the core route,
+    and ended at `true_ending` with score 255 and no objectives.
+- Playtest feedback:
+  - The direct warning works better at the morning escape hub because the
+    player can immediately write down the concrete true-route checklist before
+    deciding whether to leave or go back. The route did feel slightly lean when
+    returning without reading Mara's file or radio, but it remained coherent
+    because the warning explicitly named the needed objects.
+- Next step:
+  - Watch future random and blind samples for `lost_after_dispatch_ending`;
+    if hard issues stay absent, promote that post-dispatch failure branch or
+    another remaining normal-random miss with the same small-branch approach.
+
 # Cycle 37 First HOME Dispatch Discovery
 
 - Date: 2026-06-02

@@ -919,6 +919,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "study_morning_map_note",
       "listen_at_morning_doors",
+      "mark_morning_transfer_warning",
       "step_into_morning",
       "turn_back_for_signal_token"
     ]);
@@ -981,6 +982,66 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.found_token).toBe(true);
     expect(observation.state.flags.returned_from_safe_escape).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
+  });
+
+  it("lets map-only escape riders mark the warning directly from morning transfer", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "mark_morning_transfer_warning"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_warning_mark");
+    expect(observation.scene.text).toContain("CLOCK TOKEN");
+    expect(observation.scene.text).toContain("BADGE PROOF");
+    expect(observation.state.flags.left_morning_warning).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_marking_morning_warning",
+      "listen_to_morning_clock_catch_up",
+      "turn_back_from_warning_mark_for_token"
+    ]);
+
+    state = choose(story, state, "turn_back_from_warning_mark_for_token");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toEqual(["lantern", "map", "token"]);
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+
+    for (const choiceId of [
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("adds an optional morning-door beat before the map-only good ending", async () => {

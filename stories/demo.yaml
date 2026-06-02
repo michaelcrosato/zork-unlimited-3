@@ -2632,6 +2632,14 @@ scenes:
         effects:
           set:
             heard_morning_doors: true
+      - id: mark_morning_transfer_warning
+        label: Mark the map with what the next rescuer must bring
+        to: morning_warning_mark
+        requires:
+          notFlag: left_morning_warning
+        effects:
+          set:
+            left_morning_warning: true
       - id: listen_to_clock_from_morning_transfer
         label: Listen as the stopped clock answers the morning platform
         to: morning_clock_catch_up
