@@ -2172,6 +2172,14 @@ scenes:
             heard_passenger_answers: true
             helped_passengers_gather: true
             conductor_cleared_platform: true
+      - id: unfold_newspaper_bundle_after_making_room
+        label: Unfold the newspaper bundle once the aisle is clear
+        to: passenger_newspaper_memory
+        requires:
+          notFlag: heard_newspaper_memory
+        effects:
+          set:
+            heard_newspaper_memory: true
       - id: reach_release_after_making_room
         label: Reach the release once every passenger has room
         to: train_car
@@ -3839,8 +3847,29 @@ scenes:
       mitten. Newspaper woman. Old conductor. Dispatcher Vale. At the bottom,
       his own name waits beside the words CLOCK OUT AFTER EVERYONE ELSE.
     choices:
+      - id: hear_roster_clock_out_roll_call
+        label: Hear the roster clock out each passenger by name
+        to: passenger_lunch_tin_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
       - id: pull_release_after_lunch_tin_roster
         label: Pull the release after the worker clocks everyone out
+        to: passenger_lunch_tin_true_ending
+
+  passenger_lunch_tin_roll_call:
+    routeImportance: optional
+    text: >
+      The worker reads the roster like the end of a shift, not a claim. The
+      child answers first, the newspaper woman calls her transfer stop, and the
+      old conductor gives one clear punch in the air when Mara's name comes
+      next. Only then does the worker read his own name. The tin latch shuts
+      once, final and ordinary, and every open door waits for the release.
+    choices:
+      - id: pull_release_after_lunch_tin_roll_call
+        label: Pull the release after the roster clocks everyone out
         to: passenger_lunch_tin_true_ending
 
   passenger_mitten_intercom:

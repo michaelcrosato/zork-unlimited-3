@@ -1,3 +1,109 @@
+# Cycle 60 Lunch-Tin Roster Roll Call
+
+- Date: 2026-06-02
+- Main objective: Add a stronger optional payoff after reading the lunch-tin
+  worker's roster.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 60 evidence shows healthy validation,
+  complete coverage, and high ideal-ending rates. The best next investment is
+  richer late-game story depth. The lunch-tin path is high-traffic in random
+  samples and already has a concrete roster proof, but reading that roster
+  previously led straight to release. A lunch-tin-specific roll-call beat lets
+  the roster become an action before the ending.
+- Planned work:
+  - Add an optional `passenger_lunch_tin_roll_call` scene from the roster.
+  - Keep the direct roster release available for players who want the shorter
+    path.
+  - Add regression coverage for roster -> roll call -> lunch-tin ending.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The branch adds one extra optional beat on an already successful route.
+    This is acceptable because it preserves the direct release and reinforces
+    the route's existing object logic.
+- Status:
+  - Added `hear_roster_clock_out_roll_call` from `passenger_lunch_tin_roster`
+    to the new `passenger_lunch_tin_roll_call` scene.
+  - The new scene keeps the ending family unchanged by routing back to
+    `passenger_lunch_tin_true_ending`.
+  - Updated lunch-tin regression coverage for the new choice order and
+    roll-call scene.
+  - Focused story-path suite passed: 174 tests.
+  - `npm run health` passed: format check, TypeScript, 218 tests, validation,
+    and coverage playtest.
+  - Validation reports 139 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `read_lunch_tin_roster_from_boarding` ->
+    `hear_roster_clock_out_roll_call` ->
+    `pull_release_after_lunch_tin_roll_call`, ending at
+    `passenger_lunch_tin_true_ending` with score 315 and no objectives.
+- Playtest feedback:
+  - The route now makes the roster feel like a played action instead of static
+    flavor: the worker clocks out each named passenger before the release.
+  - The direct release remains available from the roster scene, so pacing stays
+    under player control.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind and random samples for late-game choice overload around
+    `passenger_lunch_tin_boarding` and `passenger_room_boarding`; if players
+    stall there, tune labels or ordering before adding more branches.
+
+# Cycle 55 Room-To-Newspaper Bridge
+
+- Date: 2026-06-02
+- Main objective: Surface `passenger_newspaper_true_ending` from the high-traffic
+  room-making scene.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 55 evidence. Health,
+  validation, coverage, and MCP play are green, but the short random sample
+  only reached `passenger_newspaper_true_ending` once. Recent cycles made
+  `passenger_room_boarding` easier to discover, and that scene already names
+  the newspaper bundle as part of making physical space. Letting players unfold
+  it there turns a visible prop into a natural route toward the newspaper
+  transfer payoff.
+- Planned work:
+  - Add a room-making choice that enters the existing newspaper memory chain.
+  - Preserve the existing room intercom, conductor-clear, and direct-release
+    routes.
+  - Add regression coverage proving the new bridge reaches the restored
+    transfer column and `passenger_newspaper_true_ending`.
+  - Run health and play the changed route.
+- Risks:
+  - The room-making scene gains a fourth choice. This is acceptable because the
+    new option uses a prop already described in the scene and leads into an
+    existing optional branch rather than adding a new ending.
+- Status:
+  - Added `unfold_newspaper_bundle_after_making_room` from
+    `passenger_room_boarding` to `passenger_newspaper_memory`.
+  - Preserved the existing room intercom, conductor-clear, and direct-release
+    routes.
+  - Added regression coverage for the new bridge through
+    `passenger_newspaper_memory`, `passenger_newspaper_transfer`,
+    `passenger_newspaper_intercom`, and `passenger_newspaper_true_ending`.
+  - Updated stale lunch-tin roster regression coverage so the optional roster
+    roll-call beat and direct roster release are both represented.
+  - Focused story-path suite passed: 174 tests.
+  - `npm run health` passed: format check, TypeScript, 218 tests, validation,
+    and coverage playtest.
+  - Validation reports 139 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `make_room_from_opened_manifest` ->
+    `unfold_newspaper_bundle_after_making_room` ->
+    `study_newspaper_transfer_column` ->
+    `carry_newspaper_transfer_to_third_car` ->
+    `pull_release_after_gathered_intercom`, ending at
+    `passenger_newspaper_true_ending` with score 296 and no objectives.
+- Playtest feedback:
+  - The new choice reads naturally because the room-making scene already has the
+    player lift the newspaper bundle from the aisle.
+  - The route now turns physical room-making into restored destination context:
+    room, newspaper memory, transfer column, shared release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch short random samples for whether `passenger_newspaper_true_ending`
+    appears more consistently. If `passenger_manifest_thumbprint_true_ending`
+    remains underrepresented, consider a similarly small bridge from an
+    already-visible manifest handoff or thumbprint prompt.
+
 # Cycle 59 Opened Manifest Room Boarding
 
 - Date: 2026-06-02
