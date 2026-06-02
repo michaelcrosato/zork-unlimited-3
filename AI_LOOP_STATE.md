@@ -1,3 +1,113 @@
+# Cycle 77 Matched Keepsake Check
+
+- Date: 2026-06-02
+- Main objective: Add a confirmation beat to the matched-keepsake passenger
+  route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full coverage, and strong
+  ideal-ending rates, so this cycle invests in late-route story depth. The
+  matched-keepsake branch previously moved directly from returning objects to
+  the speaker or boarding; the new beat lets players verify that each ordinary
+  proof is in the right hands before the final release.
+- Planned work:
+  - Add an optional one-time `passenger_keepsake_check` scene from the matched
+    keepsake handoff.
+  - Let the checked route continue to the existing keepsake speaker or boarding
+    paths without adding another ending family.
+  - Add focused route coverage for both continuations and the ideal ending.
+  - Run health and an actual CLI playthrough through the changed route.
+- Risks:
+  - The keepsake handoff gains one more choice. It is optional, one-time, and
+    routes back into existing keepsake payoffs, so it should add texture
+    without trapping or over-branching the route.
+- Status:
+  - Completed.
+  - Added `check_matched_keepsakes_before_boarding` and the new
+    `passenger_keepsake_check` scene.
+  - Added `carry_checked_keepsakes_to_speaker` and
+    `lead_checked_keepsakes_to_third_car` continuations into existing
+    keepsake intercom/boarding content.
+  - Added focused test coverage for the new check scene, both continuations,
+    and the resulting `passenger_keepsake_true_ending`.
+  - Focused story-path suite passed: 183 tests.
+  - `npm run health` passed: format check, TypeScript, 228 tests, validation,
+    and coverage playtest.
+  - Validation reports 142 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_keepsake_check`, with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `match_manifest_keepsakes` ->
+    `check_matched_keepsakes_before_boarding` ->
+    `carry_checked_keepsakes_to_speaker` ->
+    `hear_final_keepsake_roll_call` ->
+    `pull_release_after_keepsake_roll_call`, ending at
+    `passenger_keepsake_true_ending` with score 319 and no objectives.
+  - The check reads as a useful pause before the final intercom: it makes the
+    keepsake proof feel deliberate instead of automatic, then cleanly returns
+    to the existing speaker and release cadence.
+  - No invalid choices, dead ends, dangling objectives, or coverage
+    regressions appeared.
+- Next step:
+  - Watch blind sessions for whether late-route players choose the check or
+    skip directly to boarding. If skipped, tune the label before adding more
+    optional keepsake detail.
+
+# Cycle 76 Passenger Sign-Off Boarding Bridge
+
+- Date: 2026-06-02
+- Main objective: Make Mara's passenger sign-off actionable after direct
+  third-car boarding.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence shows healthy completion, full scene coverage,
+  and strong ideal-ending rates. The next useful improvement is story-depth
+  polish on a normal late route: asking Mara to sign off to the opened
+  passengers should continue to matter after the player boards, not only if
+  they immediately choose the explicit gather option.
+- Planned work:
+  - Add a guarded train-car continuation for players who heard Mara's passenger
+    sign-off but have not committed to echoed, answered, or gathered variants.
+  - Route that continuation into the existing gathered-passenger intercom and
+    `passenger_helped_true_ending` payoff.
+  - Preserve existing echoed-manifest train-car recovery branches.
+  - Add focused regression coverage, then run health and an actual playthrough.
+- Risks:
+  - `train_car` has many late-route choices. The new choice is limited by
+    `heard_passenger_mara_signoff` and excludes echoed, answered, and already
+    gathered branches so it should not crowd specialized routes.
+- Status:
+  - Completed.
+  - Added `carry_mara_signoff_to_gathered_passengers` in `train_car`, guarded
+    to appear only after Mara's passenger sign-off and before echoed,
+    answered, or already gathered route commitments.
+  - The new continuation sets `helped_passengers_gather` and
+    `heard_gathered_passengers`, then routes into the existing
+    `passenger_gathered_intercom` and `passenger_helped_true_ending` payoff.
+  - Preserved the generic `pull_release_with_manifest` option and the
+    echoed-manifest train-car recovery branches.
+  - Working tree also contains the checked-keepsake route and matching
+    regression coverage now present in `stories/demo.yaml` and
+    `tests/story-paths.test.ts`; health confirms the combined graph is valid.
+  - Focused story-path suite passed: 183 tests.
+  - `npm run health` passed: format check, TypeScript, 228 tests, validation,
+    and coverage playtest.
+  - Validation reports 142 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `ask_mara_to_sign_off_opened_manifest` ->
+    `board_after_passenger_mara_signoff` ->
+    `carry_mara_signoff_to_gathered_passengers` ->
+    `pull_release_after_gathered_intercom`, ending at
+    `passenger_helped_true_ending` with score 302 and no objectives.
+  - The branch reads naturally: Mara's sign-off establishes that no passenger
+    boards alone, and the new third-car choice lets that line become a crowd
+    action before the release.
+  - No invalid choices, dead ends, dangling objectives, or coverage
+    regressions appeared.
+- Next step:
+  - Watch random and blind play for whether direct sign-off boarders choose the
+    new gathered continuation over the generic manifest release. If it is
+    skipped, tune the train-car label before adding more sign-off branches.
+
 # Cycle 75 Manifest Count Discovery Bridges
 
 - Date: 2026-06-02

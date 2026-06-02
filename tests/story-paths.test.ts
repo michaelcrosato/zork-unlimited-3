@@ -7394,6 +7394,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_matched_keepsakes_before_boarding",
       "carry_matched_keepsakes_to_speaker",
       "lead_keepsake_passengers_to_third_car"
     ]);
@@ -7417,6 +7418,108 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("matched keepsakes cross the");
     expect(observation.scene.text).toContain("lets the ordinary things answer back");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets players check matched keepsakes before choosing the speaker or boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "match_manifest_keepsakes",
+      "check_matched_keepsakes_before_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_check");
+    expect(observation.scene.text).toContain("ordinary proofs answer");
+    expect(observation.scene.text).toContain("They are accounted for");
+    expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_keepsakes_to_speaker",
+      "lead_checked_keepsakes_to_third_car"
+    ]);
+
+    state = choose(story, state, "carry_checked_keepsakes_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_intercom");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+
+    state = choose(story, state, "pull_release_after_keepsake_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("carries checked keepsakes into the boarding route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "match_manifest_keepsakes",
+      "check_matched_keepsakes_before_boarding",
+      "lead_checked_keepsakes_to_third_car"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_boarding");
+    expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_keepsakes_answer_from_boarding",
+      "hear_keepsake_roll_call_from_boarding",
+      "pull_release_after_keepsake_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_keepsake_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -9821,6 +9924,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_matched_keepsakes_before_boarding",
       "carry_matched_keepsakes_to_speaker",
       "lead_keepsake_passengers_to_third_car"
     ]);
@@ -10408,12 +10512,23 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_mara_signoff_to_gathered_passengers"
+    );
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
 
-    state = choose(story, state, "pull_release_with_manifest");
+    state = choose(story, state, "carry_mara_signoff_to_gathered_passengers");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("passengers gather themselves");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+
+    state = choose(story, state, "pull_release_after_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
