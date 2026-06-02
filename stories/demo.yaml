@@ -1975,6 +1975,14 @@ scenes:
       platform sounds less like a ledger and more like people finding their
       places beside one another.
     choices:
+      - id: carry_matched_keepsakes_to_speaker
+        label: Carry the matched keepsakes to the third-car speaker
+        to: passenger_keepsake_intercom
+        requires:
+          notFlag: heard_gathered_passengers
+        effects:
+          set:
+            heard_gathered_passengers: true
       - id: lead_keepsake_passengers_to_third_car
         label: Lead the matched passengers to the third car
         to: passenger_keepsake_boarding
@@ -1989,6 +1997,12 @@ scenes:
       read the manifest again, then stops when the ordinary things answer for
       the people holding them.
     choices:
+      - id: listen_to_keepsakes_answer_from_boarding
+        label: Listen as the keepsakes answer from the third car
+        to: passenger_keepsake_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
       - id: hear_keepsake_roll_call_from_boarding
         label: Let the matched keepsakes finish Mara's roll call
         to: passenger_keepsake_roll_call
@@ -1998,12 +2012,6 @@ scenes:
           set:
             heard_gathered_passengers: true
             heard_final_roll_call: true
-      - id: listen_to_keepsakes_answer_from_boarding
-        label: Listen as the keepsakes answer from the third car
-        to: passenger_keepsake_intercom
-        effects:
-          set:
-            heard_gathered_passengers: true
       - id: pull_release_after_keepsake_boarding
         label: Pull the release while every keepsake has its owner
         to: passenger_keepsake_true_ending
@@ -3494,7 +3502,8 @@ scenes:
   passenger_keepsake_intercom:
     routeImportance: optional
     text: >
-      The returned keepsakes make the platform answer before Mara has to ask.
+      At the third-car speaker, the returned keepsakes make the platform
+      answer before Mara has to ask.
       The lunch tin knocks twice against its owner's knee, the newspaper snaps
       open to the correct transfer column, and the umbrellas rise one by one
       like a row of small signal flags. Mara reads the names anyway, but now

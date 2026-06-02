@@ -1,3 +1,65 @@
+# Cycle 33 Matched Keepsake Intercom Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the matched-keepsake
+  intercom and roll-call payoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 33 evidence shows healthy completion, full
+  coverage, and strong ideal-ending pressure, but random play can reach the
+  keepsake ending while missing `passenger_keepsake_intercom` and
+  `passenger_keepsake_roll_call`. The existing scenes are strong late-passenger
+  payoff, so this cycle makes them easier to choose without adding another
+  ending.
+- Planned work:
+  - Add a direct handoff choice from `passenger_keepsake_handoff` to
+    `passenger_keepsake_intercom`.
+  - Promote `listen_to_keepsakes_answer_from_boarding` above the direct
+    roll-call shortcut in `passenger_keepsake_boarding`.
+  - Preserve direct boarding, direct roll-call, and direct release routes.
+  - Update regression coverage for the new handoff-to-intercom route and
+    keepsake choice order.
+  - Run focused tests, full health, a random sample, and an actual CLI route
+    through the promoted keepsake intercom path.
+- Risks:
+  - The direct third-car boarding route becomes one line lower from the
+    keepsake handoff. It remains available, and the promoted option leads to
+    the same established ending family.
+- Work completed:
+  - Added `carry_matched_keepsakes_to_speaker` from
+    `passenger_keepsake_handoff` to `passenger_keepsake_intercom`.
+  - Reframed `passenger_keepsake_intercom` as happening at the third-car
+    speaker so the direct handoff path reads naturally.
+  - Moved `listen_to_keepsakes_answer_from_boarding` before
+    `hear_keepsake_roll_call_from_boarding`.
+  - Added regression coverage for the new direct keepsake speaker path and
+    updated existing choice-order assertions.
+- Evidence so far:
+  - Focused story-path suite passed: 147 tests.
+  - `npm run health` passed: format check, TypeScript, 191 tests,
+    validation, and coverage playtest.
+  - Coverage playtest still visited all 136 scenes, including
+    `passenger_keepsake_intercom` and `passenger_keepsake_roll_call`.
+  - A 250-run random sample ended all 250 runs, had no unfinished runs, and
+    visited both keepsake payoff scenes. It still missed
+    `passenger_room_intercom` and `passenger_room_release` in this
+    deterministic sample.
+  - Actual CLI play followed `match_manifest_keepsakes` ->
+    `carry_matched_keepsakes_to_speaker` -> `hear_final_keepsake_roll_call` ->
+    `pull_release_after_keepsake_roll_call`, ending at
+    `passenger_keepsake_true_ending` with score 318 and no objectives.
+- Playtest feedback:
+  - The new handoff option reads clearly: after matching objects to owners, the
+    player can carry those objects straight to Mara's speaker and hear the
+    strongest keepsake payoff before the release.
+  - Promoting the intercom ahead of the direct roll-call shortcut makes the
+    boarding menu scan from sensory payoff to roll call to final release.
+  - The room route remains the next normal-play watch item because the random
+    sample missed its intercom/release while coverage still reaches them.
+- Next step:
+  - Watch future random and blind samples for whether
+    `passenger_room_intercom` and `passenger_room_release` need another
+    discoverability nudge.
+
 # Cycle 32 Passenger Threshold Discovery
 
 - Date: 2026-06-02
