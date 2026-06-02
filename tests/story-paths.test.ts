@@ -476,6 +476,50 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets players ask Mara why the dark HOME sign answered first", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "enter_dark",
+      "follow_false_home_light",
+      "answer_mara_under_home_flicker"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("dispatcher");
+    expect(observation.state.flags.escaped_dark_home_flicker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_mara_about_false_home",
+      "ask_mara_about_train",
+      "promise_to_help"
+    ]);
+
+    state = choose(story, state, "ask_mara_about_false_home");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_false_home_warning");
+    expect(observation.scene.text).toContain("using a word it never earned");
+    expect(observation.scene.text).toContain("Real morning is on the marked map");
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.heard_false_home_warning).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_mara_from_false_home_warning"
+    ]);
+
+    state = choose(story, state, "follow_mara_from_false_home_warning");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.lights_on).toBe(true);
+    expect(observation.state.flags.promised_mara).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
+  });
+
   it("keeps Mara-promising players in the service room until they recover the map", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -919,6 +963,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "study_morning_map_note",
       "listen_at_morning_doors",
+      "look_back_at_home_reflection",
       "mark_morning_transfer_warning",
       "step_into_morning",
       "turn_back_for_signal_token"
@@ -982,6 +1027,48 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.found_token).toBe(true);
     expect(observation.state.flags.returned_from_safe_escape).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
+  });
+
+  it("lets morning-transfer riders recover from a final HOME reflection", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "look_back_at_home_reflection"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("home_sign_echo");
+    expect(observation.scene.text).toContain("The marked map trembles in your hand");
+    expect(observation.scene.text).toContain("Away");
+    expect(observation.state.flags.heard_home_sign_echo).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "cover_home_sign_with_map",
+      "listen_under_home_sign",
+      "step_into_home_reflection",
+      "let_home_sign_finish"
+    ]);
+
+    state = choose(story, state, "listen_under_home_sign");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("home_sign_dispatch");
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+
+    state = choose(story, state, "cover_home_sign_after_dispatch");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("good_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("lets map-only escape riders mark the warning directly from morning transfer", async () => {

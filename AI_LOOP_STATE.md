@@ -1,3 +1,116 @@
+# Cycle 41 HOME Sign Clarity Pass
+
+- Date: 2026-06-02
+- Main objective: Make the false-HOME threat easier to understand and recover
+  from in normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window
+  yet, so Cycle 41 follows current random/coverage and adaptive-route evidence.
+  Coverage reaches `home_sign_echo`, but normal random samples missed it, and
+  the adaptive route escaped after the early HOME flicker without a strong
+  explanation of why HOME is dangerous but morning is safe.
+- Planned work:
+  - Preserve the existing early dark-HOME recovery route while adding an
+    optional Mara explanation for players who answer her under the flicker.
+  - Add a direct `morning_transfer` choice into `home_sign_echo` so map-only
+    riders can see the recoverable HOME warning before leaving.
+  - Add regression coverage for both HOME clarification routes.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - `morning_transfer` gains one more optional choice. This is acceptable
+    because the scene already centers on a safe escape decision, and the new
+    option points to an existing recoverable warning with clear leave,
+    listen, and lose branches.
+- Work completed:
+  - Added Mara's false-HOME warning from the `dispatcher` scene after the
+    player escapes the dark HOME flicker by answering her.
+  - Added a `morning_transfer` option to look back at the HOME reflection in
+    the train glass, leading to the existing `home_sign_echo` scene.
+  - Added story-path regression coverage for both routes.
+- Evidence:
+  - Focused story-path suite passed: 158 tests.
+  - `npm run health` passed: format check, TypeScript, 203 tests,
+    validation, and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `mara_false_home_warning`
+    and `home_sign_echo`, with zero unfinished runs.
+  - Actual CLI play followed `ride_with_map` ->
+    `look_back_at_home_reflection` -> `listen_under_home_sign` ->
+    `cover_home_sign_after_dispatch`, ending at `good_ending` with score 51
+    and no objectives.
+- Playtest feedback:
+  - The new morning-transfer option fits the moment: the player has reached
+    safe morning, but looking back through the glass lets HOME make one last
+    personal claim.
+  - Mara's dispatch cleanly separates false HOME from the practical map route:
+    leave by the map, or return with token, fuse, badge, and ledger.
+  - No bugs or dangling choices appeared in the played route.
+- Next step:
+  - Watch future random and blind-play samples for whether `home_sign_echo`
+    appears more often in normal play. If hard issues remain absent, continue
+    promoting remaining random misses such as `mara_last_dispatch_intercom` or
+    passenger-specific intercom payoffs.
+
+# Cycle 41 Dark HOME Dispatcher Recovery
+
+- Date: 2026-06-02
+- Main objective: Make recovery from the dark HOME lure clearer after the
+  player answers Mara instead of following the false sign.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Fresh random evidence on the live tree reaches every scene, so this
+  cycle shifts from scene discoverability to reducing early bad-ending pressure
+  without removing the meaningful choice to surrender to HOME. The dark-HOME
+  branch is one of the first places players can learn that the HOME sign is an
+  active trap rather than just flavor.
+- Planned work:
+  - Add a dispatcher option that appears only after the player sees the dark
+    HOME flicker and answers Mara.
+  - Have Mara explicitly distinguish false HOME from the marked map's real
+    morning route.
+  - Route the player back into service-room play with lights on, map objective
+    active, and token-location knowledge.
+  - Add regression coverage for the warning, flags, and objective handoff.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The dispatcher menu gains one gated option after a specific recovery path.
+    This is acceptable because it appears only for players who already touched
+    the HOME danger and need the extra explanation.
+- Work completed:
+  - Added `ask_mara_about_false_home` from `dispatcher` into the new
+    `mara_false_home_warning` scene.
+  - Added `follow_mara_from_false_home_warning` back to `service_room`, setting
+    `lights_on`, `promised_mara`, and `knows_token_location`.
+  - Added regression coverage for the new branch and service-room objective
+    handoff.
+- Evidence:
+  - Pre-change `npm run format:check` failed only on `AI_LOOP_STATE.md`;
+    formatting was normalized before story work.
+  - Fresh 250-run random sample ended all runs, had zero unfinished runs, and
+    visited all scenes before the new branch was added.
+  - Focused story-path suite passed: 159 tests.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - `npm run health` passed: format check, TypeScript, 203 tests,
+    validation, and coverage playtest.
+  - Coverage playtest visited all 138 scenes, including
+    `mara_false_home_warning`, with zero unfinished runs.
+  - Actual CLI play followed `follow_false_home_light` ->
+    `answer_mara_under_home_flicker` -> `ask_mara_about_false_home` ->
+    `follow_mara_from_false_home_warning`, then completed the core Mara route
+    at `true_ending` with score 303 and no objectives.
+- Playtest feedback:
+  - The new warning clearly reframes HOME as a false claim, not a safe
+    destination, while preserving the player's ability to ignore the warning on
+    the earlier bad-ending branch.
+  - Returning to the service room with lights on, the map objective active, and
+    token-location knowledge kept the recovery route focused rather than
+    feeling like a reset.
+- Next step:
+  - Watch future blind/random samples for whether early dark-HOME failures
+    remain meaningful rather than accidental. If hard issues stay absent,
+    continue investing in optional HOME-sign recovery texture and late-game
+    critique/report quality.
+
 # Cycle 40 Direct Opened Manifest Answers
 
 - Date: 2026-06-02
@@ -56,7 +169,7 @@
     `home_sign_echo`.
 - Commit/push status:
   - Blocked in this sandbox because `.git` is mounted read-only and `git
-    commit` could not create `.git/index.lock`. The worktree is left green for
+commit` could not create `.git/index.lock`. The worktree is left green for
     the outer loop to commit and push.
 
 # Cycle 36 Opened Handoff Answer Discovery

@@ -353,6 +353,17 @@ scenes:
       "This is Mara Vale, night dispatcher," the speaker says. "If you can hear
       me, the line has chosen you. Find the map. Do not trust the blank sign."
     choices:
+      - id: ask_mara_about_false_home
+        label: Tell Mara the HOME sign tried to answer first
+        to: mara_false_home_warning
+        requires:
+          all:
+            - flag: escaped_dark_home_flicker
+            - notFlag: heard_false_home_warning
+        effects:
+          set:
+            met_mara: true
+            heard_false_home_warning: true
       - id: ask_mara_about_train
         label: Ask Mara what happened to the train
         to: mara_warning
@@ -367,6 +378,24 @@ scenes:
             met_mara: true
             promised_mara: true
             lights_on: true
+
+  mara_false_home_warning:
+    routeImportance: optional
+    text: >
+      Mara's voice sharpens when you describe the HOME flicker. "That is the
+      line using a word it never earned," she says. "Real morning is on the
+      marked map, not on the train sign. Pull the service lights on, take the
+      map, and do not let that word choose your name before you reach the
+      ledger."
+    choices:
+      - id: follow_mara_from_false_home_warning
+        label: Pull the service lights on and find the marked map
+        to: service_room
+        effects:
+          set:
+            lights_on: true
+            promised_mara: true
+            knows_token_location: true
 
   mara_warning:
     routeImportance: optional
@@ -2689,6 +2718,16 @@ scenes:
         effects:
           set:
             heard_morning_doors: true
+      - id: look_back_at_home_reflection
+        label: Look back at the HOME reflection in the train glass
+        to: home_sign_echo
+        requires:
+          all:
+            - item: map
+            - notFlag: heard_home_sign_echo
+        effects:
+          set:
+            heard_home_sign_echo: true
       - id: mark_morning_transfer_warning
         label: Mark the map with what the next rescuer must bring
         to: morning_warning_mark
