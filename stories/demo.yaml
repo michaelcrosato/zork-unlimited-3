@@ -2329,6 +2329,18 @@ scenes:
         effects:
           set:
             heard_morning_doors: true
+      - id: listen_to_clock_from_morning_transfer
+        label: Listen as the stopped clock answers the morning platform
+        to: morning_clock_catch_up
+        requires:
+          all:
+            - notFlag: heard_morning_clock_catch_up
+            - any:
+                - flag: found_token
+                - flag: knows_token_location
+        effects:
+          set:
+            heard_morning_clock_catch_up: true
       - id: step_into_morning
         label: Step onto the morning platform and leave the line behind
         to: good_ending

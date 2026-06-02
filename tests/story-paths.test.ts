@@ -949,6 +949,38 @@ describe("demo story critical paths", () => {
 
     for (const choiceId of [
       "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "listen_to_clock_from_morning_transfer"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_clock_catch_up");
+    expect(observation.state.flags.heard_morning_clock_catch_up).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_morning_clock_catch_up",
+      "turn_back_from_morning_clock_for_mara"
+    ]);
+
+    state = choose(story, state, "turn_back_from_morning_clock_for_mara");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
       "open_service_door",
       "take_map",
       "go_to_platform",
@@ -961,7 +993,7 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    let observation = observe(story, state);
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("morning_clock_catch_up");
     expect(observation.scene.text).toContain("ticking past 1:13");

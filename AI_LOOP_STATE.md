@@ -1,3 +1,60 @@
+# Cycle 13 Morning-Clock Catch-Up Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `morning_clock_catch_up` more naturally discoverable
+  during normal safe-transfer play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 13 evidence showed coverage could reach every
+  scene, but random and MCP random runs still often missed
+  `morning_clock_catch_up`, leaving a strong clock/payoff beat hidden behind
+  the extra warning-mark branch.
+- Planned work:
+  - Add one direct morning-platform choice into the existing clock catch-up
+    scene after the player has learned or recovered the stopped-clock token.
+  - Preserve the existing map-note, morning-door, good-ending, and turn-back
+    choices.
+  - Add regression coverage for the new direct route and its recovery back
+    toward Mara's ledger.
+- Work completed:
+  - Added `listen_to_clock_from_morning_transfer` from `morning_transfer` to
+    `morning_clock_catch_up`.
+  - Gated the new choice on `found_token` or `knows_token_location`, so the
+    beat appears only after the clock clue is meaningful to the player.
+  - Reused the existing `heard_morning_clock_catch_up` flag and existing
+    catch-up scene, avoiding new endings or duplicate story state.
+  - Added regression coverage proving the direct route appears after taking the
+    clock token, reaches `morning_clock_catch_up`, and can return to the
+    service room for the true-ending rescue path.
+- Evidence:
+  - Focused story-path suite passed: 132 tests.
+  - `npm run health` passed: format check, TypeScript, 176 tests, validation,
+    and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes with zero unfinished runs.
+  - Actual CLI play used `listen_to_clock_from_morning_transfer`, returned via
+    `turn_back_from_morning_clock_for_mara`, and reached `true_ending` at score
+    272 with no active objectives.
+  - Evidence-only `npm run ai:cycle` completed and wrote ignored `ai-runs/`
+    reports. Its shell health checks passed, but MCP verification failed with
+    `MCP error -32000: Connection closed` in this sandbox, so the CLI
+    playthrough is the recorded actual-play evidence for this cycle.
+- Playtest feedback:
+  - The direct choice reads as a natural continuation of the already-seen clock
+    clue once the train opens onto morning.
+  - The catch-up scene now works as a clearer emotional hinge: the player hears
+    time resume, Mara restart the ledger, and then has a concrete reason to
+    return.
+  - The main safe-transfer escape remains available, so the added beat improves
+    discoverability without forcing the rescue route.
+- Risks:
+  - Adds one more choice to `morning_transfer` for players who already touched
+    the clock/token. Future blind sessions should confirm this feels like
+    payoff, not choice clutter.
+- Next step:
+  - Watch random/blind runs for whether `morning_clock_catch_up` appears more
+    often, then prioritize `mara_intercom` or `mara_thumbprint_intercom` if
+    they remain normal-play misses.
+
 # Cycle 25 HOME-Sign Lost-Ending Discovery
 
 - Date: 2026-06-02
