@@ -1,3 +1,52 @@
+# Cycle 16 HOME Sign Lost-Ending Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `lost_ending` while keeping
+  the HOME-sign trap fair and recoverable.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 16 evidence showed random play missed `lost_ending` even
+  though coverage could reach it. The branch existed, but normal exploration
+  had to choose one late surrender option after several prior trap choices.
+- Planned work:
+  - Add one additional, clearly bad surrender choice at the final HOME-sign
+    grip scene.
+  - Preserve both recovery routes from the same scene.
+  - Keep ending metadata in story data and reuse `lost_ending` instead of
+    adding another ending split.
+  - Update regression coverage for the new route.
+- Work completed:
+  - Added `reach_for_false_home_door` from `home_sign_grip` to `lost_ending`.
+  - Added `reached_false_home_door` route evidence for transcript/report
+    diagnosis.
+  - Updated the HOME-sign regression to assert the new visible choice and its
+    ending path.
+- Evidence:
+  - Focused HOME-sign regression passed: 1 test, 140 skipped in
+    `tests/story-paths.test.ts`.
+  - CLI validation passed with 131 reachable scenes and 27 endings.
+  - Actual CLI play took `reach_for_false_home_door` and reached
+    `lost_ending` with `reached_false_home_door` recorded.
+  - A 250-run random playtest reached `lost_ending` once, where the previous
+    Cycle 16 random sample missed it.
+  - `npm run health` passed: format check, TypeScript, 185 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 131 scenes, including `lost_ending`, with zero
+    unfinished runs.
+- Playtest feedback:
+  - The added choice reads as a concrete action toward the false HOME image,
+    not a duplicate of the existing abstract surrender.
+  - The final trap scene still feels fair because the map recovery and service
+    room recovery remain visible before either bad choice.
+  - The final `lost_ending` text still fits both surrender choices.
+- Risks:
+  - More loss pressure at `home_sign_grip` could slightly increase bad-ending
+    frequency; this is acceptable because the scene still exposes two explicit
+    recoveries and the new choice is visibly dangerous.
+- Next step:
+  - Watch the next blind digest for whether HOME-sign losses are now visible
+    enough to critique; if they remain absent, tune the player-view objective
+    or sign-warning labels rather than adding more endings.
+
 # Cycle 19 HOME Dispatch Failure Feedback
 
 - Date: 2026-06-02

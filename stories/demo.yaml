@@ -3554,6 +3554,12 @@ scenes:
             escaped_home_sign_grip: true
             knows_token_location: true
             knows_badge_proof: true
+      - id: reach_for_false_home_door
+        label: Reach for the porch door inside the HOME sign
+        to: lost_ending
+        effects:
+          set:
+            reached_false_home_door: true
       - id: surrender_to_home_sign
         label: Let HOME take your name
         to: lost_ending

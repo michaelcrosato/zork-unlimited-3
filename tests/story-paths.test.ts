@@ -2024,6 +2024,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wrench_map_free_from_home_sign",
       "jam_map_in_home_sign_doors",
+      "reach_for_false_home_door",
       "surrender_to_home_sign"
     ]);
 
@@ -2083,6 +2084,27 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home",
+      "let_home_sign_finish",
+      "reach_for_false_home_door"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.reached_false_home_door).toBe(true);
+    expect(observation.scene.text).toContain("your kitchen window");
 
     state = initialState(story);
     for (const choiceId of [
