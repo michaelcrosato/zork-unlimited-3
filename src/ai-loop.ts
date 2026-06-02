@@ -658,8 +658,8 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
   ];
   const client = new Client({ name: "ai-loop-evidence", version: "0.1.0" });
   const transport = new StdioClientTransport({
-    command: "npm",
-    args: ["run", "mcp"],
+    command: "node",
+    args: ["--import", "tsx", "src/mcp.ts"],
     cwd: process.cwd(),
     stderr: "pipe"
   });
@@ -670,25 +670,23 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     const missingRequiredTools = requiredTools.filter((tool) => !tools.includes(tool));
 
     // 1. Story discovery
-    const storiesRes = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "list_stories",
-          arguments: {}
-        })
-      )
+    const storiesRes = parseMcpJsonResult(
+      await client.callTool({
+        name: "list_stories",
+        arguments: {}
+      }),
+      "list_stories"
     );
     const mainStory =
       storiesRes.stories.find((s: string) => s.endsWith("demo.yaml")) || "stories/demo.yaml";
 
     // 2. Story validation
-    const validateStory = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "validate_story",
-          arguments: { storyPath: mainStory }
-        })
-      )
+    const validateStory = parseMcpJsonResult(
+      await client.callTool({
+        name: "validate_story",
+        arguments: { storyPath: mainStory }
+      }),
+      "validate_story"
     );
     if (!validateStory.ok) {
       throw new Error(
@@ -697,19 +695,18 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     }
 
     // 3. Automated playtest evidence with random strategy (include runs to inspect suspicious samples)
-    const randomPlaytestRes = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "run_playtest",
-          arguments: {
-            storyPath: mainStory,
-            runs: 250,
-            maxSteps: 80,
-            strategy: "random",
-            includeRuns: true
-          }
-        })
-      )
+    const randomPlaytestRes = parseMcpJsonResult(
+      await client.callTool({
+        name: "run_playtest",
+        arguments: {
+          storyPath: mainStory,
+          runs: 250,
+          maxSteps: 80,
+          strategy: "random",
+          includeRuns: true
+        }
+      }),
+      "run_playtest"
     );
     const randomSummary = randomPlaytestRes.summary;
 
@@ -729,34 +726,32 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
       }
     }
 
-    const coverageSummary = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "run_playtest",
-          arguments: {
-            storyPath: mainStory,
-            runs: 100,
-            maxSteps: 60,
-            strategy: "coverage",
-            includeRuns: false
-          }
-        })
-      )
+    const coverageSummary = parseMcpJsonResult(
+      await client.callTool({
+        name: "run_playtest",
+        arguments: {
+          storyPath: mainStory,
+          runs: 100,
+          maxSteps: 60,
+          strategy: "coverage",
+          includeRuns: false
+        }
+      }),
+      "run_playtest"
     ).summary;
 
-    const goalSummary = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "run_playtest",
-          arguments: {
-            storyPath: mainStory,
-            runs: 10,
-            maxSteps: 40,
-            strategy: "goal",
-            includeRuns: false
-          }
-        })
-      )
+    const goalSummary = parseMcpJsonResult(
+      await client.callTool({
+        name: "run_playtest",
+        arguments: {
+          storyPath: mainStory,
+          runs: 10,
+          maxSteps: 40,
+          strategy: "goal",
+          includeRuns: false
+        }
+      }),
+      "run_playtest"
     ).summary;
 
     // 5. Adaptive exploratory MCP route
@@ -808,13 +803,12 @@ async function runMcpExploratoryRoute(
   storyPath: string
 ): Promise<McpPlayResult> {
   try {
-    let observation = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "start_game",
-          arguments: { storyPath, savePath }
-        })
-      )
+    let observation = parseMcpJsonResult(
+      await client.callTool({
+        name: "start_game",
+        arguments: { storyPath, savePath }
+      }),
+      "start_game"
     );
 
     const history: string[] = [observation.scene.id];
@@ -822,13 +816,12 @@ async function runMcpExploratoryRoute(
 
     for (let step = 0; step < exploratoryMaxSteps; step += 1) {
       // Repeatedly call get_scene before choices to verify state
-      observation = JSON.parse(
-        textContent(
-          await client.callTool({
-            name: "get_scene",
-            arguments: { savePath }
-          })
-        )
+      observation = parseMcpJsonResult(
+        await client.callTool({
+          name: "get_scene",
+          arguments: { savePath }
+        }),
+        "get_scene"
       );
 
       if (observation.scene.ending || observation.choices.length === 0) {
@@ -851,24 +844,22 @@ async function runMcpExploratoryRoute(
       const selected = candidates[Math.floor(rng() * candidates.length)].choice;
 
       history.push(selected.to);
-      observation = JSON.parse(
-        textContent(
-          await client.callTool({
-            name: "choose_option",
-            arguments: { savePath, choiceId: selected.id }
-          })
-        )
+      observation = parseMcpJsonResult(
+        await client.callTool({
+          name: "choose_option",
+          arguments: { savePath, choiceId: selected.id }
+        }),
+        "choose_option"
       );
     }
 
     // Call get_scene one last time for final observation
-    observation = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "get_scene",
-          arguments: { savePath }
-        })
-      )
+    observation = parseMcpJsonResult(
+      await client.callTool({
+        name: "get_scene",
+        arguments: { savePath }
+      }),
+      "get_scene"
     );
 
     const transcript = textContent(
@@ -1071,8 +1062,8 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
 
   const client = new Client({ name: "ai-loop-player", version: "0.1.0" });
   const transport = new StdioClientTransport({
-    command: "npm",
-    args: ["run", "mcp"],
+    command: "node",
+    args: ["--import", "tsx", "src/mcp.ts"],
     cwd: process.cwd(),
     stderr: "pipe"
   });
@@ -1097,24 +1088,22 @@ async function runMcpRoute(
   choices: string[],
   expectedFinalScene?: string
 ): Promise<McpPlayResult> {
-  let observation = JSON.parse(
-    textContent(
-      await client.callTool({
-        name: "start_game",
-        arguments: { storyPath: "stories/demo.yaml", savePath }
-      })
-    )
+  let observation = parseMcpJsonResult(
+    await client.callTool({
+      name: "start_game",
+      arguments: { storyPath: "stories/demo.yaml", savePath }
+    }),
+    "start_game"
   );
 
   for (const choiceId of choices) {
     // 4. Repeatedly call get_scene before choices to verify state
-    observation = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "get_scene",
-          arguments: { savePath }
-        })
-      )
+    observation = parseMcpJsonResult(
+      await client.callTool({
+        name: "get_scene",
+        arguments: { savePath }
+      }),
+      "get_scene"
     );
 
     const legalChoices = observation.choices.map((choice: { id: string }) => choice.id);
@@ -1134,24 +1123,22 @@ async function runMcpRoute(
       };
     }
 
-    observation = JSON.parse(
-      textContent(
-        await client.callTool({
-          name: "choose_option",
-          arguments: { savePath, choiceId }
-        })
-      )
+    observation = parseMcpJsonResult(
+      await client.callTool({
+        name: "choose_option",
+        arguments: { savePath, choiceId }
+      }),
+      "choose_option"
     );
   }
 
   // Get one last scene verification
-  observation = JSON.parse(
-    textContent(
-      await client.callTool({
-        name: "get_scene",
-        arguments: { savePath }
-      })
-    )
+  observation = parseMcpJsonResult(
+    await client.callTool({
+      name: "get_scene",
+      arguments: { savePath }
+    }),
+    "get_scene"
   );
 
   const transcript = textContent(
@@ -1176,6 +1163,17 @@ function textContent(result: unknown): string {
     throw new Error("Expected text content from MCP tool");
   }
   return first.text;
+}
+
+export function parseMcpJsonResult(result: unknown, toolName: string): any {
+  const text = textContent(result);
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    const excerpt = text.replace(/\s+/g, " ").slice(0, 300);
+    throw new Error(`MCP tool '${toolName}' returned non-JSON text: ${detail}. Text: ${excerpt}`);
+  }
 }
 
 function sleep(ms: number): Promise<void> {

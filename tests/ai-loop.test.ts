@@ -4,6 +4,7 @@ import {
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
   idealEndingRate,
+  parseMcpJsonResult,
   parsePorcelainPaths,
   requiresLoopRestart,
   restartRequestedExitCode
@@ -74,5 +75,21 @@ describe("AI loop restart detection", () => {
 
   it("allows exploratory MCP routes enough steps for late-game detours", () => {
     expect(exploratoryMaxSteps).toBeGreaterThanOrEqual(45);
+  });
+
+  it("reports non-JSON MCP tool payloads with tool context", () => {
+    expect(() =>
+      parseMcpJsonResult(
+        {
+          content: [
+            {
+              type: "text",
+              text: "Choice 'return_to_service_room' is not available in scene 'entrance'"
+            }
+          ]
+        },
+        "choose_option"
+      )
+    ).toThrow(/MCP tool 'choose_option' returned non-JSON text: .*Choice 'return_to_service_room'/);
   });
 });

@@ -1,3 +1,105 @@
+# Cycle 67 MCP Plain-Text Failure Diagnostics
+
+- Date: 2026-06-02
+- Main objective: Restore useful diagnostics for the required MCP playthrough
+  when an MCP tool returns plain-text failure output instead of JSON.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 67 supplied health, validation, coverage, and exploratory
+  evidence were green, but the required actual MCP playthrough failed with
+  `Unexpected token 'C', "Choice 're"... is not valid JSON`. That masked the
+  real illegal-choice payload and made the autonomous loop less able to choose
+  the next gameplay improvement from evidence.
+- Planned work:
+  - Add a shared MCP JSON parser that names the tool and includes a short text
+    excerpt when parsing fails.
+  - Use it for MCP evidence collection, exploratory routes, and the required
+    true-ending route.
+  - Launch the MCP stdio server directly through `node --import tsx` so npm
+    lifecycle output cannot corrupt the protocol stream.
+  - Add regression coverage for the plain-text illegal-choice payload.
+  - Run focused tests, full health, and a real route through the game.
+- Risks:
+  - This is an evidence-pipeline improvement rather than new story content.
+    It is intentionally scoped because the supplied gameplay metrics are
+    already healthy and the failed MCP route would otherwise keep obscuring
+    future player-facing signals.
+- Status:
+  - In progress.
+  - Added `parseMcpJsonResult` in `src/ai-loop.ts`.
+  - Replaced raw `JSON.parse(textContent(...))` calls in MCP evidence,
+    exploratory play, and required-route play with the contextual parser.
+  - Replaced the `npm run mcp` transport wrapper with direct
+    `node --import tsx src/mcp.ts` launches for MCP evidence and route play.
+  - Added a regression test for a `choose_option` payload beginning with
+    `Choice 'return_to_service_room'...`.
+  - Focused AI-loop test passed.
+  - TypeScript lint passed.
+- Playtest feedback:
+  - Pending full health and actual route verification.
+- Next step:
+  - Run full health, then drive a true-ending CLI/MCP route and record whether
+    the route reaches a clean ending.
+
+# Cycle 62 Unlit-Platform Service-Room Recovery
+
+- Date: 2026-06-02
+- Main objective: Make the early unlit-platform escape warning recover directly
+  into preparation instead of sending players back to the same dark platform
+  loop.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 62 evidence is green overall, but the adaptive
+  exploratory route ended at `escape_ending` after retreating from the unlit
+  platform, and random non-ideal pressure still includes 12% escape endings.
+  The warning text already points at the nearby service-room door; the recovery
+  choice should use that concrete route.
+- Planned work:
+  - Route `return_to_platform_from_escape_warning` to `service_room` and mark
+    the player as having left the platform unprepared.
+  - Route the one-time unlit glance recovery to `service_room` as well, while
+    preserving its clock-token clue.
+  - Keep the explicit escape choices available.
+  - Update focused story-path coverage for both recovery paths.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - Returning to `service_room` is a stronger nudge than returning to the
+    platform. This is intentional for the early unlit warning; the player can
+    still choose the escape ending from either warning scene.
+- Status:
+  - Completed.
+  - Routed `return_to_platform_from_escape_warning` directly to
+    `service_room`, with `left_unprepared_platform` and
+    `returned_from_unlit_escape_warning` set.
+  - Routed `return_after_unlit_escape_glance` directly to `service_room` with
+    the same recovery flag, while preserving the clock-token clue from the
+    glance.
+  - Added the new recovery flag to the unlit platform requirements so the
+    player cannot immediately loop back to the same unlit platform until they
+    recover the fuse.
+  - Preserved explicit escape choices from both warning scenes.
+  - Updated focused story-path coverage for direct warning recovery and
+    one-time glance recovery.
+  - Focused story-path suite passed: 176 tests.
+  - `npm run health` passed: format check, TypeScript, 221 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `retreat_to_stairs_from_platform` ->
+    `return_to_platform_from_escape_warning` -> service-room prep ->
+    `follow_arrows` -> `true_ending`, ending with score 287 and no objectives.
+- Playtest feedback:
+  - The changed recovery reads better because it uses the service-room door
+    named in the warning text instead of bouncing the player back to the same
+    dark platform.
+  - The direct recovery does not reveal the clock token by itself, so reading
+    Mara's personnel file remains a useful clue step.
+  - Once the fuse is recovered, returning from the tunnel to Platform 13 works
+    cleanly despite the new anti-loop flag.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch adaptive routes for whether early `escape_ending` pressure drops; if
+    players still flee immediately, tune the escape confirmation label or
+    require one more glance before final escape.
+
 # Cycle 61 Reviewed-Count Blank-Space Bridge
 
 - Date: 2026-06-02
