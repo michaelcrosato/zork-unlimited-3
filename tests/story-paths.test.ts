@@ -126,10 +126,28 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "brace_gate_and_retreat");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("service_room");
+    expect(observation.scene.id).toBe("gate_retreat_recovery");
+    expect(observation.scene.text).toContain("four missing answers");
+    expect(observation.scene.text).toContain("Mara's map on the desk");
+    expect(observation.scene.text).toContain("signal token behind the stopped clock");
     expect(observation.state.flags.backed_away_from_gate).toBe(true);
     expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
-    expect(observation.choices.map((choice) => choice.id)).toContain("take_map");
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "take_map_after_gate_retreat",
+      "open_locker_after_gate_retreat",
+      "go_to_clock_after_gate_retreat",
+      "steady_hands_after_gate_retreat"
+    ]);
+
+    state = choose(story, state, "take_map_after_gate_retreat");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.inventory).toContain("map");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("take_map");
 
     state = initialState(story);
     for (const choiceId of ["take_lantern", "follow_arrows", "force_gate", "listen_below_gate"]) {
@@ -162,6 +180,54 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("badge number you never proved");
     expect(observation.scene.text).toContain("empty fuse socket");
     expect(observation.scene.text).toContain("another unfinished name");
+  });
+
+  it("lets collapsing-gate retreat players recover into the true ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "follow_arrows",
+      "force_gate",
+      "listen_below_gate",
+      "force_gate_after_echo",
+      "brace_gate_and_retreat"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    expect(observation.scene.id).toBe("gate_retreat_recovery");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "go_to_clock_after_gate_retreat"
+    );
+
+    for (const choiceId of [
+      "go_to_clock_after_gate_retreat",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.backed_away_from_gate).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("points underprepared platform explorers back to the marked map", async () => {
@@ -280,6 +346,49 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("search_locker");
     expect(choiceIds).toContain("go_to_platform");
     expect(choiceIds).not.toContain("return_to_tunnel");
+  });
+
+  it("gives uninformed clock leavers a final token warning and recovery path", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "inspect_clock", "leave_clock"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock_token_warning");
+    expect(observation.scene.text).toContain("SIGNAL BOOTH ACCESS is not a souvenir stamp");
+    expect(observation.scene.text).toContain("sounds like a key");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "take_token_after_clock_warning",
+      "leave_warned_clock"
+    ]);
+
+    const recoveredState = choose(story, state, "take_token_after_clock_warning");
+    observation = observe(story, recoveredState);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toContain("token");
+    expect(observation.state.flags.found_token).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("inspect_clock");
+
+    state = choose(story, state, "leave_warned_clock");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_clock");
+
+    state = choose(story, state, "inspect_clock");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
   });
 
   it("keeps Mara-promising players in the service room until they recover the map", async () => {

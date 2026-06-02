@@ -1,3 +1,67 @@
+# Cycle 23 Pressure-Route Recovery Polish
+
+- Date: 2026-06-02
+- Main objective: Make two early pressure-route retreats feel like playable
+  recovery moments instead of generic resets or silent mistakes.
+- Why this matters: The current checkout already contains the supplied
+  `morning_clock_catch_up` and `lost_ending` discoverability improvements, and
+  there is still no consolidated blind-play digest. Random suspicious samples
+  continue to show players forcing the unfused gate, and ordinary players can
+  still inspect the stopped clock then walk away from the signal token before
+  understanding why it matters.
+- Planned work:
+  - Add a distinct recovery scene after bracing the collapsing gate.
+  - Provide direct choices toward the map, locker supplies, and stopped-clock
+    token based on what the player still lacks.
+  - Add a one-time warning beat when uninformed players leave the clock token.
+  - Let players either take the token immediately after the warning or leave it
+    while gaining the objective clue needed to recover it later.
+  - Preserve the final bad-ending crawl-under choice and the existing earlier
+    back-away routes.
+  - Add regression coverage for both recovery beats.
+- Work completed:
+  - Added `gate_retreat_recovery` after `brace_gate_and_retreat`.
+  - Added direct recovery actions for Mara's marked map, locker supplies, the
+    stopped-clock token, and a generic service-room check.
+  - Added `clock_token_warning` after `leave_clock`, teaching that SIGNAL BOOTH
+    ACCESS is a key clue without forcing token pickup.
+  - Set `knows_token_location` when the player hesitates at the clock so
+    objectives and later service-room routing can guide recovery.
+  - Added regression coverage for the scene text, choices, objective hints, and
+    recovery from both branches.
+- Evidence:
+  - Focused story-path suite passed: 129 tests.
+  - `npm run health` passed: format check, TypeScript, 173 tests, validation,
+    and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including `clock_token_warning` and
+    `gate_retreat_recovery`, with zero unfinished runs.
+  - Evidence-only `npm run ai:cycle` passed its health checks, MCP tool
+    verification, MCP validation, MCP random/coverage/goal playtests, and
+    actual MCP playthrough.
+  - Actual CLI play intentionally left the clock token, saw
+    `clock_token_warning`, left it again, returned to the clock, recovered the
+    token, and reached `true_ending` at score 263 with no active objectives.
+  - Actual CLI play used `force_gate_after_echo`,
+    `brace_gate_and_retreat`, and `go_to_clock_after_gate_retreat`, then
+    recovered the token, map, fuse, badge, ledger route and reached
+    `true_ending` at score 267 with no active objectives.
+- Playtest feedback:
+  - The clock warning makes the token feel important in-world before the player
+    has read Mara's file or inspected the gate control.
+  - Leaving the token after the warning remains allowed, but the route no
+    longer feels like the player silently missed a required item; the objective
+    points back to the stopped clock.
+  - The collapsing-gate recovery beat makes the final retreat from the bad
+    ending more concrete by naming the four tools under pressure.
+- Risks:
+  - Both changes add caution beats to already clue-rich routes. Future blind
+    transcripts should confirm they read as recovery clarity rather than
+    over-explanation.
+- Next step:
+  - Watch blind-play feedback for whether players still ignore the clock token
+    after seeing the new warning, then tune the choice labels if necessary.
+
 # Cycle 22 Home Sign Dispatch Recovery
 
 - Date: 2026-06-02

@@ -238,9 +238,31 @@ scenes:
             found_token: true
       - id: leave_clock
         label: Leave the clock alone
-        to: tunnel
+        to: clock_token_warning
         requires:
           notFlag: knows_token_location
+        effects:
+          set:
+            knows_token_location: true
+
+  clock_token_warning:
+    routeImportance: supporting
+    text: >
+      As you turn away, the token taps once against the wired minute hand. The
+      sound carries down the tunnel and answers from a sealed booth on Platform
+      13. SIGNAL BOOTH ACCESS is not a souvenir stamp; it is the only thing in
+      reach that sounds like a key.
+    choices:
+      - id: take_token_after_clock_warning
+        label: Take the maintenance token after all
+        to: tunnel
+        effects:
+          addItem: token
+          set:
+            found_token: true
+      - id: leave_warned_clock
+        label: Leave the token in the clock for now
+        to: tunnel
 
   dark_tunnel:
     routeImportance: optional
@@ -3113,13 +3135,50 @@ scenes:
     choices:
       - id: brace_gate_and_retreat
         label: Drop the gate and retreat for the four supplies
-        to: service_room
+        to: gate_retreat_recovery
         effects:
           set:
             backed_away_from_gate: true
       - id: crawl_under_collapsing_gate
         label: Crawl under the gate before the doors finish closing
         to: bad_ending
+
+  gate_retreat_recovery:
+    routeImportance: optional
+    text: >
+      The gate slams down hard enough to shake rust from the ceiling. Back in
+      the service room, the four missing answers are suddenly less like clues
+      and more like tools you can name under pressure: Mara's map on the desk,
+      the platform fuse and badge in the locker, and the signal token behind
+      the stopped clock.
+    choices:
+      - id: take_map_after_gate_retreat
+        label: Grab Mara's marked map from the desk
+        to: service_room
+        requires:
+          notItem: map
+        effects:
+          addItem: map
+          set:
+            knows_platform: true
+      - id: open_locker_after_gate_retreat
+        label: Open the locker for the fuse and Mara's badge
+        to: locker
+        requires:
+          any:
+            - notItem: fuse
+            - notItem: badge
+      - id: go_to_clock_after_gate_retreat
+        label: Go to the stopped clock for the signal token
+        to: clock
+        requires:
+          notItem: token
+        effects:
+          set:
+            knows_token_location: true
+      - id: steady_hands_after_gate_retreat
+        label: Steady your hands and check the service room
+        to: service_room
 
   sign_warning:
     routeImportance: optional
