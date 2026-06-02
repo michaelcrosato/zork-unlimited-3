@@ -9655,6 +9655,69 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("preserves the torn-thumbprint payoff after checking Mara at the far door", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger",
+      "watch_mara_leave_booth",
+      "return_from_mara_handoff",
+      "check_mara_far_door_before_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_check");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.state.flags.checked_mara_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_thumbprint_handoff_to_speaker",
+      "return_to_release_after_handoff_check"
+    ]);
+
+    state = choose(story, state, "carry_checked_thumbprint_handoff_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
+    expect(observation.scene.text).toContain("same hand that tore the ledger");
+    expect(observation.scene.text).toContain("witnessed the last door open");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_thumbprint_handoff_to_far_door"
+    ]);
+
+    state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_intercom");
+
+    state = choose(story, state, "pull_release_after_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("adds a final intercom beat after Mara leaves the booth", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

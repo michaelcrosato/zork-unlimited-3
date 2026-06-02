@@ -14,7 +14,7 @@
     "ai:cycle": "node --import tsx src/ai-loop.ts --once",
     "ai:loop": "node --import tsx src/ai-loop.ts",
     "cyoa": "node --import tsx src/cli.ts",
-    "mcp": "node --import tsx src/mcp.ts",
+    "mcp": "node --import tsx --input-type=module --eval \"await import('./src/mcp.ts')\"",
     "validate": "node --import tsx src/cli.ts validate stories/demo.yaml",
     "playtest": "node --import tsx src/cli.ts playtest stories/demo.yaml --runs 50",
     "playtest:session": "node --import tsx src/blind-playtester.ts",

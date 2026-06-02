@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import process from "node:process";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -190,4 +191,9 @@ function jsonResult(value: unknown) {
   };
 }
 
+const keepAlive = setInterval(() => undefined, 1 << 30);
+process.stdin.once("end", () => {
+  setTimeout(() => clearInterval(keepAlive), 25);
+});
 await server.connect(new StdioServerTransport());
+process.stdin.resume();

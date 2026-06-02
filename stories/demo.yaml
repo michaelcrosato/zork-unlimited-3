@@ -1387,11 +1387,23 @@ scenes:
       you, but Mara is close enough now that you hear her without it: "All
       right. I am here."
     choices:
+      - id: carry_checked_thumbprint_handoff_to_speaker
+        label: Carry Mara's checked thumbprint back through the speaker
+        to: mara_thumbprint_handoff_intercom
+        requires:
+          all:
+            - flag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: carry_checked_handoff_to_speaker
         label: Carry Mara's far-door check back through the speaker
         to: mara_handoff_intercom
         requires:
-          notFlag: heard_mara_goodbye
+          all:
+            - notFlag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
         effects:
           set:
             heard_mara_goodbye: true

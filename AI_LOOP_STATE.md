@@ -1,3 +1,103 @@
+# Cycle 83 Checked Thumbprint Handoff Payoff
+
+- Date: 2026-06-02
+- Main objective: Preserve Mara's torn-thumbprint payoff after the physical
+  far-door handoff check.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence keeps pointing at rare Mara handoff variants as
+  the remaining normal-play discovery gap. Cycle 81 added the physical
+  `mara_handoff_check`, but thumbprint readers who took that new check were
+  routed through the generic handoff intercom instead of the more specific
+  torn-thumbprint handoff beat they had earned.
+- Planned work:
+  - Add a thumbprint-specific speaker choice from `mara_handoff_check` when
+    `read_mara_thumbprint` is set.
+  - Keep the generic checked-handoff speaker choice for players without the
+    thumbprint clue.
+  - Preserve the direct return to the release from the check scene.
+  - Add a regression path that reads the thumbprint, watches Mara leave,
+    checks the far door, and reaches `mara_thumbprint_handoff_intercom`.
+- Risks:
+  - The check scene has conditional choice ordering. Focused tests should
+    ensure thumbprint and non-thumbprint readers each see only the relevant
+    speaker payoff plus the direct release return.
+- Status:
+  - Completed.
+  - Added `carry_checked_thumbprint_handoff_to_speaker` from
+    `mara_handoff_check` to `mara_thumbprint_handoff_intercom`.
+  - Gated the generic checked-handoff speaker choice behind
+    `notFlag: read_mara_thumbprint`.
+  - Added a focused regression test for the checked thumbprint handoff route.
+  - Focused story-path suite passed: 186 tests.
+  - `npm run health` passed: format check, TypeScript, 232 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `watch_mara_leave_booth` ->
+    `return_from_mara_handoff` -> `check_mara_far_door_before_release` ->
+    `carry_checked_thumbprint_handoff_to_speaker` ->
+    `carry_thumbprint_handoff_to_far_door` ->
+    `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 297 and no objectives.
+  - The thumbprint-specific intercom now survives the physical far-door check,
+    so players who touched the torn ledger proof hear Mara reinterpret that same
+    hand at the final doors before release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether thumbprint-route players use the checked
+    far-door speaker payoff. If it is skipped, tune the choice label before
+    adding another Mara-only branch.
+
+# Cycle 82 MCP Stdio Launch Recovery
+
+- Date: 2026-06-02
+- Main objective: Restore `npm run mcp` as a reliable stdio server entry point.
+- Why this matters: Cycle 10 evidence included a failed adaptive MCP route, and
+  local evidence-only probing showed the MCP subprocess closing before tool
+  discovery. The game loop depends on MCP playthroughs for real route evidence,
+  so the server command must stay alive long enough to receive initialized
+  stdio messages and answer tool calls.
+- Planned work:
+  - Inspect the current MCP startup behavior and reproduce the connection
+    failure.
+  - Change the `npm run mcp` entrypoint to import the MCP module in module eval
+    mode instead of launching the TypeScript file as the direct `node --import
+tsx` entrypoint.
+  - Keep the server process alive while stdin is open, then allow piped MCP
+    smoke checks to exit after stdin ends.
+  - Run health and an actual playthrough.
+- Risks:
+  - Node SDK client subprocess writes are unreliable in this sandbox, so the
+    verification uses shell-framed MCP JSON over stdin/stdout rather than a
+    Vitest client-spawn regression test.
+- Status:
+  - Completed.
+  - `npm run mcp --silent` now answers MCP `initialize` and `tools/list`
+    requests over stdio when fed newline-delimited JSON.
+  - `npm run health` passed: format check, TypeScript, 231 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed the core Mara route through `true_ending` with
+    score 305, no objectives, no available choices, and inventory
+    `badge`, `fuse`, `lantern`, `map`, `token`.
+  - The route remained clear: the service-room preparation, signal-booth proof,
+    Mara release, third-car boarding, and final emergency release all chained
+    cleanly.
+  - A full evidence-only `npm run ai:cycle` was attempted before the final MCP
+    launch fix and failed in the SDK client path with `Connection closed`; this
+    remains a follow-up for the AI loop client wrapper, while the MCP server
+    command itself now speaks stdio correctly.
+- Next step:
+  - Add a bounded timeout or shell-framed fallback around the AI loop's SDK MCP
+    client calls so `npm run ai:cycle` cannot hang or collapse evidence when the
+    local stdio client transport misbehaves.
+
 # Cycle 81 Mara Handoff Far-Door Check
 
 - Date: 2026-06-02
