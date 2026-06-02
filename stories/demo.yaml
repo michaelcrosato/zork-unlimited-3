@@ -1269,9 +1269,10 @@ scenes:
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
       a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
-      shaking rain from their ribs, a crowd pausing until someone holds the
-      third-car threshold. Mara breathes through the speaker and says, "Third
-      car. I can hold the line steady while they find the morning."
+      shaking rain from their ribs, shoulders shifting to make room, a crowd
+      pausing until someone holds the third-car threshold. Mara breathes
+      through the speaker and says, "Third car. I can hold the line steady
+      while they find the morning."
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1352,6 +1353,18 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: make_room_from_opened_manifest
+        label: Make room in the third car as the opened passengers board
+        to: passenger_room_intercom
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: made_room_for_passengers
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            made_room_for_passengers: true
+            heard_mara_goodbye: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
@@ -1743,6 +1756,17 @@ scenes:
       - id: return_from_passenger_answers
         label: Cross through the answered crowd as they gather
         to: passenger_platform
+      - id: carry_answered_names_to_intercom
+        label: Carry the answered names into the third car
+        to: passenger_answered_intercom
+        requires:
+          all:
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_answered_passengers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_answered_passengers: true
       - id: board_after_passenger_answers
         label: Board the third car while the roll call holds
         to: passenger_answered_handoff_roll_call

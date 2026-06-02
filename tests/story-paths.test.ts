@@ -3821,6 +3821,59 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest players make room directly in the third car", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "make_room_from_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.scene.text).toContain("people making room for one another");
+    expect(observation.scene.text).toContain("Enough space for everyone");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_intercom",
+      "pull_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "pass_room_release_after_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("lets the opened passenger platform directly surface the room-making intercom", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -5491,6 +5544,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_punch_from_answers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
+      "carry_answered_names_to_intercom",
       "board_after_answered_passengers"
     ]);
 
@@ -5976,6 +6030,54 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the answered passengers do not");
     expect(observation.scene.text).toContain("their own voices carry the last name");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets answered passengers carry their names directly into the intercom payoff", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "carry_answered_names_to_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_intercom");
+    expect(observation.scene.text).toContain("The passengers who answered roll call");
+    expect(observation.scene.text).toContain("Pull the release before the line");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -8364,6 +8466,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
       "hold_opened_manifest_threshold",
+      "make_room_from_opened_manifest",
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",
@@ -8385,6 +8488,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_punch_from_answers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
+      "carry_answered_names_to_intercom",
       "board_after_answered_passengers"
     ]);
 

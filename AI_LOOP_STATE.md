@@ -1,3 +1,120 @@
+# Cycle 44 Answered Passenger Intercom Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answered_intercom` and
+  `passenger_answered_true_ending` easier to reach from normal opened-manifest
+  play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 44 random/coverage
+  evidence. Coverage reaches every scene, but random samples can still miss
+  the answered-passenger intercom payoff. Once players choose to hear the
+  opened passengers answer their names, carrying those answers straight into
+  the third car is a readable next action.
+- Planned work:
+  - Add one direct `passenger_answers` choice into the existing
+    `passenger_answered_intercom` branch.
+  - Preserve handoff, conductor, lunch-tin, newspaper, gathering, and direct
+    boarding routes.
+  - Add regression coverage proving the direct answered route reaches
+    `passenger_answered_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - `passenger_answers` gains one more optional action. This is acceptable
+    because the action reuses an existing payoff and appears only before the
+    player commits to another passenger-gathering route.
+- Status:
+  - Added `carry_answered_names_to_intercom` from `passenger_answers` directly
+    to `passenger_answered_intercom`, setting `heard_answered_passengers`.
+  - Updated exact choice-order coverage for answered-passenger scenes.
+  - Added a regression route through `passenger_answered_intercom` and
+    `passenger_answered_true_ending`.
+  - Focused story-path suite passed: 164 tests.
+  - `npm run health` passed: format check, TypeScript, 208 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_answered_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `carry_answered_names_to_intercom` ->
+    `pull_release_after_answered_intercom`, ending at
+    `passenger_answered_true_ending` with score 298 and no objectives.
+- Playtest feedback:
+  - The new transition reads naturally: the player hears passengers answer for
+    themselves, then carries that proof straight into the third-car intercom.
+  - The route avoids an extra boarding detour while preserving the older
+    boarding and direct-release branch.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_answered_intercom`
+    appears more often in normal play. If hard issues remain absent, continue
+    improving low-random Mara payoffs such as `mara_manifest_handoff_intercom`
+    or `mara_last_dispatch_intercom`.
+
+# Cycle 40 Opened Manifest Room-Making Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_room_intercom` more naturally discoverable
+  from the opened-manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 40 random/coverage
+  evidence. Coverage reaches every scene, but random samples missed
+  `passenger_room_intercom`; players can already help the opened passengers
+  board, so surfacing the car-space problem earlier should make that payoff
+  easier to find in normal play.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing room-making
+    intercom branch.
+  - Motivate the choice in the opened-manifest hub prose with visible
+    room-making pressure.
+  - Preserve existing threshold, answered, keepsake, count, lunch-tin, and
+    handoff routes.
+  - Add regression coverage proving the direct opened-manifest room route
+    reaches `passenger_room_intercom` and an ideal passenger ending.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because it reuses existing downstream scenes and gives normal players a
+    direct way to act on the crowd-space detail already present in the
+    passenger release sequence.
+- Status:
+  - Added `make_room_from_opened_manifest` from `passengers_released` directly
+    to `passenger_room_intercom`, setting `made_room_for_passengers` and
+    `heard_mara_goodbye`.
+  - Revised `passengers_released` so the opened passengers visibly shift to
+    make room before the new choice appears.
+  - Updated exact hub choice-order coverage and added a direct opened-manifest
+    room-making regression through `passenger_room_intercom`,
+    `passenger_room_release`, and `passenger_true_ending`.
+  - Preserved adjacent answered-passenger discoverability work in the touched
+    files: `carry_answered_names_to_intercom` now routes directly from
+    answered names to `passenger_answered_intercom` with regression coverage to
+    `passenger_answered_true_ending`.
+  - Focused story-path suite passed: 163 tests.
+  - `npm run health` passed: format check, TypeScript, 208 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_room_intercom`,
+    with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `make_room_from_opened_manifest` -> `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 248 and no objectives.
+- Playtest feedback:
+  - The hub prose now clearly tees up the room-making action; choosing it feels
+    like helping the crowd board rather than detouring into a hidden variant.
+  - The intercom payoff reads cleanly from the new shortcut because Mara's line
+    explains why ordinary space matters to the ledger.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_room_intercom`
+    appears more often in normal play. If hard issues remain absent, continue
+    improving remaining low-random scenes such as
+    `mara_manifest_handoff_intercom` or `mara_last_dispatch_intercom`.
+
 # Cycle 39 Opened Manifest Threshold Discovery
 
 - Date: 2026-06-02
