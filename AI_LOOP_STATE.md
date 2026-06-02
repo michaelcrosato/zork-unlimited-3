@@ -1,3 +1,59 @@
+# Cycle 19 Room Intercom Shared Release
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the shared room-release
+  payoff by making it available after Mara's crowded-car intercom as well as
+  from the direct train-car continuation.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 19 supplied evidence showed healthy completion and full
+  coverage reachability, but `passenger_room_release` was still missed in a
+  250-run random MCP sample. The scene is already a strong payoff for making
+  space in the third car, so the right next move is to expose it through the
+  other natural room-making branch instead of adding more parallel content.
+- Planned work:
+  - Add a gated choice from `passenger_room_intercom` to
+    `passenger_room_release`.
+  - Preserve the existing direct `pull_release_after_making_room` ending path.
+  - Extend regression coverage to prove both intercom continuations remain
+    valid.
+  - Validate, run health, and play the route.
+- Risks:
+  - The room intercom now has two choices instead of one. Both choices are
+    short, adjacent, and tied to the same immediate release objective.
+- Work completed:
+  - Added `pass_room_release_after_intercom` from `passenger_room_intercom` to
+    `passenger_room_release`.
+  - Set `shared_release_reached` on the new branch so transcript and score
+    evidence match the direct train-car shared-release branch.
+  - Preserved the existing direct `pull_release_after_making_room` route to
+    `passenger_true_ending`.
+  - Extended the room-making regression test to cover both intercom
+    continuations and the original train-car hand-to-hand continuation.
+- Evidence:
+  - Focused story-path suite passed: 143 tests.
+  - CLI validation passed with 134 reachable scenes and 27 endings.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 134 scenes, including
+    `passenger_room_release`, with no unvisited scenes.
+  - Actual CLI play followed `make_room_for_passengers_in_third_car` ->
+    `listen_to_room_made_for_passengers` ->
+    `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 259, no objectives, and
+    `shared_release_reached` recorded.
+  - A 250-run random playtest ended 250/250 runs, had zero frontier samples,
+    and visited `passenger_room_release`.
+- Playtest feedback:
+  - The room route now has a coherent optional escalation whether the player
+    reaches straight for the release or pauses for Mara's crowded-car intercom.
+  - The new label is direct and actionable, and the immediate ending option
+    remains available for players who do not want another pause.
+- Next step:
+  - Watch blind feedback for whether the plain passenger platform remains
+    readable with its current optional branches; if it starts to feel crowded,
+    consolidate nearby passenger-room choices rather than adding more choices.
+
 # Cycle 22 Shared Release Payoff
 
 - Date: 2026-06-02

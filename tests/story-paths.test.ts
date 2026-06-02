@@ -3217,6 +3217,27 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.scene.text).toContain("Enough space for everyone");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_intercom",
+      "pull_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "pass_room_release_after_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("You do not pull the release alone");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, roomState, "listen_to_room_made_for_passengers");
+    observation = observe(story, state);
 
     state = choose(story, state, "pull_release_after_making_room");
     observation = observe(story, state);

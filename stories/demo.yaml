@@ -2953,6 +2953,14 @@ scenes:
       "That is what the ledger never knew how to count," she says. "Enough
       space for everyone to leave together."
     choices:
+      - id: pass_room_release_after_intercom
+        label: Pass the release handle through the steadied car
+        to: passenger_room_release
+        requires:
+          notFlag: shared_release_reached
+        effects:
+          set:
+            shared_release_reached: true
       - id: pull_release_after_making_room
         label: Pull the release while the car holds everyone
         to: passenger_true_ending
