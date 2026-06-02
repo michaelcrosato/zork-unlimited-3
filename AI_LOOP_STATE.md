@@ -1,10 +1,10 @@
-# Cycle 28 Threshold Handoff Discovery
+# Cycle 32 Passenger Threshold Discovery
 
 - Date: 2026-06-02
 - Main objective: Improve normal-play discovery of `passenger_threshold_intercom`
   without undoing the prior passenger-room boarding promotion.
 - Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
-  window. The supplied Cycle 28 evidence shows full coverage and healthy
+  window. The supplied Cycle 32 evidence shows full coverage and healthy
   completion, but a 250-run random MCP sample still missed
   `passenger_threshold_intercom`. The previous cycle made the room beat the
   stronger direct-platform continuation, so this cycle adds a threshold entry
