@@ -53,6 +53,67 @@
     density is becoming a soft issue; otherwise continue adding small
     route-specific emotional payoffs or improve transcript/report critique.
 
+# Cycle 12 Manifest Thumbprint Recognition
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for
+  `mara_manifest_thumbprint_intercom` and
+  `passenger_manifest_thumbprint_true_ending`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 12 evidence. Health and
+  coverage were strong, but the 100-run random sample missed
+  `mara_manifest_thumbprint_intercom` and
+  `passenger_manifest_thumbprint_true_ending`, showing that the manifest
+  thumbprint payoff remained too dependent on a narrow optional chain.
+- Planned work:
+  - Add one contextual prompt for players who already touched Mara's original
+    torn ledger thumbprint before opening the passenger manifest.
+  - Place the prompt during Mara's opened-manifest handoff, where the
+    thumbprint oath is visible and narratively relevant.
+  - Avoid duplicate choices by keeping the generic manifest-thumbprint touch
+    prompt for players who did not inspect the earlier thumbprint.
+  - Add regression coverage for the new route through the manifest thumbprint
+    ideal ending.
+- Work completed:
+  - Added `recognize_mara_manifest_thumbprint_oath` from
+    `mara_manifest_handoff` to `mara_manifest_thumbprint_intercom`.
+  - The new choice requires `read_mara_thumbprint`, sets
+    `read_manifest_thumbprint` and `heard_mara_goodbye`, and preserves the
+    existing final release path.
+  - Gated `touch_mara_manifest_thumbprint` away from `read_mara_thumbprint` so
+    thumbprint-aware players see the more specific recognition prompt instead
+    of a duplicate generic touch prompt.
+  - Added story-path regression coverage proving the new route reaches
+    `passenger_manifest_thumbprint_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 137 tests.
+  - `npm run health` passed: format check, TypeScript, 181 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 126 reachable scenes and 26 endings.
+  - Health coverage visited all 126 scenes, including
+    `mara_manifest_thumbprint_intercom` and
+    `passenger_manifest_thumbprint_true_ending`, with zero unfinished runs.
+  - Actual CLI play used `recognize_mara_manifest_thumbprint_oath` and reached
+    `passenger_manifest_thumbprint_true_ending` at score 303 with no active
+    objectives.
+- Playtest feedback:
+  - The new choice reads as a direct payoff for earlier curiosity rather than a
+    new branch, because the player has already learned what Mara's torn print
+    meant before seeing her call the opened doors.
+  - The route now reaches the manifest-thumbprint intercom without requiring an
+    extra touch-and-carry sequence after the handoff, reducing the chance that
+    normal players board past the payoff.
+  - The ending remains concise and emotionally clear: Mara leaves with the
+    passengers instead of standing before or behind the manifest.
+- Risks:
+  - This is another optional late-game choice in a scene that already branches.
+    Future blind sessions should watch for late passenger-route choice density.
+- Next step:
+  - Watch the next random/blind sample for improved
+    `passenger_manifest_thumbprint_true_ending` discovery. If it stabilizes,
+    shift from discovery fixes to transcript/report critique or richer
+    route-specific payoff.
+
 # Cycle 11 Thumbprint-Handoff Discovery
 
 - Date: 2026-06-02

@@ -1402,11 +1402,27 @@ scenes:
       handed from name to name. By the time she reaches her own row, the
       speaker is full of people breathing with her instead of waiting for her.
     choices:
+      - id: recognize_mara_manifest_thumbprint_oath
+        label: Recognize Mara's thumbprint oath as she calls the opened doors
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - flag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            heard_mara_goodbye: true
       - id: touch_mara_manifest_thumbprint
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
         requires:
-          notFlag: read_manifest_thumbprint
+          all:
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
         effects:
           set:
             read_manifest_thumbprint: true
