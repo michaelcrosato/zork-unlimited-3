@@ -12,6 +12,67 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a recoverable HOME-sign scare that can steer players
+  back to the true-ending preparation route.
+- Why this matters: Cycle 10 evidence showed core guidance and ideal-ending
+  rates are healthy, but suspicious path samples still included a map-carrying
+  player who stared through the HOME sign into `lost_ending` after partially
+  understanding the route. The sign trap should remain dangerous, but the final
+  warning can also convert a near-loss into concrete preparation goals for
+  players still holding the map.
+- Tasks:
+  - Add a third choice at `home_sign_grip` that uses the map to break the sign's
+    pull and return to the service room. Done.
+  - Make the new beat explicitly name the remaining true-route components:
+    badge, fuse, clock token, and ledger. Done.
+  - Preserve the existing safe morning escape and explicit lost ending. Done.
+  - Update focused story-path regression coverage through the new recovery
+    route into `true_ending`. Done.
+  - Run focused tests, validation, full health, evidence cycle, and actual
+    CLI/MCP playthroughs. Done.
+- Evidence:
+  - Added `jam_map_in_home_sign_doors`, gated by the map, from
+    `home_sign_grip` back to `service_room`.
+  - The recovery sets `escaped_home_sign_grip`, `knows_token_location`, and
+    `knows_badge_proof`, so objectives point to the stopped clock and Mara's
+    identity proof after the scare.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 111 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 112 scenes,
+    24 endings, all 112 reachable, and no warnings.
+  - `npm run health` passed with formatting, TypeScript, 132 tests, validation,
+    and coverage playtest.
+  - Health coverage completed with zero unfinished runs, all scenes visited,
+    best score 100/100, average score 94.2, and 923 max-score runs.
+  - Manual CLI play followed `look_at_sign` -> `stare_at_home` ->
+    `let_home_sign_finish` -> `jam_map_in_home_sign_doors`, then gathered the
+    fuse, badge, clock token, restored the platform, cleared Mara, and reached
+    `true_ending` at 100/100 with no objectives.
+  - MCP play repeated the same recovery route through
+    `jam_map_in_home_sign_doors` and reached `true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-02T02-23-55-245Z.md`.
+- Playtest notes:
+  - The new beat feels like a last-second correction rather than a free pass:
+    the player still had to choose through two warnings before seeing it.
+  - Returning to the service room after the HOME scare produces useful
+    objectives for token, fuse, badge proof, and survival knowledge.
+  - Existing `good_ending` and `lost_ending` choices remain visible at the same
+    branch, so the trap is still legible and voluntary.
+  - No bugs or dead ends were found in focused tests, full health, CLI play, or
+    MCP play.
+- Follow-up:
+  - Watch random samples to see whether the new recovery choice lowers
+    `lost_ending` pressure without erasing the sign trap's narrative cost.
+  - Consider a similar recovery cue for repeated forced-gate attempts only if
+    bad-ending pressure starts crowding out normal play.
+- Risks:
+  - The HOME-sign branch now offers three exits, so its final-choice tension
+    may feel slightly less severe.
+
+## Last Completed Cycle
+
+- Date: 2026-06-02
+- Status: Completed locally; ready for commit/push.
 - Main objective: Improve normal-play discovery for the conductor final
   roll-call payoff.
 - Why this matters: Cycle 9 evidence showed all scenes reachable under coverage

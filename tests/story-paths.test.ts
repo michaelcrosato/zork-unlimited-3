@@ -1499,9 +1499,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("home_sign_grip");
     expect(observation.scene.text).toContain("the map will not fall");
     expect(observation.scene.text).toContain("both places pulling at your name");
+    expect(observation.scene.text).toContain("badge, fuse, clock token, ledger");
     expect(observation.state.flags.felt_home_sign_grip).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wrench_map_free_from_home_sign",
+      "jam_map_in_home_sign_doors",
       "surrender_to_home_sign"
     ]);
 
@@ -1510,6 +1512,57 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("good_ending");
     expect(observation.scene.ending).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home",
+      "let_home_sign_finish",
+      "jam_map_in_home_sign_doors"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.escaped_home_sign_grip).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
+
+    for (const choiceId of [
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_stopped_clock",
+      "take_token",
+      "open_service_door",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = initialState(story);
     for (const choiceId of [

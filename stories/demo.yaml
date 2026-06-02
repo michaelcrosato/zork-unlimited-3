@@ -2493,13 +2493,25 @@ scenes:
       The sign finishes the word, but the map will not fall. Its pencil line to
       MORNING PLATFORM cuts across the false porch light like a transfer stamp,
       and for one breath you can feel both places pulling at your name. The
-      train doors begin to close around the choice.
+      train doors begin to close around the choice. The service-room route is
+      still printed on the map's damp reverse, smeared but readable: badge,
+      fuse, clock token, ledger.
     choices:
       - id: wrench_map_free_from_home_sign
         label: Follow the map's morning line before the doors close
         to: good_ending
         requires:
           item: map
+      - id: jam_map_in_home_sign_doors
+        label: Jam the map in the doors and tumble back to the service room
+        to: service_room
+        requires:
+          item: map
+        effects:
+          set:
+            escaped_home_sign_grip: true
+            knows_token_location: true
+            knows_badge_proof: true
       - id: surrender_to_home_sign
         label: Let HOME take your name
         to: lost_ending
