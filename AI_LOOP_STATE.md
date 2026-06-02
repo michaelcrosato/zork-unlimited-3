@@ -1,3 +1,56 @@
+# Cycle 17 Morning Chorus Boarding
+
+- Date: 2026-06-02
+- Main objective: Add a focused third-car payoff for the passenger morning
+  chorus route without changing route requirements or ending classification.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, while current Cycle 17 evidence shows all scenes reachable, zero
+  unfinished random runs, and healthy ideal-ending rates. The best next
+  improvement is richer late passenger-route payoff in a lane not touched by
+  the reviewed-count chorus.
+- Planned work:
+  - Add a one-time optional third-car intercom beat after
+    `passenger_morning_chorus`.
+  - Keep the existing direct release from `train_car` available for players who
+    do not want another beat.
+  - Route the new beat into the existing `passenger_true_ending`.
+  - Add regression coverage for the new beat and unchanged direct release.
+- Work completed:
+  - Added `listen_to_morning_chorus_from_boarding` from `train_car` to new
+    optional scene `passenger_morning_intercom`.
+  - Added `heard_passenger_morning_boarding` gating so the beat appears once on
+    the morning-chorus route.
+  - Added `pull_release_after_morning_chorus_boarding`, reusing the existing
+    `passenger_true_ending`.
+  - Updated the morning-chorus regression to prove the old direct release
+    remains available and added a dedicated regression for the new beat.
+- Evidence:
+  - Focused story-path suite passed: 140 tests.
+  - `npm run health` passed: format check, TypeScript, 184 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 128 reachable scenes and 26 endings.
+  - Health coverage visited all 128 scenes, including
+    `passenger_morning_intercom`, with zero unfinished runs.
+  - Actual CLI play used `listen_to_passenger_morning_chorus`,
+    `board_after_passenger_morning_chorus`,
+    `listen_to_morning_chorus_from_boarding`, and
+    `pull_release_after_morning_chorus_boarding`, then reached
+    `passenger_true_ending` at score 282 with no active objectives.
+- Playtest feedback:
+  - The new beat closes the loop between the earlier remembered-morning
+    imagery and the third-car release.
+  - The destination sign giving up on HOME and showing real stops makes the
+    route feel less abstract and more spatial.
+  - Direct release remains visible from the train car, preserving momentum for
+    players who do not want another optional intercom.
+- Risks:
+  - This adds one more optional late passenger choice. Watch blind sessions for
+    late-route choice density.
+- Next step:
+  - Let blind consolidation determine whether late passenger-route choice
+    density is becoming a soft issue; otherwise continue with small route
+    payoffs or transcript/report critique.
+
 # Cycle 17 Reviewed Count Chorus
 
 - Date: 2026-06-02

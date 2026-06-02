@@ -7153,9 +7153,59 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_morning_chorus_from_boarding"
+    );
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
 
     state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("pays off the passenger morning chorus before the release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "board_after_passenger_morning_chorus",
+      "listen_to_morning_chorus_from_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.scene.text).toContain("stops with real streets again");
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_morning_chorus_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_morning_chorus_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");

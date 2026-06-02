@@ -2219,6 +2219,23 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_morning_chorus_from_boarding
+        label: Listen as the remembered mornings board the third car
+        to: passenger_morning_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_morning_chorus
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_morning_boarding
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
       - id: listen_to_answered_handoff_passengers
         label: Listen as Mara and the answered passengers board
         to: passenger_answered_handoff_intercom
@@ -2841,6 +2858,20 @@ scenes:
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
         to: passenger_reviewed_count_true_ending
+
+  passenger_morning_intercom:
+    routeImportance: optional
+    text: >
+      The third-car speaker catches the morning chorus as the passengers board.
+      Someone names the kettle before it boils dry. Someone else remembers the
+      time clock, the radiator, the raincoat still hanging by a back door. Mara
+      does not turn those memories into proof; she lets them stay ordinary
+      until the destination sign gives up spelling HOME and starts showing
+      stops with real streets again.
+    choices:
+      - id: pull_release_after_morning_chorus_boarding
+        label: Pull the release while the morning chorus points home
+        to: passenger_true_ending
 
   passenger_answered_handoff_roll_call:
     routeImportance: optional
