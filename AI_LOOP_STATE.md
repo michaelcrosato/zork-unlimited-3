@@ -1,3 +1,61 @@
+# Cycle 56 Answered Count Bridge
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answers` appear on a more intuitive normal
+  route after the opened passengers finish Mara's count.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 56 evidence. Core health is
+  strong and coverage reaches every scene, but the latest 100-run sample missed
+  `passenger_answers` even though the opened-manifest hub text says passengers
+  are answering Mara's count. Routing that natural count choice through the
+  answer scene improves discoverability without adding duplicate hub options.
+- Planned work:
+  - Route the opened-manifest "finish Mara's count together" choice through
+    `passenger_answers`.
+  - Do the same for the equivalent Mara manifest handoff count choice.
+  - Set `heard_passenger_answers` on those routes so score/objective state
+    matches the prose.
+  - Preserve the counted ending with a contextual release choice from
+    `passenger_answers` when the reviewed count has already finished.
+  - Update regression coverage, run full health, and play the changed route.
+- Risks:
+  - The counted ending now takes one extra visible beat on two routes. This is
+    intentional because the added beat is the missing passenger-answer moment,
+    and the original direct counted release remains available from reviewed
+    count intercom routes.
+- Status:
+  - Updated `let_opened_passengers_finish_count` and
+    `finish_count_after_mara_manifest_handoff` to enter `passenger_answers`
+    while setting `heard_passenger_answers`.
+  - Added `pull_release_after_answered_count` so players can still immediately
+    pay off the completed count as `passenger_counted_true_ending`.
+  - Updated story-path regressions for both direct opened-manifest and Mara
+    handoff count routes.
+  - Focused story-path suite passed: 172 tests.
+  - `npm run health` passed: format check, TypeScript, 216 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `let_opened_passengers_finish_count` ->
+    `pull_release_after_answered_count`, ending at
+    `passenger_counted_true_ending` with score 283 and no objectives.
+  - Follow-up 100-run random sample ended all runs with zero frontier samples
+    and visited `passenger_answers`; it still missed
+    `mara_manifest_handoff_intercom`, `passenger_manifest_handoff_true_ending`,
+    and `passenger_conductor_true_ending` in that short sample.
+- Playtest feedback:
+  - The route now reads more coherently: "finish Mara's count together" shows
+    the passengers answering before the release, instead of skipping directly
+    to the ending.
+  - The new release label is clear and appears only in the completed-count
+    state.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Continue improving short-random discoverability for
+    `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending`; consider an earlier handoff
+    signal from `passengers_released` if blind feedback also misses it.
+
 # Cycle 51 Manifest Handoff Answer Bridge
 
 - Date: 2026-06-02

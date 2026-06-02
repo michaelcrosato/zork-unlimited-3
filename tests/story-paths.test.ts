@@ -4780,15 +4780,24 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_counted_chorus");
-    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_counted_chorus"
+      "pull_release_after_answered_count",
+      "follow_newspaper_answer",
+      "gather_answered_passengers",
+      "let_lunch_tin_worker_keep_count",
+      "ask_conductor_punch_from_answers",
+      "ask_conductor_from_answers",
+      "return_from_passenger_answers",
+      "carry_answered_names_to_intercom",
+      "board_after_answered_passengers"
     ]);
 
-    state = choose(story, state, "pull_release_after_counted_chorus");
+    state = choose(story, state, "pull_release_after_answered_count");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
@@ -5308,12 +5317,13 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_counted_chorus");
-    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
 
-    state = choose(story, state, "pull_release_after_counted_chorus");
+    state = choose(story, state, "pull_release_after_answered_count");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");

@@ -1321,13 +1321,14 @@ scenes:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
         label: Let the opened passengers finish Mara's count together
-        to: passenger_counted_chorus
+        to: passenger_answers
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+            heard_passenger_answers: true
       - id: follow_opened_manifest_echoes
         label: Carry the opened door-echoes into the third car
         to: passenger_echoed_boarding
@@ -1734,13 +1735,14 @@ scenes:
             held_passenger_threshold: true
       - id: finish_count_after_mara_manifest_handoff
         label: Let the opened passengers finish Mara's count together
-        to: passenger_counted_chorus
+        to: passenger_answers
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+            heard_passenger_answers: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
         to: mara_manifest_thumbprint_intercom
@@ -1818,6 +1820,11 @@ scenes:
       folded newspaper answering "Warden Street" like a stop can become a door.
       Mara waits for every answer before she tells you the third car is ready.
     choices:
+      - id: pull_release_after_answered_count
+        label: Pull the release after the answered count
+        to: passenger_counted_true_ending
+        requires:
+          flag: passengers_finished_reviewed_count
       - id: follow_newspaper_answer
         label: Follow the newspaper woman's Warden Street answer
         to: passenger_newspaper_memory
