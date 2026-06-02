@@ -1,3 +1,54 @@
+# Cycle 26 Conductor Transfer Handoff Priority
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the conductor-transfer
+  handoff beat after the conductor punches the restored transfer.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current supplied evidence showed full coverage and healthy completion,
+  with the suggested next action focused on
+  `passenger_conductor_transfer_handoff`. Cycle 25 made the proof beat directly
+  discoverable, but that left the collaborative child handoff behind the direct
+  proof and release choices.
+- Planned work:
+  - Reorder the uncounted conductor-transfer choices so
+    `pass_punched_transfer_to_child` is first, followed by direct proof and
+    direct release.
+  - Keep all existing endings and recovery routes available.
+  - Update regression coverage, validate, run health, run a random sample, and
+    play the handoff route through the CLI.
+- Risks:
+  - The transfer scene still has five visible choices on the uncounted branch.
+    This change improves scanning by order rather than adding another branch, so
+    route complexity stays flat.
+- Work completed:
+  - Moved `pass_punched_transfer_to_child` before direct proof and direct
+    release in the conductor-transfer choice list.
+  - Updated conductor-transfer story-path regression coverage for the
+    handoff-first order.
+- Evidence:
+  - Focused story-path suite passed: 144 tests.
+  - CLI validation passed with 135 reachable scenes, 27 endings, and no
+    warnings.
+  - `npm run health` passed: format check, TypeScript, 188 tests, validation,
+    and coverage playtest.
+  - Actual CLI play followed `ask_conductor_to_punch_transfer` ->
+    `pass_punched_transfer_to_child` -> `press_transfer_to_speaker_grille` ->
+    `pull_release_after_transfer_proof`, ending at
+    `passenger_conductor_transfer_true_ending` with score 324 and both
+    `punched_transfer_carried_forward` and `pressed_transfer_to_speaker` set.
+  - A 100-run random playtest ended all 100 runs and visited both
+    `passenger_conductor_transfer_handoff` and
+    `passenger_conductor_transfer_proof`, with no unvisited scenes.
+- Playtest feedback:
+  - Putting the child handoff first makes the collaborative passenger beat feel
+    like the natural continuation of the transfer being passed down the aisle.
+  - The direct proof and direct release paths remain present, so players who
+    want a shorter finish are not forced through the extra handoff beat.
+- Next step:
+  - Watch future blind feedback for whether the five-choice transfer scene
+    feels crowded. If it does, consolidate roll-call labels before adding any
+    more conductor-transfer branches.
+
 # Cycle 25 Direct Conductor Transfer Proof
 
 - Date: 2026-06-02

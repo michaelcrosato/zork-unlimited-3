@@ -1433,9 +1433,9 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_punched_transfer_to_child",
       "press_punched_transfer_to_speaker",
       "pull_release_with_punched_transfer",
-      "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
       "hold_for_transfer_conductor_roll_call"
     ]);
@@ -4813,9 +4813,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("star-shaped hole");
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_punched_transfer_to_child",
       "press_punched_transfer_to_speaker",
       "pull_release_with_punched_transfer",
-      "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
       "hold_for_transfer_conductor_roll_call"
     ]);
