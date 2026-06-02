@@ -5341,6 +5341,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_released");
     expect(observation.state.flags.freed_mara).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "ask_mara_about_thumbprint_before_boarding"
+    );
   });
 
   it("pays off Mara's thumbprint memory before the direct release", async () => {
@@ -5393,6 +5396,58 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_thumbprint_goodbye"
     ]);
+
+    state = choose(story, state, "pull_release_after_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets thumbprint readers ask Mara before boarding the third car", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_released");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_mara_for_last_dispatch",
+      "watch_mara_leave_booth",
+      "ask_mara_about_thumbprint_before_boarding",
+      "board_after_clearing_mara"
+    ]);
+
+    state = choose(story, state, "ask_mara_about_thumbprint_before_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_intercom");
+    expect(observation.scene.text).toContain("the torn thumbprint memory");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
     state = choose(story, state, "pull_release_after_thumbprint_goodbye");
     observation = observe(story, state);
@@ -6413,8 +6468,21 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_mara_for_last_dispatch",
       "watch_mara_leave_booth",
+      "answer_mara_before_boarding",
       "board_after_clearing_mara"
     ]);
+
+    const intercomState = choose(story, state, "answer_mara_before_boarding");
+    observation = observe(story, intercomState);
+
+    expect(observation.scene.id).toBe("mara_intercom");
+    expect(observation.scene.text).toContain("no longer buried in static");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_mara_goodbye"
+    ]);
+
+    observation = observe(story, state);
 
     state = choose(story, state, "board_after_clearing_mara");
     observation = observe(story, state);

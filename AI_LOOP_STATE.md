@@ -1,3 +1,57 @@
+# Cycle 10 Mara Intercom Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_intercom` and `mara_thumbprint_intercom` more
+  naturally discoverable during normal Mara-only rescue play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 10 evidence. Coverage could
+  visit every scene, but random play still missed `mara_intercom` and
+  `mara_thumbprint_intercom` in one sample. Both are useful late-game Mara
+  payoff beats, and players can currently bypass them by clearing Mara and
+  boarding immediately.
+- Planned work:
+  - Add one contextual Mara intercom prompt before boarding after clearing only
+    Mara.
+  - Add one torn-thumbprint-specific prompt before boarding when the player has
+    already touched Mara's thumbprint memory.
+  - Preserve direct boarding, last-dispatch, handoff, manifest, and train-car
+    intercom routes.
+  - Add regression coverage for the new prompt gates and ending routes.
+- Work completed:
+  - Added `answer_mara_before_boarding` from `mara_released` to
+    `mara_intercom` for basic Mara-only rescue runs.
+  - Added `ask_mara_about_thumbprint_before_boarding` from `mara_released` to
+    `mara_thumbprint_intercom` when `read_mara_thumbprint` is set.
+  - Gated the generic prompt away from thumbprint, manifest, handoff, and
+    last-dispatch states so the more specific payoffs remain focused.
+  - Updated story-path coverage to assert the new generic intercom route and
+    the thumbprint-before-boarding route through `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 133 tests.
+  - `npm run health` passed: format check, TypeScript, 177 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including `mara_intercom` and
+    `mara_thumbprint_intercom`, with zero unfinished runs.
+  - Actual CLI play used `ask_mara_about_thumbprint_before_boarding`, reached
+    `mara_thumbprint_intercom`, then reached `true_ending` at score 275 with no
+    active objectives.
+- Playtest feedback:
+  - The thumbprint prompt reads as a natural follow-up immediately after Mara is
+    freed, while the memory is still fresh.
+  - The basic Mara prompt gives players one clear chance to hear her final
+    guidance before boarding without forcing an optional detour.
+  - Direct boarding remains available in both states, so the added prompts
+    improve discoverability without blocking the fast ending route.
+- Risks:
+  - `mara_released` now has one additional optional choice in the basic route
+    and thumbprint route. Future blind sessions should confirm the late-game
+    choice list still feels deliberate rather than crowded.
+- Next step:
+  - Watch random and blind runs for whether `mara_intercom` and
+    `mara_thumbprint_intercom` appear more often, then shift to richer story
+    depth if these misses clear.
+
 # Cycle 13 Morning-Clock Catch-Up Discovery
 
 - Date: 2026-06-02
