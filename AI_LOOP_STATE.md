@@ -1,3 +1,81 @@
+# Cycle 85 Structured MCP Invalid Choice Recovery
+
+- Date: 2026-06-02
+- Main objective: Make MCP playthrough failures from stale or scene-inapplicable
+  choices machine-readable instead of collapsing into non-JSON tool text.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence included an adaptive exploratory MCP route
+  that stopped when `ignore_warning` was attempted from `entrance`. That kind
+  of mistake should leave agents with the current scene, legal choices, and
+  objectives so the next cycle can recover or critique the actual route.
+- Planned work:
+  - Keep successful `choose_option` responses unchanged.
+  - Catch invalid choice errors in the MCP `choose_option` tool.
+  - Return structured JSON containing the rejected choice, current scene, legal
+    choices, objectives, and score.
+  - Add a focused regression test for the structured invalid-choice payload.
+- Risks:
+  - Some callers may still treat `ok: false` as a normal observation unless
+    they check the field. This is still safer than an unparseable MCP error,
+    and legal-choice behavior is unchanged.
+- Status:
+  - Completed.
+  - Added shared MCP result helpers in `src/mcp-results.ts`.
+  - Updated `choose_option` to catch invalid choice errors and return parseable
+    JSON without mutating the save.
+  - Added `tests/mcp-results.test.ts` coverage for the exact stale-choice shape
+    from the current evidence.
+  - Focused tests passed: 10 tests across MCP result and AI loop suites.
+  - `npm run health` passed: format check, TypeScript, 233 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+- Playtest feedback:
+  - Direct MCP invalid-choice smoke attempted `ignore_warning` from `entrance`
+    and returned JSON with legal choices `read_notice`, `take_lantern`, and
+    `enter_dark` plus active objectives.
+  - Actual MCP play followed the Mara handoff route through
+    `mara_handoff_true_ending` with score 318 and no remaining objectives.
+  - No save mutation, invalid legal-choice regression, dead end, or coverage
+    regression appeared.
+- Next step:
+  - Teach the AI loop route runner to use `ok: false` invalid-choice payloads
+    as recovery hints when a scripted or model-chosen route goes stale.
+
+# Cycle 84 Mara Handoff Entry Prompt
+
+- Date: 2026-06-02
+- Main objective: Make the rare Mara-only handoff route easier to recognize at
+  the moment players clear Mara's ledger entry.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence points at `mara_handoff_intercom`,
+  `mara_handoff_true_ending`, and `mara_thumbprint_handoff_intercom` as the
+  remaining normal-play discovery gap. The route already exists and is
+  validated, so the best small improvement is a clearer player-facing entry
+  prompt rather than another branch.
+- Planned work:
+  - Move `watch_mara_leave_booth` to the first post-release choice.
+  - Rename the choice so it communicates a concrete route: walking with Mara to
+    the third car before the release.
+  - Add story text that explicitly frames the decision between leaving Mara as a
+    speaker voice and walking beside her.
+  - Lock the revised prompt and choice order with a focused regression test.
+- Risks:
+  - Choice ordering can affect random route distribution. The path still remains
+    optional and all existing direct release and intercom routes should stay
+    available.
+- Status:
+  - Completed.
+  - Moved `watch_mara_leave_booth` to the first post-release choice.
+  - Renamed the choice to `Walk with Mara to the third car before the release`.
+  - Added Mara release text that frames the choice between leaving her as a
+    speaker voice and walking beside her.
+  - Updated focused story-path expectations for the new prompt and ordering.
+  - Verified as part of Cycle 85: `npm run health` passed, direct MCP handoff
+    route reached `mara_handoff_true_ending`, and coverage still visited all
+    scenes.
+
 # Cycle 83 Checked Thumbprint Handoff Payoff
 
 - Date: 2026-06-02

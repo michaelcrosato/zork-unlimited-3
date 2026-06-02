@@ -1227,8 +1227,18 @@ scenes:
       The ledger ink lifts from Mara's name like smoke. Far below, the train
       doors open with a softer sound, and the booth speaker carries her first
       full breath in forty-three years. "Third car," Mara says. "I can hold
-      the line steady long enough for you to pull the release."
+      the line steady long enough for you to pull the release." The booth door
+      unlocks behind her, waiting to see whether she leaves as another voice in
+      the speaker or walks the platform beside you.
     choices:
+      - id: watch_mara_leave_booth
+        label: Walk with Mara to the third car before the release
+        to: mara_handoff
+        requires:
+          notFlag: saw_mara_handoff
+        effects:
+          set:
+            saw_mara_handoff: true
       - id: ask_mara_for_last_dispatch
         label: Ask Mara what her last dispatch should say
         to: mara_last_dispatch
@@ -1237,14 +1247,6 @@ scenes:
         effects:
           set:
             heard_mara_last_dispatch: true
-      - id: watch_mara_leave_booth
-        label: Watch the signal booth go dark behind her
-        to: mara_handoff
-        requires:
-          notFlag: saw_mara_handoff
-        effects:
-          set:
-            saw_mara_handoff: true
       - id: answer_badge_proof_before_boarding
         label: Answer Mara with the badge proof before boarding
         to: mara_badge_proof_intercom

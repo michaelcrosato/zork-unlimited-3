@@ -12,6 +12,7 @@ import { scoreState } from "./score.js";
 import { loadStory } from "./story.js";
 import { renderTranscript } from "./transcript.js";
 import { validateStory } from "./validate.js";
+import { invalidChoiceResult, jsonResult } from "./mcp-results.js";
 
 const DEFAULT_STORY = "stories/demo.yaml";
 const DEFAULT_SAVE = "saves/mcp-run.json";
@@ -105,7 +106,12 @@ server.registerTool(
   async ({ choiceId, savePath }) => {
     const save = await readSave(savePath);
     const story = await loadStory(save.storyPath);
-    const next = choose(story, save.state, choiceId);
+    let next;
+    try {
+      next = choose(story, save.state, choiceId);
+    } catch (error) {
+      return invalidChoiceResult(story, save.state, choiceId, error);
+    }
     await writeSave(savePath, save.storyPath, next);
     return jsonResult(observe(story, next));
   }
@@ -179,17 +185,6 @@ server.registerTool(
     return jsonResult(includeRuns ? report : { summary: report.summary });
   }
 );
-
-function jsonResult(value: unknown) {
-  return {
-    content: [
-      {
-        type: "text" as const,
-        text: JSON.stringify(value, null, 2)
-      }
-    ]
-  };
-}
 
 const keepAlive = setInterval(() => undefined, 1 << 30);
 process.stdin.once("end", () => {

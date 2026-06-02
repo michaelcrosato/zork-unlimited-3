@@ -3048,8 +3048,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_released");
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "ask_mara_for_last_dispatch",
       "watch_mara_leave_booth",
+      "ask_mara_for_last_dispatch",
       "answer_badge_proof_before_boarding",
       "board_after_clearing_mara"
     ]);
@@ -8381,8 +8381,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_released");
     expect(observation.state.flags.read_mara_thumbprint).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "ask_mara_for_last_dispatch",
       "watch_mara_leave_booth",
+      "ask_mara_for_last_dispatch",
       "ask_mara_about_thumbprint_before_boarding",
       "board_after_clearing_mara"
     ]);
@@ -9521,14 +9521,18 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_released");
     expect(observation.scene.text).toContain("I can hold the line steady");
+    expect(observation.scene.text).toContain("walks the platform beside you");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "ask_mara_for_last_dispatch",
       "watch_mara_leave_booth",
+      "ask_mara_for_last_dispatch",
       "answer_mara_before_boarding",
       "board_after_clearing_mara"
     ]);
+    expect(observation.choices[0]?.label).toBe(
+      "Walk with Mara to the third car before the release"
+    );
 
     const intercomState = choose(story, state, "answer_mara_before_boarding");
     observation = observe(story, intercomState);
