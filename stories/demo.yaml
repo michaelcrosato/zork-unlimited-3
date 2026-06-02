@@ -2814,12 +2814,33 @@ scenes:
       the count the line cannot keep," Mara says. "Pull the release while they
       are counting one another home."
     choices:
+      - id: let_passengers_finish_reviewed_count
+        label: Let the passengers finish the reviewed count together
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            passengers_finished_reviewed_count: true
       - id: pull_release_before_reviewed_count_finishes
         label: Pull the release before Mara has to finish the count
         to: passenger_reviewed_count_true_ending
       - id: pull_release_after_counted_manifest_goodbye
         label: Pull the release while the reviewed count holds
         to: passenger_counted_true_ending
+
+  passenger_counted_chorus:
+    routeImportance: optional
+    text: >
+      Mara stops at the old blank space, but the passengers do not. The
+      newspaper woman reads the transfer aloud, the lunch-tin worker answers
+      with the time she should have clocked out, the mitten child says present
+      twice so the old conductor can hear. By the time Mara breathes again, the
+      count has become a chorus with no last name left for the line to claim.
+    choices:
+      - id: pull_release_after_counted_chorus
+        label: Pull the release after the passengers finish the count
+        to: passenger_reviewed_count_true_ending
 
   passenger_answered_handoff_roll_call:
     routeImportance: optional

@@ -1608,6 +1608,60 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
   });
 
+  it("lets the passengers finish Mara's reviewed count together", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "board_with_reviewed_manifest_count"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_passengers_finish_reviewed_count",
+      "pull_release_before_reviewed_count_finishes",
+      "pull_release_after_counted_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "let_passengers_finish_reviewed_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("prove the count can end");
+    expectIdealScore(observation.score);
+  });
+
   it("still lets gate-control players install only the fuse when the token is missing", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3543,6 +3597,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_passengers_finish_reviewed_count",
       "pull_release_before_reviewed_count_finishes",
       "pull_release_after_counted_manifest_goodbye"
     ]);

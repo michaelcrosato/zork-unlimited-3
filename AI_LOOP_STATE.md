@@ -1,3 +1,59 @@
+# Cycle 17 Reviewed Count Chorus
+
+- Date: 2026-06-02
+- Main objective: Add one focused story-depth beat to the adaptive route that
+  reached `passenger_reviewed_count_true_ending`, without changing ending
+  classification or route requirements.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence shows all scenes reachable with strong
+  ideal-ending rates. The best next improvement is richer late passenger-route
+  payoff rather than another discoverability fix.
+- Planned work:
+  - Add an optional moment inside `passenger_counted_manifest_intercom` where
+    the passengers finish Mara's reviewed count together.
+  - Preserve both existing release choices from that intercom.
+  - Route the new beat back into the existing
+    `passenger_reviewed_count_true_ending` payoff.
+  - Add regression coverage for the new beat and final ending.
+- Work completed:
+  - Added `let_passengers_finish_reviewed_count` from
+    `passenger_counted_manifest_intercom` to new optional scene
+    `passenger_counted_chorus`.
+  - Added `passengers_finished_reviewed_count` as a route flag for the optional
+    beat.
+  - Added `pull_release_after_counted_chorus`, reusing
+    `passenger_reviewed_count_true_ending`.
+  - Updated the existing reviewed-count intercom regression to include the new
+    optional choice and added a dedicated path regression for the new scene.
+- Evidence:
+  - Focused story-path suite passed: 139 tests.
+  - `npm run health` passed: format check, TypeScript, 183 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 127 reachable scenes and 26 endings.
+  - Health coverage visited all 127 scenes, including
+    `passenger_counted_chorus`, with zero unfinished runs.
+  - Actual CLI play used `review_open_manifest_count`,
+    `board_with_reviewed_manifest_count`,
+    `let_passengers_finish_reviewed_count`, and
+    `pull_release_after_counted_chorus`, then reached
+    `passenger_reviewed_count_true_ending` at score 279 with no active
+    objectives.
+- Playtest feedback:
+  - The new beat makes the reviewed-count path feel less procedural: Mara stops
+    at the old blank space, then the passengers answer for one another.
+  - The route preserves momentum because the old immediate release choices are
+    still visible in the same intercom.
+  - The existing ending still fits the new path, especially its line about the
+    passengers proving the count can end.
+- Risks:
+  - This adds one more optional late-game passenger choice. Future blind
+    sessions should watch for choice density around passenger count and
+    sign-off routes.
+- Next step:
+  - Let blind consolidation identify whether late passenger-route density is a
+    real soft issue; otherwise continue with small route-specific payoffs or
+    transcript/report critique.
+
 # Cycle 16 Passenger Sign-Off Thumbprint Bridge
 
 - Date: 2026-06-02
