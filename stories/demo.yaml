@@ -912,6 +912,14 @@ scenes:
       handed from name to name. By the time she reaches her own row, the
       speaker is full of people breathing with her instead of waiting for her.
     choices:
+      - id: touch_mara_manifest_thumbprint
+        label: Touch Mara's torn thumbprint before boarding
+        to: mara_manifest_thumbprint
+        requires:
+          notFlag: read_manifest_thumbprint
+        effects:
+          set:
+            read_manifest_thumbprint: true
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: train_car
@@ -924,6 +932,21 @@ scenes:
           set:
             heard_passenger_answers: true
       - id: return_from_mara_manifest_handoff
+        label: Return to the opened manifest doors
+        to: passengers_released
+
+  mara_manifest_thumbprint:
+    text: >
+      The torn thumbprint warms under your hand while the opened manifest keeps
+      answering Mara. For a moment, her old oath changes shape: not a dispatcher
+      holding the last line alone, but a witness keeping the door open until
+      every passenger can answer for themselves. Mara inhales when she hears
+      the page tear no further. "Then I come through with them," she says.
+    choices:
+      - id: board_after_manifest_thumbprint
+        label: Board while Mara carries the oath forward
+        to: train_car
+      - id: return_from_manifest_thumbprint
         label: Return to the opened manifest doors
         to: passengers_released
 
@@ -1355,6 +1378,22 @@ scenes:
             - flag: read_passenger_manifest
             - notFlag: heard_mara_goodbye
             - flag: saw_mara_manifest_handoff
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_mara_manifest_thumbprint_intercom
+        label: Listen as Mara carries the thumbprint oath aboard
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - flag: saw_mara_manifest_handoff
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
         effects:
@@ -1781,6 +1820,18 @@ scenes:
       - id: pull_release_after_manifest_handoff_goodbye
         label: Pull the release while Mara holds the manifest open
         to: passenger_manifest_handoff_true_ending
+
+  mara_manifest_thumbprint_intercom:
+    text: >
+      The third car carries Mara's voice and the soft scrape of her thumb over
+      the torn ledger page. "I thought that mark meant I had to be last," she
+      says. Around her, the opened passengers answer one by one, and each
+      answer loosens the old ink. "Let it mean I stayed long enough to leave
+      with them."
+    choices:
+      - id: pull_release_after_manifest_thumbprint_goodbye
+        label: Pull the release while Mara leaves with the manifest
+        to: passenger_manifest_thumbprint_true_ending
 
   mara_manifest_intercom:
     text: >
@@ -2280,6 +2331,16 @@ scenes:
       conductor to lunch-tin worker, stranger to stranger until the manifest is
       no longer a duty in one voice. Mara lets the final page close only after
       every answer has become movement.
+    choices: []
+
+  passenger_manifest_thumbprint_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once, and Mara's torn thumbprint lifts
+      from the ledger with the last passenger name. She does not stand behind
+      the manifest or ahead of it. She walks through with the crowd she kept
+      in ink for forty-three years, one hand on the page until rain makes the
+      old oath unreadable and unnecessary.
     choices: []
 
   passenger_manifest_true_ending:

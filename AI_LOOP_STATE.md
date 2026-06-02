@@ -10,6 +10,81 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 ## Active Cycle
 
+- Date: 2026-06-02
+- Status: Completed locally; ready for commit/push.
+- Main objective: Add a Mara-oath variant to the opened-manifest handoff route.
+- Why this matters: Core route health and true-ending discoverability are
+  strong, so the best next improvement is story depth. The player can inspect
+  Mara's torn thumbprint on the solo-Mara route, but the passenger-manifest
+  handoff route currently cannot carry that oath forward into its own payoff.
+- Tasks:
+  - Add an optional opened-manifest thumbprint beat after Mara starts calling
+    passenger names.
+  - Route that beat to a distinct full-score ending from the third-car
+    intercom.
+  - Update score, playtest, AI-loop reporting, and focused route tests.
+  - Run focused tests, validation, full health, and a real playable route.
+- Evidence:
+  - Added `mara_manifest_thumbprint`, an optional opened-manifest handoff beat
+    where the player touches Mara's torn thumbprint after she starts calling
+    the passenger doors.
+  - Added `mara_manifest_thumbprint_intercom`, carrying that oath into the
+    third car before the release.
+  - Added `passenger_manifest_thumbprint_true_ending`, a full-score ending
+    where Mara leaves with the passenger crowd instead of remaining behind the
+    manifest.
+  - Updated `src/score.ts`, `src/playtest.ts`, and `src/ai-loop.ts` so the new
+    ending counts as a max-score ideal manifest ending.
+  - Updated story-path, playtest, and AI-loop regression coverage for the new
+    route and reporting bucket.
+  - Focused route and reporting tests passed with 120 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 105 scenes,
+    24 endings, all 105 reachable, and no warnings.
+  - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 105 scenes, reached
+    `passenger_manifest_thumbprint_true_ending` 4024 times, had zero unfinished
+    runs, best score 100/100, average score 99.65, and 482880 max-score runs.
+  - Targeted CLI play followed the new route through
+    `touch_mara_manifest_thumbprint` ->
+    `listen_to_mara_manifest_thumbprint_intercom` ->
+    `pull_release_after_manifest_thumbprint_goodbye`, reaching
+    `passenger_manifest_thumbprint_true_ending` at 100/100 with no objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-02T00-18-21-237Z.md`.
+  - Evidence-cycle health checks passed, including random and coverage
+    playtests.
+  - Evidence-cycle random play reached
+    `passenger_manifest_thumbprint_true_ending` once in 100 runs, visited all
+    105 scenes, and ended all runs.
+  - Evidence-cycle MCP validation passed with 105 reachable scenes and no
+    warnings.
+  - Evidence-cycle MCP random play reached
+    `passenger_manifest_thumbprint_true_ending` twice in 250 runs, and MCP
+    coverage reached it 4024 times.
+  - Evidence-cycle required MCP route still reached `true_ending` at 100/100,
+    and the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
+    100/100.
+- Playtest notes:
+  - The new handoff beat reads as a meaningful echo of Mara's earlier solo
+    thumbprint memory, but it now serves the passenger-manifest route.
+  - The new ending makes Mara's oath resolve beside the crowd rather than
+    behind the booth, strengthening the late-game emotional payoff without
+    changing the core route.
+  - Existing manifest handoff, answered handoff, and direct manifest releases
+    remain reachable and distinct.
+  - No bugs or confusing objectives were found in the focused CLI route, health
+    coverage, or evidence-cycle MCP checks.
+- Follow-up:
+  - Core route metrics remain healthy; future work should improve report
+    readability or deepen existing route identities rather than adding generic
+    success endings.
+- Risks:
+  - The game has many ideal-ending variants; the new route must stay tied to a
+    distinct player action and remain legible in reports.
+
+## Last Completed Cycle
+
 - Date: 2026-06-01
 - Status: Completed locally; ready for commit/push.
 - Main objective: Make the generic `passenger_helped_true_ending` more

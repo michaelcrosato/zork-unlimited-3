@@ -536,6 +536,7 @@ const idealEndingGroups = [
         endings: [
           "passenger_manifest_true_ending",
           "passenger_manifest_handoff_true_ending",
+          "passenger_manifest_thumbprint_true_ending",
           "passenger_echoed_true_ending",
           "passenger_counted_true_ending",
           "passenger_reviewed_count_true_ending"
