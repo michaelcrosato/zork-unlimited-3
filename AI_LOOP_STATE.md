@@ -66,8 +66,6 @@
     excerpt when parsing fails.
   - Use it for MCP evidence collection, exploratory routes, and the required
     true-ending route.
-  - Launch the MCP stdio server directly through `node --import tsx` so npm
-    lifecycle output cannot corrupt the protocol stream.
   - Add regression coverage for the plain-text illegal-choice payload.
   - Run focused tests, full health, and a real route through the game.
 - Risks:
@@ -76,21 +74,32 @@
     already healthy and the failed MCP route would otherwise keep obscuring
     future player-facing signals.
 - Status:
-  - In progress.
+  - Completed.
   - Added `parseMcpJsonResult` in `src/ai-loop.ts`.
   - Replaced raw `JSON.parse(textContent(...))` calls in MCP evidence,
     exploratory play, and required-route play with the contextual parser.
-  - Replaced the `npm run mcp` transport wrapper with direct
-    `node --import tsx src/mcp.ts` launches for MCP evidence and route play.
   - Added a regression test for a `choose_option` payload beginning with
     `Choice 'return_to_service_room'...`.
   - Focused AI-loop test passed.
   - TypeScript lint passed.
+  - Investigated local MCP subprocess failures separately; direct launcher and
+    keep-alive experiments did not improve the sandbox behavior, so they were
+    not kept.
+  - `npm run health` passed: format check, TypeScript, 221 tests, validation,
+    and coverage playtest.
 - Playtest feedback:
-  - Pending full health and actual route verification.
+  - Evidence-only `npm run ai:cycle` still cannot complete MCP discovery in
+    this sandbox; it fails before tool calls with `MCP error -32000:
+Connection closed`.
+  - The failure is distinct from the original plain-text JSON parse masking
+    issue; the parser regression is covered, while local MCP remains an
+    environment/SDK transport blocker here.
+  - CLI route verification followed `read_notice` -> service-room preparation
+    -> `mark_mara_clear_from_ledger` -> `board_after_clearing_mara` ->
+    `pull_release`, reaching `true_ending` with score 305 and no objectives.
 - Next step:
-  - Run full health, then drive a true-ending CLI/MCP route and record whether
-    the route reaches a clean ending.
+  - Next cycle should focus on a story-depth improvement unless MCP transport
+    diagnostics become the highest blocker again.
 
 # Cycle 62 Unlit-Platform Service-Room Recovery
 
