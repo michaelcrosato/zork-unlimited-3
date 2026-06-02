@@ -1138,8 +1138,35 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("enough route for a clear signal");
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_conductor_to_punch_restored_transfer",
       "carry_newspaper_transfer_to_third_car"
     ]);
+
+    const conductorTransferState = choose(
+      story,
+      transferState,
+      "ask_conductor_to_punch_restored_transfer"
+    );
+    observation = observe(story, conductorTransferState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer");
+    expect(observation.scene.text).toContain("Valid for morning");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.punched_conductor_transfer).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_with_punched_transfer",
+      "hear_transfer_conductor_roll_call",
+      "hold_for_transfer_conductor_roll_call"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, conductorTransferState, "pull_release_with_punched_transfer")
+    );
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.score.score).toBe(observation.score.maxScore);
 
     observation = observe(
       story,

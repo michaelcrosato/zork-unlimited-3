@@ -1,3 +1,54 @@
+# Cycle 7 Restored Transfer Conductor Bridge
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for
+  `passenger_conductor_transfer_true_ending` through the existing newspaper
+  transfer clue.
+- Why this matters: Current health evidence was green, but the conductor
+  transfer payoff remained a rare late passenger branch. The newspaper woman
+  already restores the blank transfer column and the conductor calls it enough
+  route for a clear signal; letting players ask him to punch that restored
+  transfer makes the payoff available where the story promise is clearest.
+- Work completed:
+  - Added `ask_conductor_to_punch_restored_transfer` from
+    `passenger_newspaper_transfer` to the existing
+    `passenger_conductor_transfer` scene.
+  - Set `helped_passengers_gather`, `conductor_cleared_platform`, and
+    `punched_conductor_transfer` on that bridge so the conductor payoff and
+    release route stay coherent.
+  - Preserved the existing newspaper route through
+    `carry_newspaper_transfer_to_third_car`.
+  - Added focused regression coverage for the restored-transfer bridge through
+    `passenger_conductor_transfer_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 117 tests.
+  - `npm run health` passed: format check, TypeScript, 161 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.67, and 1285 max-score runs.
+  - Coverage hits for `passenger_conductor_transfer_true_ending` rose to 49 in
+    the required health playtest.
+  - Actual CLI play used `ask_conductor_to_punch_restored_transfer` and
+    `pull_release_with_punched_transfer`, reaching
+    `passenger_conductor_transfer_true_ending` at 100/100 with no active
+    objectives.
+- Playtest feedback:
+  - The bridge reads naturally because the restored transfer column already
+    names morning transfer and the conductor is physically touching it.
+  - The transfer scene now offers a clear choice between conductor validation
+    and the existing newspaper intercom route.
+  - No route bugs, dangling objectives, score issues, or unfinished runs
+    appeared.
+- Next step:
+  - Watch random and blind-play samples for whether late passenger routes now
+    feel choice-dense; if so, consolidate payoff choices by theme instead of
+    adding parallel branches.
+- Risks:
+  - This adds one more choice to a late optional branch. It is scoped to a
+    scene that previously had only one continuation.
+
 # Cycle 9 Manifest Thumbprint Recovery
 
 - Date: 2026-06-02
