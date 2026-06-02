@@ -1,3 +1,52 @@
+# Cycle 61 Manifest Objective Alignment
+
+- Date: 2026-06-02
+- Main objective: Align the post-manifest player objective with the visible
+  manifest-door action.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 61 evidence points at adaptive exploration
+  stalling around late hub returns. After a player reads the kept-passenger
+  manifest, the route correctly offers `clear_manifest_and_mara_from_ledger`,
+  but the active objective still said to clear only Mara's ledger entry. That
+  stale guidance could make the passenger route feel like a detour instead of
+  the intended next action.
+- Planned work:
+  - Change the `read_passenger_manifest` objective to name opening the
+    kept-passenger manifest doors.
+  - Add a regression assertion on the ledger-first manifest route.
+  - Run health and play the updated manifest route through the CLI.
+- Risks:
+  - This is a player-guidance change, not a route-graph change. It should not
+    affect ending balance, but it depends on objective copy staying consistent
+    with existing choice labels.
+- Status:
+  - Updated the objective from `Clear Mara's ledger entry with her badge proof.`
+    to `Open the kept-passenger manifest doors with Mara's badge proof.`
+  - Added regression coverage proving that, after
+    `return_to_signal_ledger_from_manifest`, the new manifest-door objective is
+    active and the stale Mara-only objective is absent.
+  - Focused story-path suite passed: 175 tests.
+  - `npm run health` passed: format check, TypeScript, 219 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `read_manifest_from_ledger` ->
+    `return_to_signal_ledger_from_manifest` ->
+    `clear_manifest_and_mara_from_ledger` -> room-making route, ending at
+    `passenger_true_ending` with score 264 and no objectives.
+- Playtest feedback:
+  - The corrected objective now matches the visible manifest-door choice,
+    making the passenger route read as the next task rather than a contradiction
+    of the manifest clue.
+  - A live objective check at `signal_ledger` showed the corrected objective
+    before the route continued.
+  - No validation errors, dead ends, or dangling objectives appeared on the
+    completed route.
+- Next step:
+  - Continue watching adaptive-play transcripts for late-game stalls at
+    `passenger_platform`; if players still hesitate, tune choice ordering or
+    objective copy there before adding more passenger branches.
+
 # Cycle 56 Dark Platform Glance
 
 - Date: 2026-06-02
