@@ -1,3 +1,67 @@
+# Cycle 53 Direct Last-Dispatch Boarding Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `mara_last_dispatch_intercom` more naturally
+  discoverable from explicit last-dispatch play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 53 evidence. Core route
+  health is strong and coverage reaches all scenes, but the random sample
+  missed `mara_last_dispatch_intercom`. The player can explicitly ask Mara for
+  her last dispatch; if they also know the badge proof, one boarding option
+  still detoured to the generic train car and made the authored dispatch payoff
+  optional again.
+- Planned work:
+  - Route `board_after_last_dispatch` directly to
+    `mara_last_dispatch_intercom`.
+  - Keep the badge-proof follow-up available from the last-dispatch intercom.
+  - Preserve the existing direct release from the last-dispatch intercom.
+  - Update regression coverage for the direct boarding route.
+  - Preserve and verify the adjacent passenger-answer bridge changes already
+    present in the working tree.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - The generic train-car pause is removed from one explicit last-dispatch
+    branch. This is acceptable because the player has already asked for the
+    dispatch, and the intercom still offers both the badge-proof elaboration
+    and the direct release.
+- Status:
+  - Routed `board_after_last_dispatch` directly to
+    `mara_last_dispatch_intercom`.
+  - Preserved the badge-proof follow-up from the last-dispatch intercom via
+    `listen_to_badge_proof_after_last_dispatch`.
+  - Updated story-path regression coverage for direct last-dispatch boarding
+    with badge proof.
+  - Verified the adjacent passenger-answer bridge: opened-manifest players now
+    reach `passenger_answers` before direct answered boarding, and
+    `passenger_morning_chorus` can flow directly into `passenger_answers`.
+  - Focused story-path suite passed: 170 tests.
+  - Actual CLI play followed `ask_mara_for_last_dispatch` ->
+    `board_after_last_dispatch` ->
+    `listen_to_badge_proof_after_last_dispatch` ->
+    `pull_release_after_badge_proof_goodbye`, ending at `true_ending`.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `mara_last_dispatch_intercom`, with zero unfinished runs.
+  - A follow-up 100-run random sample now visited both
+    `mara_last_dispatch_intercom` and `passenger_answers`; remaining random
+    misses were `mara_manifest_handoff_intercom`,
+    `passenger_conductor_true_ending`, and
+    `passenger_manifest_handoff_true_ending`.
+- Playtest feedback:
+  - The branch now reads as one continuous promise: ask Mara for the last
+    dispatch, board after she gives it, hear it hold the doors, then optionally
+    tie it to the badge proof before release.
+  - The generic train-car pause no longer interrupts the specific dispatch
+    beat after the player asks for it.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Improve normal-play discovery for `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending`, since they remain absent from the
+    latest random sample.
+
 # Cycle 52 Morning Chorus Boarding Payoff
 
 - Date: 2026-06-02

@@ -3022,7 +3022,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("preserves the badge-proof payoff after asking for Mara's last dispatch", async () => {
+  it("preserves the badge-proof payoff after direct last-dispatch boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -3053,12 +3053,13 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("mara_last_dispatch_intercom");
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_badge_proof_after_last_dispatch"
-    );
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_badge_proof_after_last_dispatch",
+      "pull_release_after_last_dispatch_goodbye"
+    ]);
 
     state = choose(story, state, "listen_to_badge_proof_after_last_dispatch");
     observation = observe(story, state);
@@ -6412,10 +6413,19 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "board_with_answered_passengers");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answered_boarding");
-    expect(observation.scene.text).toContain("carrying their own names now");
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_after_answered_passengers"
+    );
+
+    state = choose(story, state, "board_after_answered_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding");
+    expect(observation.scene.text).toContain("carrying their own names now");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_answered_passengers_from_boarding",
       "pull_release_after_answered_boarding"
@@ -9229,8 +9239,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_from_passenger_morning_chorus",
       "cross_after_passenger_morning_chorus",
+      "let_morning_chorus_answer_names",
       "board_after_passenger_morning_chorus"
     ]);
+
+    const answeredMorningState = choose(story, state, "let_morning_chorus_answer_names");
+    observation = observe(story, answeredMorningState);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_answered_names_to_intercom"
+    );
 
     const returnedState = choose(story, state, "return_from_passenger_morning_chorus");
     observation = observe(story, returnedState);
