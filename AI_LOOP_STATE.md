@@ -1,3 +1,52 @@
+# Cycle 12 Badge-Proof Thumbprint Recovery
+
+- Date: 2026-06-02
+- Main objective: Preserve `mara_thumbprint_intercom` discovery when players
+  have both the badge-proof clue and Mara's torn-thumbprint memory, then answer
+  the badge-proof line first.
+- Why this matters: Current cycle evidence still called out
+  `mara_thumbprint_intercom` as a normal-play miss. The scene was available
+  directly from the train car, but a clue-stacking player could naturally choose
+  the badge-proof payoff first and close the intercom thread before the
+  thumbprint memory paid off.
+- Work completed:
+  - Added `ask_about_thumbprint_after_badge_proof` from
+    `mara_badge_proof_intercom` to `mara_thumbprint_intercom`, gated by
+    `read_mara_thumbprint`.
+  - Preserved the existing direct badge-proof release choice, so the added beat
+    is optional and only appears for players who earned the thumbprint memory.
+  - Added regression coverage for the notice-back badge-proof route that touches
+    Mara's thumbprint, answers badge proof first, then reaches `true_ending`
+    through the thumbprint intercom.
+- Evidence:
+  - Focused story-path suite passed: 120 tests.
+  - `npm run health` passed: format check, TypeScript, 164 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 117 scenes with zero unfinished runs,
+    best score 390, and average score 318.27.
+  - Actual CLI play used `ask_about_thumbprint_after_badge_proof` and reached
+    `true_ending` at score 303 with no active objectives.
+  - `npm run ai:cycle` wrote ignored run artifacts, but the nested `codex exec`
+    failed to initialize the in-process app-server client because this
+    environment reports a read-only filesystem while updating PATH.
+- Playtest feedback:
+  - The new branch reads as a natural follow-up question rather than a second
+    unrelated goodbye: badge proof explains why Mara can answer, and the
+    thumbprint explains what she was holding open.
+  - The new choice is tightly gated by `read_mara_thumbprint`, avoiding extra
+    late-game choice density for players who did not inspect that memory.
+  - No dangling objectives, invalid choices, validation errors, or unfinished
+    coverage runs appeared.
+- Next step:
+  - Watch blind-play feedback for whether the Mara-only train-car/intercom
+    choice stack now feels complete or too dense; if density becomes the issue,
+    consolidate badge-proof and thumbprint language into a single combined
+    payoff.
+- Risks:
+  - This adds one optional intercom choice after another optional intercom beat.
+    It improves clue-order recovery, but late Mara-only payoff density remains
+    the main thing to monitor.
+
 # Cycle 11 Badge-Proof Last-Dispatch Recovery
 
 - Date: 2026-06-02
