@@ -12,59 +12,67 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional passenger morning-chorus beat after opening
-  the manifest.
-- Why this matters: Current evidence shows route completion and true-ending
-  discoverability are healthy, so this cycle should deepen late-game passenger
-  payoff without adding scoring pressure or another ending. The standard opened
-  manifest path previously moved from clearance straight into gathering or
-  boarding; the new beat gives the released passengers concrete memories of
-  where they are trying to arrive.
+- Main objective: Improve normal-play discovery for the answered-passenger
+  Mara handoff route.
+- Why this matters: Cycle 8 evidence showed all scenes reachable, but random
+  play under-sampled `passenger_answered_handoff_intercom`,
+  `passenger_answered_handoff_roll_call`, and
+  `passenger_answered_handoff_true_ending`. Those scenes are strong payoffs for
+  Mara sharing the manifest duty, but the previous path required players to
+  watch Mara's opened-door handoff, return or continue into the passenger
+  answer hub, then board from there. A direct boarding continuation makes the
+  route legible from the moment the handoff is happening.
 - Tasks:
-  - Add an optional one-time passenger-memory scene after
-    `passengers_released`. Done.
-  - Route the scene back to the opened manifest, across the passenger platform,
-    and directly into the existing third-car release path. Done.
-  - Preserve existing manifest count, Mara handoff, passenger answer, and direct
-    boarding routes. Done.
+  - Add a direct choice from `mara_manifest_handoff` to the existing
+    answered-handoff boarding scene. Done.
+  - Preserve the existing answer hub, manifest thumbprint, generic handoff,
+    return, and direct train-car boarding routes. Done.
+  - Set the same route flags the longer answered-handoff path relies on. Done.
   - Update focused story-path regression coverage. Done.
-  - Run validation, full health, an actual CLI playthrough, and evidence cycle.
-    Done.
+  - Run validation, full health, and an actual CLI playthrough. Done.
+  - Run evidence cycle before commit. Done.
 - Evidence:
-  - Added `passenger_morning_chorus`, reachable once from
-    `passengers_released` through `listen_to_passenger_morning_chorus`.
-  - The new scene sets `heard_passenger_morning_chorus` and can return to the
-    opened manifest doors, cross to `passenger_platform`, or board to
-    `train_car`.
-  - Updated `tests/story-paths.test.ts` to assert the optional beat, its flag,
-    objectives, one-time return behavior, direct-release availability, and a
-    max-score `passenger_true_ending`.
-  - Updated the existing `passengers_released` exact-choice regression to
-    include the new optional branch while preserving count, handoff, answer,
-    and boarding options.
-  - Focused `npm test -- tests/story-paths.test.ts` passed with 110 tests.
+  - Added `board_with_mara_answered_handoff` to `mara_manifest_handoff`.
+  - The new choice routes directly to `passenger_answered_handoff_roll_call`
+    and sets `heard_passenger_answers` plus `heard_answered_passengers`.
+  - Existing `continue_manifest_handoff_roll_call` still reaches
+    `passenger_answers`, so players can take the broader passenger hub instead
+    of boarding immediately.
+  - Updated `tests/story-paths.test.ts` exact-choice coverage for
+    `mara_manifest_handoff`.
+  - Added a focused direct-route regression that reaches
+    `passenger_answered_handoff_roll_call` ->
+    `passenger_answered_handoff_intercom` ->
+    `passenger_answered_handoff_true_ending` at max score.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 111 tests.
   - `npm run cyoa -- validate stories/demo.yaml --json` passed with 112 scenes,
     24 endings, all 112 reachable, and no warnings.
-  - Manual CLI play followed `listen_to_passenger_morning_chorus` ->
-    `board_after_passenger_morning_chorus` -> `pull_release_with_manifest`,
-    reaching `passenger_true_ending` at 100/100 with no objectives and
-    `heard_passenger_morning_chorus` set.
-  - `npm run health` passed with formatting, TypeScript, 131 tests, validation,
+  - Manual CLI play followed `watch_mara_open_manifest` ->
+    `board_with_mara_answered_handoff` ->
+    `listen_to_answered_handoff_after_roll_call` ->
+    `pull_release_after_answered_handoff_intercom`, reaching
+    `passenger_answered_handoff_true_ending` at 100/100 with no objectives.
+  - `npm run health` passed with formatting, TypeScript, 132 tests, validation,
     and coverage playtest.
   - Health coverage visited all 112 scenes including
-    `passenger_morning_chorus`, had zero unfinished runs, best score 100/100,
-    average score 94.62, and 923 max-score runs.
+    `passenger_answered_handoff_roll_call`,
+    `passenger_answered_handoff_intercom`, and
+    `passenger_answered_handoff_true_ending`, had zero unfinished runs, best
+    score 100/100, average score 94.62, and 923 max-score runs.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T01-52-49-747Z.md`.
+    report `ai-runs/cycle-2026-06-02T02-02-53-461Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play visited `passenger_morning_chorus`, ended all
-    100 runs, and had zero unfinished runs.
+  - Evidence-cycle random play ended all 100 runs, had zero unfinished runs,
+    visited `passenger_answered_handoff_roll_call`,
+    `passenger_answered_handoff_intercom`, and
+    `passenger_answered_handoff_true_ending`, and reached
+    `passenger_answered_handoff_true_ending` 3 times.
   - Evidence-cycle coverage visited all 112 scenes with zero unfinished runs.
   - Evidence-cycle MCP validation passed with 112 reachable scenes and no
     warnings.
   - Evidence-cycle MCP random play ended all 250 runs with zero unfinished
-    runs and visited `passenger_morning_chorus`.
+    runs.
   - Evidence-cycle required MCP route reached `true_ending` at 100/100, and
     the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
     100/100.
@@ -72,28 +80,23 @@ payoffs and agent evidence quality where the core guidance is already healthy.
     74%, random max-score rate 74%, average score 82.1, and non-ideal pressure
     at bad 7%, lost 3%, escape 2%.
 - Playtest notes:
-  - The morning-chorus beat makes the opened manifest feel less abstract by
-    naming practical things waiting outside the line: a kettle, a time clock,
-    and the child's other mitten.
-  - The branch reads as optional emotional payoff and does not become a
-    required clue; direct count, Mara handoff, passenger answer, and boarding
-    routes remain available.
-  - The manual transcript flows cleanly from opened doors to the chorus, then
-    into the third-car release without adding objectives or score noise.
-  - No objective, scoring, reachability, MCP-tool, or unfinished-run regressions
-    were found in focused tests, validation, full health, manual CLI play, or
-    evidence-cycle MCP routes.
+  - The new choice reads naturally from `mara_manifest_handoff`: Mara is
+    already handing steadiness from name to name, so boarding with that handoff
+    feels like a direct continuation instead of a detour.
+  - The existing longer route remains useful for players who want to inspect
+    passenger memories or choose other passenger-led payoffs.
+  - The route finishes with the intended distinct ending and no objective,
+    scoring, or reachability regressions.
 - Follow-up:
-  - Core route metrics remain healthy; favor meaningful new scenes, stronger
-    character beats, or pacing improvements over another clue-only polish pass.
-  - Consider a focused pass on non-ideal endings only if random bad/lost/escape
-    pressure rises above the current evidence-cycle baseline.
+  - Evidence now points at `passenger_conductor_roll_call` as the next
+    normal-play discovery gap.
+  - Consider a focused conductor-route clarity pass, or playtest strategy
+    weighting, rather than adding more final scenes.
 - Risks:
-  - Extra optional beats after `passengers_released` can slow the final
-    approach if they accumulate without distinct purpose.
-  - The new morning-chorus beat should remain concise emotional context, not a
-    second passenger-routing hub that competes with existing handoff and
-    keepsake branches.
+  - Adding another choice to `mara_manifest_handoff` increases branch density at
+    a late-game hub.
+  - The route should remain a shortcut into an existing payoff, not a reason to
+    duplicate the answered-passenger hub.
 
 ## Last Completed Cycle
 

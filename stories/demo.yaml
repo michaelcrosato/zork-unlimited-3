@@ -979,6 +979,15 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: board_with_mara_answered_handoff
+        label: Board as Mara hands the roll call to the answered passengers
+        to: passenger_answered_handoff_roll_call
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
+            heard_answered_passengers: true
       - id: return_from_mara_manifest_handoff
         label: Return to the opened manifest doors
         to: passengers_released

@@ -2159,6 +2159,7 @@ describe("demo story critical paths", () => {
       "touch_mara_manifest_thumbprint",
       "board_after_mara_manifest_handoff",
       "continue_manifest_handoff_roll_call",
+      "board_with_mara_answered_handoff",
       "return_from_mara_manifest_handoff"
     ]);
 
@@ -2221,6 +2222,62 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("Mara began at the opened manifest");
+  });
+
+  it("lets Mara's manifest handoff board directly with answered passengers", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "board_with_mara_answered_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_roll_call");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.scene.text).toContain("handoff instead of a duty");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_handoff_after_roll_call"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_handoff_after_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_handoff_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_handoff_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
   it("adds an optional opened-manifest count before the passenger roll call", async () => {
