@@ -1,3 +1,54 @@
+# Cycle 57 Direct Manifest Handoff Release
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_manifest_handoff_true_ending` easier to
+  discover from the opened-manifest handoff route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 57 evidence. Core health is
+  strong and coverage reaches every scene, but short random samples still miss
+  `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending`. The handoff scene already tells the
+  player the third car is asking for the release; a direct release option lets
+  that promise pay off without requiring an extra intercom step.
+- Planned work:
+  - Add an immediate release choice from `mara_manifest_handoff` to
+    `passenger_manifest_handoff_true_ending`.
+  - Preserve the existing board-to-intercom route and other passenger handoff
+    branches.
+  - Set `heard_mara_goodbye` on the direct release so state matches the
+    handoff payoff.
+  - Add regression coverage, run health, and play the changed route.
+- Risks:
+  - The direct payoff slightly shortens one manifest branch. This is
+    intentional because the intercom route remains available for players who
+    want Mara's final spoken prompt.
+- Status:
+  - Added `pull_release_during_mara_manifest_handoff` from
+    `mara_manifest_handoff` to `passenger_manifest_handoff_true_ending`.
+  - Preserved `board_after_mara_manifest_handoff` and all existing handoff,
+    count, thumbprint, threshold, and room-making branches.
+  - Added regression coverage for reaching the manifest handoff ending without
+    the intercom detour.
+  - Focused story-path suite passed: 173 tests.
+  - `npm run health` passed: format check, TypeScript, 217 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `watch_mara_open_manifest` ->
+    `pull_release_during_mara_manifest_handoff`, ending at
+    `passenger_manifest_handoff_true_ending` with score 285 and no objectives.
+- Playtest feedback:
+  - The handoff scene now resolves cleanly at the moment it says the third car
+    is asking for the release.
+  - The richer intercom path is still available, so the branch keeps its slower
+    Mara goodbye for exploratory players.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Re-run short random samples in the next cycle and watch whether
+    `passenger_manifest_handoff_true_ending` appears more consistently. If
+    `mara_manifest_handoff_intercom` remains under-discovered, improve its
+    label or add a more explicit reason to board for Mara's final prompt.
+
 # Cycle 52 Direct Conductor Signal Payoff
 
 - Date: 2026-06-02

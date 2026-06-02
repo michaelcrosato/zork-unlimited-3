@@ -4295,6 +4295,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("steadiness can be handed from name to name");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
       "hold_threshold_after_mara_manifest_handoff",
@@ -4368,6 +4369,50 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("can release during Mara's opened-door handoff without the intercom detour", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_during_mara_manifest_handoff"
+    );
+
+    state = choose(story, state, "pull_release_during_mara_manifest_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara is still mid-handoff");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expectIdealScore(observation.score);
   });
 

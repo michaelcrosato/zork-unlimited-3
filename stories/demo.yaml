@@ -1711,6 +1711,12 @@ scenes:
       The third car answers with crowded shuffles, asking for room as plainly
       as it asks for the release.
     choices:
+      - id: pull_release_during_mara_manifest_handoff
+        label: Pull the release while Mara is still handing names forward
+        to: passenger_manifest_handoff_true_ending
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: mara_manifest_handoff_intercom
