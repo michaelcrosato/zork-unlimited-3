@@ -1761,11 +1761,21 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.saw_mara_handoff).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_intercom",
+      "listen_to_last_dispatch_intercom",
       "pull_release"
     ]);
 
-    state = choose(story, state, "pull_release");
+    state = choose(story, state, "listen_to_last_dispatch_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_last_dispatch_intercom");
+    expect(observation.scene.text).toContain("Route held. Doors ready. Release authorized.");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_last_dispatch_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");

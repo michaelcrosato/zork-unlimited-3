@@ -12,65 +12,62 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve normal-play discovery for the threshold intercom
-  payoff.
-- Why this matters: Cycle 12 evidence showed all scenes were reachable under
-  coverage, but `passenger_threshold_intercom` was missed by the 100-run random
-  sample even after `passenger_threshold_boarding` appeared. A player who
-  chooses to hold the third-car threshold should hear the matching final
-  intercom instead of being offered the generic manifest intercom first.
+- Main objective: Pay off Mara's optional last-dispatch beat in the third car.
+- Why this matters: Cycle 13 evidence showed the core route is healthy and
+  suggested investing in richer story depth. The direct Mara route already lets
+  players ask for her last dispatch before boarding, but the train-car intercom
+  did not remember that choice. A focused payoff makes the optional character
+  beat feel causal without changing the score model or route complexity.
 - Tasks:
-  - Gate the generic opened-manifest intercom away after the player has held
-    the third-car threshold. Done.
-  - Keep the threshold-specific intercom and existing `passenger_true_ending`
-    route intact. Done.
-  - Add a regression assertion that the threshold route no longer exposes the
-    generic manifest intercom in the train car. Done.
-  - Run focused tests, validation, random/coverage checks, full health, the
-    evidence cycle, and an actual CLI playthrough. Done.
+  - Add a last-dispatch-specific train-car intercom after
+    `ask_mara_for_last_dispatch`. Done.
+  - Gate the generic Mara/badge-proof goodbyes away when the dispatch-specific
+    payoff is available. Done.
+  - Update the existing last-dispatch regression test to follow the new payoff
+    into `true_ending`. Done.
+  - Run focused tests and story validation. Done.
+  - Run full health and an actual CLI playthrough. Done.
+  - Run the evidence cycle. Done.
 - Evidence:
-  - Added `notFlag: held_passenger_threshold` to
-    `listen_to_mara_manifest_intercom`, so the direct generic Mara manifest
-    goodbye no longer competes with `listen_to_threshold_manifest_intercom`
-    after the threshold beat.
-  - Updated the threshold story-path test to assert that
-    `listen_to_threshold_manifest_intercom` is visible and
-    `listen_to_mara_manifest_intercom` is not visible in that branch.
+  - Added `mara_last_dispatch_intercom`, reached from `train_car` when
+    `heard_mara_last_dispatch` is set.
+  - Added `notFlag: heard_mara_last_dispatch` to the generic direct-Mara
+    intercom choices so the specific payoff is the only optional goodbye after
+    asking for the dispatch.
+  - Updated the last-dispatch story-path test to assert the new intercom is
+    offered, the direct release fallback remains available, and the route
+    reaches `true_ending` at max score.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 112 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 114
-    scenes, 24 endings, all 114 reachable, and no warnings.
-  - A 100-run random sample ended all runs, had zero unfinished runs, visited
-    all scenes, and now included both `passenger_threshold_boarding` and
-    `passenger_threshold_intercom`.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 115
+    scenes, 24 endings, all 115 reachable, and no warnings.
   - `npm run health` passed with formatting, TypeScript, 133 tests, story
     validation, and coverage playtest.
-  - Health coverage visited all 114 scenes, had zero unfinished completed
-    routes, best score 100/100, average score 94.3, and 943 max-score runs.
-  - Actual CLI play followed the direct passenger manifest route through
-    `hold_third_car_threshold`, `listen_to_threshold_manifest_intercom`, and
-    `pull_release_after_threshold_manifest`, reaching `passenger_true_ending`
-    at 100/100 with no remaining objectives.
+  - Health coverage visited all 115 scenes including
+    `mara_last_dispatch_intercom`, had zero unfinished completed routes, best
+    score 100/100, average score 94.34, and 951 max-score runs.
+  - Actual CLI play followed the direct Mara route through
+    `ask_mara_for_last_dispatch`, `listen_to_last_dispatch_intercom`, and
+    `pull_release_after_last_dispatch_goodbye`, reaching `true_ending` at
+    100/100 with no remaining objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T02-43-47-043Z.md`.
+    reports `ai-runs/cycle-2026-06-02T02-55-51-412Z.md` and
+    `ai-runs/cycle-2026-06-02T02-55-51-412Z-prompt.md`.
 - Playtest notes:
-  - The threshold branch now reads as a coherent cause-and-effect beat: hold
-    the doorway, reach the release, hear Mara respond to the held doorway, then
-    pull the release.
-  - The route still uses the existing `passenger_true_ending`, so the change
-    improves payoff clarity without adding scoring churn or another ending.
-  - The generic manifest intercom remains available to players who skip the
-    threshold beat.
-  - No bugs or dead ends were found in focused tests, validation, random
-    playtest, health, evidence cycle, or the manual CLI route.
+  - The new intercom makes the last-dispatch choice feel remembered: the train
+    tries to repeat the dispatch as an order, but Mara reframes it as arrival.
+  - The direct release fallback remains available from `train_car`, so the
+    optional listen beat does not block players who want to act immediately.
+  - The route still uses `true_ending`, so this improves story payoff without
+    adding a score beat or ending variant.
+  - No bugs or dead ends were found in focused tests, validation, full health,
+    the actual CLI playthrough, or the evidence-only cycle.
 - Follow-up:
-  - Continue favoring small payoff-quality improvements while ideal-ending and
-    max-score rates remain healthy.
-  - Watch non-ideal bad/lost/escape pressure only if future random samples show
-    it crowding out normal successful play.
+  - Continue favoring small character-payoff improvements while ideal-ending
+    and max-score rates remain healthy.
+  - Watch for too many late train-car intercom variants making the direct route
+    feel over-fragmented.
 - Risks:
-  - This makes the threshold-specific intercom mandatory once the player has
-    chosen the threshold beat, slightly reducing late train-car choice variety
-    in that route.
+  - Adds one more scene to an already large late-game intercom surface.
 
 ## Last Completed Cycle
 

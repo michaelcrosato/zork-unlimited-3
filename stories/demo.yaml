@@ -1433,6 +1433,19 @@ scenes:
       fingers find an emergency release. The blank destination sign begins to
       spell HOME one letter at a time.
     choices:
+      - id: listen_to_last_dispatch_intercom
+        label: Listen as Mara's last dispatch holds the doors
+        to: mara_last_dispatch_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: heard_mara_last_dispatch
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: saw_mara_handoff
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_to_badge_proof_intercom
         label: Listen as Mara answers the badge-proof line
         to: mara_badge_proof_intercom
@@ -1444,6 +1457,7 @@ scenes:
             - notFlag: read_passenger_manifest
             - notFlag: read_mara_thumbprint
             - notFlag: saw_mara_handoff
+            - notFlag: heard_mara_last_dispatch
         effects:
           set:
             heard_mara_goodbye: true
@@ -1471,6 +1485,7 @@ scenes:
             - notFlag: read_mara_thumbprint
             - notFlag: saw_mara_handoff
             - notFlag: knows_badge_proof
+            - notFlag: heard_mara_last_dispatch
         effects:
           set:
             heard_mara_goodbye: true
@@ -1970,6 +1985,18 @@ scenes:
     choices:
       - id: pull_release_after_badge_proof_goodbye
         label: Pull the release while the badge proof answers
+        to: true_ending
+
+  mara_last_dispatch_intercom:
+    text: >
+      The speaker repeats Mara's last dispatch, but the train cannot flatten it
+      into another order. Route held. Doors ready. Release authorized. Between
+      each phrase you hear Mara breathing beside the signal, no longer asking
+      permission from the ledger she kept alive. "That is the whole message,"
+      she says. "Pull once, and let it finally arrive."
+    choices:
+      - id: pull_release_after_last_dispatch_goodbye
+        label: Pull the release after Mara's last dispatch
         to: true_ending
 
   mara_thumbprint_intercom:
