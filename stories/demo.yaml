@@ -1099,6 +1099,14 @@ scenes:
       it, every one still shut. Mara's dispatcher row is set apart at the end,
       its door barred by the same badge proof that can open the rest.
     choices:
+      - id: read_manifest_marginal_notes
+        label: Read the notes written in the manifest margins
+        to: passenger_manifest_notes
+        requires:
+          notFlag: read_manifest_marginal_notes
+        effects:
+          set:
+            read_manifest_marginal_notes: true
       - id: listen_to_manifest_doors_from_manifest
         label: Listen to the marked passenger doors
         to: passenger_echoes
@@ -1109,6 +1117,32 @@ scenes:
             heard_passenger_echoes: true
       - id: return_to_signal_ledger_from_manifest
         label: Turn from the manifest to Mara's ledger row
+        to: signal_ledger
+        effects:
+          set:
+            inspected_signal_ledger: true
+
+  passenger_manifest_notes:
+    routeImportance: optional
+    text: >
+      The margin notes are not official entries. Someone wrote them in pencil
+      whenever the ledger tried to make people into counts: Lenora Pike,
+      newspaper folded to the transfer column; Eli Rose, lunch tin packed for
+      a double shift; Tomas Vale, no relation to Mara, conductor's punch still
+      warm from the last checked ticket; a child's mitten tagged only RED LEFT.
+      Beside each note, Mara added the same short instruction: answer before
+      opening.
+    choices:
+      - id: listen_after_manifest_notes
+        label: Listen for the names the margin notes remember
+        to: passenger_echoes
+        requires:
+          notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_passenger_echoes: true
+      - id: return_from_manifest_notes
+        label: Return to Mara's ledger row with the margin notes in mind
         to: signal_ledger
         effects:
           set:

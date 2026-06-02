@@ -3584,7 +3584,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
+  it("uses manifest margin notes to foreshadow the echoed passenger route", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -3618,32 +3618,44 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Mara's dispatcher row is set apart");
     expect(observation.state.flags.read_passenger_manifest).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_manifest_marginal_notes",
       "listen_to_manifest_doors_from_manifest",
       "return_to_signal_ledger_from_manifest"
     ]);
 
-    state = choose(story, state, "listen_to_manifest_doors_from_manifest");
+    state = choose(story, state, "read_manifest_marginal_notes");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_echoes");
-    expect(observation.scene.text).toContain("asking whether the next stop has rain");
-    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.scene.id).toBe("passenger_manifest_notes");
+    expect(observation.scene.text).toContain("Lenora Pike");
+    expect(observation.scene.text).toContain("Eli Rose");
+    expect(observation.scene.text).toContain("answer before opening");
+    expect(observation.state.flags.read_manifest_marginal_notes).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_manifest_notes",
+      "return_from_manifest_notes"
+    ]);
 
-    state = choose(story, state, "return_from_passenger_echoes");
+    state = choose(story, state, "return_from_manifest_notes");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("signal_ledger");
-    expect(observation.state.flags.inspected_signal_ledger).toBe(true);
+    expect(observation.objectives).toContain(
+      "Open the kept-passenger manifest doors with Mara's badge proof."
+    );
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "clear_manifest_and_mara_from_ledger"
     );
 
+    state = choose(story, state, "clear_manifest_and_mara_from_ledger");
+    state = choose(story, state, "follow_opened_manifest_echoes");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+
     for (const choiceId of [
-      "clear_manifest_and_mara_from_ledger",
-      "board_after_releasing_passengers",
-      "board_with_echoed_manifest",
-      "reach_release_with_echoed_manifest",
-      "listen_to_echoed_manifest_intercom",
+      "listen_to_echoed_manifest_from_boarding",
       "pull_release_after_echoed_manifest_goodbye"
     ]) {
       state = choose(story, state, choiceId);

@@ -1,3 +1,80 @@
+# Cycle 7 Manifest Margin Echo Foreshadowing
+
+- Date: 2026-06-02
+- Main objective: Make the passenger echoed-manifest route more naturally
+  discoverable from normal manifest reading.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence says the core route is healthy while
+  random play under-discovers several passenger echo/newspaper/manifest-ready
+  scenes. The kept-passenger manifest is already a common story-forward clue;
+  adding margin-note context turns the later echo route from a hidden branch
+  into a readable payoff.
+- Planned work:
+  - Add optional manifest margin notes before returning to Mara's ledger row.
+  - Use the notes to name ordinary passenger details that later become the
+    echoed boarding route.
+  - Preserve the direct listen-to-doors and return-to-ledger options.
+  - Add focused story-path coverage, run full health, and play the changed
+    route through the CLI.
+- Risks:
+  - The extra manifest choice may slightly lengthen a late-game branch, but it
+    is optional and appears only after the player chooses to inspect the kept
+    passenger manifest.
+- Status:
+  - In progress.
+
+# Cycle 92 Passenger Manifest Marginal Notes
+
+- Date: 2026-06-02
+- Main objective: Give the kept-passenger manifest route clearer human anchors
+  before the player opens every passenger door.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence says core routing is healthy with all
+  scenes visited. The highest-value next step is richer story depth and better
+  transcript critique signals, especially in the passenger-manifest branch.
+- Planned work:
+  - Add one optional manifest-note scene before returning to Mara's ledger row.
+  - Preserve the direct manifest, passenger-echo, and clear-manifest routes.
+  - Add focused regression coverage for the new beat and a complete ideal
+    passenger-manifest ending.
+  - Run full health and play the changed route through the CLI.
+- Risks:
+  - The new optional choice adds one more pre-ledger branch, but it is gated by
+    a one-time flag and returns to the established objective.
+- Status:
+  - Completed.
+  - Added `read_manifest_marginal_notes` from `passenger_manifest` to the new
+    `passenger_manifest_notes` scene.
+  - The notes name several kept passengers and reinforce Mara's "answer before
+    opening" instruction.
+  - Added `listen_after_manifest_notes` for players who want to convert the
+    notes into the existing passenger-echo route.
+  - Added `return_from_manifest_notes` back to `signal_ledger`, preserving the
+    manifest-door objective and clear route.
+  - Updated the focused manifest regression to cover the new scene and finish at
+    `passenger_echoed_true_ending`.
+  - Focused test passed:
+    `npm test -- tests/story-paths.test.ts -t "optional kept-passenger manifest"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_manifest_notes`, with zero unvisited scenes and zero unfinished
+    complete paths.
+  - Actual CLI play followed the new manifest-notes route, ended at
+    `passenger_echoed_true_ending`, scored 281, and left no objectives.
+- Playtest feedback:
+  - The new notes make the manifest branch read less like an abstract list and
+    more like people with concrete objects and destinations.
+  - Returning from the notes lands on the right ledger objective: open the
+    kept-passenger manifest doors with Mara's badge proof.
+  - The route remains direct enough to finish cleanly through the echoed
+    passenger-manifest ending.
+- Next step:
+  - Watch blind sessions for whether named passenger anchors improve critiques
+    of the manifest route; if the branch still feels crowded, tune choice
+    ordering or consolidate overlapping passenger help beats.
+
 # Cycle 91 Thumbprint Intercom Handoff Recovery
 
 - Date: 2026-06-02
