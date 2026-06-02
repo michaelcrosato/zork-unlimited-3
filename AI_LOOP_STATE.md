@@ -1,3 +1,52 @@
+# Cycle 8 Threshold Boarding Intercom Bridge
+
+- Date: 2026-06-02
+- Main objective: Improve the passenger threshold route by paying off the
+  held-door scene immediately instead of requiring a detour through the generic
+  train-car scene.
+- Why this matters: Current evidence is green with full coverage, so the best
+  improvement is route texture and discoverability. The threshold scene already
+  frames the player's action as proof that the passengers are becoming a crowd;
+  letting Mara answer from that exact scene keeps the payoff attached to the
+  choice that earned it.
+- Work completed:
+  - Added `listen_to_threshold_from_boarding` from
+    `passenger_threshold_boarding` to the existing
+    `passenger_threshold_intercom`.
+  - Set `heard_mara_goodbye` on the direct bridge to match the existing
+    train-car intercom route.
+  - Preserved `reach_release_after_threshold_boarding`, so players can still
+    route through the train-car scene and hear the same threshold intercom
+    there.
+  - Updated regression coverage for both the new direct threshold payoff and
+    the preserved older train-car threshold path.
+- Evidence:
+  - Focused story-path suite passed: 117 tests.
+  - Actual CLI play used `listen_to_threshold_from_boarding` and reached
+    `passenger_true_ending` at 100/100 with no active objectives.
+  - `npm run health` passed: format check, TypeScript, 161 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.67, and 1285 max-score runs.
+- Playtest feedback:
+  - The threshold route now reads as one continuous beat: hold the doorway,
+    hear Mara accept the footsteps as proof, then pull the release.
+  - The fallback route through `train_car` still exposes
+    `listen_to_threshold_manifest_intercom`, so existing navigation remains
+    valid.
+  - No route bugs, dangling objectives, score issues, or unfinished runs
+    appeared.
+- Next step:
+  - Watch random and blind-play samples for whether late passenger routes feel
+    too choice-dense; if so, consolidate overlapping passenger payoff choices
+    by theme.
+- Risks:
+  - This adds one more choice to a late optional passenger branch. It is scoped
+    to a scene that previously had only one continuation and reuses an existing
+    payoff scene.
+
 # Cycle 7 Restored Transfer Conductor Bridge
 
 - Date: 2026-06-02

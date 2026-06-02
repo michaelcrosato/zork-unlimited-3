@@ -2113,24 +2113,15 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("becoming a crowd");
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_threshold_from_boarding",
       "reach_release_after_threshold_boarding"
     ]);
 
-    state = choose(story, state, "reach_release_after_threshold_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_threshold_manifest_intercom"
-    );
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "listen_to_mara_manifest_intercom"
-    );
-
-    state = choose(story, state, "listen_to_threshold_manifest_intercom");
+    state = choose(story, state, "listen_to_threshold_from_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_threshold_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("threshold you held");
     expect(observation.scene.text).toContain("before the threshold remembers how to close");
 
@@ -2140,6 +2131,40 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "hold_third_car_threshold",
+      "reach_release_after_threshold_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_threshold_manifest_intercom"
+    );
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "listen_to_mara_manifest_intercom"
+    );
   });
 
   it("pays off Mara's opened manifest count before a direct passenger release", async () => {

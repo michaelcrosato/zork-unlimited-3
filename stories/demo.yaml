@@ -1416,6 +1416,12 @@ scenes:
       Mara does not count over them. She lets the threshold prove they are
       becoming a crowd.
     choices:
+      - id: listen_to_threshold_from_boarding
+        label: Listen as Mara holds the threshold open
+        to: passenger_threshold_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: reach_release_after_threshold_boarding
         label: Reach the release after the last passenger clears the threshold
         to: train_car
