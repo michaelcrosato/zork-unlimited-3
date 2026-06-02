@@ -1987,6 +1987,7 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("sign_warning");
     expect(observe(story, state).choices.map((choice) => choice.id)).toEqual([
       "look_away_from_sign",
+      "listen_for_mara_under_home_warning",
       "stare_at_home",
       "step_toward_porch_light"
     ]);
@@ -2020,6 +2021,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "look_away_from_sign",
       "follow_mara_note_from_sign",
+      "listen_for_mara_under_home_warning",
       "stare_at_home",
       "step_toward_porch_light"
     ]);
@@ -2058,6 +2060,95 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+  });
+
+  it("lets the first HOME sign warning carry Mara's dispatch back into the true route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "listen_for_mara_under_home_warning"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("home_sign_dispatch");
+    expect(observation.scene.text).toContain("That is not home");
+    expect(observation.scene.text).toContain("Clock token, fuse, badge, ledger");
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "cover_home_sign_after_dispatch",
+      "turn_back_after_home_sign_dispatch",
+      "step_into_false_home_after_dispatch",
+      "let_home_sign_drown_mara"
+    ]);
+
+    state = choose(story, state, "turn_back_after_home_sign_dispatch");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.escaped_home_sign_dispatch).toBe(true);
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
+
+    for (const choiceId of [
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_stopped_clock",
+      "take_token",
+      "open_service_door",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "listen_for_mara_under_home_warning",
+      "step_into_false_home_after_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_after_dispatch_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
   });
 
   it("adds a final recoverable HOME sign warning before the lost ending", async () => {

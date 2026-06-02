@@ -1,3 +1,55 @@
+# Cycle 37 First HOME Dispatch Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `home_sign_dispatch` discoverable from the first HOME
+  sign warning, not only after the player keeps staring at the false HOME
+  reflection.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current automated and MCP evidence is green, and the supplied Cycle
+  32 evidence still calls out `home_sign_dispatch` and
+  `lost_after_dispatch_ending` as normal-random discovery targets. Surfacing
+  Mara's practical dispatch one beat earlier makes the false HOME branch fairer
+  and turns a tempting trap into a clearer informed decision.
+- Planned work:
+  - Add a direct `sign_warning` choice into `home_sign_dispatch`.
+  - Preserve the existing safe map exit, Mara-note recovery, stare, and porch
+    light branches.
+  - Reuse the existing dispatch flags so objective guidance remains consistent
+    after the player turns back.
+  - Run focused story-path tests, full health, and an actual route through the
+    new branch.
+- Risks:
+  - The first HOME warning menu gains one more option. This is acceptable
+    because it is a high-signal rescue/hint route and keeps the previous
+    outcomes available.
+- Work completed:
+  - Added `listen_for_mara_under_home_warning` from `sign_warning` directly to
+    `home_sign_dispatch`.
+  - Preserved safe map escape, Mara-note recovery, HOME-stare, and porch-light
+    branches.
+  - Reused the existing dispatch knowledge flags so turning back from the HOME
+    sign produces the same objective guidance as the deeper route.
+  - Added regression coverage for the direct first-warning dispatch path into
+    `true_ending` and for the deliberate post-dispatch lost ending.
+- Evidence:
+  - Focused story-path suite passed: 152 tests.
+  - `npm run health` passed: format check, TypeScript, 196 tests, validation,
+    and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `look_at_sign` ->
+    `listen_for_mara_under_home_warning` ->
+    `turn_back_after_home_sign_dispatch`, recovered through the core route, and
+    ended at `true_ending` with score 267 and no objectives.
+- Playtest feedback:
+  - The first-warning dispatch reads more fairly than the old hidden route:
+    Mara names the recovery checklist while the false HOME sign is already
+    threatening the player, then the player can make an informed choice to
+    leave, turn back, or step into the trap.
+- Next step:
+  - Watch future random/blind samples for whether `home_sign_dispatch` and
+    `lost_after_dispatch_ending` appear more often in normal play.
+
 # Cycle 36 Opened-Count Handoff Discovery
 
 - Date: 2026-06-02

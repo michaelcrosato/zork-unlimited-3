@@ -3743,6 +3743,17 @@ scenes:
             knows_platform: true
             knows_token_location: true
             knows_badge_proof: true
+      - id: listen_for_mara_under_home_warning
+        label: Listen for Mara beneath the HOME sign
+        to: home_sign_dispatch
+        requires:
+          notFlag: heard_home_sign_dispatch
+        effects:
+          set:
+            heard_home_sign_dispatch: true
+            met_mara: true
+            knows_token_location: true
+            knows_badge_proof: true
       - id: stare_at_home
         label: Keep staring at HOME
         to: home_sign_echo
