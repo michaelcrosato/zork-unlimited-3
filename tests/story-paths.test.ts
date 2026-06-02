@@ -1932,9 +1932,32 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_passengers_finish_reviewed_count",
+      "ask_who_reviewed_count_left_blank",
       "pull_release_before_reviewed_count_finishes",
       "pull_release_after_counted_manifest_goodbye"
     ]);
+
+    const missingCountState = choose(story, state, "ask_who_reviewed_count_left_blank");
+    observation = observe(story, missingCountState);
+
+    expect(observation.scene.id).toBe("passenger_missing_count");
+    expect(observation.scene.text).toContain("not a missing passenger");
+    expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
+
+    const returnedIntercomState = choose(
+      story,
+      missingCountState,
+      "board_with_unanswered_row_resolved"
+    );
+    observation = observe(story, returnedIntercomState);
+
+    expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "ask_who_reviewed_count_left_blank"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_counted_manifest_goodbye"
+    );
 
     state = choose(story, state, "let_passengers_finish_reviewed_count");
     observation = observe(story, state);
@@ -5116,6 +5139,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_passengers_finish_reviewed_count",
+      "ask_who_reviewed_count_left_blank",
       "pull_release_before_reviewed_count_finishes",
       "pull_release_after_counted_manifest_goodbye"
     ]);
@@ -5781,17 +5805,18 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "let_lunch_tin_count_become_roll_call");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
-    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
+    expect(observation.scene.text).toContain("The worker reads the roster");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_final_roll_call"
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
-    state = choose(story, state, "pull_release_after_final_roll_call");
+    state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 

@@ -2530,13 +2530,14 @@ scenes:
           set:
             heard_gathered_passengers: true
       - id: let_lunch_tin_count_become_roll_call
-        label: Let the lunch-tin count become the final roll call
-        to: passenger_roll_call_epilogue
+        label: Ask the worker to turn the latch-count into a final roster call
+        to: passenger_lunch_tin_roll_call
         requires:
           notFlag: heard_final_roll_call
         effects:
           set:
             heard_final_roll_call: true
+            read_lunch_tin_roster: true
       - id: pull_release_after_lunch_tin_boarding
         label: Pull the release while the lunch-tin count holds
         to: passenger_lunch_tin_true_ending
@@ -3509,6 +3510,14 @@ scenes:
         effects:
           set:
             passengers_finished_reviewed_count: true
+      - id: ask_who_reviewed_count_left_blank
+        label: Ask Mara who the old blank space belonged to
+        to: passenger_missing_count
+        requires:
+          notFlag: checked_missing_passenger_count
+        effects:
+          set:
+            checked_missing_passenger_count: true
       - id: pull_release_before_reviewed_count_finishes
         label: Pull the release before Mara has to finish the count
         to: passenger_reviewed_count_true_ending

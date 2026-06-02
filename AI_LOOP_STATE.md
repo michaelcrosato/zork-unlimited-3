@@ -1,3 +1,112 @@
+# Cycle 61 Reviewed-Count Blank-Space Bridge
+
+- Date: 2026-06-02
+- Main objective: Make the late reviewed-count intercom preserve the
+  `passenger_missing_count` clarification beat.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied evidence shows healthy completion and says to invest in
+  richer story depth; prior lunch-tin discovery work is already present in this
+  checkout. The reviewed-count route could board directly into the intercom and
+  skip the strongest explanation that the "missing" row is Mara's old last
+  place in the line.
+- Planned work:
+  - Preserve direct reviewed-count chorus and release choices.
+  - Add an optional intercom choice from `passenger_counted_manifest_intercom`
+    to `passenger_missing_count`.
+  - Prevent the bridge from looping after the blank-space clarification is
+    seen.
+  - Add regression coverage for the bridge and the preserved direct chorus
+    route.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The reviewed-count intercom gains one more choice. It is optional and hides
+    after use, while the immediate release and finish-count routes remain
+    available.
+- Status:
+  - Completed.
+  - Added `ask_who_reviewed_count_left_blank` from
+    `passenger_counted_manifest_intercom` to `passenger_missing_count`.
+  - Kept the direct reviewed-count chorus and both release choices available.
+  - Hid the blank-space bridge after the player sees it, preventing a repeated
+    clarification loop.
+  - Extended focused story-path coverage for the new bridge, the hidden
+    repeat, and the preserved direct chorus path.
+  - Focused story-path suite passed: 176 tests.
+  - `npm run health` passed: format check, TypeScript, 220 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `board_with_reviewed_manifest_count` ->
+    `ask_who_reviewed_count_left_blank` ->
+    `board_with_unanswered_row_resolved` ->
+    `pull_release_after_counted_manifest_goodbye`, ending at
+    `passenger_counted_true_ending` with score 288 and no objectives.
+- Playtest feedback:
+  - The new choice clarifies that the old blank space belongs to the line's
+    habit of making Mara last, not to an actually missing passenger.
+  - Returning from the clarification to the intercom is mechanically clean, but
+    it repeats the intercom paragraph; acceptable for this small optional bridge
+    and worth watching in blind sessions.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch whether blind players understand the distinction between reviewed
+    count, missing row, and final chorus; if confusion remains, tune the
+    returned intercom copy rather than adding more branches.
+
+# Cycle 66 Lunch-Tin Boarding Roll-Call Target
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of
+  `passenger_lunch_tin_roll_call` from the lunch-tin boarding scene.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 66 evidence shows all coverage green, but the
+  random sample still missed `passenger_lunch_tin_roll_call` while naming it as
+  the suggested next action. Prior cycles made the scene reachable through the
+  roster and intercom; the remaining discoverability leak was that the
+  prominent boarding choice `let_lunch_tin_count_become_roll_call` still routed
+  to the generic final roll call instead of the lunch-tin-specific payoff.
+- Planned work:
+  - Route `let_lunch_tin_count_become_roll_call` from
+    `passenger_lunch_tin_boarding` to `passenger_lunch_tin_roll_call`.
+  - Rename the choice so it promises a roster call rather than the generic
+    shared roll call.
+  - Set `read_lunch_tin_roster` on that path because the worker reads from the
+    roster in the target scene.
+  - Preserve direct lunch-tin release, roster, and intercom options.
+  - Update focused story-path regression coverage.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The generic `passenger_roll_call_epilogue` is no longer reachable from this
+    one lunch-tin boarding choice, but the generic roll-call route remains
+    available from gathered boarding, conductor, mitten, and other passenger
+    branches. This tradeoff keeps the lunch-tin scene's most obvious roll-call
+    action aligned with its specific payoff.
+- Status:
+  - Completed.
+  - Routed `let_lunch_tin_count_become_roll_call` from
+    `passenger_lunch_tin_boarding` to `passenger_lunch_tin_roll_call`.
+  - Updated the choice label to promise a final roster call.
+  - Set `read_lunch_tin_roster` on that path.
+  - Focused story-path suite passed: 176 tests.
+  - `npm run health` passed: format check, TypeScript, 220 tests,
+    validation, and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `let_lunch_tin_worker_keep_count` ->
+    `return_from_passenger_farewell` ->
+    `let_lunch_tin_count_become_roll_call` ->
+    `pull_release_after_lunch_tin_roll_call`, ending at
+    `passenger_lunch_tin_true_ending` with score 309 and no objectives.
+- Playtest feedback:
+  - The boarding choice now delivers the exact lunch-tin roster roll-call beat
+    it advertises.
+  - The route reads cleanly as latch-count, named roster, release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch random-play samples for whether `passenger_lunch_tin_roll_call`
+    appears consistently; if late passenger choice density feels high, tune
+    ordering rather than adding more branches.
+
 # Cycle 65 Last-Dispatch Handoff Bridge
 
 - Date: 2026-06-02
