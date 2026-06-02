@@ -1,3 +1,83 @@
+# Cycle 16 Gate-Control Plaque Guidance
+
+- Date: 2026-06-02
+- Main objective: Add one normal-route story beat at the gate control that
+  teaches the signal-booth requirements in-world while preserving the existing
+  underprepared escape and bad-ending pressure.
+- Why this matters: Current evidence has healthy route coverage and no
+  unfinished runs, so the highest-value next step is richer story depth that
+  also clarifies the real playable objective: lights, token, map, and badge
+  proof before the ledger.
+- Work completed:
+  - Added `gate_control_plaque`, an optional burned service-plaque scene from
+    `gate_control` that states the token/light, badge-proof, route-map, and
+    HOME-sign rules as station procedure.
+  - Set the existing `gate_control_inspected` score flag when players inspect
+    the gate control, while preserving the existing `inspected_gate_control`
+    routing flag.
+  - Added regression coverage for reading the plaque, returning to the gate
+    control, and surfacing token and badge-proof objectives for underprepared
+    players.
+- Evidence:
+  - Focused story-path suite passed: 123 tests.
+  - `npm run health` passed: format check, TypeScript, 167 tests, validation,
+    and coverage playtest.
+  - Health validation now reports 119 reachable scenes and 26 endings.
+  - Health coverage visited all 119 scenes, including `gate_control_plaque`,
+    with zero unfinished runs.
+  - Actual CLI play used `inspect_gate_control`,
+    `read_gate_control_plaque`, and `return_from_gate_control_plaque`, then
+    recovered all supplies and reached `true_ending` at score 287 with no
+    active objectives.
+- Playtest feedback:
+  - The plaque reads like station procedure rather than an external hint, and
+    it gives the player a clear reason to collect badge proof and keep the map
+    involved before touching the ledger.
+  - Returning from the plaque to the gate control is one-time gated, so it does
+    not create a repeat loop. The route still lets underprepared players back
+    out and gather supplies.
+  - The existing gate-control exploration award now appears in the CLI score
+    breakdown after inspection.
+- Next step:
+  - Watch random and blind-play evidence for whether the added gate-control
+    choice makes early platform decision density feel heavier. If it does,
+    fold the plaque language into the base gate-control text.
+- Risks:
+  - Adds one optional choice to a core route. It is one-time and returns to the
+    same control surface, but choice density at the platform should be watched.
+
+# Cycle 15 Opened-Manifest Unanswered Row
+
+- Date: 2026-06-02
+- Main objective: Add one richer passenger-count story beat after players
+  review the opened manifest count.
+- Why this matters: Current evidence shows validation, random play, coverage,
+  and true-ending discovery are healthy, with no consolidated blind-play
+  blockers. The next highest-value improvement is playable story depth: the
+  reviewed-count route now clarifies why the manifest needs a collective
+  answer instead of only a mechanical count.
+- Work completed:
+  - Added `passenger_missing_count`, an optional one-time beat from
+    `passenger_manifest_count` that reframes the last unanswered manifest row
+    as the old pause where Mara had been made last.
+  - Added exits from the beat into the existing passenger roll-call,
+    conductor-clear, reviewed-count intercom, and return paths without adding a
+    new ending or required route.
+  - Added regression coverage for the new branch, its one-time flag gating,
+    its roll-call finish, and its conductor exit.
+- Evidence:
+  - Focused story-path suite passed: 123 tests.
+- Playtest feedback:
+  - Pending full health and an actual playthrough through the new branch.
+- Next step:
+  - Run `npm run health`, then play the new branch through the CLI or MCP and
+    record whether the added beat improves the passenger-count payoff without
+    making the late-game choice list feel noisy.
+- Risks:
+  - This adds one optional choice to an already rich passenger-count scene. The
+    one-time flag prevents repeat loops, but late-game choice density remains
+    the main watch item.
+
 # Cycle 14 Echoed-Boarding Intercom Recovery
 
 - Date: 2026-06-02

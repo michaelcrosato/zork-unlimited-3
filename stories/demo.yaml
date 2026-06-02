@@ -24,6 +24,7 @@ objectives:
         - notFlag: inspected_signal_ledger
         - notFlag: read_passenger_manifest
         - notFlag: heard_passenger_echoes
+        - notFlag: knows_badge_proof
         - any:
             - notItem: map
             - notItem: token
@@ -510,6 +511,7 @@ scenes:
         effects:
           set:
             inspected_gate_control: true
+            gate_control_inspected: true
             knows_token_location: true
       - id: install_fuse
         label: Install the platform fuse
@@ -557,6 +559,15 @@ scenes:
       SIGNAL BOOTH token, then clear the ledger before boarding. Someone has
       scratched CLOCK = TOKEN into the soot.
     choices:
+      - id: read_gate_control_plaque
+        label: Read the burned service plaque inside the access plate
+        to: gate_control_plaque
+        requires:
+          notFlag: read_gate_control_plaque
+        effects:
+          set:
+            read_gate_control_plaque: true
+            knows_badge_proof: true
       - id: install_fuse_and_insert_token
         label: Install the fuse, then insert the signal token
         to: signal_booth
@@ -593,6 +604,19 @@ scenes:
       - id: return_to_service_room_for_parts
         label: Return to the service room for parts
         to: service_room
+
+  gate_control_plaque:
+    routeImportance: optional
+    text: >
+      The plaque is almost burned blank, but the remaining service rule is
+      stubborn: SIGNAL ACCESS ACCEPTS TOKEN ONLY AFTER PLATFORM LIGHTS. LEDGER
+      CLEARANCE REQUIRES BADGE PROOF AND ROUTE MAP ON THE DESK. Below it, a
+      dispatcher has penciled one private correction: if the train says HOME,
+      do not answer with your name.
+    choices:
+      - id: return_from_gate_control_plaque
+        label: Return to the open gate control
+        to: gate_control
 
   lit_platform:
     routeImportance: supporting
@@ -1119,6 +1143,14 @@ scenes:
       punch. "They need more than clearance," Mara says. "They need one another
       to answer when the train tries to count them again."
     choices:
+      - id: check_for_unanswered_manifest_row
+        label: Check which opened row still has no answer
+        to: passenger_missing_count
+        requires:
+          notFlag: checked_missing_passenger_count
+        effects:
+          set:
+            checked_missing_passenger_count: true
       - id: listen_after_manifest_count
         label: Listen as the counted passengers answer their names
         to: passenger_answers
@@ -1149,6 +1181,45 @@ scenes:
       - id: board_after_manifest_count
         label: Board the third car while Mara holds the count
         to: train_car
+
+  passenger_missing_count:
+    routeImportance: optional
+    text: >
+      Mara turns the opened manifest sideways so the blank spaces line up.
+      Every stamped door has unlocked, but one row still waits without a voice
+      beside it: not a missing passenger, she realizes, but the pause where the
+      line used to put her. The child with the mitten taps the paper, the
+      newspaper woman reads the stop aloud, and the old conductor lifts his
+      punch. "Then we answer that space together," Mara says, and the ledger no
+      longer has room to make anyone last.
+    choices:
+      - id: let_unanswered_row_become_roll_call
+        label: Let the unanswered row become the passengers' roll call
+        to: passenger_answers
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
+      - id: ask_conductor_to_clear_unanswered_row
+        label: Ask the conductor to clear the unanswered row
+        to: passenger_conductor_signal
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+      - id: board_with_unanswered_row_resolved
+        label: Board once the unanswered row belongs to everyone
+        to: passenger_counted_manifest_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: return_from_unanswered_row
+        label: Return to the reviewed manifest count
+        to: passenger_manifest_count
 
   mara_manifest_handoff:
     routeImportance: optional

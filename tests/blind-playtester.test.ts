@@ -24,7 +24,12 @@ fi
 
 describe("blind playtester (built-in decider)", () => {
   it("plays the demo blind and returns a valid record without any LLM", async () => {
-    const record = await runSession({ seed: 12345, persona: "goal_seeker", write: false });
+    const record = await runSession({
+      seed: 12345,
+      persona: "goal_seeker",
+      agentCmd: "",
+      write: false
+    });
     expect(() => FeedbackRecordSchema.parse(record)).not.toThrow();
     expect(record.persona).toBe("goal_seeker");
     expect(record.model).toBe("builtin");
@@ -37,15 +42,20 @@ describe("blind playtester (built-in decider)", () => {
   });
 
   it("is deterministic for a fixed seed", async () => {
-    const a = await runSession({ seed: 999, persona: "risk_taker", write: false });
-    const b = await runSession({ seed: 999, persona: "risk_taker", write: false });
+    const a = await runSession({ seed: 999, persona: "risk_taker", agentCmd: "", write: false });
+    const b = await runSession({ seed: 999, persona: "risk_taker", agentCmd: "", write: false });
     expect(a.final_scene).toBe(b.final_scene);
     expect(a.score).toBe(b.score);
     expect(a.turns).toBe(b.turns);
   });
 
   it("does not fabricate qualitative themes in the built-in path", async () => {
-    const record = await runSession({ seed: 7, persona: "completionist", write: false });
+    const record = await runSession({
+      seed: 7,
+      persona: "completionist",
+      agentCmd: "",
+      write: false
+    });
     expect(record.verdict).toContain("builtin decider");
   });
 
@@ -55,6 +65,7 @@ describe("blind playtester (built-in decider)", () => {
     const record = await runSession({
       seed: 42,
       persona: "methodical_lore_reader",
+      agentCmd: "",
       logDir: dir,
       sessionsFile,
       write: true

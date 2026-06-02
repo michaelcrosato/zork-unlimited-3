@@ -989,7 +989,26 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("gate_control");
     expect(observation.scene.text).toContain("CLOCK = TOKEN");
     expect(observation.state.flags.inspected_gate_control).toBe(true);
+    expect(observation.state.flags.gate_control_inspected).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("read_gate_control_plaque");
+
+    state = choose(story, state, "read_gate_control_plaque");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("gate_control_plaque");
+    expect(observation.scene.text).toContain("BADGE PROOF AND ROUTE MAP");
+    expect(observation.scene.text).toContain("do not answer with your name");
+    expect(observation.state.flags.read_gate_control_plaque).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+
+    state = choose(story, state, "return_from_gate_control_plaque");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("gate_control");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "read_gate_control_plaque"
+    );
 
     state = choose(story, state, "return_to_service_room_for_parts");
     observation = observe(story, state);
@@ -1065,7 +1084,7 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("gate_control");
-    expect(choiceIds[0]).toBe("install_fuse_and_insert_token");
+    expect(choiceIds).toContain("install_fuse_and_insert_token");
     expect(choiceIds).not.toContain("install_fuse_from_gate_control");
     expect(choiceIds).toContain("return_to_service_room_for_parts");
 
@@ -1264,6 +1283,101 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_gathered_intercom"
     );
+  });
+
+  it("adds an optional unanswered-row beat after reviewing the opened manifest count", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "check_for_unanswered_manifest_row"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_missing_count");
+    expect(observation.scene.text).toContain("one row still waits without a voice");
+    expect(observation.scene.text).toContain("we answer that space together");
+    expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_unanswered_row_become_roll_call",
+      "ask_conductor_to_clear_unanswered_row",
+      "board_with_unanswered_row_resolved",
+      "return_from_unanswered_row"
+    ]);
+
+    state = choose(story, state, "return_from_unanswered_row");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_count");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "check_for_unanswered_manifest_row"
+    );
+
+    state = choose(story, state, "listen_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+
+    state = choose(story, state, "board_after_answered_passengers");
+    state = choose(story, state, "pull_release_after_answered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expectIdealScore(observation.score);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "check_for_unanswered_manifest_row",
+      "ask_conductor_to_clear_unanswered_row"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_signal");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
   });
 
   it("still lets gate-control players install only the fuse when the token is missing", async () => {
@@ -2738,6 +2852,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They need more than clearance");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_for_unanswered_manifest_row",
       "listen_after_manifest_count",
       "ask_conductor_after_manifest_count",
       "cross_after_manifest_count",
