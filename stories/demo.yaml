@@ -1271,10 +1271,12 @@ scenes:
       a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
       shaking rain from their ribs, passengers answering Mara's count before
       it can make anyone last, shoulders shifting to make room, a crowd pausing
-      until someone holds the third-car threshold. Mara breathes through the
-      speaker and says, "Third car. I can hold the line steady while they find
-      the morning." When she has already called the opened doors once, the
-      third car speaker keeps a small waiting hiss for her handoff.
+      until someone holds the third-car threshold. The same tiny door-echoes
+      you could have heard before opening the manifest keep their rhythm now
+      that the names are people. Mara breathes through the speaker and says,
+      "Third car. I can hold the line steady while they find the morning." When
+      she has already called the opened doors once, the third car speaker keeps
+      a small waiting hiss for her handoff.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1314,6 +1316,19 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+      - id: follow_opened_manifest_echoes
+        label: Carry the opened door-echoes into the third car
+        to: passenger_echoed_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
       - id: check_opened_manifest_blank_row
         label: Check the blank row in the opened manifest
         to: passenger_missing_count

@@ -1,3 +1,64 @@
+# Cycle 42 Opened Manifest Echo Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_echoed_boarding`,
+  `passenger_echoed_manifest_intercom`, and `passenger_echoed_true_ending`
+  easier to discover from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 42 random/coverage
+  evidence. Coverage reaches every scene, but random samples missed the echoed
+  passenger payoff branch. The opened-manifest hub already foregrounds the
+  passengers' ordinary sounds, so carrying those sounds into the third car is a
+  natural visible action.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing echoed
+    boarding branch.
+  - Preserve existing count, handoff, threshold, room-making, keepsake,
+    answered-passenger, morning, and direct boarding routes.
+  - Add regression coverage proving the hub route reaches
+    `passenger_echoed_boarding`, `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because it reuses existing scenes and appears only while the player has not
+    committed to another passenger-gathering or answered-passenger route.
+- Status:
+  - Added `follow_opened_manifest_echoes` from `passengers_released` into the
+    existing `passenger_echoed_boarding` branch, setting
+    `heard_passenger_echoes` and `echoed_manifest_boarded`.
+  - Revised the opened-manifest hub prose so the door-echoes remain visible
+    after the manifest opens.
+  - Added regression coverage for the direct hub route through
+    `passenger_echoed_boarding`, `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending`.
+  - Focused story-path suite passed: 167 tests.
+  - `npm run health` passed: format check, TypeScript, 211 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_echoed_boarding`, `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending`, with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `follow_opened_manifest_echoes` ->
+    `listen_to_echoed_manifest_from_boarding` ->
+    `pull_release_after_echoed_manifest_goodbye`, ending at
+    `passenger_echoed_true_ending` with score 280 and no objectives.
+- Playtest feedback:
+  - The new hub line makes the echoed route legible even if the player did not
+    listen to the sealed manifest doors before opening them.
+  - Boarding first feels better than jumping straight to the intercom because
+    it pays off one of the random-missed scenes and lets the player hear Mara's
+    final handoff as a deliberate second beat.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether the echoed passenger route
+    appears more often in normal play. If hard issues remain absent, continue
+    with remaining low-random Mara payoffs such as
+    `mara_last_dispatch_intercom`.
+
 # Cycle 41 Mara Manifest Handoff Intercom Discovery
 
 - Date: 2026-06-02
