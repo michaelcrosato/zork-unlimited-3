@@ -1090,6 +1090,12 @@ scenes:
       The line hisses, trying to turn the words into another order, but Mara
       finishes first: "Third car. First seat. Pull once."
     choices:
+      - id: carry_last_dispatch_into_car
+        label: Carry Mara's last dispatch into the third car
+        to: mara_last_dispatch_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_last_dispatch
         label: Board after Mara gives the last dispatch
         to: train_car
@@ -1940,6 +1946,22 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: ask_mara_for_train_car_dispatch
+        label: Ask Mara for one last dispatch before the release
+        to: mara_last_dispatch_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: read_mara_thumbprint
+            - notFlag: saw_mara_handoff
+            - notFlag: knows_badge_proof
+            - notFlag: heard_mara_last_dispatch
+        effects:
+          set:
+            heard_mara_last_dispatch: true
+            heard_mara_goodbye: true
       - id: listen_to_mara_intercom
         label: Listen to Mara before pulling the release
         to: mara_intercom
@@ -2542,7 +2564,7 @@ scenes:
   mara_last_dispatch_intercom:
     routeImportance: main
     text: >
-      The speaker repeats Mara's last dispatch, but the train cannot flatten it
+      The speaker carries Mara's last dispatch, and the train cannot flatten it
       into another order. Route held. Doors ready. Release authorized. Between
       each phrase you hear Mara breathing beside the signal, no longer asking
       permission from the ledger she kept alive. "That is the whole message,"

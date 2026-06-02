@@ -1,3 +1,117 @@
+# Cycle 24 Last-Dispatch Payoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_last_dispatch_intercom` easier to discover during
+  normal play without removing the existing train-car release pacing.
+- Why this matters: No consolidated blind-play digest is available yet, and
+  current cycle evidence shows health is green with all scenes reachable, but
+  random play usually misses `mara_last_dispatch_intercom`. The scene currently
+  requires two optional choices in a row after clearing Mara, so players who ask
+  for her final words can still miss the immediate payoff.
+- Planned work:
+  - Add a direct route from Mara's last-dispatch scene into the third-car
+    intercom payoff.
+  - Preserve the older route where the player boards first and then listens from
+    the train car.
+  - Add regression coverage for the new direct route and keep coverage for the
+    old route.
+- Work completed:
+  - Added `carry_last_dispatch_into_car` from `mara_last_dispatch` to
+    `mara_last_dispatch_intercom`.
+  - Added `ask_mara_for_train_car_dispatch` from `train_car`, giving players
+    who boarded first one more natural chance to ask for Mara's final dispatch.
+  - Both new choices set the same dispatch/goodbye flags as the existing
+    intercom branch.
+  - Updated story-path tests to assert the direct payoff route, the train-car
+    ask route, and the preserved board-then-listen route.
+- Evidence:
+  - Focused story-path suite passed: 132 tests.
+  - `npm run health` passed: format check, TypeScript, 176 tests, validation,
+    and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including
+    `mara_last_dispatch_intercom`, with zero unfinished runs.
+  - Actual CLI play used `ask_mara_for_last_dispatch`,
+    `carry_last_dispatch_into_car`, and
+    `pull_release_after_last_dispatch_goodbye`, reaching `true_ending` at score
+    293 with no active objectives.
+  - `npm run ai:cycle` was attempted. The wrapper wrote ignored `ai-runs/`
+    reports but its nested `codex exec` failed before gameplay with a
+    read-only filesystem app-server initialization error; post-agent automation
+    also refused auto-commit because the intended tracked files were already
+    dirty.
+  - Local commit was attempted with message
+    `Improve Mara last-dispatch discovery`, but the sandbox could not create
+    `.git/index.lock` because `.git` is read-only. No files were staged.
+- Playtest feedback:
+  - The direct choice makes the intercom payoff feel like a continuation of
+    Mara's dispatch instead of a second hidden optional listen after boarding.
+  - The train-car ask route gives players who skipped the earlier optional ask
+    a clearer contextual prompt at the release handle.
+  - The older board-then-listen route still works, so players who want the
+    concrete third-car scene before listening are not forced out of that pacing.
+  - The route remains clean at the ending: `heard_mara_last_dispatch` and
+    `heard_mara_goodbye` are set, inventory is intact, and no objectives remain.
+- Risks:
+  - Adds a second choice to a main route moment after Mara is cleared. The
+    labels need to remain clearly distinct: immediate intercom payoff versus
+    direct boarding.
+  - Commit/push must be performed by the outer loop or a shell with writable
+    `.git` access.
+- Next step:
+  - Verify the new branch reaches `true_ending`, then watch future random/blind
+    runs for whether `mara_last_dispatch_intercom` appears more often.
+
+# Cycle 24 Train-Car Last Dispatch Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_last_dispatch_intercom` more naturally
+  discoverable for players who clear Mara and immediately board the third car.
+- Why this matters: The top blind-play digest still has no consolidated
+  feedback, and Cycle 9 evidence shows health is strong while random play
+  still misses a few optional payoff scenes. The last-dispatch intercom is a
+  high-value Mara character beat, but normal play can bypass it by boarding
+  directly after clearing the ledger.
+- Planned work:
+  - Add a train-car choice to ask Mara for one last dispatch before pulling the
+    release.
+  - Preserve the existing generic Mara intercom and immediate release choices.
+  - Keep richer badge-proof, thumbprint, handoff, and manifest intercom routes
+    from being crowded by the new option.
+  - Add regression coverage for the new route through `true_ending`.
+- Work completed:
+  - Added `ask_mara_for_train_car_dispatch` from `train_car` for the basic
+    non-manifest, non-handoff, non-badge-proof Mara release route.
+  - Adjusted `mara_last_dispatch_intercom` wording so it reads cleanly whether
+    the dispatch was first heard in the booth or requested from the car.
+  - Added tests asserting the new choice appears alongside the existing generic
+    Mara intercom and reaches `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 132 tests.
+  - `npm run health` passed: format check, TypeScript, 176 tests,
+    validation, and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including
+    `mara_last_dispatch_intercom`, with zero unfinished runs.
+  - Actual CLI play used `ask_mara_for_train_car_dispatch` from the third car,
+    reached `mara_last_dispatch_intercom`, then reached `true_ending` at score
+    287 with no active objectives.
+- Playtest feedback:
+  - The new train-car option makes Mara's last dispatch feel like a natural
+    final question at the release handle instead of a payoff available only to
+    players who paused in `mara_released`.
+  - The immediate `pull_release` path remains available, so the final beat adds
+    discoverability without blocking players who already know what to do.
+  - The option is hidden from badge-proof, thumbprint, handoff, and manifest
+    variants, keeping the richest branches focused on their more specific
+    payoffs.
+- Risks:
+  - Adds one more choice to the basic train-car release moment. It is hidden
+    from the richer branch variants to limit choice clutter.
+- Next step:
+  - Run `npm run ai:cycle`, then commit and push if the evidence cycle stays
+    green.
+
 # Cycle 23 Pressure-Route Recovery Polish
 
 - Date: 2026-06-02
