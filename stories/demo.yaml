@@ -2274,6 +2274,13 @@ scenes:
       - id: pull_release_after_conductor_roll_call
         label: Pull the release after the conductor's final clear call
         to: passenger_conductor_true_ending
+        requires:
+          notFlag: punched_conductor_transfer
+      - id: pull_release_after_conductor_transfer
+        label: Pull the release after the conductor's punched transfer
+        to: passenger_conductor_transfer_true_ending
+        requires:
+          flag: punched_conductor_transfer
 
   passenger_conductor_count_roll_call:
     text: >
@@ -2759,6 +2766,16 @@ scenes:
       repeat his call down the platform until every open door sounds like work
       finished well, and Mara lets another worker's voice be the last one the
       line obeys.
+    choices: []
+
+  passenger_conductor_transfer_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once through the conductor's punched
+      transfer. Its star-shaped hole catches the first rain-bright light as it
+      passes from hand to hand: child, newspaper woman, lunch-tin worker, Mara,
+      then the old conductor last. No one asks where the ticket is valid
+      anymore. Morning has already accepted the change.
     choices: []
 
   passenger_keepsake_true_ending:

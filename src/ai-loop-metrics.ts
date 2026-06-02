@@ -75,7 +75,8 @@ const idealEndingGroups = [
           "passenger_answered_true_ending",
           "passenger_answered_boarding_true_ending",
           "passenger_answered_handoff_true_ending",
-          "passenger_conductor_true_ending"
+          "passenger_conductor_true_ending",
+          "passenger_conductor_transfer_true_ending"
         ]
       },
       {

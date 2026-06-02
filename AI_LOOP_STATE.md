@@ -52,62 +52,88 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Pay off Mara's optional last-dispatch beat in the third car.
-- Why this matters: Cycle 13 evidence showed the core route is healthy and
-  suggested investing in richer story depth. The direct Mara route already lets
-  players ask for her last dispatch before boarding, but the train-car intercom
-  did not remember that choice. A focused payoff makes the optional character
-  beat feel causal without changing the score model or route complexity.
+- Main objective: Pay off the conductor's punched-transfer branch with a
+  distinct ideal ending and complete the blind-playtesting infrastructure
+  follow-through from `GOALRESEARCH20260601.md`.
+- Why this matters: Current evidence showed route health is strong and
+  recommended richer story depth over more signposting. The answered-passenger
+  conductor route already let players ask for one last transfer punch, but that
+  optional beat collapsed back into the generic conductor ending. A focused
+  ending makes the choice feel causal while preserving the existing conductor
+  route.
 - Tasks:
-  - Add a last-dispatch-specific train-car intercom after
-    `ask_mara_for_last_dispatch`. Done.
-  - Gate the generic Mara/badge-proof goodbyes away when the dispatch-specific
-    payoff is available. Done.
-  - Update the existing last-dispatch regression test to follow the new payoff
-    into `true_ending`. Done.
-  - Run focused tests and story validation. Done.
+  - Add `passenger_conductor_transfer_true_ending` for punched-transfer
+    roll-call routes. Done.
+  - Keep non-transfer conductor roll-call routes on
+    `passenger_conductor_true_ending`. Done.
+  - Classify the new ending as ideal in scoring, playtest search, loop metrics,
+    and feedback consolidation. Done.
+  - Update conductor-route regression coverage for transfer and non-transfer
+    variants. Done.
+  - Wire real per-turn LLM blind decisions with validated JSON and deterministic
+    fallback telemetry. Done.
+  - Add maintained route-importance weighting and control-sensitive cluster tags
+    to blind feedback consolidation. Done.
+  - Add isolated worktree launch and artifact-only auto-commit support to
+    `playtest_loop.sh`. Done.
   - Run full health and an actual CLI playthrough. Done.
   - Run the evidence cycle. Done.
 - Evidence:
-  - Added `mara_last_dispatch_intercom`, reached from `train_car` when
-    `heard_mara_last_dispatch` is set.
-  - Added `notFlag: heard_mara_last_dispatch` to the generic direct-Mara
-    intercom choices so the specific payoff is the only optional goodbye after
-    asking for the dispatch.
-  - Updated the last-dispatch story-path test to assert the new intercom is
-    offered, the direct release fallback remains available, and the route
-    reaches `true_ending` at max score.
-  - Focused `npm test -- tests/story-paths.test.ts` passed with 112 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 115
-    scenes, 24 endings, all 115 reachable, and no warnings.
-  - `npm run health` passed with formatting, TypeScript, 133 tests, story
-    validation, and coverage playtest.
-  - Health coverage visited all 115 scenes including
-    `mara_last_dispatch_intercom`, had zero unfinished completed routes, best
-    score 100/100, average score 94.34, and 951 max-score runs.
-  - Actual CLI play followed the direct Mara route through
-    `ask_mara_for_last_dispatch`, `listen_to_last_dispatch_intercom`, and
-    `pull_release_after_last_dispatch_goodbye`, reaching `true_ending` at
-    100/100 with no remaining objectives.
+  - Added a flag-gated release choice in `passenger_conductor_roll_call`: generic
+    conductor routes still offer `pull_release_after_conductor_roll_call`, while
+    routes with `punched_conductor_transfer` offer
+    `pull_release_after_conductor_transfer`.
+  - Added ending text centered on the star-shaped transfer punch passing from
+    passenger to passenger into morning.
+  - Updated ideal-ending classification in `src/score.ts`, `src/playtest.ts`,
+    `src/ai-loop-metrics.ts`, and `src/consolidate-feedback.ts`.
+  - Added `src/playtest-route-importance.ts` and wired consolidation output to
+    show `[route:...]` and `[control:...]` metadata while multiplying priority
+    only for already-observed issues.
+  - Added per-turn decision prompts in `src/playtest-prompts.ts`, decision
+    parsing in `src/playtest-feedback.ts`, and LLM/fallback accounting in
+    `src/blind-playtester.ts`.
+  - Hardened `playtest_loop.sh` with `AI_PLAYTEST_WORKTREE`,
+    `AI_PLAYTEST_PUSH_BRANCH`, and artifact-only auto-commit/push retries.
+  - Focused blind subsystem tests passed:
+    `npm test -- tests/blind-playtester.test.ts tests/playtest-feedback.test.ts tests/consolidate-feedback.test.ts`
+    with 15 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 116
+    scenes, 25 endings, all 116 reachable, and no warnings.
+  - `npm run health` passed with formatting, TypeScript, 153 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 116 scenes including
+    `passenger_conductor_transfer_true_ending`, had zero unfinished runs, best
+    score 100/100, average score 94.58, and 1000 max-score runs.
+  - No-write blind playtest session passed:
+    `npm run playtest:session -- --persona goal_seeker --variant no_hints --max-turns 5 --seed 123 --no-write`.
+  - `bash -n playtest_loop.sh` passed.
+  - Actual CLI play followed the direct Mara route to `true_ending` at 100/100.
+  - Actual CLI play followed the answered-passenger conductor route through
+    `ask_conductor_to_punch_transfer`, `hear_transfer_conductor_roll_call`, and
+    `pull_release_after_conductor_transfer`, reaching
+    `passenger_conductor_transfer_true_ending` at 100/100.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    reports `ai-runs/cycle-2026-06-02T02-55-51-412Z.md` and
-    `ai-runs/cycle-2026-06-02T02-55-51-412Z-prompt.md`.
+    reports `ai-runs/cycle-2026-06-02T05-06-48-286Z.md` and
+    `ai-runs/cycle-2026-06-02T05-06-48-286Z-prompt.md`.
 - Playtest notes:
-  - The new intercom makes the last-dispatch choice feel remembered: the train
-    tries to repeat the dispatch as an order, but Mara reframes it as arrival.
-  - The direct release fallback remains available from `train_car`, so the
-    optional listen beat does not block players who want to act immediately.
-  - The route still uses `true_ending`, so this improves story payoff without
-    adding a score beat or ending variant.
+  - The transfer punch now has a complete arc: requested in the third car,
+    carried through the final clear call, then paid off in the ending.
+  - The generic conductor route still works when the transfer is not punched,
+    so the new branch adds payoff without taking away the simpler roll-call
+    resolution.
   - No bugs or dead ends were found in focused tests, validation, full health,
-    the actual CLI playthrough, or the evidence-only cycle.
+    or the actual CLI playthrough.
+  - The blind-playtesting loop can now produce genuinely turn-by-turn model
+    behavior when model commands are configured, while still staying unattended
+    and honest when a model returns invalid decision JSON.
 - Follow-up:
   - Continue favoring small character-payoff improvements while ideal-ending
     and max-score rates remain healthy.
-  - Watch for too many late train-car intercom variants making the direct route
-    feel over-fragmented.
+  - Consider whether the counted-manifest transfer route should eventually get
+    its own ending, or whether the current counted conductor ending is enough.
 - Risks:
-  - Adds one more scene to an already large late-game intercom surface.
+  - Adds one more tracked ideal ending, so evidence summaries are slightly wider.
 
 ## Last Completed Cycle
 

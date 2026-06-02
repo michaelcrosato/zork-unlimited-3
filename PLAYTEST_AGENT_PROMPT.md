@@ -10,6 +10,11 @@ The orchestrator (`src/blind-playtester.ts`) drives the game and shows you a **m
 no internal scene/choice ids, no choice destinations, no flags, no achievement model — so your
 "blindness" is enforced by construction, not just by trust.
 
+When configured as the live turn decider, you receive one masked screen at a time and must return
+only `{"choice": <visible number>, "reason": "..."}`. Invalid JSON or an out-of-range choice is
+recorded and the orchestrator falls back to the built-in persona heuristic so the loop keeps
+running honestly.
+
 ## Be brutally honest
 
 You didn't build this. Say exactly what confused, bored, or felt unfair. Don't pad with praise.

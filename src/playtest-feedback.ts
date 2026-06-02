@@ -88,6 +88,12 @@ export const RawFeedbackSchema = z.object({
 });
 export type RawFeedback = z.infer<typeof RawFeedbackSchema>;
 
+export const TurnDecisionSchema = z.object({
+  choice: z.number().int().min(0),
+  reason: z.string().optional()
+});
+export type TurnDecision = z.infer<typeof TurnDecisionSchema>;
+
 export const IssueSchema = RawIssueSchema.extend({
   id: z.string().min(1),
   scene: z.string().optional(),
@@ -104,6 +110,9 @@ export const FeedbackRecordSchema = z.object({
   persona: z.enum(PERSONAS),
   variant: z.enum(VARIANTS),
   story: z.string(),
+  decider: z.enum(["builtin", "llm"]).default("builtin"),
+  decision_parse_errors: z.number().int().min(0).default(0),
+  decision_fallbacks: z.number().int().min(0).default(0),
   turns: z.number().int().min(0),
   ended: z.boolean(),
   final_scene: z.string(),
@@ -128,6 +137,17 @@ export type FeedbackRecord = z.infer<typeof FeedbackRecordSchema>;
  * than crash the loop.
  */
 export function parseRawFeedback(text: string): RawFeedback | null {
+  return parseJsonFromText(text, RawFeedbackSchema);
+}
+
+export function parseTurnDecision(text: string): TurnDecision | null {
+  return parseJsonFromText(text, TurnDecisionSchema);
+}
+
+function parseJsonFromText<Schema extends z.ZodTypeAny>(
+  text: string,
+  schema: Schema
+): z.infer<Schema> | null {
   const candidates: string[] = [];
 
   const fenceRegex = /```(?:json)?\s*([\s\S]*?)```/gi;
@@ -145,7 +165,7 @@ export function parseRawFeedback(text: string): RawFeedback | null {
 
   for (const candidate of candidates.reverse()) {
     try {
-      const parsed = RawFeedbackSchema.safeParse(JSON.parse(candidate));
+      const parsed = schema.safeParse(JSON.parse(candidate));
       if (parsed.success) return parsed.data;
     } catch {
       // try the next candidate
@@ -165,6 +185,9 @@ export function toCompactLine(record: FeedbackRecord): string {
     model: record.model,
     persona: record.persona,
     variant: record.variant,
+    decider: record.decider,
+    decision_parse_errors: record.decision_parse_errors,
+    decision_fallbacks: record.decision_fallbacks,
     ended: record.ended,
     final_scene: record.final_scene,
     score: record.score,

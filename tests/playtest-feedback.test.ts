@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   FeedbackRecordSchema,
   parseRawFeedback,
+  parseTurnDecision,
   slugify,
   toCompactLine
 } from "../src/playtest-feedback.js";
@@ -27,6 +28,14 @@ describe("playtest feedback schema", () => {
     expect(parseRawFeedback(`{"issues":[]}`)).toBeNull(); // missing required verdict
   });
 
+  it("parses a per-turn choice decision", () => {
+    expect(parseTurnDecision(`\`\`\`json\n{"choice":2,"reason":"looks useful"}\n\`\`\``)).toEqual({
+      choice: 2,
+      reason: "looks useful"
+    });
+    expect(parseTurnDecision(`{"choice":"two"}`)).toBeNull();
+  });
+
   it("builds a compact line carrying evidence and positives", () => {
     const record = FeedbackRecordSchema.parse({
       run_id: "pt-1",
@@ -36,6 +45,9 @@ describe("playtest feedback schema", () => {
       persona: "goal_seeker",
       variant: "no_hints",
       story: "stories/demo.yaml",
+      decider: "llm",
+      decision_parse_errors: 1,
+      decision_fallbacks: 1,
       turns: 5,
       ended: true,
       final_scene: "good_ending",
@@ -60,6 +72,9 @@ describe("playtest feedback schema", () => {
 
     const parsed = JSON.parse(toCompactLine(record));
     expect(parsed.kept).toBe("intercom reveal landed");
+    expect(parsed.decider).toBe("llm");
+    expect(parsed.decision_parse_errors).toBe(1);
+    expect(parsed.decision_fallbacks).toBe(1);
     expect(parsed.issues[0].ev).toBe("three near-identical search options dragged");
     expect(parsed.issues[0].scene).toBe("locker");
     expect(parsed.parse_error).toBe(false);

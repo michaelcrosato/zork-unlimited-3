@@ -121,6 +121,8 @@ describe("consolidate feedback", () => {
     expect(digest).toContain("cheap-gate-death");
     expect(digest).toContain("[cross-model]");
     expect(digest).toContain("confuse-goal");
+    expect(digest).toContain("[route:main]");
+    expect(digest).toContain("[control:needs with_hints control]");
 
     // One-off S4 is parked, not promoted.
     expect(digest).toContain("### Do not overreact");
@@ -136,6 +138,72 @@ describe("consolidate feedback", () => {
     // Anti-fabrication: no hardcoded/placeholder themes (the Jules bug).
     expect(digest).not.toContain("Simulated");
     expect(digest).not.toContain("Most players");
+  });
+
+  it("weights main-path clusters above equivalent optional-path clusters", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "consolidate-route-"));
+    const sessionsFile = join(dir, "sessions.jsonl");
+    await writeFile(
+      sessionsFile,
+      [
+        line({
+          run_id: "main",
+          ts: "2026-06-01T10:00:00Z",
+          model: "builtin",
+          persona: "goal_seeker",
+          ended: false,
+          final_scene: "platform",
+          score: 30,
+          stuck_at: "platform",
+          issues: [
+            {
+              id: "main-route-wall",
+              sev: "S2",
+              category: "navigation",
+              scene: "platform",
+              confidence: "med",
+              ev: "main route stalled"
+            }
+          ]
+        }),
+        line({
+          run_id: "optional",
+          ts: "2026-06-01T11:00:00Z",
+          model: "builtin",
+          persona: "goal_seeker",
+          ended: false,
+          final_scene: "badge_memory",
+          score: 30,
+          stuck_at: "badge_memory",
+          issues: [
+            {
+              id: "optional-route-wall",
+              sev: "S2",
+              category: "navigation",
+              scene: "badge_memory",
+              confidence: "med",
+              ev: "optional route stalled"
+            }
+          ]
+        })
+      ].join("\n") + "\n",
+      "utf8"
+    );
+
+    const result = await consolidate({
+      sessionsFile,
+      digestFile: join(dir, "PLAYTEST_DIGEST.md"),
+      watermarkFile: join(dir, ".watermark"),
+      all: true,
+      now: new Date("2026-06-02T00:00:00Z"),
+      write: false
+    });
+
+    const main = result.clusters.find((cluster) => cluster.id === "main-route-wall");
+    const optional = result.clusters.find((cluster) => cluster.id === "optional-route-wall");
+    expect(main?.route).toBe("main");
+    expect(optional?.route).toBe("optional");
+    expect(main?.priority).toBeGreaterThan(optional?.priority ?? 0);
   });
 
   it("returns nothing when there are no new sessions", async () => {

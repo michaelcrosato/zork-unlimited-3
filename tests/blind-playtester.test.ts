@@ -1,9 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { runSession } from "../src/blind-playtester.js";
 import { FeedbackRecordSchema } from "../src/playtest-feedback.js";
+
+async function fakeAgent(dir: string, decision: string): Promise<string> {
+  const script = join(dir, "fake-agent.cjs");
+  await writeFile(
+    script,
+    `let input = "";
+process.stdin.on("data", (chunk) => input += chunk);
+process.stdin.on("end", () => {
+  if (input.includes('"choice"')) {
+    console.log(${JSON.stringify(decision)});
+  } else {
+    console.log(JSON.stringify({
+      verdict: "terse fake critique",
+      kept_working: "masked transcript was readable",
+      top3: [],
+      issues: []
+    }));
+  }
+});`,
+    "utf8"
+  );
+  return `node ${script}`;
+}
 
 describe("blind playtester (built-in decider)", () => {
   it("plays the demo blind and returns a valid record without any LLM", async () => {
@@ -50,5 +73,41 @@ describe("blind playtester (built-in decider)", () => {
 
     const verbose = JSON.parse(await readFile(join(dir, `${record.run_id}.json`), "utf8"));
     expect(verbose.final_scene).toBe(record.final_scene);
+  });
+
+  it("uses a configured LLM command as the per-turn blind decider", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "pt-agent-"));
+    const cmd = await fakeAgent(dir, JSON.stringify({ choice: 0, reason: "first visible option" }));
+    const record = await runSession({
+      seed: 1,
+      persona: "goal_seeker",
+      agentCmd: cmd,
+      maxTurns: 3,
+      write: false
+    });
+
+    expect(record.decider).toBe("llm");
+    expect(record.model).toBe("node");
+    expect(record.decision_parse_errors).toBe(0);
+    expect(record.decision_fallbacks).toBe(0);
+    expect(record.parse_error).toBe(false);
+    expect(record.kept_working).toBe("masked transcript was readable");
+  });
+
+  it("falls back to the built-in decider when a per-turn response is invalid", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "pt-agent-bad-"));
+    const cmd = await fakeAgent(dir, "not json");
+    const record = await runSession({
+      seed: 1,
+      persona: "goal_seeker",
+      agentCmd: cmd,
+      maxTurns: 2,
+      write: false
+    });
+
+    expect(record.decider).toBe("llm");
+    expect(record.decision_parse_errors).toBeGreaterThan(0);
+    expect(record.decision_fallbacks).toBe(record.decision_parse_errors);
+    expect(record.turns).toBeGreaterThan(0);
   });
 });

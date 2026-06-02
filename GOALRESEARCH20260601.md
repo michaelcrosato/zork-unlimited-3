@@ -91,8 +91,19 @@ AI_PLAYTEST_CMDS="claude -p;gemini -p" ./playtest_loop.sh             # the para
 The coding agent reads `PLAYTEST_DIGEST.md` (top section) at the start of each planning window
 (see `AI_AGENT_PROMPT.md`).
 
-## Open items
+## Implemented follow-through
 
-- Wire a real per-turn LLM decider (current default: persona heuristic + end-of-run LLM critique).
-- Run the parallel loop in its own worktree/container; enable `AI_PLAYTEST_AUTO_COMMIT` there.
-- Add route-importance weighting once a main-path scene list is maintained.
+- Real per-turn LLM decider is wired. When `AI_PLAYTEST_CMD` is configured, each turn uses the
+  masked screen plus persona prompt and validates a JSON `{ "choice": number }`; invalid responses
+  fall back to the deterministic persona heuristic and are counted in the feedback record.
+- The parallel loop can launch itself inside an isolated detached worktree via
+  `AI_PLAYTEST_WORKTREE=/path/to/worktree ./playtest_loop.sh`; `AI_PLAYTEST_AUTO_COMMIT=1` commits
+  and pushes only `PLAYTEST_DIGEST.md` and `playtest-feedback/sessions.jsonl` after consolidation.
+- Route-importance weighting is maintained in `src/playtest-route-importance.ts`; consolidation
+  tags ranked issues with `route:main|supporting|optional` and gives main-path clusters a priority
+  multiplier without fabricating issues.
+
+## Remaining open items
+
+- Run enough real multi-family blind sessions to produce the first non-empty `PLAYTEST_DIGEST.md`.
+- Keep the maintained main/supporting path list current as the story grows.

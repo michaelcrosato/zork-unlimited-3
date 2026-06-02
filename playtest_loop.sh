@@ -33,6 +33,11 @@ Environment:
   AI_PLAYTEST_WINDOW_HOURS Consolidation window. Default: 24.
   AI_PLAYTEST_AUTO_COMMIT  1 to commit+push the digest + sessions.jsonl after
                            each consolidation (rebase-retry). Default: 0.
+  AI_PLAYTEST_WORKTREE     Optional path for an isolated detached git worktree.
+                           If set from the main checkout, this script creates/
+                           reuses it and execs itself there.
+  AI_PLAYTEST_PUSH_BRANCH  Branch to push auto-commit artifacts to. Default:
+                           the branch that launched the isolated worktree.
 EOF
 }
 
@@ -44,6 +49,20 @@ fi
 if [[ ! -d node_modules ]]; then
   echo "node_modules not found; running npm install first."
   npm install
+fi
+
+if [[ -n "${AI_PLAYTEST_WORKTREE:-}" && "${AI_PLAYTEST_IN_WORKTREE:-0}" != "1" ]]; then
+  launch_branch="${AI_PLAYTEST_PUSH_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)}"
+  worktree_path="$AI_PLAYTEST_WORKTREE"
+  if [[ ! -e "$worktree_path/.git" ]]; then
+    mkdir -p "$(dirname "$worktree_path")"
+    git worktree add --detach "$worktree_path" HEAD
+  fi
+  echo "Switching blind playtest loop to isolated worktree: $worktree_path"
+  exec env \
+    AI_PLAYTEST_IN_WORKTREE=1 \
+    AI_PLAYTEST_PUSH_BRANCH="$launch_branch" \
+    bash "$worktree_path/playtest_loop.sh" "$@"
 fi
 
 PERSONAS=(${AI_PLAYTEST_PERSONAS:-methodical_lore_reader goal_seeker risk_taker casual_clicker completionist story_first systems_skeptic})
@@ -65,7 +84,38 @@ echo "Starting parallel blind playtesting loop."
 echo "Personas: ${PERSONAS[*]}"
 echo "Model pool: ${AI_PLAYTEST_CMDS:-<builtin decider>}"
 echo "Consolidating every ${WINDOW_HOURS}h into PLAYTEST_DIGEST.md."
+if [[ "${AI_PLAYTEST_IN_WORKTREE:-0}" == "1" ]]; then
+  echo "Isolated worktree mode: push branch ${AI_PLAYTEST_PUSH_BRANCH:-<current>}"
+fi
 echo "Press Ctrl-C to stop."
+
+auto_commit_feedback() {
+  local branch
+  branch="${AI_PLAYTEST_PUSH_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)}"
+
+  git add PLAYTEST_DIGEST.md playtest-feedback/sessions.jsonl 2>/dev/null || true
+  if git diff --cached --quiet -- PLAYTEST_DIGEST.md playtest-feedback/sessions.jsonl; then
+    echo "[auto-commit] no feedback artifact changes to commit"
+    return 0
+  fi
+
+  git commit -m "playtest: consolidate blind feedback digest" || return 0
+
+  for attempt in 1 2 3 4; do
+    git fetch origin "$branch" || true
+    git rebase "origin/$branch" || {
+      echo "[auto-commit] rebase failed; aborting and leaving local commit for inspection"
+      git rebase --abort 2>/dev/null || true
+      return 0
+    }
+    if git push origin "HEAD:$branch"; then
+      echo "[auto-commit] pushed feedback artifacts to $branch"
+      return 0
+    fi
+    echo "[auto-commit] push attempt $attempt failed; retrying"
+    sleep 2
+  done
+}
 
 last_consolidate=$(date +%s)
 i=0
@@ -95,10 +145,7 @@ while true; do
     node --import tsx src/consolidate-feedback.ts || true
     last_consolidate=$now
     if [[ "${AI_PLAYTEST_AUTO_COMMIT:-0}" == "1" ]]; then
-      git add PLAYTEST_DIGEST.md playtest-feedback/sessions.jsonl 2>/dev/null || true
-      git commit -m "playtest: consolidate blind feedback digest" 2>/dev/null || true
-      git pull --rebase origin "$(git rev-parse --abbrev-ref HEAD)" 2>/dev/null || true
-      git push origin "$(git rev-parse --abbrev-ref HEAD)" 2>/dev/null || true
+      auto_commit_feedback
     fi
   fi
 

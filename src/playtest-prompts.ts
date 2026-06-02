@@ -47,6 +47,44 @@ export interface CritiqueInput {
   turns: number;
 }
 
+export interface TurnDecisionInput {
+  persona: Persona;
+  variant: Variant;
+  scene: string;
+  turn: number;
+  recentChoices: string[];
+}
+
+/**
+ * Builds the per-turn blind-player prompt. The model sees only what a first-time
+ * player would see: prose, visible score/objectives if this is the with-hints
+ * control, and numbered labels. It must choose by visible index only.
+ */
+export function buildTurnDecisionPrompt(input: TurnDecisionInput): string {
+  const recent =
+    input.recentChoices.length === 0
+      ? "none"
+      : input.recentChoices.map((choice) => `- ${choice}`).join("\n");
+  return `You are a FIRST-TIME player of a text adventure. You have no code, no story file,
+no walkthrough, and no internal ids. Choose the next action using only the visible screen.
+
+Player style (${input.persona}): ${PERSONA_BRIEF[input.persona]}
+Variant: ${input.variant}
+Turn: ${input.turn}
+Recent visible choices:
+${recent}
+
+--- SCREEN START ---
+${input.scene}
+--- SCREEN END ---
+
+Return ONE JSON object and nothing else:
+{
+  "choice": <number from the visible Choices list>,
+  "reason": "terse player-facing reason"
+}`;
+}
+
 /**
  * Builds the end-of-run critique prompt. The model only ever sees the masked
  * transcript (no internal ids, destinations, flags, or achievement model).

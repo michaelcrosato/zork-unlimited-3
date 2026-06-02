@@ -110,13 +110,16 @@ metrics and maintainer feedback.
 
 A separate, parallel loop runs _blind_ playtests: a rotating persona plays the game through a
 masked interface (no internal ids, choice destinations, flags, or score model) and produces
-structured, brutally-honest feedback. Every 24h the feedback is consolidated into
-`PLAYTEST_DIGEST.md`, which the autonomous coding agent reads when planning the next window.
+structured, brutally-honest feedback. Configured model runs choose one turn at a time from that
+masked screen, with invalid decision JSON counted and safely falling back to the built-in persona
+heuristic. Every 24h the feedback is consolidated into `PLAYTEST_DIGEST.md`, which the autonomous
+coding agent reads when planning the next window.
 
 ```bash
 npm run playtest:session -- --persona goal_seeker --variant no_hints   # one blind run
 npm run playtest:consolidate -- --all                                  # rebuild the digest
 AI_PLAYTEST_CMDS="claude -p;gemini -p" ./playtest_loop.sh               # the parallel loop
+AI_PLAYTEST_WORKTREE=/tmp/zork-blind AI_PLAYTEST_AUTO_COMMIT=1 ./playtest_loop.sh
 ```
 
 With no `AI_PLAYTEST_CMD`/`AI_PLAYTEST_CMDS` set, a built-in decider plays and records honest

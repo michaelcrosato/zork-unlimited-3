@@ -13,6 +13,7 @@ import { runAgentCommand } from "./agent-runner.js";
 import {
   FeedbackRecordSchema,
   parseRawFeedback,
+  parseTurnDecision,
   slugify,
   toCompactLine,
   type FeedbackRecord,
@@ -23,7 +24,7 @@ import {
   PERSONAS,
   VARIANTS
 } from "./playtest-feedback.js";
-import { buildCritiquePrompt } from "./playtest-prompts.js";
+import { buildCritiquePrompt, buildTurnDecisionPrompt } from "./playtest-prompts.js";
 
 const DEFAULT_STORY = "stories/demo.yaml";
 const DEFAULT_MAX_TURNS = 40;
@@ -195,14 +196,19 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
   const agentCmd = options.agentCmd ?? process.env.AI_PLAYTEST_CMD;
   const write = options.write ?? true;
   const rng = mulberry32(seed);
+  const turnDeciderEnabled =
+    Boolean(agentCmd) && process.env.AI_PLAYTEST_TURN_DECIDER !== "0" && options.agentCmd !== "";
 
   const story = await loadStory(storyPath);
   let state = initialState(story);
   const turns: TurnEntry[] = [];
+  const recentVisibleChoices: string[] = [];
   const visitCount = new Map<string, number>();
   const takenPerScene = new Map<string, Set<string>>();
   let stuckAt: string | null = null;
   let stuckTurn = 0;
+  let decisionParseErrors = 0;
+  let decisionFallbacks = 0;
 
   for (let turn = 0; turn < maxTurns; turn++) {
     const observation = observe(story, state);
@@ -218,13 +224,39 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
 
     const view = maskObservation(observation, { includeObjectives: variant === "with_hints" });
     const taken = takenPerScene.get(sceneId) ?? new Set<string>();
-    const index = pickChoiceIndex(persona, view, taken, rng);
+    let index: number | null = null;
+
+    if (turnDeciderEnabled && agentCmd) {
+      const prompt = buildTurnDecisionPrompt({
+        persona,
+        variant,
+        scene: renderMaskedScene(view.masked),
+        turn,
+        recentChoices: recentVisibleChoices.slice(-5)
+      });
+      const result = await runAgentCommand(agentCmd, prompt, {
+        timeoutMs: options.timeoutMs ?? Number(process.env.AI_PLAYTEST_TIMEOUT_MS ?? 120000)
+      });
+      const decision = parseTurnDecision(result.output);
+      if (decision && view.masked.choices.some((choice) => choice.index === decision.choice)) {
+        index = decision.choice;
+      } else {
+        decisionParseErrors += 1;
+      }
+    }
+
+    if (index === null) {
+      decisionFallbacks += turnDeciderEnabled ? 1 : 0;
+      index = pickChoiceIndex(persona, view, taken, rng);
+    }
+
     const choiceId = view.choiceIds[index];
     const label = view.masked.choices[index].label;
     taken.add(choiceId);
     takenPerScene.set(sceneId, taken);
 
     turns.push({ turn, sceneId, chosenId: choiceId, chosenLabel: label });
+    recentVisibleChoices.push(label);
     state = choose(story, state, choiceId);
   }
 
@@ -273,6 +305,9 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
     persona,
     variant,
     story: storyPath,
+    decider: turnDeciderEnabled ? "llm" : "builtin",
+    decision_parse_errors: decisionParseErrors,
+    decision_fallbacks: decisionFallbacks,
     turns: turns.length,
     ended,
     final_scene: finalScene,

@@ -11,8 +11,10 @@ that the coding agent reads at the start of each planning window.
    stats, top stuck scenes, per-persona / per-model breakdown, parse-error rate.
 3. **Dedupe** issues by `id`; per cluster track frequency, max severity, unique personas, unique
    models, scenes, best confidence, a sample evidence snippet.
-4. **Rank** by `priority = severity_weight × frequency × unique_personas × confidence_weight`
-   (`S0=100 … S4=2`; confidence `high=1.5 med=1 low=0.6`).
+4. **Rank** by
+   `priority = severity_weight × frequency × unique_personas × confidence_weight × route_importance`
+   (`S0=100 … S4=2`; confidence `high=1.5 med=1 low=0.6`; route weights are maintained in
+   `src/playtest-route-importance.ts`).
 5. **Promote** a cluster only if: any `S0`/`S1`; `S2` seen in ≥2 sessions; `S3` in ≥4; or it spans
    ≥2 personas. Everything else is parked under **Do not overreact** (score-smoothing).
 6. Flag **cross-model agreement** (≥2 model families) as higher confidence.
@@ -37,7 +39,7 @@ the model's own weakness.
 ## Digest section layout (newest on top)
 
 `meta` (sessions, models, personas, parse-errors) · `quant` line · **Ranked issues** (`[sev cat]
-[freq/runs][personas][cross-model] id @scene — evidence (prio)`) · **Do not overreact** ·
+[freq/runs][personas][cross-model][route][control] id @scene — evidence (prio)`) · **Do not overreact** ·
 **Working (preserve)** · **Persisting / resolved** · **Next-window priorities** (machine-readable
 `yaml priorities:` block of `id` / `action` / `scenes` / `add_test`).
 

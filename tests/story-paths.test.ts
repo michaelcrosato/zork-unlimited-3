@@ -3071,13 +3071,15 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_roll_call");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_transfer"
     ]);
 
-    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    state = choose(story, state, "pull_release_after_conductor_transfer");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("star-shaped hole");
+    expect(observation.scene.text).toContain("Morning has already accepted the change");
     expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = conductorTransferState;
@@ -3087,12 +3089,15 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_roll_call");
     expect(observation.scene.text).toContain("not punching tickets");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_transfer"
+    ]);
 
-    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    state = choose(story, state, "pull_release_after_conductor_transfer");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
-    expect(observation.scene.text).toContain("conductor's clear signal");
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
     expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = choose(story, conductorIntercomState, "hear_final_conductor_roll_call");
@@ -3121,6 +3126,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("not punching tickets");
     expect(observation.scene.text).toContain("clear for Mara");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call"
+    ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
     observation = observe(story, state);

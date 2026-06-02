@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { runAgentCommand } from "./agent-runner.js";
 import { buildConsolidatorPrompt } from "./playtest-prompts.js";
 import { SEVERITY_WEIGHT, SEVERITIES } from "./playtest-feedback.js";
+import { routeImportance } from "./playtest-route-importance.js";
 
 type Severity = (typeof SEVERITIES)[number];
 
@@ -25,6 +26,7 @@ const IDEAL_ENDINGS = new Set([
   "passenger_answered_handoff_true_ending",
   "passenger_helped_true_ending",
   "passenger_conductor_true_ending",
+  "passenger_conductor_transfer_true_ending",
   "passenger_keepsake_true_ending",
   "passenger_newspaper_true_ending",
   "passenger_mitten_true_ending"
@@ -66,9 +68,13 @@ interface Cluster {
   freq: number;
   personas: Set<string>;
   models: Set<string>;
+  variants: Set<string>;
   scenes: Set<string>;
   confidence: string;
   evidence: string;
+  route: string;
+  routeWeight: number;
+  control: string;
   priority: number;
 }
 
@@ -127,9 +133,13 @@ function buildClusters(records: CompactRecord[]): Cluster[] {
           freq: 0,
           personas: new Set(),
           models: new Set(),
+          variants: new Set(),
           scenes: new Set(),
           confidence: issue.confidence ?? "med",
           evidence: issue.ev ?? "",
+          route: "unknown",
+          routeWeight: 1,
+          control: "unclassified",
           priority: 0
         };
         map.set(issue.id, cluster);
@@ -137,6 +147,7 @@ function buildClusters(records: CompactRecord[]): Cluster[] {
       cluster.freq += 1;
       cluster.personas.add(record.persona);
       cluster.models.add(record.model);
+      cluster.variants.add(record.variant);
       if (issue.scene) cluster.scenes.add(issue.scene);
       if (SEVERITY_ORDER[issue.sev] < SEVERITY_ORDER[cluster.sev]) cluster.sev = issue.sev;
       if (
@@ -150,11 +161,25 @@ function buildClusters(records: CompactRecord[]): Cluster[] {
   }
 
   for (const cluster of map.values()) {
+    const importance =
+      [...cluster.scenes]
+        .map((scene) => routeImportance(scene))
+        .sort((a, b) => b.weight - a.weight)[0] ?? routeImportance(undefined);
+    cluster.route = importance.label;
+    cluster.routeWeight = importance.weight;
+    const isSignpostingCluster = ["navigation", "goal", "signposting"].includes(cluster.category);
+    cluster.control =
+      isSignpostingCluster && !cluster.variants.has("with_hints")
+        ? "needs with_hints control"
+        : isSignpostingCluster && cluster.variants.has("with_hints")
+          ? "control observed"
+          : "not control-sensitive";
     cluster.priority =
       SEVERITY_WEIGHT[cluster.sev] *
       cluster.freq *
       cluster.personas.size *
-      (CONFIDENCE_WEIGHT[cluster.confidence] ?? 1);
+      (CONFIDENCE_WEIGHT[cluster.confidence] ?? 1) *
+      cluster.routeWeight;
   }
 
   return [...map.values()].sort((a, b) => b.priority - a.priority);
@@ -272,6 +297,8 @@ export async function consolidate(options: ConsolidateOptions = {}): Promise<Con
         sev: c.sev,
         freq: c.freq,
         personas: c.personas.size,
+        route: c.route,
+        control: c.control,
         scenes: [...c.scenes],
         evidence: c.evidence
       }))
@@ -339,7 +366,9 @@ export async function consolidate(options: ConsolidateOptions = {}): Promise<Con
       const scene = [...c.scenes][0] ?? "?";
       lines.push(
         `${i + 1}. [${c.sev} ${c.category}][${c.freq}/${records.length}][p${c.personas.size}]${crossModel} ` +
-          `${c.id} @${scene} — ${c.evidence || "(no snippet)"} (prio ${Math.round(c.priority)})`
+          `[route:${c.route}][control:${c.control}] ${c.id} @${scene} — ${
+            c.evidence || "(no snippet)"
+          } (prio ${Math.round(c.priority)})`
       );
     });
   }
