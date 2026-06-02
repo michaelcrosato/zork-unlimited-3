@@ -4320,9 +4320,64 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds).not.toContain("watch_mara_open_manifest");
+    expect(choiceIds).toContain("carry_mara_manifest_handoff_from_opened_doors");
     expect(choiceIds).toContain("board_with_opened_handoff_answers");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
+  });
+
+  it("carries Mara's opened-door handoff from the manifest hub into its intercom", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "return_from_mara_manifest_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_mara_manifest_handoff_from_opened_doors"
+    );
+
+    state = choose(story, state, "carry_mara_manifest_handoff_from_opened_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.scene.text).toContain("they still sound like people");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("lets the opened manifest handoff board into answered passengers from the hub", async () => {
@@ -4580,6 +4635,10 @@ describe("demo story critical paths", () => {
     expect(observation.choices[1]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
+    expect(choiceIds[2]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[2]?.label).toBe(
+      "Let the opened passengers finish Mara's count together"
+    );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -4640,6 +4699,51 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).not.toContain(
       "pull_release_with_manifest"
     );
+  });
+
+  it("lets opened passengers finish Mara's count directly from the manifest hub", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "let_opened_passengers_finish_count"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("pays off a direct release after reviewing Mara's opened manifest count", async () => {
@@ -8459,6 +8563,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "watch_mara_open_manifest",
       "review_open_manifest_count",
+      "let_opened_passengers_finish_count",
       "check_opened_manifest_blank_row",
       "return_opened_manifest_mitten",
       "match_opened_manifest_keepsakes",

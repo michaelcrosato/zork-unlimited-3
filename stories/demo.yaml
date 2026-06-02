@@ -1269,10 +1269,12 @@ scenes:
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
       a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
-      shaking rain from their ribs, shoulders shifting to make room, a crowd
-      pausing until someone holds the third-car threshold. Mara breathes
-      through the speaker and says, "Third car. I can hold the line steady
-      while they find the morning."
+      shaking rain from their ribs, passengers answering Mara's count before
+      it can make anyone last, shoulders shifting to make room, a crowd pausing
+      until someone holds the third-car threshold. Mara breathes through the
+      speaker and says, "Third car. I can hold the line steady while they find
+      the morning." When she has already called the opened doors once, the
+      third car speaker keeps a small waiting hiss for her handoff.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1290,6 +1292,28 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: carry_mara_manifest_handoff_from_opened_doors
+        label: Carry Mara's opened-door handoff into the third car
+        to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: let_opened_passengers_finish_count
+        label: Let the opened passengers finish Mara's count together
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
       - id: check_opened_manifest_blank_row
         label: Check the blank row in the opened manifest
         to: passenger_missing_count

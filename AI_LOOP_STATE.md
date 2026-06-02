@@ -1,3 +1,119 @@
+# Cycle 41 Mara Manifest Handoff Intercom Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_manifest_handoff_intercom` easier to reach from
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 41 random/coverage
+  evidence. Coverage reaches every scene, but random samples missed
+  `mara_manifest_handoff_intercom` and `passenger_manifest_handoff_true_ending`.
+  Once players watch Mara call the opened manifest doors, carrying that handoff
+  directly into the third car should be a clear next action.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing Mara manifest
+    handoff intercom after the player has watched the handoff.
+  - Preserve existing answered-passenger, count, thumbprint, room-making,
+    threshold, keepsake, and direct boarding routes.
+  - Add regression coverage proving the direct hub route reaches
+    `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action after the handoff
+    beat. This is acceptable because the action reuses an existing payoff and
+    appears only after the player has already asked Mara to call the opened
+    doors.
+- Status:
+  - Added `carry_mara_manifest_handoff_from_opened_doors` from
+    `passengers_released` directly to `mara_manifest_handoff_intercom` after
+    the player has watched Mara call the opened manifest doors.
+  - Revised the opened-manifest hub prose so Mara's prior handoff leaves a
+    visible third-car speaker cue.
+  - Added regression coverage for the direct hub route through
+    `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending`.
+  - Focused story-path suite passed: 166 tests.
+  - `npm run health` passed: format check, TypeScript, 210 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `mara_manifest_handoff_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `watch_mara_open_manifest` ->
+    `return_from_mara_manifest_handoff` ->
+    `carry_mara_manifest_handoff_from_opened_doors` ->
+    `pull_release_after_manifest_handoff_goodbye`, ending at
+    `passenger_manifest_handoff_true_ending` with score 296 and no objectives.
+- Playtest feedback:
+  - The new transition reads naturally after watching Mara call the opened
+    doors: the hub now makes the third-car speaker feel like a pending handoff
+    rather than a hidden train-car-only variant.
+  - Returning to the opened-manifest hub still leaves the answered-passenger,
+    count, thumbprint, threshold, room-making, keepsake, and direct boarding
+    options intact.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether
+    `mara_manifest_handoff_intercom` appears more often in normal play. If hard
+    issues remain absent, continue improving low-random Mara payoffs such as
+    `mara_last_dispatch_intercom` or passenger morning variants.
+
+# Cycle 45 Direct Counted Chorus Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_counted_chorus` easier to reach from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 45 random/coverage
+  evidence. Coverage reaches every scene, but random samples missed
+  `passenger_counted_chorus`; the opened-manifest hub already describes the
+  passengers as ordinary people answering Mara, so giving that count a direct
+  action should make the existing payoff easier to discover.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing
+    `passenger_counted_chorus` branch.
+  - Preserve the longer reviewed-count, missing-row, conductor, handoff,
+    threshold, room-making, keepsake, answered, and boarding routes.
+  - Update exact opened-manifest hub coverage and add a regression route that
+    reaches `passenger_counted_true_ending` through the new direct action.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because it reuses an existing branch and appears next to the already
+    related count-review choice.
+- Status:
+  - Added `let_opened_passengers_finish_count` from `passengers_released`
+    directly to `passenger_counted_chorus`, setting both
+    `reviewed_open_manifest_count` and `passengers_finished_reviewed_count`.
+  - Revised `passengers_released` prose so the opened-manifest hub visibly
+    includes passengers answering Mara's count before it can make anyone last.
+  - Updated exact hub choice-order coverage and added a regression route
+    through `passenger_counted_chorus` to `passenger_counted_true_ending`.
+  - Focused story-path suite passed: 166 tests.
+  - `npm run health` passed: format check, TypeScript, 210 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_counted_chorus`,
+    with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `let_opened_passengers_finish_count` ->
+    `pull_release_after_counted_chorus`, ending at
+    `passenger_counted_true_ending` with score 270 and no objectives.
+- Playtest feedback:
+  - The new hub line makes the count action feel like an immediate response to
+    what the opened passengers are already doing, not a hidden sub-branch.
+  - The direct action lands cleanly in the existing chorus scene and the ending
+    text pays off the no-one-left-last idea.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch random/blind samples for whether `passenger_counted_chorus` appears
+    more often in normal play. If hard issues remain absent, continue with
+    remaining low-random intercom payoffs such as `passenger_morning_intercom`
+    or `mara_last_dispatch_intercom`.
+
 # Cycle 44 Answered Passenger Intercom Discovery
 
 - Date: 2026-06-02
