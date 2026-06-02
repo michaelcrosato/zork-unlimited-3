@@ -2176,6 +2176,17 @@ scenes:
         effects:
           set:
             heard_passenger_mara_signoff: true
+      - id: listen_for_platform_morning_chorus
+        label: Listen for the passengers' remembered mornings
+        to: passenger_morning_chorus
+        requires:
+          all:
+            - notFlag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_morning_chorus: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car

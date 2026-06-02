@@ -1,3 +1,64 @@
+# Cycle 72 Passenger Platform Morning Chorus
+
+- Date: 2026-06-02
+- Main objective: Surface the remembered-morning passenger chorus from the
+  passenger platform.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full scene coverage, and
+  strong ideal-ending rates, so this cycle continues focused story-depth polish
+  on a normally reached late passenger route. The morning chorus already gives
+  the opened passengers a stronger sense of destination, but it was easiest to
+  find before crossing to the passenger platform; this makes that emotional cue
+  available at the platform pause too.
+- Planned work:
+  - Add a guarded `passenger_platform` choice that listens for the passengers'
+    remembered mornings.
+  - Reuse `passenger_morning_chorus` and `passenger_morning_intercom` instead
+    of adding another ending branch.
+  - Add focused route coverage for platform discovery, one-time choice
+    removal, boarding, and the existing morning payoff.
+  - Run focused tests, full health, and an actual CLI playthrough of the
+    changed route.
+- Risks:
+  - `passenger_platform` already has several optional vignettes. The new choice
+    is one-time and hidden once answered-name or gathered-passenger branches are
+    underway, so it should clarify the destination theme without crowding
+    committed routes.
+- Status:
+  - Completed.
+  - Added `listen_for_platform_morning_chorus` from `passenger_platform` to
+    the existing `passenger_morning_chorus` scene.
+  - Guarded the choice behind `heard_passenger_morning_chorus`,
+    `heard_passenger_answers`, and `helped_passengers_gather` so it remains a
+    one-time pre-commitment platform reflection.
+  - Added focused path coverage for platform discovery, returning to the
+    platform, one-time choice removal, boarding, the morning intercom, and the
+    existing passenger ideal ending.
+  - Focused story-path suite passed: 180 tests.
+  - `npm run health` passed: format check, TypeScript, 225 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `listen_for_platform_morning_chorus` ->
+    `cross_after_passenger_morning_chorus` ->
+    `listen_to_morning_chorus_from_boarding` ->
+    `pull_release_after_morning_chorus_boarding`, ending at
+    `passenger_true_ending` with score 286 and no objectives.
+  - The new beat works as a platform pause: the passengers already look to
+    Mara's speaker, so listening for their remembered mornings feels like a
+    natural response before boarding.
+  - Returning to `passenger_platform` after the chorus is clean; the choice does
+    not repeat, and the third-car route carries the remembered-morning payoff
+    into the final release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether passenger-platform players choose the
+    morning chorus before boarding. If it is skipped, tune the platform text or
+    label before adding more optional passenger vignettes.
+
 # Cycle 71 Mara Sign-Off Gathered Boarding
 
 - Date: 2026-06-02
