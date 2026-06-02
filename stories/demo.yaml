@@ -2734,6 +2734,15 @@ scenes:
         effects:
           set:
             heard_gathered_passengers: true
+      - id: check_lunch_tin_passengers_before_release
+        label: Check the lunch-tin count against the passengers in the aisle
+        to: passenger_lunch_tin_check
+        requires:
+          notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            checked_lunch_tin_passengers: true
+            heard_gathered_passengers: true
       - id: let_lunch_tin_count_become_roll_call
         label: Ask the worker to turn the latch-count into a final roster call
         to: passenger_lunch_tin_roll_call
@@ -4161,8 +4170,43 @@ scenes:
           set:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
+      - id: check_lunch_tin_passengers_from_intercom
+        label: Check the lunch-tin count against the boarded passengers
+        to: passenger_lunch_tin_check
+        requires:
+          notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            checked_lunch_tin_passengers: true
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
+        to: passenger_lunch_tin_true_ending
+
+  passenger_lunch_tin_check:
+    routeImportance: optional
+    text: >
+      You move down the aisle with the worker's latch-count instead of the
+      ledger's ink. The child lifts both mittens when the first click lands,
+      the newspaper woman taps her transfer against the seat rail on the
+      second, and the old conductor answers the third with a punch held in the
+      air until Mara's name is safe inside it. The worker waits for the last
+      click to be his own. Nobody is only a number now, and the release under
+      the first seat feels less like an escape than the end of a shift.
+    choices:
+      - id: carry_checked_lunch_tin_count_to_speaker
+        label: Carry the checked lunch-tin count to Mara's speaker
+        to: passenger_lunch_tin_intercom
+      - id: turn_checked_lunch_tin_count_into_roll_call
+        label: Turn the checked count into the final roster call
+        to: passenger_lunch_tin_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+            read_lunch_tin_roster: true
+      - id: pull_release_after_checked_lunch_tin_count
+        label: Pull the release after every passenger answers the count
         to: passenger_lunch_tin_true_ending
 
   passenger_lunch_tin_roster:

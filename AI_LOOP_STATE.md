@@ -1,3 +1,55 @@
+# Cycle 80 Lunch-Tin Passenger Check
+
+- Date: 2026-06-02
+- Main objective: Add a physical confirmation beat to the lunch-tin passenger
+  route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 11 evidence is healthy: all scenes are covered, no random
+  runs are unfinished, and the adaptive route naturally reached
+  `passenger_lunch_tin_true_ending`. That makes the lunch-tin route a good
+  target for story-depth polish rather than structural repair.
+- Planned work:
+  - Add an optional one-time `passenger_lunch_tin_check` scene from the
+    lunch-tin boarding and intercom route.
+  - Let checked players continue to the existing intercom, roll-call, or direct
+    release payoffs without adding another ending family.
+  - Preserve existing direct release and roster paths.
+  - Cover the new branch in focused story-path tests, then run health and an
+    actual playthrough.
+- Risks:
+  - The lunch-tin branch gains one more choice. It is optional and returns to
+    established payoff scenes, so it should add grounding without trapping
+    players or reducing route clarity.
+- Status:
+  - Completed.
+  - Added `passenger_lunch_tin_check`, reachable from the lunch-tin boarding
+    scene and from the lunch-tin intercom when it has not already been checked.
+  - The checked route sets `checked_lunch_tin_passengers` and can continue to
+    the existing lunch-tin intercom, final roster call, or direct ideal ending.
+  - Preserved the existing direct release, roster, and intercom routes.
+  - Focused story-path suite passed: 184 tests.
+  - `npm run health` passed: format check, TypeScript, 230 tests, validation,
+    and coverage playtest.
+  - Validation reports 146 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_lunch_tin_check`,
+    with zero unvisited scenes and zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `let_lunch_tin_worker_keep_count` -> `return_from_passenger_farewell` ->
+    `check_lunch_tin_passengers_before_release` ->
+    `carry_checked_lunch_tin_count_to_speaker` ->
+    `pull_release_after_lunch_tin_intercom`, ending at
+    `passenger_lunch_tin_true_ending` with score 319 and no objectives.
+  - The new check makes the worker's latch-count easier to read as a human
+    boarding count: the child, newspaper woman, old conductor, Mara, and the
+    worker are all accounted for before the release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether lunch-tin route players choose the check
+    before release. If it is skipped, tune the label before adding more
+    lunch-tin branch detail.
+
 # Cycle 79 Answered Passenger Check
 
 - Date: 2026-06-02

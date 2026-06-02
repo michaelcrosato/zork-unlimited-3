@@ -5962,6 +5962,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "check_lunch_tin_passengers_before_release",
       "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
@@ -5996,6 +5997,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_lunch_tin_roll_call",
+      "check_lunch_tin_passengers_from_intercom",
       "pull_release_after_lunch_tin_intercom"
     ]);
 
@@ -6032,6 +6034,37 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
 
     state = boardingState;
+    state = choose(story, state, "check_lunch_tin_passengers_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_check");
+    expect(observation.scene.text).toContain("Nobody is only a number now");
+    expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_lunch_tin_count_to_speaker",
+      "turn_checked_lunch_tin_count_into_roll_call",
+      "pull_release_after_checked_lunch_tin_count"
+    ]);
+
+    state = choose(story, state, "carry_checked_lunch_tin_count_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_lunch_tin_roster",
+      "hear_final_lunch_tin_roll_call",
+      "pull_release_after_lunch_tin_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = boardingState;
     state = choose(story, state, "let_lunch_tin_count_become_roll_call");
     observation = observe(story, state);
 
@@ -6049,6 +6082,21 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+
+    state = boardingState;
+    state = choose(story, state, "listen_to_lunch_tin_worker_from_boarding");
+    state = choose(story, state, "check_lunch_tin_passengers_from_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_check");
+    expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
+
+    state = choose(story, state, "turn_checked_lunch_tin_count_into_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
 
     state = boardingState;
     state = choose(story, state, "listen_to_lunch_tin_worker_from_boarding");
@@ -6237,6 +6285,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "check_lunch_tin_passengers_before_release",
       "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
@@ -7281,6 +7330,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "check_lunch_tin_passengers_before_release",
       "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
