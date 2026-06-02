@@ -1,3 +1,58 @@
+# Cycle 15 Passenger Mara Sign-Off
+
+- Date: 2026-06-02
+- Main objective: Add a focused story-depth beat to the passenger-manifest
+  route now that normal-play discoverability and route health are strong.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 15 evidence showed all scenes reachable, zero
+  unfinished random runs, and a 71% random ideal-ending rate. With core
+  guidance healthy, the highest-value improvement was richer late-game payoff
+  rather than another corrective branch.
+- Planned work:
+  - Add one optional post-release moment where Mara signs off directly to the
+    opened passenger manifest.
+  - Keep existing passenger count, morning chorus, lunch-tin, manifest handoff,
+    roll-call, and direct boarding routes intact.
+  - Gate the beat so it appears once before passengers have already answered or
+    gathered.
+  - Add regression coverage proving the new route returns cleanly and can still
+    finish through an ideal passenger ending.
+- Work completed:
+  - Added `ask_mara_to_sign_off_opened_manifest` from `passengers_released` to
+    new optional scene `passenger_mara_signoff`.
+  - Added `heard_passenger_mara_signoff` gating so the prompt disappears after
+    use.
+  - Added return, cross-platform, and direct-board choices from the new scene,
+    all feeding existing passenger routes.
+  - Added story-path regression coverage for the new scene, one-time prompt,
+    objective preservation, and completion through `passenger_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 136 tests.
+  - `npm run health` passed: format check, TypeScript, 180 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 126 reachable scenes and 26 endings.
+  - Health coverage visited all 126 scenes, including
+    `passenger_mara_signoff`, with zero unfinished runs.
+  - Actual CLI play used `ask_mara_to_sign_off_opened_manifest`, then
+    `board_after_passenger_mara_signoff`, and reached `passenger_true_ending`
+    at score 277 with no active objectives.
+- Playtest feedback:
+  - The new beat gives Mara a human, non-bureaucratic sign-off to the passengers
+    before the final release, strengthening the passenger route's emotional
+    payoff.
+  - The text reads naturally after every manifest door opens: Mara tells the
+    passengers they were held, not late, and the crowd starts moving together.
+  - Direct boarding and all existing passenger-development choices remain
+    visible, so the new moment adds depth without blocking momentum.
+- Risks:
+  - `passengers_released` now has one more optional choice in its initial list.
+    Future blind sessions should watch whether this still feels deliberate
+    rather than crowded.
+- Next step:
+  - Let blind playtest consolidation identify whether late passenger choice
+    density is becoming a soft issue; otherwise continue adding small
+    route-specific emotional payoffs or improve transcript/report critique.
+
 # Cycle 11 Thumbprint-Handoff Discovery
 
 - Date: 2026-06-02

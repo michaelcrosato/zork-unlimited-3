@@ -6748,6 +6748,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "review_open_manifest_count",
       "listen_to_passenger_morning_chorus",
+      "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
       "watch_mara_open_manifest",
       "listen_to_passenger_answers",
@@ -6975,6 +6976,68 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "board_after_passenger_morning_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+
+    state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("adds a one-time Mara sign-off for the opened passenger manifest", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "ask_mara_to_sign_off_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mara_signoff");
+    expect(observation.scene.text).toContain("You are not late. You were held.");
+    expect(observation.scene.text).toContain("no one boards alone");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_mara_signoff",
+      "cross_after_passenger_mara_signoff",
+      "board_after_passenger_mara_signoff"
+    ]);
+
+    const returnedState = choose(story, state, "return_from_passenger_mara_signoff");
+    observation = observe(story, returnedState);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "ask_mara_to_sign_off_opened_manifest"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain("listen_to_passenger_answers");
+
+    state = choose(story, state, "board_after_passenger_mara_signoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");

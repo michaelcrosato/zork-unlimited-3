@@ -1196,6 +1196,17 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: ask_mara_to_sign_off_opened_manifest
+        label: Ask Mara to sign off to the opened passengers
+        to: passenger_mara_signoff
+        requires:
+          all:
+            - notFlag: heard_passenger_mara_signoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_mara_signoff: true
       - id: follow_lunch_tin_latch
         label: Follow the lunch-tin latch toward the third car
         to: passenger_farewell
@@ -1274,6 +1285,26 @@ scenes:
         to: passenger_platform
       - id: board_after_passenger_morning_chorus
         label: Board the third car with the morning chorus behind you
+        to: train_car
+
+  passenger_mara_signoff:
+    routeImportance: optional
+    text: >
+      Mara keys the booth speaker, then stops before the line can make her
+      voice official. "Warden Street," she says, softer than a dispatch and
+      steadier than an apology. "You are not late. You were held. The doors are
+      open now, and no one boards alone." The passengers answer not with a
+      cheer but with movement: hands finding handles, shoulders turning toward
+      the third car, small proofs of life making room for one another.
+    choices:
+      - id: return_from_passenger_mara_signoff
+        label: Return to the opened manifest doors
+        to: passengers_released
+      - id: cross_after_passenger_mara_signoff
+        label: Cross the platform after Mara's sign-off
+        to: passenger_platform
+      - id: board_after_passenger_mara_signoff
+        label: Board the third car after Mara signs off
         to: train_car
 
   passenger_manifest_count:
