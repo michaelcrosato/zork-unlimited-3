@@ -2216,26 +2216,18 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_echoed_boarding");
     expect(observation.scene.text).toContain("sounds you heard behind the stamped");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_echoed_manifest_from_boarding",
       "reach_release_with_echoed_manifest"
     ]);
 
-    state = choose(story, state, "reach_release_with_echoed_manifest");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_echoed_manifest_intercom",
-      "pull_release_with_manifest"
-    ]);
-
-    state = choose(story, state, "listen_to_echoed_manifest_intercom");
+    state = choose(story, state, "listen_to_echoed_manifest_from_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("same small sounds you heard behind the");
     expect(observation.scene.text).toContain("Now let the line hear them leaving");
-    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_echoed_manifest_goodbye"
     ]);

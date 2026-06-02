@@ -1,3 +1,51 @@
+# Cycle 8 Echoed Manifest Boarding Payoff
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `passenger_echoed_boarding`
+  payoff without adding a new ending or broadening early-game pressure.
+- Why this matters: The current evidence is green and fully reachable, but
+  random normal play still under-sampled `passenger_echoed_boarding` compared
+  with coverage. The branch already has a strong moment where the player boards
+  while the stamped-door sounds follow them; the matching intercom payoff should
+  be available there, not only after routing through the generic train-car
+  scene.
+- Work completed:
+  - Added `listen_to_echoed_manifest_from_boarding`, a direct choice from
+    `passenger_echoed_boarding` to the existing
+    `passenger_echoed_manifest_intercom`.
+  - Set `heard_mara_goodbye` on the direct choice to match the existing
+    train-car intercom route.
+  - Preserved `reach_release_with_echoed_manifest`, so players can still move
+    through the generic release scene if they skip the intercom beat.
+  - Updated regression coverage for the echoed-manifest route through
+    `passenger_echoed_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 116 tests.
+  - Actual CLI play used `listen_to_echoed_manifest_from_boarding` and reached
+    `passenger_echoed_true_ending` at 100/100 with no active objectives.
+  - `npm run health` passed: format check, TypeScript, 160 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.52, and 1237 max-score runs.
+  - Coverage-path hits for `passenger_echoed_true_ending` rose to 25.
+- Playtest feedback:
+  - The new branch reads naturally because the boarding scene already says Mara
+    leaves the speaker open and the train needs to hear waiting turn into
+    boarding.
+  - The boarding scene now has two choices: hear the echoed intercom payoff or
+    follow the echoes straight to the release.
+  - No route bugs, dangling objectives, or score issues appeared in the focused
+    playthrough.
+- Next step:
+  - Watch whether random play now samples the echoed manifest ending more often
+    without increasing unfinished or non-ideal pressure.
+- Risks:
+  - Late passenger branches are choice-dense in aggregate; keep future work
+    focused on consolidating or clarifying existing hubs rather than adding more
+    parallel endings.
+
 # Cycle 6 Answered Passenger Boarding Discoverability
 
 - Date: 2026-06-02

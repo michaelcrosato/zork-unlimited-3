@@ -1375,6 +1375,12 @@ scenes:
       recognize the rhythm. Mara leaves the speaker open, as if the train needs
       to hear that waiting has turned into boarding.
     choices:
+      - id: listen_to_echoed_manifest_from_boarding
+        label: Listen as the boarded echoes answer Mara
+        to: passenger_echoed_manifest_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: reach_release_with_echoed_manifest
         label: Follow the familiar echoes to the emergency release
         to: train_car
