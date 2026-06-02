@@ -1,3 +1,55 @@
+# Cycle 68 Handoff Intercom Pre-Boarding Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `mara_handoff_intercom`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied cycle evidence is green overall, but the random sample
+  missed `mara_handoff_intercom` while coverage reached it. The handoff payoff
+  currently requires a player to watch Mara leave the booth, cross with her,
+  board the train, and then choose a second listen action; making the listen
+  available at the handoff boarding beat better matches the fiction.
+- Planned work:
+  - Add a direct pre-boarding handoff intercom choice from
+    `mara_handoff_boarding`.
+  - Keep the direct emergency-release boarding route available.
+  - Preserve the torn-thumbprint handoff as the stronger clue-specific branch.
+  - Update focused path coverage for the new route and changed choice list.
+  - Run health and play the changed route through the CLI or MCP.
+- Risks:
+  - Adding one more choice to `mara_handoff_boarding` could slightly slow the
+    late-game route, but it is only shown after the player has already chosen
+    the optional physical handoff branch.
+- Status:
+  - Completed.
+  - Added `listen_to_handoff_before_boarding` from `mara_handoff_boarding` to
+    `mara_handoff_intercom`.
+  - Kept `board_after_mara_handoff` available so players can still go straight
+    to the release.
+  - Guarded the new generic handoff listen behind `notFlag: read_mara_thumbprint`
+    so the torn-thumbprint handoff remains the stronger clue-specific
+    pre-boarding payoff.
+  - Updated focused story-path coverage for the new route and revised choice
+    lists.
+  - Focused story-path suite passed: 177 tests.
+  - `npm run health` passed: format check, TypeScript, 222 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `watch_mara_leave_booth` ->
+    `return_from_mara_handoff` -> `listen_to_handoff_before_boarding` ->
+    `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 275 and no objectives.
+  - The new beat better matches the fiction: once Mara is physically walking
+    the platform, the player can listen to her far-door handoff before entering
+    the car instead of discovering that payoff only after boarding.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch random and blind playtest sessions for whether
+    `mara_handoff_intercom` appears more consistently. If it remains missed,
+    tune the handoff choice label or route `watch_mara_leave_booth` directly
+    through a stronger prompt.
+
 # Cycle 67 MCP Plain-Text Failure Diagnostics
 
 - Date: 2026-06-02
