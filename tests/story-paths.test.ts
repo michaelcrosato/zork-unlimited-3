@@ -1751,6 +1751,61 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("preserves the badge-proof payoff after asking for Mara's last dispatch", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "inspect_notice_back",
+      "take_lantern_after_notice_back",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "ask_mara_for_last_dispatch",
+      "board_after_last_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_badge_proof_after_last_dispatch"
+    );
+
+    state = choose(story, state, "listen_to_badge_proof_after_last_dispatch");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_badge_proof_intercom");
+    expect(observation.scene.text).toContain("Badge proof required");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_badge_proof_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_badge_proof_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expectIdealScore(observation.score);
+  });
+
   it("adds an optional last-dispatch beat after clearing Mara's ledger row", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
