@@ -1,3 +1,50 @@
+# Cycle 63 Lunch-Tin Roll-Call Bridge
+
+- Date: 2026-06-02
+- Main objective: Let the lunch-tin boarding beat flow into the broader final
+  passenger roll call without removing its direct ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 58 evidence shows healthy coverage and high ideal-ending
+  rates. The best focused improvement is richer late-game route texture: the
+  lunch-tin worker already sets a practical boarding rhythm, so players should
+  be able to turn that rhythm into the shared roll-call payoff instead of only
+  choosing between lunch-tin-specific flavor and immediate release.
+- Planned work:
+  - Preserve direct `passenger_lunch_tin_true_ending` release.
+  - Add an optional bridge from `passenger_lunch_tin_boarding` to
+    `passenger_roll_call_epilogue`.
+  - Add regression coverage for the bridge and its final
+    `passenger_roll_call_true_ending`.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The lunch-tin boarding scene gains one more choice. The direct release and
+    roster/intercom beats remain available, so pacing stays under player
+    control.
+- Status:
+  - Completed.
+  - Added `let_lunch_tin_count_become_roll_call` from
+    `passenger_lunch_tin_boarding` to `passenger_roll_call_epilogue`.
+  - Preserved direct lunch-tin release, lunch-tin intercom, and roster branches.
+  - Extended regression coverage through `passenger_roll_call_true_ending`.
+  - Focused story-path suite passed: 175 tests.
+  - `npm run health` passed: format check, TypeScript, 219 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed the lunch-tin pace route through
+    `let_lunch_tin_count_become_roll_call` and
+    `pull_release_after_final_roll_call`, ending at
+    `passenger_roll_call_true_ending` with score 298 and no objectives.
+- Playtest feedback:
+  - The bridge reads naturally because the worker's latch-count is already
+    framed as a practical rhythm for the crowd.
+  - The direct `passenger_lunch_tin_true_ending` remains one click away, so the
+    added choice improves depth without forcing extra pacing.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind sessions for whether late passenger scenes now feel too dense;
+    if so, tune choice ordering before adding another branch.
+
 # Cycle 62 Manifest Answers Boarding Bridge
 
 - Date: 2026-06-02

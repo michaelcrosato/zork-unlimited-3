@@ -5646,6 +5646,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
 
@@ -5689,6 +5690,24 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = boardingState;
+    state = choose(story, state, "let_lunch_tin_count_become_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_final_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_final_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
@@ -5851,6 +5870,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
 
@@ -6862,6 +6882,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
+      "let_lunch_tin_count_become_roll_call",
       "pull_release_after_lunch_tin_boarding"
     ]);
   });
