@@ -1,3 +1,61 @@
+# Cycle 22 Home Sign Dispatch Recovery
+
+- Date: 2026-06-02
+- Main objective: Add a clearer recoverable Mara beat inside the late HOME-sign
+  hazard without removing the existing lost-ending pressure.
+- Why this matters: The current tree already contains the suggested
+  `morning_clock_catch_up` improvement and subsequent route polish. Health is
+  strong, coverage is complete, and no consolidated blind-play blockers are
+  available, so the best next move is small playable depth on a normal-player
+  danger route that can still end at `lost_ending`.
+- Planned work:
+  - Add an optional Mara interruption from `home_sign_echo`.
+  - Teach the practical recovery set in-world: map for morning, or clock token,
+    fuse, badge, and ledger for rescue.
+  - Preserve the existing good ending, service-room recovery, HOME grip, and
+    lost-ending branches.
+- Work completed:
+  - Added `home_sign_dispatch`, where Mara breaks through the false HOME image
+    and names the recovery route.
+  - Added `listen_under_home_sign` from `home_sign_echo` and three exits:
+    morning transfer, service-room recovery, or letting HOME drown Mara out into
+    the existing grip scene.
+  - Added regression coverage for the new scene's text, flags, choices,
+    objective hints, and full recovery to `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 127 tests.
+  - `npm run health` passed: format check, TypeScript, 171 tests, validation,
+    and coverage playtest.
+  - Health validation reported 123 reachable scenes and 26 endings.
+  - Health coverage visited all 123 scenes, including `home_sign_dispatch`, with
+    zero unfinished runs.
+  - Actual CLI play used `listen_under_home_sign` and
+    `turn_back_after_home_sign_dispatch`, recovered the clock token, fuse,
+    badge, and ledger route, and reached `true_ending` at score 268 with no
+    active objectives.
+  - Actual CLI terminal play used `listen_under_home_sign`,
+    `let_home_sign_drown_mara`, and `surrender_to_home_sign`, reaching
+    `lost_ending` at score 52 with no active objectives.
+- Playtest feedback:
+  - The new beat makes the HOME hazard feel less like a pure trap: Mara names
+    the player-facing choice in plain fiction while the false sign remains
+    tempting.
+  - The service-room return is understandable because the next objectives
+    explicitly point to the stopped clock token and Mara badge proof.
+  - The terminal branch still escalates cleanly from warning, to dispatch, to
+    grip, to loss; the new recovery clue does not remove the player's ability
+    to make the bad choice.
+  - The route intentionally skips optional personnel/radio flavor, so the score
+    is lower than richer true-ending routes but still coherent.
+- Risks:
+  - Adds another option to an already recoverable warning branch. Watch random
+    and blind transcripts for whether the extra choice improves clarity or
+    makes the HOME sequence feel over-signposted.
+- Next step:
+  - Watch blind-play feedback for whether players who reach the HOME sign now
+    understand the difference between morning escape and full rescue, then
+    tighten choice labels if they still treat the branch as arbitrary.
+
 # Cycle 21 Early Escape Platform Glance
 
 - Date: 2026-06-02

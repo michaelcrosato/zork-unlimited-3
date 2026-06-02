@@ -3154,8 +3154,46 @@ scenes:
         to: good_ending
         requires:
           item: map
+      - id: listen_under_home_sign
+        label: Listen for Mara beneath the HOME sign
+        to: home_sign_dispatch
+        requires:
+          notFlag: heard_home_sign_dispatch
+        effects:
+          set:
+            heard_home_sign_dispatch: true
+            met_mara: true
+            knows_token_location: true
+            knows_badge_proof: true
       - id: let_home_sign_finish
         label: Let HOME finish spelling itself
+        to: home_sign_grip
+        effects:
+          set:
+            felt_home_sign_grip: true
+
+  home_sign_dispatch:
+    routeImportance: optional
+    text: >
+      You listen past the porch light and hear the station speaker stuttering
+      under it. "That is not home," Mara says, each word dragging through static
+      and brake dust. "Map for morning if you leave. Clock token, fuse, badge,
+      ledger if you come back for us." The HOME sign brightens, but now it has
+      to compete with a real voice.
+    choices:
+      - id: cover_home_sign_after_dispatch
+        label: Cover the sign with the map and take the morning transfer
+        to: good_ending
+        requires:
+          item: map
+      - id: turn_back_after_home_sign_dispatch
+        label: Turn back for the clock token, fuse, badge, and ledger
+        to: service_room
+        effects:
+          set:
+            escaped_home_sign_dispatch: true
+      - id: let_home_sign_drown_mara
+        label: Let HOME drown Mara out
         to: home_sign_grip
         effects:
           set:
