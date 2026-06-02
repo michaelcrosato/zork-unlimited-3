@@ -3330,6 +3330,11 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "make_room_for_passengers_in_third_car"
     );
+    expect(observation.choices.map((choice) => choice.id).slice(-3)).toEqual([
+      "make_room_for_passengers_in_third_car",
+      "hold_third_car_threshold",
+      "board_third_car_with_passengers"
+    ]);
     expect(
       observation.choices.find((choice) => choice.id === "make_room_for_passengers_in_third_car")
         ?.label
@@ -5554,8 +5559,8 @@ describe("demo story critical paths", () => {
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",
-      "hold_third_car_threshold",
       "make_room_for_passengers_in_third_car",
+      "hold_third_car_threshold",
       "board_third_car_with_passengers"
     ]);
 
@@ -7683,8 +7688,8 @@ describe("demo story critical paths", () => {
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",
-      "hold_third_car_threshold",
       "make_room_for_passengers_in_third_car",
+      "hold_third_car_threshold",
       "board_third_car_with_passengers"
     ]);
 

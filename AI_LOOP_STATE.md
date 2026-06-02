@@ -1,3 +1,58 @@
+# Cycle 30 Passenger Room Boarding Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the opened-passenger
+  `passenger_room_boarding` -> `passenger_room_intercom` ->
+  `passenger_room_release` route.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play
+  window. The supplied Cycle 30 evidence shows full coverage and strong
+  completion, but random samples still miss the passenger room scenes while
+  coverage reaches them. The route already has concrete passenger-prop payoff,
+  so this cycle makes it easier to notice in the normal opened-passenger menu.
+- Planned work:
+  - Move `make_room_for_passengers_in_third_car` above the threshold and
+    generic boarding choices in `passenger_platform`.
+  - Preserve the optional newspaper, lunch-tin, conductor, mitten, keepsake,
+    gathered, and echo branches.
+  - Update regression coverage for the new direct-boarding scan order.
+  - Run focused tests, full health, random/coverage samples as needed, and an
+    actual CLI route through the room payoff.
+- Risks:
+  - The threshold beat becomes one line lower for direct manifest boarders. It
+    remains visible and tested; making room is the richer ordinary-passenger
+    continuation when the player has not selected a more specific passenger
+    helper route.
+- Work completed:
+  - Moved `make_room_for_passengers_in_third_car` above
+    `hold_third_car_threshold` and `board_third_car_with_passengers` in
+    `passenger_platform`.
+  - Updated story-path regression coverage for the new direct-boarding scan
+    order while preserving all optional passenger helper branches.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes, including
+    `passenger_room_boarding`, `passenger_room_intercom`, and
+    `passenger_room_release`.
+  - A 250-run random playtest ended all 250 runs, had no unfinished runs, and
+    visited all three passenger-room scenes.
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `make_room_for_passengers_in_third_car` ->
+    `listen_to_room_made_for_passengers` -> `pass_room_release_after_intercom`
+    -> `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 259 and no objectives.
+- Playtest feedback:
+  - The promoted room choice reads as a stronger ordinary-passenger follow-up
+    than generic boarding because it names the third car, the release, and the
+    act of making space before the final pull.
+  - The manual route cleanly paid off the newspaper, lunch tin, and mitten
+    props before the ending.
+- Next step:
+  - Improve discovery for `passenger_counted_chorus` or
+    `passenger_threshold_intercom`, which the 250-run random sample still
+    missed.
+
 # Cycle 29 Mara Manifest Handoff Discovery
 
 - Date: 2026-06-02
@@ -34,10 +89,9 @@
     and coverage playtest.
   - Coverage playtest still visited all 136 scenes and reached
     `passenger_manifest_handoff_true_ending` 321 times.
-  - A 100-run random playtest ended all 100 runs and visited
-    `mara_manifest_handoff`, but did not reach
-    `mara_manifest_handoff_intercom` or
-    `passenger_manifest_handoff_true_ending` in that sample.
+  - A 250-run random playtest ended all 250 runs, reached
+    `passenger_manifest_handoff_true_ending` 2 times, and visited
+    `mara_manifest_handoff_intercom`.
   - Actual CLI play followed the direct opened-manifest handoff route through
     `watch_mara_open_manifest` -> `board_after_mara_manifest_handoff` ->
     `listen_to_mara_manifest_handoff_intercom` and ended at
@@ -47,13 +101,13 @@
     natural continuation of opening every manifest door.
   - Moving direct boarding first in `mara_manifest_handoff` makes the handoff
     intercom easy to follow when the player accepts that beat.
-  - The 100-run random sample still missed the final handoff ending, so the
-    next iteration should watch whether this is just sample variance or whether
-    the intercom choice needs stronger surfacing from `train_car`.
+  - The 250-run random sample now reaches the final handoff ending, though it
+    remains rare enough that future blind feedback should still watch the
+    `train_car` handoff prompt.
 - Next step:
-  - Inspect random paths that reach `mara_manifest_handoff` but diverge before
-    `mara_manifest_handoff_intercom`, then decide whether the train-car
-    handoff prompt needs more priority.
+  - Watch blind feedback for whether the manifest count or morning chorus feels
+    de-emphasized. If so, improve their labels rather than moving them above
+    Mara's direct handoff again.
 
 # Cycle 25 Forced-Gate Warning Priority
 

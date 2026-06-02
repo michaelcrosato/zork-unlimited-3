@@ -1692,18 +1692,6 @@ scenes:
         effects:
           set:
             echoed_manifest_boarded: true
-      - id: hold_third_car_threshold
-        label: Hold the third-car threshold while the passengers board
-        to: passenger_threshold_boarding
-        requires:
-          all:
-            - notFlag: heard_passenger_echoes
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-            - notFlag: reviewed_open_manifest_count
-        effects:
-          set:
-            held_passenger_threshold: true
       - id: make_room_for_passengers_in_third_car
         label: Make room inside the third car before reaching for the release
         to: passenger_room_boarding
@@ -1717,6 +1705,18 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
+      - id: hold_third_car_threshold
+        label: Hold the third-car threshold while the passengers board
+        to: passenger_threshold_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
