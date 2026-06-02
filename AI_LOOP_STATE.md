@@ -12,91 +12,69 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Improve normal-play discovery for the answered-passenger
-  Mara handoff route.
-- Why this matters: Cycle 8 evidence showed all scenes reachable, but random
-  play under-sampled `passenger_answered_handoff_intercom`,
-  `passenger_answered_handoff_roll_call`, and
-  `passenger_answered_handoff_true_ending`. Those scenes are strong payoffs for
-  Mara sharing the manifest duty, but the previous path required players to
-  watch Mara's opened-door handoff, return or continue into the passenger
-  answer hub, then board from there. A direct boarding continuation makes the
-  route legible from the moment the handoff is happening.
+- Main objective: Improve normal-play discovery for the conductor final
+  roll-call payoff.
+- Why this matters: Cycle 9 evidence showed all scenes reachable under coverage
+  play, but the 100-run random sample still missed
+  `passenger_conductor_roll_call`. Players who already chose the old conductor
+  route could still jump straight from the conductor intercom or transfer beat
+  to the ending, skipping one of the clearest passenger-worker payoffs. Holding
+  the release for the final clear call makes the conductor route read as a
+  complete action instead of a late optional aside.
 - Tasks:
-  - Add a direct choice from `mara_manifest_handoff` to the existing
-    answered-handoff boarding scene. Done.
-  - Preserve the existing answer hub, manifest thumbprint, generic handoff,
-    return, and direct train-car boarding routes. Done.
-  - Set the same route flags the longer answered-handoff path relies on. Done.
-  - Update focused story-path regression coverage. Done.
-  - Run validation, full health, and an actual CLI playthrough. Done.
-  - Run evidence cycle before commit. Done.
+  - Route the direct conductor-clear intercom action through the regular or
+    counted conductor roll-call scene before release. Done.
+  - Route the conductor transfer shortcut through the regular or counted
+    conductor roll-call scene before release. Done.
+  - Preserve the explicit roll-call choices and final conductor ending. Done.
+  - Update focused story-path regression coverage for regular, transfer, and
+    reviewed-count variants. Done.
+  - Run focused tests, validation, random/coverage samples, full health, and an
+    actual CLI playthrough. Done.
 - Evidence:
-  - Added `board_with_mara_answered_handoff` to `mara_manifest_handoff`.
-  - The new choice routes directly to `passenger_answered_handoff_roll_call`
-    and sets `heard_passenger_answers` plus `heard_answered_passengers`.
-  - Existing `continue_manifest_handoff_roll_call` still reaches
-    `passenger_answers`, so players can take the broader passenger hub instead
-    of boarding immediately.
-  - Updated `tests/story-paths.test.ts` exact-choice coverage for
-    `mara_manifest_handoff`.
-  - Added a focused direct-route regression that reaches
-    `passenger_answered_handoff_roll_call` ->
-    `passenger_answered_handoff_intercom` ->
-    `passenger_answered_handoff_true_ending` at max score.
+  - Replaced the direct `pull_release_after_conductor_clearance` ending jump
+    with `hold_for_conductor_roll_call_before_release` and
+    `hold_for_conductor_count_before_release`.
+  - Replaced the direct `pull_release_after_transfer_punch` ending jump with
+    `hold_for_transfer_conductor_roll_call` and
+    `hold_for_transfer_conductor_count`.
+  - The new held-release choices set `heard_final_roll_call` and route to the
+    appropriate conductor roll-call scene before the existing final release
+    choice.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 111 tests.
   - `npm run cyoa -- validate stories/demo.yaml --json` passed with 112 scenes,
     24 endings, all 112 reachable, and no warnings.
-  - Manual CLI play followed `watch_mara_open_manifest` ->
-    `board_with_mara_answered_handoff` ->
-    `listen_to_answered_handoff_after_roll_call` ->
-    `pull_release_after_answered_handoff_intercom`, reaching
-    `passenger_answered_handoff_true_ending` at 100/100 with no objectives.
+  - A 100-run random sample ended 100/100 runs, had zero unfinished runs, and
+    now visited `passenger_conductor_roll_call`.
+  - A 100-run coverage sample visited all 112 scenes, had zero unfinished
+    completed routes, kept best score 100/100, averaged 94.62, and produced
+    923 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 132 tests, validation,
     and coverage playtest.
-  - Health coverage visited all 112 scenes including
-    `passenger_answered_handoff_roll_call`,
-    `passenger_answered_handoff_intercom`, and
-    `passenger_answered_handoff_true_ending`, had zero unfinished runs, best
-    score 100/100, average score 94.62, and 923 max-score runs.
-  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T02-02-53-461Z.md`.
-  - Evidence-cycle health checks passed, including random and coverage
-    playtests.
-  - Evidence-cycle random play ended all 100 runs, had zero unfinished runs,
-    visited `passenger_answered_handoff_roll_call`,
-    `passenger_answered_handoff_intercom`, and
-    `passenger_answered_handoff_true_ending`, and reached
-    `passenger_answered_handoff_true_ending` 3 times.
-  - Evidence-cycle coverage visited all 112 scenes with zero unfinished runs.
-  - Evidence-cycle MCP validation passed with 112 reachable scenes and no
-    warnings.
-  - Evidence-cycle MCP random play ended all 250 runs with zero unfinished
-    runs.
-  - Evidence-cycle required MCP route reached `true_ending` at 100/100, and
-    the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
-    100/100.
-  - Evidence-cycle long-run signals remained stable: random ideal-ending rate
-    74%, random max-score rate 74%, average score 82.1, and non-ideal pressure
-    at bad 7%, lost 3%, escape 2%.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `follow_conductor_signal_to_third_car` ->
+    `ask_conductor_to_punch_transfer` ->
+    `hold_for_transfer_conductor_roll_call` ->
+    `pull_release_after_conductor_roll_call`, reaching
+    `passenger_conductor_true_ending` at 100/100 with no objectives.
 - Playtest notes:
-  - The new choice reads naturally from `mara_manifest_handoff`: Mara is
-    already handing steadiness from name to name, so boarding with that handoff
-    feels like a direct continuation instead of a detour.
-  - The existing longer route remains useful for players who want to inspect
-    passenger memories or choose other passenger-led payoffs.
-  - The route finishes with the intended distinct ending and no objective,
-    scoring, or reachability regressions.
+  - The conductor route now keeps its physical release action visible while
+    making the player wait for the old conductor to finish clearing the doors.
+  - The transfer beat flows cleanly into the roll call: the punched transfer
+    becomes proof that the passengers can change trains, then the conductor
+    calls each door clear.
+  - The first manual script used an outdated choice ID and stopped at
+    `passengers_released`; rerunning with the actual `listen_to_passenger_answers`
+    hub choice completed the intended route.
 - Follow-up:
-  - Evidence now points at `passenger_conductor_roll_call` as the next
-    normal-play discovery gap.
-  - Consider a focused conductor-route clarity pass, or playtest strategy
-    weighting, rather than adding more final scenes.
+  - Recheck random ending distribution after a larger evidence cycle; this
+    change improves scene visibility without changing the number of endings.
+  - Watch for late-game routes becoming too linear if more optional final
+    beats are made mandatory.
 - Risks:
-  - Adding another choice to `mara_manifest_handoff` increases branch density at
-    a late-game hub.
-  - The route should remain a shortcut into an existing payoff, not a reason to
-    duplicate the answered-passenger hub.
+  - The conductor route is one beat longer on direct release attempts.
+  - Choice labels now say "hold the release" instead of "pull the release," so
+    the scene text must keep the emergency release physically present.
 
 ## Last Completed Cycle
 

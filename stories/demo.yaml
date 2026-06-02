@@ -2109,9 +2109,26 @@ scenes:
         effects:
           set:
             punched_conductor_transfer: true
-      - id: pull_release_after_conductor_clearance
-        label: Pull the release on the conductor's clear signal
-        to: passenger_conductor_true_ending
+      - id: hold_for_conductor_roll_call_before_release
+        label: Hold the release until the conductor clears every door
+        to: passenger_conductor_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: hold_for_conductor_count_before_release
+        label: Hold the release until the conductor clears the counted manifest
+        to: passenger_conductor_count_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - flag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_final_roll_call: true
 
   passenger_conductor_transfer:
     text: >
@@ -2142,9 +2159,26 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
-      - id: pull_release_after_transfer_punch
-        label: Pull the release while the punched transfer passes hand to hand
-        to: passenger_conductor_true_ending
+      - id: hold_for_transfer_conductor_roll_call
+        label: Hold the release while the punched transfer becomes a clear call
+        to: passenger_conductor_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: hold_for_transfer_conductor_count
+        label: Hold the release while the punched transfer carries the count
+        to: passenger_conductor_count_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - flag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_final_roll_call: true
 
   passenger_conductor_roll_call:
     text: >
