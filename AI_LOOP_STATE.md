@@ -1,14 +1,14 @@
-# Cycle 59 Roster-to-Intercom Recovery
+# Cycle 64 Roster-to-Intercom Recovery
 
 - Date: 2026-06-02
 - Main objective: Improve normal-play discovery of `passenger_lunch_tin_intercom`
   after players inspect the lunch-tin roster.
 - Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
-  window, and the supplied Cycle 59 random evidence missed
-  `passenger_lunch_tin_intercom` while coverage proved it reachable. The
-  lunch-tin route already had a strong roster clue, but reading that roster
-  removed the more embodied third-car intercom beat unless the player had
-  listened first.
+  window, and the supplied Cycle 64 evidence names
+  `passenger_lunch_tin_roll_call` as the remaining normal-play discovery target.
+  The lunch-tin route already had a strong roster clue, but reading that roster
+  could skip the embodied third-car intercom beat that teaches the worker's
+  count as movement before the roster-specific roll call.
 - Planned work:
   - Preserve direct `passenger_lunch_tin_true_ending` releases.
   - Preserve the roster-specific roll-call branch.
