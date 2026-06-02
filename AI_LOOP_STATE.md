@@ -12,59 +12,59 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a small transfer-column proof beat to deepen the
-  passenger newspaper route.
+- Main objective: Add a small lunch-tin roster proof beat to deepen the
+  passenger lunch-tin route.
 - Why this matters: Current evidence shows true-ending guidance and route
   completion are healthy, so the next improvement should strengthen story depth
   on an existing high-value passenger route without adding another ending or
-  changing scoring. The newspaper route already names Warden Street as a way
-  out; letting the blank transfer column fill in gives that route a clearer
-  object-level payoff before the release.
+  changing scoring. The lunch-tin route already frames the worker as someone
+  turning counting back into care; letting the player read his improvised shift
+  roster gives that route a clearer object-level payoff before the release.
 - Tasks:
-  - Add an optional one-time transfer-column scene after the newspaper memory.
+  - Add an optional one-time lunch-tin roster scene after the lunch-tin intercom.
     Done.
-  - Route the scene cleanly back into the existing newspaper intercom and ending.
-    Done.
-  - Preserve existing direct newspaper, conductor, keepsake, and mitten routes.
-    Done.
+  - Route the scene cleanly into the existing lunch-tin ending. Done.
+  - Preserve existing direct lunch-tin release and final roll-call routes. Done.
   - Update focused story-path regression coverage. Done.
-  - Run validation, full health, an actual CLI/MCP playthrough, and the evidence
-    cycle. Done.
+  - Run validation, full health, an actual CLI/MCP playthrough, and commit/push
+    when green. Done.
 - Evidence:
-  - Added `passenger_newspaper_transfer`, reachable once from
-    `passenger_newspaper_memory`.
-  - The new scene sets `studied_newspaper_transfer` and returns through
-    `carry_newspaper_transfer_to_third_car` to `passenger_newspaper_intercom`.
+  - Added `passenger_lunch_tin_roster`, reachable once from
+    `passenger_lunch_tin_intercom`.
+  - The new scene sets `read_lunch_tin_roster` and routes through
+    `pull_release_after_lunch_tin_roster` to the existing
+    `passenger_lunch_tin_true_ending`.
   - Updated `tests/story-paths.test.ts` to assert the optional beat, its flag,
-    and the route back into the existing newspaper intercom payoff.
-  - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 109 scenes,
-    24 endings, all 109 reachable, and no warnings.
-  - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
+    and the route into the existing lunch-tin payoff.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 108 tests.
+  - `npm run health` passed with formatting, TypeScript, 129 tests, validation,
     and coverage playtest.
-  - Health coverage visited all 109 scenes including
-    `passenger_newspaper_transfer`, with zero unfinished runs and best score
+  - Health validation passed with 110 scenes, 24 endings, all 110 reachable, and
+    no warnings.
+  - Health coverage visited all 110 scenes including
+    `passenger_lunch_tin_roster`, had zero unfinished runs, and kept best score
     100/100.
-  - Manual CLI play followed `ask_newspaper_woman_about_stop` ->
-    `study_newspaper_transfer_column` -> `carry_newspaper_transfer_to_third_car`
-    -> `hear_final_newspaper_roll_call` ->
-    `pull_release_after_newspaper_roll_call`, reaching
-    `passenger_newspaper_true_ending` at 100/100 with no objectives.
+  - Manual CLI play followed `listen_to_lunch_tin_worker_from_boarding` ->
+    `read_lunch_tin_roster` -> `pull_release_after_lunch_tin_roster`, reaching
+    `passenger_lunch_tin_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T01-22-46-602Z.md`.
+    report `ai-runs/cycle-2026-06-02T01-34-31-697Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play visited `passenger_newspaper_transfer`, ended all
+  - Evidence-cycle random play visited `passenger_lunch_tin_roster`, ended all
     100 runs, and had zero unfinished runs.
-  - Evidence-cycle coverage visited all 109 scenes with zero unfinished runs.
-  - Evidence-cycle MCP validation passed, the required MCP route reached
-    `true_ending` at 100/100, and the adaptive MCP route reached
-    `passenger_lunch_tin_true_ending` at 100/100.
+  - Evidence-cycle coverage visited all 110 scenes with zero unfinished runs.
+  - Evidence-cycle MCP validation passed with 110 reachable scenes and no
+    warnings.
+  - Evidence-cycle MCP random play ended all 250 runs with zero unfinished runs.
+  - Evidence-cycle required MCP route reached `true_ending` at 100/100, and the
+    adaptive MCP route reached `passenger_lunch_tin_true_ending` at 100/100.
 - Playtest notes:
-  - The new transfer-column beat makes the newspaper route's promised
-    Warden-Street-to-morning path feel more concrete before the final roll call.
+  - The new roster beat makes the worker's count feel personal rather than
+    purely rhythmic: he names the child, newspaper woman, conductor, Mara, and
+    himself before clocking everyone out.
   - The branch reads as an optional object payoff, not a required clue; direct
-    boarding and other passenger help routes remain available.
+    lunch-tin release and the broader final roll-call route remain available.
   - No objective, scoring, reachability, or unfinished-run regressions were
     found in focused tests, full health, manual CLI play, or evidence-cycle MCP
     routes.
@@ -76,7 +76,7 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 - Risks:
   - Extra optional beats can make late passenger routes feel over-segmented if
     labels are too similar or if random routes linger before ending.
-  - The new transfer-column beat should remain an optional character/object
+  - The new lunch-tin roster beat should remain an optional character/object
     payoff, not a required mechanical clue.
 
 ## Last Completed Cycle

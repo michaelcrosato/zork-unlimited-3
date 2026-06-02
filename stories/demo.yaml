@@ -2153,6 +2153,14 @@ scenes:
       never ended," she says through the speaker. "Let that be the last thing
       the line counts. Pull the release while they are moving together."
     choices:
+      - id: read_lunch_tin_roster
+        label: Read the shift roster tucked inside the lunch tin
+        to: passenger_lunch_tin_roster
+        requires:
+          notFlag: read_lunch_tin_roster
+        effects:
+          set:
+            read_lunch_tin_roster: true
       - id: hear_final_lunch_tin_roll_call
         label: Hear the lunch-tin worker set the final roll call
         to: passenger_roll_call_epilogue
@@ -2163,6 +2171,18 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
+        to: passenger_lunch_tin_true_ending
+
+  passenger_lunch_tin_roster:
+    text: >
+      Folded under the tin's lid is a shift roster softened by steam. The
+      worker has written the passenger names in the margin whenever the line
+      tried to make him count tickets instead of people. Child with red
+      mitten. Newspaper woman. Old conductor. Dispatcher Vale. At the bottom,
+      his own name waits beside the words CLOCK OUT AFTER EVERYONE ELSE.
+    choices:
+      - id: pull_release_after_lunch_tin_roster
+        label: Pull the release after the worker clocks everyone out
         to: passenger_lunch_tin_true_ending
 
   passenger_mitten_intercom:

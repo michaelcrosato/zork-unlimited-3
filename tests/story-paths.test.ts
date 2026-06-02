@@ -2664,6 +2664,55 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("adds an optional lunch-tin roster proof before the lunch-tin ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "let_lunch_tin_worker_keep_count",
+      "return_from_passenger_farewell",
+      "listen_to_lunch_tin_worker_from_boarding",
+      "read_lunch_tin_roster"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster");
+    expect(observation.scene.text).toContain("CLOCK OUT AFTER EVERYONE ELSE");
+    expect(observation.scene.text).toContain("Dispatcher Vale");
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_roster"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
