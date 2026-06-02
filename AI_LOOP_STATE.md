@@ -1,3 +1,132 @@
+# Cycle 40 Direct Opened Manifest Answers
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_manifest_answers` easier to discover from
+  the opened manifest doors.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window
+  yet, so Cycle 40 follows current random/coverage evidence. Coverage reaches
+  `passenger_manifest_answers`, but the 250-run MCP random sample still missed
+  it. The scene is a strong payoff because the manifest stops being Mara's
+  solo count and becomes passengers answering for themselves before release.
+- Planned work:
+  - Add an optional `passengers_released` choice directly into
+    `passenger_manifest_answers`.
+  - Reuse `manifest_names_answered_once` and `heard_mara_goodbye` so the new
+    route behaves like the existing third-car intercom version.
+  - Preserve the existing passenger-answer, keepsake, count, morning-chorus,
+    and direct boarding routes.
+  - Add regression coverage proving the direct opened-manifest answer route
+    reaches `passenger_manifest_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest menu gains one optional choice. This is acceptable
+    because the scene already foregrounds ordinary passenger sounds, and the
+    new route uses existing downstream content instead of adding another
+    ending.
+- Work completed:
+  - Added `let_opened_manifest_names_answer_once` from `passengers_released`
+    directly to `passenger_manifest_answers`.
+  - Set `manifest_names_answered_once` and `heard_mara_goodbye` on the direct
+    path so it shares state with the established manifest intercom route.
+  - Added regression coverage for the direct opened-manifest answer route into
+    `passenger_manifest_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 156 tests.
+  - `npm run health` passed: format check, TypeScript, 200 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `let_opened_manifest_names_answer_once` ->
+    `pull_release_after_manifest_answers`, ending at
+    `passenger_manifest_true_ending` with score 276 and no objectives.
+- Playtest feedback:
+  - The new option reads naturally from `passengers_released` because that
+    scene already names the lunch tin, child's laugh, and umbrellas. Letting
+    those opened names answer before boarding feels like a direct payoff, not a
+    detour.
+  - The ending text cleanly carries the same motif forward: ordinary sounds
+    become footsteps, and the passengers finish the count in morning air.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_manifest_answers`
+    appears more often in ordinary play. If hard issues stay absent, continue
+    promoting remaining normal-random misses such as
+    `passenger_threshold_intercom`, `mara_last_dispatch_intercom`, or
+    `home_sign_echo`.
+- Commit/push status:
+  - Blocked in this sandbox because `.git` is mounted read-only and `git
+    commit` could not create `.git/index.lock`. The worktree is left green for
+    the outer loop to commit and push.
+
+# Cycle 36 Opened Handoff Answer Discovery
+
+- Date: 2026-06-02
+- Main objective: Make the answered-passenger handoff route easier to discover
+  from the opened-manifest hub after Mara has called the doors.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 36 evidence was behind the current checkout:
+  several suggested misses were already promoted and covered. A fresh 250-run
+  random sample on the live tree ended all runs with zero unfinished runs and
+  visited every scene except `passenger_answered_handoff_intercom`,
+  `passenger_answered_handoff_roll_call`, and
+  `passenger_answered_handoff_true_ending`. Those scenes are a strong payoff
+  for Mara handing the roll call to passengers who can answer for themselves.
+- Planned work:
+  - Add a gated post-handoff option from `passengers_released` into the
+    existing `passenger_answered_handoff_roll_call`.
+  - Keep the initial opened-manifest choice list unchanged by requiring
+    `saw_mara_manifest_handoff`.
+  - Reuse `heard_passenger_answers` and `heard_answered_passengers` so the
+    branch behaves like the established answered-passenger handoff route.
+  - Add regression coverage through `passenger_answered_handoff_intercom` and
+    `passenger_answered_handoff_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more option after the player has already
+    taken the Mara handoff beat. This is acceptable because the new option is
+    gated behind that setup and does not crowd the first view of the hub.
+- Work completed:
+  - Added `board_with_opened_handoff_answers` from `passengers_released` to
+    `passenger_answered_handoff_roll_call`.
+  - Gated the new choice behind `saw_mara_manifest_handoff` so the first
+    opened-manifest menu is unchanged.
+  - Reused `heard_passenger_answers` and `heard_answered_passengers` to align
+    the branch with the existing answered-handoff state.
+  - Added regression coverage through `passenger_answered_handoff_roll_call`,
+    `passenger_answered_handoff_intercom`, and
+    `passenger_answered_handoff_true_ending`.
+- Evidence:
+  - Fresh pre-change 250-run random sample ended all 250 runs, had zero
+    unfinished runs, and missed only the answered-handoff branch.
+  - Focused story-path suite passed: 157 tests.
+  - `npm run health` passed: format check, TypeScript, 201 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `watch_mara_open_manifest` -> `return_from_mara_manifest_handoff` ->
+    `board_with_opened_handoff_answers` ->
+    `listen_to_answered_handoff_after_roll_call` ->
+    `pull_release_after_answered_handoff_intercom`, ending at
+    `passenger_answered_handoff_true_ending` with score 308 and no objectives.
+  - Post-change 250-run random sample ended all 250 runs, had zero unfinished
+    runs, reached `passenger_answered_handoff_true_ending` once, and had no
+    unvisited scenes.
+- Playtest feedback:
+  - The new option reads naturally after returning from Mara's opened-door
+    handoff: the hub already contains the opened manifest sounds, and the
+    label makes the player action about letting Mara hand the roll call to the
+    passengers rather than simply boarding.
+  - The branch stages cleanly from hub choice to roll-call scene, intercom
+    confirmation, and ideal ending. No objectives or choices remained dangling.
+- Next step:
+  - Watch future blind-play samples for whether the opened-manifest hub now
+    feels crowded after handoff. If hard issues stay absent, prioritize richer
+    late-game critique/reporting or another soft pacing improvement from the
+    next consolidated digest.
+
 # Cycle 35 Direct Opened Manifest Blank Row
 
 - Date: 2026-06-02

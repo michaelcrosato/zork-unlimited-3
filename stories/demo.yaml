@@ -1334,6 +1334,30 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: let_opened_manifest_names_answer_once
+        label: Let the opened manifest names answer once
+        to: passenger_manifest_answers
+        requires:
+          all:
+            - notFlag: manifest_names_answered_once
+            - notFlag: heard_mara_goodbye
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            manifest_names_answered_once: true
+            heard_mara_goodbye: true
+      - id: board_with_opened_handoff_answers
+        label: Board as Mara hands the roll call to the passengers
+        to: passenger_answered_handoff_roll_call
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
+            heard_answered_passengers: true
       - id: board_with_answered_passengers
         label: Board as the passengers carry their own names
         to: passenger_answered_boarding

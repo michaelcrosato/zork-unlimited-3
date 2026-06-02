@@ -4136,8 +4136,68 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds).not.toContain("watch_mara_open_manifest");
+    expect(choiceIds).toContain("board_with_opened_handoff_answers");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
+  });
+
+  it("lets the opened manifest handoff board into answered passengers from the hub", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "return_from_mara_manifest_handoff",
+      "board_with_opened_handoff_answers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_roll_call");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.scene.text).toContain("handoff instead of a duty");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_handoff_after_roll_call"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_handoff_after_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_handoff_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_handoff_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("lets Mara's manifest handoff lead directly into the threshold beat", async () => {
@@ -8114,6 +8174,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
       "listen_to_passenger_answers",
+      "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
       "board_after_releasing_passengers"
     ]);
@@ -8344,6 +8405,52 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets the opened manifest names answer directly before boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "let_opened_manifest_names_answer_once"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_answers");
+    expect(observation.scene.text).toContain("a car full of people proving");
+    expect(observation.state.flags.manifest_names_answered_once).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_answers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest is still answering");
     expectIdealScore(observation.score);
   });
 
