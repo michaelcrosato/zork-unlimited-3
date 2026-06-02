@@ -6,7 +6,7 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 
 - MCP-first autonomous maintenance loop with report, prompt, verification,
   commit, and push automation.
-- Haunted transit interactive-fiction story with 26 reachable scenes and 5
+- Haunted transit interactive-fiction story with 94 reachable scenes and 16
   endings.
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.
@@ -105,6 +105,23 @@ Run without allowing an agent to edit the repo:
 See [`AGENTS.md`](./AGENTS.md) and [`AI_LOOP_STATE.md`](./AI_LOOP_STATE.md) for agent handoff instructions.
 See [`IMPROVEMENT_LOG.md`](./IMPROVEMENT_LOG.md) for persistent self-play
 metrics and maintainer feedback.
+
+## Blind Playtesting
+
+A separate, parallel loop runs _blind_ playtests: a rotating persona plays the game through a
+masked interface (no internal ids, choice destinations, flags, or score model) and produces
+structured, brutally-honest feedback. Every 24h the feedback is consolidated into
+`PLAYTEST_DIGEST.md`, which the autonomous coding agent reads when planning the next window.
+
+```bash
+npm run playtest:session -- --persona goal_seeker --variant no_hints   # one blind run
+npm run playtest:consolidate -- --all                                  # rebuild the digest
+AI_PLAYTEST_CMDS="claude -p;gemini -p" ./playtest_loop.sh               # the parallel loop
+```
+
+With no `AI_PLAYTEST_CMD`/`AI_PLAYTEST_CMDS` set, a built-in decider plays and records honest
+quantitative-only feedback. See `PLAYTEST_AGENT_PROMPT.md`, `PLAYTEST_CONSOLIDATOR_PROMPT.md`, and
+`GOALRESEARCH20260601.md`.
 
 ## MCP Server
 

@@ -8,6 +8,7 @@ Operate in a persistent loop until explicitly stopped by the outer bash loop.
 
 1. PLAN
    - Inspect the current project state.
+   - Read `PLAYTEST_DIGEST.md` (top section) first. If a new 24h window has rolled over, set the next objective(s) from its top-ranked priorities and tie each to a digest cluster id. Treat blind-play feedback as higher-signal than self-play: fix recurring S0–S2 issues before one-off S3/S4, and reproduce a fixed issue from its repro path with a regression test.
    - Identify the highest-impact next improvement.
    - Break the work into clear, testable tasks.
    - Prioritize changes that improve the actual playable experience.

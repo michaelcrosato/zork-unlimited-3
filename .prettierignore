@@ -6,3 +6,5 @@ ai-runs/
 coverage/
 dist/
 package-lock.json
+PLAYTEST_DIGEST.md
+playtest-feedback/

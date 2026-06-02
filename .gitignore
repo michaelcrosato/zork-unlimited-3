@@ -7,3 +7,4 @@ ai-runs/*
 !ai-runs/.gitkeep
 coverage/
 OUTPUTLOG.md
+playtest-feedback/.watermark
