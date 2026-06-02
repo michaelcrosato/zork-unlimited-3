@@ -1,3 +1,66 @@
+# Cycle 47 Direct Conductor Clear Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_conductor_true_ending` more naturally
+  discoverable from explicit old-conductor clear-signal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 47 random/coverage evidence.
+  Coverage reaches `passenger_conductor_true_ending`, but the 100-run random
+  sample missed it while other conductor transfer/count variants appeared. The
+  player-facing conductor signal already says the platform is clear, so sending
+  that explicit choice through another intercom hub made the plain conductor
+  payoff easier to skip than the more elaborate transfer variants.
+- Planned work:
+  - Route the explicit non-counted conductor clear signal directly to
+    `passenger_conductor_roll_call`.
+  - Route reviewed-count conductor signals directly to
+    `passenger_conductor_count_roll_call`.
+  - Preserve the conductor punch-memory route through
+    `passenger_conductor_intercom` so optional punched-transfer endings remain
+    available.
+  - Update regression coverage for direct clear-signal and counted-signal
+    routing.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - Direct routing removes one optional pause from the plain conductor signal
+    path. This is acceptable because the punch-memory route still exposes the
+    intercom hub and transfer branch for players who inspect the punch.
+- Status:
+  - Routed `follow_conductor_signal_to_third_car` directly to
+    `passenger_conductor_roll_call` and set `heard_final_roll_call` on entry.
+  - Added `follow_counted_conductor_signal_to_third_car` for reviewed manifest
+    routes, preserving counted-conductor payoff logic.
+  - Preserved `passenger_conductor_intercom` through
+    `inspect_conductor_punch_memory` -> `follow_punch_memory_to_third_car`, so
+    transfer and intercom variants remain available for players who inspect the
+    punch.
+  - Updated conductor regression coverage for direct ordinary and counted
+    signal routes plus preserved punch-memory intercom routes.
+  - Focused story-path suite passed: 170 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_conductor_true_ending`, with zero unfinished runs.
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `follow_conductor_signal_to_third_car` ->
+    `pull_release_after_conductor_roll_call`, ending at
+    `passenger_conductor_true_ending` with score 315 and no objectives.
+- Playtest feedback:
+  - The conductor route now reads as one continuous commitment: ask him to call
+    the platform clear, follow that clear signal to the release, then pull on
+    his final call.
+  - The ending payoff is clearer because the player no longer lands in a hub
+    that reopens transfer choices after choosing the plain worker-signal
+    branch.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random samples for whether `passenger_conductor_true_ending`
+    appears more often. If hard issues remain absent, continue with remaining
+    low-random payoff branches such as `passenger_morning_intercom`.
+
 # Cycle 46 Direct Manifest-Handoff Intercom Boarding
 
 - Date: 2026-06-02

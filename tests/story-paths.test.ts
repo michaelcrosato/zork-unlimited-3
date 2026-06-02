@@ -5785,18 +5785,34 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "follow_conductor_signal_to_third_car");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_intercom");
-    expect(observation.scene.text).toContain("Platform clear");
-    expect(observation.scene.text).toContain("emergency release waits in your hand");
-    expect(observation.scene.text).toContain("Pull the release on his clear");
+    expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    expect(observation.scene.text).toContain("not punching tickets");
+    expect(observation.scene.text).toContain("clear for Mara");
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.text).toContain("conductor's clear signal");
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorSignalState, "inspect_conductor_punch_memory");
+    state = choose(story, state, "follow_punch_memory_to_third_car");
+    const conductorIntercomState = state;
+    observation = observe(story, conductorIntercomState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_intercom");
+    expect(observation.scene.text).toContain("emergency release waits in your hand");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_conductor_roll_call",
       "ask_conductor_to_punch_transfer",
       "hold_for_conductor_roll_call_before_release"
     ]);
-
-    const conductorIntercomState = state;
 
     state = choose(story, conductorIntercomState, "ask_conductor_to_punch_transfer");
     observation = observe(story, state);
@@ -6002,33 +6018,21 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "review_open_manifest_count",
       "ask_conductor_after_manifest_count",
-      "follow_conductor_signal_to_third_car"
+      "follow_counted_conductor_signal_to_third_car"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_intercom");
+    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "hear_counted_conductor_roll_call",
-      "ask_conductor_to_punch_transfer",
-      "hold_for_conductor_count_before_release"
-    ]);
-
-    const conductorIntercomState = state;
-
-    state = choose(story, state, "hear_counted_conductor_roll_call");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
-    expect(observation.scene.text).toContain("opened count folded against his punch");
-    expect(observation.scene.text).toContain("newspaper, lunch tin, child's mitten");
-    expect(observation.scene.text).toContain("the count has become a crowd");
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.scene.text).toContain("opened count folded against his punch");
+    expect(observation.scene.text).toContain("the count has become a crowd");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_conductor_count"
     ]);
@@ -6041,6 +6045,43 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("conductor's counted clear call");
     expect(observation.scene.text).toContain("the count has already become a crowd");
     expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "ask_conductor_after_manifest_count",
+      "inspect_conductor_punch_memory",
+      "follow_punch_memory_to_third_car"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    expect(observation.scene.id).toBe("passenger_conductor_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_counted_conductor_roll_call",
+      "ask_conductor_to_punch_transfer",
+      "hold_for_conductor_count_before_release"
+    ]);
+
+    const conductorIntercomState = state;
 
     state = choose(story, conductorIntercomState, "hold_for_conductor_count_before_release");
     observation = observe(story, state);

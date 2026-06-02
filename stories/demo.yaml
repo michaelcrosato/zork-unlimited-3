@@ -2218,11 +2218,23 @@ scenes:
           set:
             heard_conductor_punch_memory: true
       - id: follow_conductor_signal_to_third_car
-        label: Follow the conductor's clear signal into the third car
-        to: passenger_conductor_intercom
+        label: Follow the conductor's clear signal to the release
+        to: passenger_conductor_roll_call
+        requires:
+          notFlag: reviewed_open_manifest_count
         effects:
           set:
             heard_conductor_clearance: true
+            heard_final_roll_call: true
+      - id: follow_counted_conductor_signal_to_third_car
+        label: Follow the conductor's counted clear signal to the release
+        to: passenger_conductor_count_roll_call
+        requires:
+          flag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
 
   passenger_conductor_punch_memory:
     routeImportance: optional
