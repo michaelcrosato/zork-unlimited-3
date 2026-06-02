@@ -3,6 +3,7 @@ import type { Story } from "./schema.js";
 export const restartSensitivePaths = new Set([
   "package.json",
   "package-lock.json",
+  "src/ai-loop-metrics.ts",
   "src/ai-loop.ts"
 ]);
 export const restartRequestedExitCode = 75;
@@ -14,6 +15,10 @@ export function requiresLoopRestart(changedPaths: string[]): boolean {
 
 export function getRestartSensitiveChangedPaths(changedPaths: string[]): string[] {
   return changedPaths.filter((path) => restartSensitivePaths.has(path));
+}
+
+export function cycleSavePath(kind: "exploratory" | "mcp", cycle: number): string {
+  return `saves/ai-loop-${kind}-cycle-${cycle}.json`;
 }
 
 export function parsePathLines(output: string): string[] {

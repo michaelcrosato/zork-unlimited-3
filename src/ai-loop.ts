@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import {
+  cycleSavePath,
   exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
@@ -19,6 +20,7 @@ import type { Story } from "./schema.js";
 import { loadStory } from "./story.js";
 
 export {
+  cycleSavePath,
   exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
@@ -203,7 +205,7 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
   const mcpEvidence = await runMcpEvidence(cycle);
-  const mcpPlay = await runMcpPlaythrough();
+  const mcpPlay = await runMcpPlaythrough(cycle);
   const story = await loadStory("stories/demo.yaml");
   const report = renderReport(
     cycle,
@@ -757,7 +759,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     // 5. Adaptive exploratory MCP route
     const exploratory = await runMcpExploratoryRoute(
       client,
-      "saves/ai-loop-exploratory.json",
+      cycleSavePath("exploratory", cycle),
       cycle,
       mainStory
     );
@@ -932,7 +934,7 @@ async function runPostAgentAutomation(
 
   const health = await runCommand("npm run health");
   commands.push(health);
-  const mcpPlay = await runMcpPlaythrough();
+  const mcpPlay = await runMcpPlaythrough(cycle);
   if (health.exitCode !== 0 || !mcpPlay.ok) {
     return {
       status: "failed",
@@ -1034,8 +1036,8 @@ async function writeText(path: string, text: string): Promise<void> {
   await writeFile(path, text, "utf8");
 }
 
-async function runMcpPlaythrough(): Promise<McpPlayResult> {
-  const savePath = "saves/ai-loop-mcp.json";
+async function runMcpPlaythrough(cycle: number): Promise<McpPlayResult> {
+  const savePath = cycleSavePath("mcp", cycle);
   const choices = [
     "read_notice",
     "take_lantern_after_notice",

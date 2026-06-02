@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  cycleSavePath,
   exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
@@ -13,6 +14,7 @@ import {
 describe("AI loop restart detection", () => {
   it("requires a restart when loop runtime files change", () => {
     expect(requiresLoopRestart(["stories/demo.yaml", "src/ai-loop.ts"])).toBe(true);
+    expect(requiresLoopRestart(["src/ai-loop-metrics.ts"])).toBe(true);
     expect(requiresLoopRestart(["package.json"])).toBe(true);
     expect(requiresLoopRestart(["package-lock.json"])).toBe(true);
   });
@@ -21,6 +23,9 @@ describe("AI loop restart detection", () => {
     expect(
       getRestartSensitiveChangedPaths(["README.md", "src/ai-loop.ts", "package-lock.json"])
     ).toEqual(["src/ai-loop.ts", "package-lock.json"]);
+    expect(
+      getRestartSensitiveChangedPaths(["src/ai-loop-metrics.ts", "stories/demo.yaml"])
+    ).toEqual(["src/ai-loop-metrics.ts"]);
   });
 
   it("uses a stable restart-request exit code for loop.sh", () => {
@@ -75,6 +80,12 @@ describe("AI loop restart detection", () => {
 
   it("allows exploratory MCP routes enough steps for late-game detours", () => {
     expect(exploratoryMaxSteps).toBeGreaterThanOrEqual(45);
+  });
+
+  it("uses cycle-specific MCP save paths so evidence routes start cleanly", () => {
+    expect(cycleSavePath("exploratory", 10)).toBe("saves/ai-loop-exploratory-cycle-10.json");
+    expect(cycleSavePath("mcp", 10)).toBe("saves/ai-loop-mcp-cycle-10.json");
+    expect(cycleSavePath("exploratory", 11)).not.toBe(cycleSavePath("exploratory", 10));
   });
 
   it("reports non-JSON MCP tool payloads with tool context", () => {
