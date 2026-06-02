@@ -773,6 +773,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.left_morning_warning).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "leave_after_marking_morning_warning",
+      "listen_to_morning_clock_catch_up",
       "turn_back_from_warning_mark_for_token"
     ]);
 
@@ -822,6 +823,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.left_morning_warning).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "leave_after_marking_morning_warning",
+      "listen_to_morning_clock_catch_up",
       "turn_back_from_warning_mark_for_token"
     ]);
 
@@ -830,6 +832,91 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("good_ending");
     expect(observation.scene.ending).toBe(true);
+  });
+
+  it("adds an optional morning-clock beat after marking the safe-transfer warning", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "study_morning_map_note",
+      "mark_warning_for_next_rescuer",
+      "listen_to_morning_clock_catch_up"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_clock_catch_up");
+    expect(observation.scene.text).toContain("ticking past 1:13");
+    expect(observation.scene.text).toContain("starts again from the first name");
+    expect(observation.state.flags.heard_morning_clock_catch_up).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_morning_clock_catch_up",
+      "turn_back_from_morning_clock_for_token"
+    ]);
+
+    const returnedState = choose(story, state, "turn_back_from_morning_clock_for_token");
+    observation = observe(story, returnedState);
+
+    expect(observation.scene.id).toBe("tunnel");
+    expect(observation.state.inventory).toEqual(["lantern", "map", "token"]);
+    expect(observation.state.flags.found_token).toBe(true);
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+
+    state = returnedState;
+    for (const choiceId of [
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "ride_with_map",
+      "listen_at_morning_doors",
+      "mark_door_warning_for_next_rescuer",
+      "listen_to_morning_clock_catch_up",
+      "turn_back_from_morning_clock_for_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.heard_morning_clock_catch_up).toBe(true);
+    expect(observation.state.flags.returned_from_safe_escape).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
   });
 
   it("lets morning-door listeners turn back toward the true ending", async () => {

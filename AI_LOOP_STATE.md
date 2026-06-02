@@ -1,3 +1,57 @@
+# Cycle 19 Morning Clock Catch-Up
+
+- Date: 2026-06-02
+- Main objective: Add one richer safe-transfer aftermath beat to the map-only
+  morning route without weakening the true-ending recovery path.
+- Why this matters: Current evidence shows healthy validation, complete
+  coverage, zero unfinished runs, and strong true-ending discovery. With no
+  consolidated blind-play blockers, the highest-value next move is small
+  playable story depth on an existing normal route: the player can survive by
+  following the map, mark a warning, then hear the station clocks catch up and
+  decide whether to leave or return for Mara.
+- Planned work:
+  - Add a one-time optional `morning_clock_catch_up` beat after players mark
+    the morning map warning.
+  - Preserve all existing safe-escape and return-to-true-ending exits.
+  - Add regression coverage for both token-missing and token-held recovery
+    branches from the new beat.
+- Work completed:
+  - Added `listen_to_morning_clock_catch_up` from `morning_warning_mark` to a
+    new optional scene.
+  - Added exits from the new scene to `good_ending`, token recovery in the
+    tunnel, and Mara ledger recovery in the service room.
+  - Updated exact choice-order tests for `morning_warning_mark` and added a
+    dedicated regression path that continues from the new beat to
+    `true_ending`.
+- Evidence so far:
+  - Focused story-path suite passed: 126 tests.
+  - `npm run health` passed: format check, TypeScript, 170 tests, validation,
+    and coverage playtest.
+  - Health validation reported 121 reachable scenes and 26 endings.
+  - Health coverage visited all 121 scenes, including
+    `morning_clock_catch_up`, with zero unfinished runs.
+  - Actual CLI play used `listen_to_morning_clock_catch_up` and
+    `turn_back_from_morning_clock_for_token`, then recovered the remaining
+    true-ending supplies and reached `true_ending` at score 277 with no active
+    objectives.
+- Playtest feedback:
+  - The new beat fits after marking the map because the player has already
+    chosen to leave evidence for a future rescuer.
+  - The dry click from the underpass clock makes the token recovery choice feel
+    like a story response instead of an external hint.
+  - The branch still routes cleanly into normal service-room preparation, but
+    the tested route skipped reading Mara's personnel file; future scoring
+    polish should audit why that achievement appears in the transcript's score
+    breakdown on this path.
+- Risks:
+  - Adds one optional choice to an already caution-heavy safe-transfer branch.
+    It is only available after players intentionally mark the warning, so it
+    should read as payoff rather than route clutter.
+- Next step:
+  - Watch blind-play feedback for whether the safe-transfer branch now feels
+    too warning-heavy; if so, fold the clock language into
+    `morning_warning_mark` instead of keeping it as a separate choice.
+
 # Cycle 18 Reviewed-Count Intercom Payoff
 
 - Date: 2026-06-02

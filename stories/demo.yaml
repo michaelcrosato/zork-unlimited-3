@@ -2375,6 +2375,14 @@ scenes:
       - id: leave_after_marking_morning_warning
         label: Leave the marked warning where the morning light can find it
         to: good_ending
+      - id: listen_to_morning_clock_catch_up
+        label: Listen as the morning clocks catch up
+        to: morning_clock_catch_up
+        requires:
+          notFlag: heard_morning_clock_catch_up
+        effects:
+          set:
+            heard_morning_clock_catch_up: true
       - id: turn_back_from_warning_mark_for_token
         label: Pocket the map and go back for the signal token
         to: tunnel
@@ -2390,6 +2398,43 @@ scenes:
             met_mara: true
       - id: turn_back_from_warning_mark_for_mara
         label: Pocket the map and return for Mara's ledger
+        to: service_room
+        requires:
+          item: token
+        effects:
+          set:
+            returned_from_safe_escape: true
+            knows_platform: true
+            met_mara: true
+
+  morning_clock_catch_up:
+    routeImportance: optional
+    text: >
+      The morning station clocks begin to move in order, each one ticking past
+      1:13 as if the hour had only been waiting for permission. Through the
+      closing train doors, the underpass clock answers with one dry click.
+      Mara stops reading for exactly that long, then starts again from the
+      first name on the page. The warning on the map is still wet under your
+      thumb.
+    choices:
+      - id: leave_after_morning_clock_catch_up
+        label: Let the clocks move on and step into morning
+        to: good_ending
+      - id: turn_back_from_morning_clock_for_token
+        label: Follow the answering clock back to the signal token
+        to: tunnel
+        requires:
+          notItem: token
+        effects:
+          addItem: token
+          set:
+            found_token: true
+            returned_from_safe_escape: true
+            knows_platform: true
+            knows_token_location: true
+            met_mara: true
+      - id: turn_back_from_morning_clock_for_mara
+        label: Return before Mara has to start the ledger again
         to: service_room
         requires:
           item: token
