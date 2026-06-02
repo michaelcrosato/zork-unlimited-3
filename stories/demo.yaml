@@ -2809,8 +2809,29 @@ scenes:
       knocking together by the doors. "They remember the way out now," she
       says. "Pull the release before the line teaches them to wait again."
     choices:
+      - id: let_manifest_names_answer_once
+        label: Let the opened names answer once before the release
+        to: passenger_manifest_answers
+        effects:
+          set:
+            manifest_names_answered_once: true
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
+        to: passenger_manifest_true_ending
+
+  passenger_manifest_answers:
+    routeImportance: optional
+    text: >
+      Mara starts again, slower, and this time she does not finish any name
+      alone. The lunch-tin worker clicks his clasp on the second syllable, the
+      child shakes rain from the mitten on the third, and the newspaper woman
+      reads the stop printed under each door. By the final row, the manifest is
+      no longer a list. It is a car full of people proving they can answer for
+      themselves. "Now," Mara says, almost smiling. "Before the line remembers
+      how to interrupt."
+    choices:
+      - id: pull_release_after_manifest_answers
+        label: Pull the release after the manifest answers
         to: passenger_manifest_true_ending
 
   passenger_echoed_manifest_intercom:

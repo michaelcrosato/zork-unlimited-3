@@ -1,3 +1,53 @@
+# Cycle 15 Manifest Answers
+
+- Date: 2026-06-02
+- Main objective: Add one focused payoff beat to the low-frequency plain
+  manifest route after Mara's final intercom count.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 15 evidence shows all scenes covered, zero unfinished
+  runs, and healthy ideal-ending pressure. The best next improvement is richer
+  late-route story depth without changing route requirements or ending
+  classification.
+- Planned work:
+  - Add an optional passenger-answer beat after `mara_manifest_intercom`.
+  - Keep the immediate `pull_release_after_manifest_goodbye` choice available.
+  - Reuse `passenger_manifest_true_ending` so route metadata stays stable.
+  - Add regression coverage for both the old direct release and the new beat.
+- Work completed:
+  - Added `let_manifest_names_answer_once` from `mara_manifest_intercom` to
+    new optional scene `passenger_manifest_answers`.
+  - Added `manifest_names_answered_once` as route evidence for the optional
+    beat.
+  - Added `pull_release_after_manifest_answers`, reusing
+    `passenger_manifest_true_ending`.
+  - Updated manifest route regressions to prove both direct release and the
+    new answer beat remain valid.
+- Evidence:
+  - Focused story-path suite passed: 141 tests.
+  - `npm run health` passed: format check, TypeScript, 185 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 130 reachable scenes and 26 endings.
+  - Health coverage visited all 130 scenes, including
+    `passenger_manifest_answers`, with zero unfinished runs.
+  - Actual CLI play used `listen_to_mara_manifest_intercom`,
+    `let_manifest_names_answer_once`, and
+    `pull_release_after_manifest_answers`, then reached
+    `passenger_manifest_true_ending`.
+- Playtest feedback:
+  - The new beat makes the plain manifest route feel less like abstract ledger
+    bookkeeping and more like passengers audibly reclaiming their names.
+  - The direct release remains available, preserving late-game momentum for
+    players who want to finish immediately.
+  - The added beat reads as a quiet payoff rather than a new puzzle gate.
+- Risks:
+  - This adds another optional late passenger choice. Watch blind-play digest
+    output for choice-density complaints before adding more late intercom
+    beats.
+- Next step:
+  - Let blind consolidation decide whether late passenger-route choice density
+    is a real issue; otherwise continue with small route-specific payoffs or
+    transcript/report critique.
+
 # Cycle 18 Punched Transfer Handoff
 
 - Date: 2026-06-02

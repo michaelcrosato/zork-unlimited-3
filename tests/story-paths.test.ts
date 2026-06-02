@@ -3081,10 +3081,29 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the line teaches them to wait again");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
 
-    state = choose(story, state, "pull_release_after_manifest_goodbye");
+    let directReleaseState = choose(story, state, "pull_release_after_manifest_goodbye");
+    observation = observe(story, directReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest is still answering");
+    expectIdealScore(observation.score);
+
+    state = choose(story, state, "let_manifest_names_answer_once");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_answers");
+    expect(observation.scene.text).toContain("a car full of people proving");
+    expect(observation.state.flags.manifest_names_answered_once).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_answers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_answers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_manifest_true_ending");
@@ -5895,10 +5914,29 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They remember the way out now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
 
-    state = choose(story, state, "pull_release_after_manifest_goodbye");
+    const directReleaseState = choose(story, state, "pull_release_after_manifest_goodbye");
+    observation = observe(story, directReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest is still answering");
+    expectIdealScore(observation.score);
+
+    state = choose(story, state, "let_manifest_names_answer_once");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_answers");
+    expect(observation.scene.text).toContain("The lunch-tin worker clicks his clasp");
+    expect(observation.state.flags.manifest_names_answered_once).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_answers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_answers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_manifest_true_ending");
