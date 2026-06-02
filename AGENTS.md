@@ -85,6 +85,37 @@ Use the tools:
 
 Write down what felt unclear, boring, unfair, or promising, then let that feedback steer the next change.
 
+## Blind Playtesting (parallel loop)
+
+Two tiers of testing run independently:
+
+- The **main dev loop** (`./loop.sh`) keeps its single MCP playthrough as a fast crash/bug smoke
+  gate. Unchanged.
+- A **separate parallel loop** (`./playtest_loop.sh`) does deep, brutally-honest _blind_ testing:
+  each session plays the game with a rotating persona through a **masked** interface
+  (`src/blind-facade.ts` hides internal ids, choice destinations, flags, and the achievement model),
+  optionally on a rotating pool of model families (`AI_PLAYTEST_CMDS`). It writes a verbose log to
+  `ai-runs/playtest/` (gitignored) and appends one compact, zod-validated record to
+  `playtest-feedback/sessions.jsonl` (committed).
+
+```bash
+npm run playtest:session -- --persona risk_taker --variant no_hints
+npm run playtest:consolidate -- --all
+AI_PLAYTEST_CMDS="claude -p;gemini -p" ./playtest_loop.sh
+```
+
+Every 24h the loop consolidates accrued feedback into `PLAYTEST_DIGEST.md` (committed), ranking
+issues by `severity × frequency × unique_personas × confidence` and parking one-off noise. The
+coding agent reads the digest's top section at the start of each planning window. Run the parallel
+loop in its own worktree/checkout (or container) so it never races the dev loop; it only writes
+`PLAYTEST_DIGEST.md` and `playtest-feedback/sessions.jsonl`. See `PLAYTEST_AGENT_PROMPT.md`,
+`PLAYTEST_CONSOLIDATOR_PROMPT.md`, and `GOALRESEARCH20260601.md`.
+
+- Signal routing: **hard** failures (crash, invalid-choice error, unmarked dead-end, save
+  corruption, impossible required route, route-bug max-step loop) escalate immediately and may gate
+  commits; **soft** feedback (boring/confusing/unfair/pacing) waits for the 24h digest and never
+  blocks commits.
+
 ## Development Rules
 
 - Keep story data in `stories/*.yaml`.

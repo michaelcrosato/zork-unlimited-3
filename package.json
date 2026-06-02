@@ -16,7 +16,10 @@
     "cyoa": "node --import tsx src/cli.ts",
     "mcp": "node --import tsx src/mcp.ts",
     "validate": "node --import tsx src/cli.ts validate stories/demo.yaml",
-    "playtest": "node --import tsx src/cli.ts playtest stories/demo.yaml --runs 50"
+    "playtest": "node --import tsx src/cli.ts playtest stories/demo.yaml --runs 50",
+    "playtest:session": "node --import tsx src/blind-playtester.ts",
+    "playtest:consolidate": "node --import tsx src/consolidate-feedback.ts",
+    "playtest:loop": "bash playtest_loop.sh"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
