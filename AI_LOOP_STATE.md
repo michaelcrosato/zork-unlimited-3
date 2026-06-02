@@ -1,3 +1,114 @@
+# Cycle 90 Last-Dispatch Handoff Recovery
+
+- Date: 2026-06-02
+- Main objective: Let players who already asked for Mara's last dispatch still
+  recover the physical Mara handoff route from the third-car intercom.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the current evidence continues to value better discovery for the
+  rare Mara handoff scenes. The last-dispatch line is a natural, story-forward
+  choice, but it previously resolved only to the generic `true_ending` once the
+  player carried it into the train.
+- Planned work:
+  - Add an optional last-dispatch intercom choice that waits for Mara to carry
+    the dispatch to the far door.
+  - Route that choice through `mara_handoff_intercom` so it pays off at
+    `mara_handoff_true_ending`.
+  - Preserve the direct last-dispatch release path.
+  - Add focused story-path coverage and run full health plus an actual route.
+- Risks:
+  - The new option slightly increases traffic into the handoff ending family,
+    but only after the player has explicitly asked for Mara's last dispatch.
+- Status:
+  - Completed.
+  - Added `wait_for_handoff_after_last_dispatch` from
+    `mara_last_dispatch_intercom` to `mara_handoff_intercom`.
+  - Updated last-dispatch expectations to keep the direct release while
+    exposing the handoff recovery.
+  - Added a focused regression for asking for Mara's train-car dispatch,
+    waiting for the handoff, and reaching `mara_handoff_true_ending`.
+  - Focused tests passed:
+    `npm test -- tests/story-paths.test.ts -t "last dispatch"`.
+  - `npm run health` passed: format check, TypeScript, 236 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths; `mara_handoff_true_ending` rose to 51 coverage
+    hits in this run.
+  - Actual CLI play followed the direct-board last-dispatch route through
+    `wait_for_handoff_after_last_dispatch`, ended at
+    `mara_handoff_true_ending`, scored 288, and left no objectives.
+- Playtest feedback:
+  - The new option reads as a natural continuation of the dispatch line:
+    players can still pull immediately, but waiting now turns Mara's words into
+    the physical far-door payoff.
+  - The direct release and badge-proof follow-up remain available from the same
+    intercom, so the added route improves discovery without blocking the older
+    ending.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether players use the new
+    last-dispatch wait option; if not, tune `mara_last_dispatch_intercom` text
+    before adding another handoff branch.
+
+# Cycle 89 Badge-Proof Handoff Recovery
+
+- Date: 2026-06-02
+- Main objective: Let players who learned the badge-proof clue recover Mara's
+  physical far-door handoff after they board the third car directly.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence continues to point at the Mara handoff
+  route family as the remaining normal-play discovery gap. The previous
+  direct-board recovery helped thumbprint readers; notice-back badge-proof
+  readers still defaulted to an intercom-only payoff unless they chose the
+  handoff before boarding.
+- Planned work:
+  - Add a badge-proof-aware train-car choice that waits for Mara to carry the
+    proof to the far door.
+  - Route that recovery choice into `mara_handoff_intercom` and set the
+    established handoff/goodbye flags.
+  - Preserve the existing badge-proof intercom and direct release routes.
+  - Add a focused regression, run full health, and play the route.
+- Risks:
+  - The extra choice can slightly increase random traffic into
+    `mara_handoff_true_ending`, but only after players earn the optional
+    badge-proof clue and choose to wait instead of pulling the release.
+- Status:
+  - Completed.
+  - Added `wait_for_badge_proof_mara_at_far_door` from `train_car` to
+    `mara_handoff_intercom`.
+  - Updated the badge-proof direct-board expectation to include the new
+    recovery option while preserving `listen_to_badge_proof_intercom` and
+    `pull_release`.
+  - Added a focused regression for reaching `mara_handoff_true_ending` through
+    the new badge-proof far-door choice.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "badge-proof direct boarders"`.
+  - Targeted last-dispatch regression passed:
+    `npm test -- tests/story-paths.test.ts -t "last dispatch"`.
+  - `npm run health` passed: format check, TypeScript, 236 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, had zero unfinished complete paths,
+    and raised `mara_handoff_true_ending` coverage from 41 to 51 runs.
+  - Actual CLI play followed the notice-back badge-proof route through
+    `wait_for_badge_proof_mara_at_far_door`, ended at
+    `mara_handoff_true_ending`, scored 285, and left no objectives.
+- Playtest feedback:
+  - The train-car handoff recovery reads naturally after direct boarding: the
+    player has already proven Mara's name and can now choose to let her carry
+    that proof to the far door.
+  - The existing badge-proof intercom and emergency-release choices remain
+    available, so the new route adds an optional physical payoff without
+    removing the concise ending path.
+  - No invalid choices, dead ends, dangling objectives, validation regressions,
+    or coverage regressions appeared.
+- Next step:
+  - Watch future random/blind sessions for whether badge-proof players now
+    reach `mara_handoff_intercom` more often after direct boarding; if handoff
+    routes are healthy, shift attention toward richer passenger-manifest
+    critique or transcript quality.
+
 # Cycle 88 Direct-Board Thumbprint Handoff Recovery
 
 - Date: 2026-06-02

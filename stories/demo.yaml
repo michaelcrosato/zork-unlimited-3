@@ -2850,6 +2850,22 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: wait_for_badge_proof_mara_at_far_door
+        label: Wait for Mara to walk the badge proof to the far door
+        to: mara_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: knows_badge_proof
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: read_mara_thumbprint
+            - notFlag: saw_mara_handoff
+            - notFlag: heard_mara_last_dispatch
+        effects:
+          set:
+            saw_mara_handoff: true
+            heard_mara_goodbye: true
       - id: wait_for_thumbprint_mara_at_far_door
         label: Wait for Mara to carry the torn thumbprint to the far door
         to: mara_thumbprint_handoff_intercom
@@ -3620,6 +3636,12 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: wait_for_handoff_after_last_dispatch
+        label: Wait while Mara carries the last dispatch to the far door
+        to: mara_handoff_intercom
+        effects:
+          set:
+            saw_mara_handoff: true
       - id: pull_release_after_last_dispatch_goodbye
         label: Pull the release after Mara's last dispatch
         to: true_ending

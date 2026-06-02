@@ -2802,6 +2802,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "wait_for_handoff_after_last_dispatch",
       "pull_release_after_last_dispatch_goodbye"
     ]);
 
@@ -2903,6 +2904,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "wait_for_handoff_after_last_dispatch",
       "pull_release_after_last_dispatch_goodbye"
     ]);
 
@@ -2995,6 +2997,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_badge_proof_intercom",
+      "wait_for_badge_proof_mara_at_far_door",
       "pull_release"
     ]);
 
@@ -3013,6 +3016,54 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets badge-proof direct boarders recover Mara's far-door handoff", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "inspect_notice_back",
+      "take_lantern_after_notice_back",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "wait_for_badge_proof_mara_at_far_door"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_intercom");
+    expect(observation.scene.text).toContain("crossing the platform instead of haunting it");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.state.flags.saw_mara_handoff).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -3109,6 +3160,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_badge_proof_after_last_dispatch",
+      "wait_for_handoff_after_last_dispatch",
       "pull_release_after_last_dispatch_goodbye"
     ]);
 
@@ -3176,6 +3228,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Route held. Doors ready. Release authorized.");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "wait_for_handoff_after_last_dispatch",
       "pull_release_after_last_dispatch_goodbye"
     ]);
 
@@ -3287,6 +3340,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "wait_for_handoff_after_last_dispatch",
       "pull_release_after_last_dispatch_goodbye"
     ]);
 
@@ -3294,6 +3348,54 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets Mara carry her last dispatch into the physical handoff after boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "ask_mara_for_train_car_dispatch",
+      "wait_for_handoff_after_last_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_intercom");
+    expect(observation.scene.text).toContain("crossing the platform instead of haunting it");
+    expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.saw_mara_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
