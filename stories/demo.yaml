@@ -1878,6 +1878,18 @@ scenes:
         effects:
           set:
             heard_answered_passengers: true
+      - id: board_with_mara_handoff_after_answers
+        label: Board while Mara keeps the manifest handoff steady
+        to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - notFlag: heard_answered_passengers
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_passenger_answers
         label: Board the third car while the roll call holds
         to: passenger_answered_handoff_roll_call

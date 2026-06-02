@@ -4535,6 +4535,63 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Mara began at the opened manifest");
   });
 
+  it("keeps Mara's manifest handoff available after listening to passenger answers", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "continue_manifest_handoff_roll_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_with_mara_handoff_after_answers"
+    );
+
+    state = choose(story, state, "board_with_mara_handoff_after_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBeUndefined();
+    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("lets Mara's manifest handoff board directly with answered passengers", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

@@ -1,3 +1,51 @@
+# Cycle 51 Manifest Handoff Answer Bridge
+
+- Date: 2026-06-02
+- Main objective: Preserve the Mara manifest handoff payoff after players
+  listen to the opened passengers answer their names.
+- Why this matters: The platform handoff route now has a direct payoff, but the
+  same clean handoff context could still be displaced if the player chose the
+  adjacent answer-listening beat first. This keeps the Mara-specific payoff
+  visible after that natural detour without removing the answered-passenger
+  route.
+- Planned work:
+  - Add a contextual `passenger_answers` boarding choice back into
+    `mara_manifest_handoff_intercom` when Mara's handoff is active.
+  - Preserve the existing answered-passenger handoff route.
+  - Add regression coverage for the answer-listening detour.
+  - Run focused tests, full health, and a CLI playthrough through the changed
+    route.
+- Risks:
+  - Adds one choice to a specific answer scene. Conditions keep it out of
+    gathered-passenger and already-answered boarding variants.
+- Status:
+  - Added `board_with_mara_handoff_after_answers`.
+  - Added a story-path regression for watching Mara's manifest handoff,
+    listening to passenger answers, then boarding back into the handoff
+    intercom and ending at `passenger_manifest_handoff_true_ending`.
+  - Focused story-path suite passed: 172 tests.
+  - `npm run health` passed: format check, TypeScript, 216 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes and increased
+    `passenger_manifest_handoff_true_ending` coverage from the previous 401
+    paths to 721 paths in the expanded coverage run.
+  - Actual CLI play followed `watch_mara_open_manifest` ->
+    `continue_manifest_handoff_roll_call` ->
+    `board_with_mara_handoff_after_answers` ->
+    `pull_release_after_manifest_handoff_goodbye`, ending at
+    `passenger_manifest_handoff_true_ending` with score 305 and no objectives.
+- Playtest feedback:
+  - The answer-listening detour now keeps Mara's handoff visible instead of
+    forcing the player into an answered-passenger payoff. The label and state
+    make it clear that Mara is still holding the manifest steady.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch short random samples for whether
+    `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending` appear more consistently; if not,
+    move one direct handoff prompt earlier in `passengers_released`.
+
 # Cycle 55 Direct Conductor Release
 
 - Date: 2026-06-02
