@@ -3023,6 +3023,16 @@ scenes:
         to: passenger_conductor_transfer_true_ending
         requires:
           notFlag: reviewed_open_manifest_count
+      - id: pass_punched_transfer_to_child
+        label: Let the child carry the punched transfer to Mara's speaker
+        to: passenger_conductor_transfer_handoff
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: punched_transfer_carried_forward
+        effects:
+          set:
+            punched_transfer_carried_forward: true
       - id: hear_counted_transfer_conductor_roll_call
         label: Let the punched transfer carry the counted clear call
         to: passenger_conductor_count_roll_call
@@ -3063,6 +3073,21 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+
+  passenger_conductor_transfer_handoff:
+    routeImportance: optional
+    text: >
+      The child takes the punched transfer in both hands and walks it to the
+      ceiling speaker as if Mara can take hold from the other side. The
+      conductor steadies the aisle pole. The newspaper woman reads the blank
+      destination aloud as morning, and the lunch-tin worker answers with the
+      shift bell he never reached. When the paper reaches the speaker grille,
+      Mara laughs once, startled by proof light enough to pass hand to hand.
+      "That is enough," she says. "Pull it now."
+    choices:
+      - id: pull_release_after_transfer_handoff
+        label: Pull the release after the punched transfer reaches Mara
+        to: passenger_conductor_transfer_true_ending
 
   passenger_conductor_roll_call:
     routeImportance: supporting

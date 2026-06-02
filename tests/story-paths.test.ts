@@ -1410,6 +1410,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_with_punched_transfer",
+      "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
       "hold_for_transfer_conductor_roll_call"
     ]);
@@ -4488,6 +4489,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_with_punched_transfer",
+      "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
       "hold_for_transfer_conductor_roll_call"
     ]);
@@ -4495,6 +4497,24 @@ describe("demo story critical paths", () => {
     const conductorTransferState = state;
 
     state = choose(story, conductorTransferState, "pull_release_with_punched_transfer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorTransferState, "pass_punched_transfer_to_child");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_handoff");
+    expect(observation.scene.text).toContain("walks it to the ceiling speaker");
+    expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
+    expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_transfer_handoff"
+    ]);
+
+    state = choose(story, state, "pull_release_after_transfer_handoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");

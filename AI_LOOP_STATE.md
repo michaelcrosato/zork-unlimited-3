@@ -1,3 +1,57 @@
+# Cycle 18 Punched Transfer Handoff
+
+- Date: 2026-06-02
+- Main objective: Add one focused payoff beat to the adaptive conductor
+  transfer route that ended at `passenger_conductor_transfer_true_ending`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 18 evidence shows a healthy, fully covered game with the
+  adaptive route landing on the punched-transfer passenger ending. The best
+  next improvement is richer late-route texture without changing route
+  requirements.
+- Planned work:
+  - Add an optional hand-to-hand transfer beat after
+    `passenger_conductor_transfer`.
+  - Keep the existing immediate release and roll-call choices available.
+  - Reuse `passenger_conductor_transfer_true_ending` to avoid splitting ending
+    classification.
+  - Add regression coverage for the new beat and unchanged direct release.
+- Work completed:
+  - Added `pass_punched_transfer_to_child` from
+    `passenger_conductor_transfer` to new optional scene
+    `passenger_conductor_transfer_handoff`.
+  - Added `punched_transfer_carried_forward` so the beat is one-time and
+    route-specific.
+  - Added `pull_release_after_transfer_handoff`, reusing
+    `passenger_conductor_transfer_true_ending`.
+  - Updated conductor-route regression coverage for the new handoff while
+    preserving the existing immediate release and roll-call options.
+- Evidence:
+  - Focused story-path suite passed: 141 tests.
+  - `npm run health` passed: format check, TypeScript, 185 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 129 reachable scenes and 26 endings.
+  - Health coverage visited all 129 scenes, including
+    `passenger_conductor_transfer_handoff`, with zero unfinished runs.
+  - Actual CLI play used `ask_conductor_to_punch_transfer`,
+    `pass_punched_transfer_to_child`, and
+    `pull_release_after_transfer_handoff`, then reached
+    `passenger_conductor_transfer_true_ending` at score 323 with no active
+    objectives.
+- Playtest feedback:
+  - The handoff makes the punched transfer feel less like a private token and
+    more like a shared proof passed through the people the player helped.
+  - The beat connects the child, newspaper woman, lunch-tin worker, Mara, and
+    conductor without adding new route requirements.
+  - Immediate release remains visible, preserving momentum for players who do
+    not want another late optional scene.
+- Risks:
+  - This adds one more optional late passenger choice. Watch blind sessions for
+    conductor-route choice density.
+- Next step:
+  - Let blind consolidation identify whether late passenger-route choice
+    density is becoming a real soft issue; otherwise continue with small
+    route-specific payoffs or transcript/report critique.
+
 # Cycle 14 Stairwell Token Return
 
 - Date: 2026-06-02
