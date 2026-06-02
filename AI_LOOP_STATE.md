@@ -1,3 +1,62 @@
+# Cycle 11 Thumbprint-Handoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_thumbprint_handoff_intercom` more naturally
+  discoverable during normal Mara-only rescue play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 11 evidence. Coverage could
+  reach every scene, but the 100-run random sample missed
+  `mara_thumbprint_handoff_intercom`, leaving a strong payoff dependent on
+  touching Mara's torn thumbprint, watching her leave the booth, boarding, and
+  then selecting the right train-car listen.
+- Planned work:
+  - Add one contextual torn-thumbprint handoff response before boarding, while
+    Mara is visibly holding the platform doors.
+  - Preserve direct boarding and the existing train-car
+    `listen_to_mara_thumbprint_after_handoff` route.
+  - Gate the new prompt on `read_mara_thumbprint` so basic Mara handoff runs
+    keep their current choice list.
+  - Add regression coverage for the new pre-boarding route through
+    `mara_handoff_true_ending`.
+- Work completed:
+  - Added `ask_mara_about_handoff_thumbprint_before_boarding` from
+    `mara_handoff_boarding` to `mara_thumbprint_handoff_intercom`.
+  - The new choice sets `heard_mara_goodbye`, matching the existing intercom
+    payoff behavior.
+  - Kept `board_after_mara_handoff` available from the same scene, so players
+    can still proceed directly to the release.
+  - Added regression coverage proving the new prompt appears only after the
+    torn thumbprint and handoff setup, reaches the existing intercom scene, and
+    finishes at `mara_handoff_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 135 tests.
+  - `npm run health` passed: format check, TypeScript, 179 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including
+    `mara_thumbprint_handoff_intercom`, with zero unfinished runs.
+  - Actual CLI play used
+    `ask_mara_about_handoff_thumbprint_before_boarding`, reached
+    `mara_thumbprint_handoff_intercom`, then reached
+    `mara_handoff_true_ending` at score 283 with no active objectives.
+- Playtest feedback:
+  - The new prompt reads naturally after Mara has left the booth, because the
+    player has just seen the same hand that tore the ledger touching the open
+    doors.
+  - The moment now pays off the torn thumbprint before the player commits to
+    boarding, reducing reliance on a hidden train-car optional listen.
+  - Direct boarding remains visible beside the new prompt, so the route adds
+    clarity without blocking momentum.
+- Risks:
+  - Adds one optional choice to `mara_handoff_boarding` for players who touched
+    the thumbprint. Future blind sessions should confirm it feels like payoff
+    rather than late-game choice clutter.
+- Next step:
+  - Watch random and blind runs for whether
+    `mara_thumbprint_handoff_intercom` appears more often, then shift to richer
+    story depth or transcript/report critique if normal-play scene coverage
+    remains healthy.
+
 # Cycle 14 Badge-Proof Pre-Boarding Discovery
 
 - Date: 2026-06-02

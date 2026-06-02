@@ -1156,6 +1156,17 @@ scenes:
       the release. "I can hold it from here," she says, and this time here
       means beside you.
     choices:
+      - id: ask_mara_about_handoff_thumbprint_before_boarding
+        label: Ask Mara what the torn thumbprint means beside the doors
+        to: mara_thumbprint_handoff_intercom
+        requires:
+          all:
+            - flag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_mara_handoff
         label: Reach the emergency release while Mara holds the doors
         to: train_car

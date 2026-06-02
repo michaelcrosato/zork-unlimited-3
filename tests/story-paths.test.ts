@@ -2639,6 +2639,58 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("surfaces Mara's torn-thumbprint handoff before boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger",
+      "watch_mara_leave_booth",
+      "return_from_mara_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_boarding");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_mara_about_handoff_thumbprint_before_boarding",
+      "board_after_mara_handoff"
+    ]);
+
+    state = choose(story, state, "ask_mara_about_handoff_thumbprint_before_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
+    expect(observation.scene.text).toContain("same hand that tore the ledger");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pull_release_after_thumbprint_handoff_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expectIdealScore(observation.score);
+  });
+
   it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
