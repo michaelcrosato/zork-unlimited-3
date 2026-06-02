@@ -1,3 +1,75 @@
+# Cycle 28 Threshold Handoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `passenger_threshold_intercom`
+  without undoing the prior passenger-room boarding promotion.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 28 evidence shows full coverage and healthy
+  completion, but a 250-run random MCP sample still missed
+  `passenger_threshold_intercom`. The previous cycle made the room beat the
+  stronger direct-platform continuation, so this cycle adds a threshold entry
+  from Mara's opened-manifest handoff instead of moving the room route back
+  down.
+- Planned work:
+  - Point `passenger_platform` text toward the third-car threshold as the next
+    shared action.
+  - Rename and promote the direct platform threshold choice so it explicitly
+    says the player is holding the door open for every passenger.
+  - Add a handoff-specific threshold choice after Mara calls the opened doors.
+  - Preserve direct handoff boarding, thumbprint, answered-passenger, return,
+    passenger-room, keepsake, mitten, lunch-tin, newspaper, gather, echo, and
+    direct-release routes.
+  - Update regression coverage for the new handoff-to-threshold path and
+    threshold label.
+  - Run focused tests, full health, a random sample, and an actual CLI route
+    through `passenger_threshold_intercom`.
+- Risks:
+  - The room-making route moves one line lower on the ordinary passenger
+    platform. It remains adjacent to direct boarding and covered by tests; the
+    random sample should watch whether its intercom payoff needs another nudge.
+- Work completed:
+  - Revised `passenger_platform` text so opened passengers look toward the
+    third-car threshold instead of generically waiting on the player.
+  - Renamed `hold_third_car_threshold` to "Hold the third-car threshold open
+    for every passenger".
+  - Promoted `hold_third_car_threshold` above
+    `make_room_for_passengers_in_third_car` in the ordinary passenger-platform
+    menu while preserving the room route.
+  - Added `hold_threshold_after_mara_manifest_handoff` from
+    `mara_manifest_handoff` to `passenger_threshold_boarding`.
+  - Kept direct Mara handoff boarding first and preserved thumbprint,
+    answered-passenger, return, room, and direct platform routes.
+  - Added regression coverage for the direct handoff-to-threshold route through
+    `passenger_threshold_intercom`.
+  - Relaxed older passenger-platform order assertions so they guard
+    availability and final direct boarding without making unrelated route order
+    brittle.
+- Evidence so far:
+  - Focused story-path suite passed: 146 tests.
+  - `npm run health` passed: format check, TypeScript, 190 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes, including
+    `passenger_threshold_intercom`, `passenger_room_intercom`, and
+    `passenger_room_release`.
+  - A 250-run random playtest ended all 250 runs, had no unfinished runs, and
+    visited `passenger_threshold_intercom`.
+  - Actual CLI play followed `watch_mara_open_manifest` ->
+    `hold_threshold_after_mara_manifest_handoff` ->
+    `listen_to_threshold_from_boarding` ->
+    `pull_release_after_threshold_manifest`, ending at
+    `passenger_true_ending` with score 292 and no objectives.
+- Playtest feedback:
+  - The new handoff threshold route reads coherently: Mara calls the opened
+    doors, the player holds the third-car threshold, and the intercom payoff
+    frames boarding as the passengers becoming a crowd.
+  - The 250-run random sample now reaches `passenger_threshold_intercom`, but
+    missed `passenger_room_intercom` and `passenger_room_release`; coverage and
+    tests still preserve those scenes, so future random samples should watch
+    whether the room route needs another discoverability nudge.
+- Next step:
+  - Watch random and blind feedback for whether room-route discovery regresses
+    after improving threshold discovery.
+
 # Cycle 27 Counted Chorus Discovery
 
 - Date: 2026-06-02

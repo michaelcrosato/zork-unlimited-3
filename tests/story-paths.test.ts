@@ -3235,6 +3235,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toContain("hold_third_car_threshold");
+    expect(
+      observation.choices.find((choice) => choice.id === "hold_third_car_threshold")?.label
+    ).toBe("Hold the third-car threshold open for every passenger");
 
     state = choose(story, state, "hold_third_car_threshold");
     observation = observe(story, state);
@@ -3330,11 +3333,8 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "make_room_for_passengers_in_third_car"
     );
-    expect(observation.choices.map((choice) => choice.id).slice(-3)).toEqual([
-      "make_room_for_passengers_in_third_car",
-      "hold_third_car_threshold",
-      "board_third_car_with_passengers"
-    ]);
+    expect(observation.choices.map((choice) => choice.id)).toContain("hold_third_car_threshold");
+    expect(observation.choices.at(-1)?.id).toBe("board_third_car_with_passengers");
     expect(
       observation.choices.find((choice) => choice.id === "make_room_for_passengers_in_third_car")
         ?.label
@@ -3723,6 +3723,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_after_mara_manifest_handoff",
+      "hold_threshold_after_mara_manifest_handoff",
       "touch_mara_manifest_thumbprint",
       "continue_manifest_handoff_roll_call",
       "board_with_mara_answered_handoff",
@@ -3737,6 +3738,60 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("watch_mara_open_manifest");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
+  });
+
+  it("lets Mara's manifest handoff lead directly into the threshold beat", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "hold_threshold_after_mara_manifest_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_boarding");
+    expect(observation.scene.text).toContain("stand at the third-car threshold");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_threshold_from_boarding",
+      "reach_release_after_threshold_boarding"
+    ]);
+
+    state = choose(story, state, "listen_to_threshold_from_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_intercom");
+    expect(observation.scene.text).toContain("threshold you held");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pull_release_after_threshold_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("lets Mara's manifest handoff continue into answered passenger boarding", async () => {
@@ -5568,16 +5623,18 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_platform");
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
+    const passengerPlatformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(passengerPlatformChoiceIds).toContain("make_room_for_passengers_in_third_car");
+    expect(passengerPlatformChoiceIds).toContain("hold_third_car_threshold");
+    expect(passengerPlatformChoiceIds.at(-1)).toBe("board_third_car_with_passengers");
+    expect(passengerPlatformChoiceIds.slice(0, 6)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "help_passengers_gather",
-      "make_room_for_passengers_in_third_car",
-      "hold_third_car_threshold",
-      "board_third_car_with_passengers"
+      "help_passengers_gather"
     ]);
 
     state = choose(story, state, "return_lost_mitten");
@@ -7697,16 +7754,18 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
+    const manifestPlatformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(manifestPlatformChoiceIds).toContain("make_room_for_passengers_in_third_car");
+    expect(manifestPlatformChoiceIds).toContain("hold_third_car_threshold");
+    expect(manifestPlatformChoiceIds.at(-1)).toBe("board_third_car_with_passengers");
+    expect(manifestPlatformChoiceIds.slice(0, 6)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "help_passengers_gather",
-      "make_room_for_passengers_in_third_car",
-      "hold_third_car_threshold",
-      "board_third_car_with_passengers"
+      "help_passengers_gather"
     ]);
 
     state = choose(story, state, "help_passengers_gather");

@@ -1453,6 +1453,14 @@ scenes:
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: train_car
+      - id: hold_threshold_after_mara_manifest_handoff
+        label: Hold the third-car threshold while Mara calls the opened doors
+        to: passenger_threshold_boarding
+        requires:
+          notFlag: held_passenger_threshold
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
         to: mara_manifest_thumbprint_intercom
@@ -1620,8 +1628,8 @@ scenes:
       The platform is no longer empty. People step out of the manifest doors
       carrying ordinary burdens: a folded newspaper, a paper sack darkened by
       rain, the mitten you saw pinned beside a name. None of them look at the
-      destination sign. They look to Mara's speaker, then to you, waiting for
-      the last door to open.
+      destination sign. They look to Mara's speaker, then to the third-car
+      threshold, waiting for someone to hold the last door open.
     choices:
       - id: ask_newspaper_woman_about_stop
         label: Ask the newspaper woman which stop she was trying to reach
@@ -1700,6 +1708,18 @@ scenes:
         effects:
           set:
             echoed_manifest_boarded: true
+      - id: hold_third_car_threshold
+        label: Hold the third-car threshold open for every passenger
+        to: passenger_threshold_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: make_room_for_passengers_in_third_car
         label: Make room inside the third car before reaching for the release
         to: passenger_room_boarding
@@ -1713,18 +1733,6 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
-      - id: hold_third_car_threshold
-        label: Hold the third-car threshold while the passengers board
-        to: passenger_threshold_boarding
-        requires:
-          all:
-            - notFlag: heard_passenger_echoes
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-            - notFlag: reviewed_open_manifest_count
-        effects:
-          set:
-            held_passenger_threshold: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
