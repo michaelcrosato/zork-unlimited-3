@@ -1,3 +1,53 @@
+# Cycle 24 Counted Chorus Ending Consistency
+
+- Date: 2026-06-02
+- Main objective: Tighten the reviewed-manifest count payoff by sending the
+  passenger-finished count chorus to the counted-crowd ending instead of the
+  earlier reviewed-count ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current health/playtest evidence shows full reachability and
+  strong completion. With discoverability healthy, the best next improvement is
+  late-route story consistency: once the passengers finish Mara's count
+  together, the ending should emphasize people keeping track of one another
+  rather than Mara's count still being fresh from the ledger.
+- Planned work:
+  - Retarget `pull_release_after_counted_chorus` to
+    `passenger_counted_true_ending`.
+  - Update regression coverage for the new ending text and preserve the
+    earlier direct reviewed-count release route.
+  - Validate, run health, and play the route.
+- Risks:
+  - This slightly changes one existing route's ending variant inside the same
+    ideal Manifest family. The direct reviewed-count ending remains available
+    from the intercom before the passengers finish the count.
+- Work completed:
+  - Retargeted `pull_release_after_counted_chorus` from
+    `passenger_reviewed_count_true_ending` to `passenger_counted_true_ending`.
+  - Updated the reviewed-count chorus regression test to assert the counted
+    crowd ending text.
+- Evidence:
+  - Focused story-path suite passed: 143 tests.
+  - CLI validation passed with 134 reachable scenes, 27 endings, and no
+    warnings.
+  - Actual CLI play followed `review_open_manifest_count` ->
+    `board_with_reviewed_manifest_count` ->
+    `let_passengers_finish_reviewed_count` ->
+    `pull_release_after_counted_chorus`, ending at
+    `passenger_counted_true_ending` with score 279 and no objectives.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 134 scenes with no unvisited scenes.
+- Playtest feedback:
+  - The route now escalates cleanly: Mara starts the reviewed count, the
+    passengers finish it as a chorus, and the ending describes the count
+    becoming a crowd rather than a total.
+  - The direct reviewed-count ending remains available before the passenger
+    chorus, preserving the lighter route.
+- Next step:
+  - Watch future blind feedback for whether the reviewed-count branch now has
+    the right number of adjacent payoff choices; if it feels crowded, simplify
+    labels before adding more manifest endings.
+
 # Cycle 23 Counted Transfer Handoff
 
 - Date: 2026-06-02

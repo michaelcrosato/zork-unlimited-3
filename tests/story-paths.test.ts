@@ -1683,9 +1683,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_counted_chorus");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("prove the count can end");
+    expect(observation.scene.text).toContain("the reviewed count falls apart");
+    expect(observation.scene.text).toContain("not a total");
     expectIdealScore(observation.score);
   });
 

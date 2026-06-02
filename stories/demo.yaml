@@ -3015,7 +3015,7 @@ scenes:
     choices:
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
-        to: passenger_reviewed_count_true_ending
+        to: passenger_counted_true_ending
 
   passenger_morning_intercom:
     routeImportance: optional
