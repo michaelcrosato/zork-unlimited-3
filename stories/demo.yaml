@@ -1269,14 +1269,15 @@ scenes:
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
       a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
-      shaking rain from their ribs, passengers answering Mara's count before
-      it can make anyone last, shoulders shifting to make room, a crowd pausing
-      until someone holds the third-car threshold. The same tiny door-echoes
-      you could have heard before opening the manifest keep their rhythm now
-      that the names are people. Mara breathes through the speaker and says,
-      "Third car. I can hold the line steady while they find the morning." When
-      she has already called the opened doors once, the third car speaker keeps
-      a small waiting hiss for her handoff.
+      shaking rain from their ribs, a newspaper transfer unfolding beside the
+      old conductor's punch, passengers answering Mara's count before it can
+      make anyone last, shoulders shifting to make room, a crowd pausing until
+      someone holds the third-car threshold. The same tiny door-echoes you
+      could have heard before opening the manifest keep their rhythm now that
+      the names are people. Mara breathes through the speaker and says, "Third
+      car. I can hold the line steady while they find the morning." When she
+      has already called the opened doors once, the third car speaker keeps a
+      small waiting hiss for her handoff.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1364,6 +1365,18 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: ask_conductor_to_punch_opened_transfer
+        label: Ask the conductor to punch the opened manifest transfer
+        to: passenger_conductor_transfer
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: punched_conductor_transfer
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            punched_conductor_transfer: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off to the opened passengers
         to: passenger_mara_signoff

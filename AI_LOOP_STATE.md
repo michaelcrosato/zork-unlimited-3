@@ -1,3 +1,64 @@
+# Cycle 48 Direct Conductor Transfer Proof Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_conductor_transfer_proof` easier to discover
+  from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 48 random/coverage evidence.
+  Coverage reaches every scene, but random samples missed
+  `passenger_conductor_transfer_proof`. The opened-manifest hub already carries
+  passenger keepsakes and a transfer motif, so surfacing the old conductor's
+  punch there gives players a readable way into the existing proof beat without
+  requiring the longer answered-passenger conductor chain.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing conductor
+    transfer branch.
+  - Revise the opened-manifest hub prose so the newspaper transfer and
+    conductor punch are visible before the choice appears.
+  - Add regression coverage proving the direct route reaches
+    `passenger_conductor_transfer`, `passenger_conductor_transfer_proof`, and
+    `passenger_conductor_transfer_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new branch.
+- Risks:
+  - The opened-manifest hub gains one more optional passenger action. This is
+    acceptable because it reuses an existing scene sequence and appears beside
+    other opened-passenger affordances rather than creating another ending.
+- Status:
+  - Added `ask_conductor_to_punch_opened_transfer` from `passengers_released`
+    directly to `passenger_conductor_transfer`, setting the existing conductor
+    transfer flags.
+  - Revised `passengers_released` text to mention the newspaper transfer
+    unfolding beside the old conductor's punch.
+  - Added regression coverage for the direct hub route through
+    `passenger_conductor_transfer`, `passenger_conductor_transfer_proof`, and
+    `passenger_conductor_transfer_true_ending`.
+  - Focused story-path suite passed: 169 tests.
+  - `npm run health` passed: format check, TypeScript, 213 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_conductor_transfer_proof`, with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `ask_conductor_to_punch_opened_transfer` ->
+    `press_punched_transfer_to_speaker` ->
+    `pull_release_after_transfer_proof`, ending at
+    `passenger_conductor_transfer_true_ending` with score 291 and no
+    objectives.
+- Playtest feedback:
+  - The new action is legible from the hub because the prose now points at both
+    the transfer paper and the conductor's punch before offering the choice.
+  - Pressing the punched transfer to Mara's speaker gives the branch a stronger
+    visual proof beat before the ideal passenger ending.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether
+    `passenger_conductor_transfer_proof` appears more often in normal play. If
+    hard issues remain absent, continue with remaining low-random intercom
+    payoffs such as `mara_last_dispatch_intercom` or
+    `passenger_morning_intercom`.
+
 # Cycle 47 Direct Gathered-Passenger Boarding Discovery
 
 - Date: 2026-06-02
