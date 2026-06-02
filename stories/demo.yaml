@@ -1623,6 +1623,18 @@ scenes:
         effects:
           set:
             heard_newspaper_memory: true
+      - id: ask_newspaper_woman_to_read_transfer_column
+        label: Ask the newspaper woman to read the blank transfer column aloud
+        to: passenger_newspaper_transfer
+        requires:
+          all:
+            - notFlag: heard_newspaper_memory
+            - notFlag: studied_newspaper_transfer
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
       - id: ask_lunch_tin_worker_to_set_pace
         label: Ask the lunch-tin worker to set the boarding pace
         to: passenger_farewell
@@ -1692,6 +1704,19 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: make_room_for_passengers_in_third_car
+        label: Make room inside the third car before reaching for the release
+        to: passenger_room_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: made_room_for_passengers
+        effects:
+          set:
+            made_room_for_passengers: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
@@ -1747,6 +1772,26 @@ scenes:
             heard_mara_goodbye: true
       - id: reach_release_after_threshold_boarding
         label: Reach the release after the last passenger clears the threshold
+        to: train_car
+
+  passenger_room_boarding:
+    routeImportance: optional
+    text: >
+      Inside the third car, the first seat has become more than a place to hide
+      the release. You lift the newspaper bundle from the aisle, tuck the lunch
+      tin where it will not trip anyone, and guide the child with the mitten
+      toward the rail. Each small motion gives the passengers another inch of
+      ordinary space. Mara leaves the speaker open long enough for the car to
+      sound crowded instead of haunted.
+    choices:
+      - id: listen_to_room_made_for_passengers
+        label: Listen as the crowded car steadies around the release
+        to: passenger_room_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: reach_release_after_making_room
+        label: Reach the release once every passenger has room
         to: train_car
 
   passenger_newspaper_memory:
@@ -2885,6 +2930,19 @@ scenes:
         label: Pull the release while the threshold stays open
         to: passenger_true_ending
 
+  passenger_room_intercom:
+    routeImportance: optional
+    text: >
+      The speaker carries the noise of people making room for one another:
+      knees shifting, bags passed hand to hand, the lunch tin set carefully
+      under the first seat beside the release. Mara does not read another name.
+      "That is what the ledger never knew how to count," she says. "Enough
+      space for everyone to leave together."
+    choices:
+      - id: pull_release_after_making_room
+        label: Pull the release while the car holds everyone
+        to: passenger_true_ending
+
   passenger_counted_manifest_intercom:
     routeImportance: optional
     text: >
@@ -3147,6 +3205,16 @@ scenes:
         to: passenger_conductor_transfer_true_ending
         requires:
           flag: punched_conductor_transfer
+      - id: pass_punched_transfer_from_roll_call
+        label: Let the child carry the punched transfer from the clear call to Mara
+        to: passenger_conductor_transfer_handoff
+        requires:
+          all:
+            - flag: punched_conductor_transfer
+            - notFlag: punched_transfer_carried_forward
+        effects:
+          set:
+            punched_transfer_carried_forward: true
 
   passenger_conductor_count_roll_call:
     routeImportance: optional

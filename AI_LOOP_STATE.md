@@ -1,3 +1,130 @@
+# Cycle 18 Transfer Column Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the newspaper transfer
+  branch and the conductor transfer handoff without adding new endings or
+  changing required true-ending logic.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 18 evidence shows healthy completion, full
+  coverage reachability, and zero unfinished runs, but normal random samples
+  still sometimes miss `passenger_newspaper_transfer` and
+  `passenger_conductor_transfer_handoff`. The transfer column is a strong
+  passenger detail, so it should be easier to notice during ordinary platform
+  play.
+- Planned work:
+  - Add one direct platform choice that asks the newspaper woman to read the
+    blank transfer column aloud.
+  - Route that choice into the existing `passenger_newspaper_transfer` scene.
+  - Add a second handoff opportunity after the conductor's transfer roll call
+    so the punched transfer can still reach Mara if the player pauses for the
+    clear call first.
+  - Preserve the existing slower newspaper-memory route and all existing
+    endings.
+  - Add regression coverage for the direct transfer-column path and conductor
+    handoff.
+- Work completed:
+  - Added `ask_newspaper_woman_to_read_transfer_column` from
+    `passenger_platform` to `passenger_newspaper_transfer`.
+  - Set `heard_newspaper_memory` and `studied_newspaper_transfer` on the direct
+    route so later state/report evidence matches the discovered clue.
+  - Added `pass_punched_transfer_from_roll_call` from
+    `passenger_conductor_roll_call` to `passenger_conductor_transfer_handoff`
+    when the conductor's punched transfer is active.
+  - Updated exact choice-list expectations and added regression coverage that
+    reaches `passenger_conductor_transfer_handoff` through both the direct
+    transfer branch and the new roll-call handoff branch.
+- Evidence so far:
+  - Focused story-path suite passed: 143 tests.
+  - CLI validation passed with 133 reachable scenes and 27 endings.
+  - Actual CLI play followed the direct transfer-column route through
+    `pass_punched_transfer_to_child` to
+    `passenger_conductor_transfer_true_ending` with score 298 and no remaining
+    objectives.
+  - Actual CLI play followed the transfer roll-call route through
+    `pass_punched_transfer_from_roll_call` to
+    `passenger_conductor_transfer_true_ending` with score 300 and no remaining
+    objectives.
+  - A 250-run random playtest visited both `passenger_newspaper_transfer` and
+    `passenger_conductor_transfer_handoff`, with 250/250 ended and no frontier
+    samples.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+- Playtest feedback:
+  - The direct platform choice makes the transfer column readable before the
+    player has to step through the longer newspaper-memory beat.
+  - The roll-call handoff option reads naturally after the conductor has
+    validated the paper, and it preserves the direct release for players who
+    want to end immediately.
+  - The route remains ideal and does not add ending taxonomy or metadata
+    complexity.
+- Risks:
+  - The passenger platform has one more optional choice. The label is concrete
+    and routes to existing content, but future blind feedback should watch
+    whether this makes the choice list feel too busy.
+- Next step:
+  - Watch blind feedback for whether the passenger platform choice list now
+    feels crowded; if so, consolidate labels before adding more optional
+    passenger beats.
+
+# Cycle 21 Passenger Crowd Room Beat
+
+- Date: 2026-06-02
+- Main objective: Add a small optional payoff for direct passenger-manifest
+  boarders so the crowded third car feels like people physically making room
+  before the emergency release, without changing true-ending requirements.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and supplied Cycle 21 evidence says guidance, coverage, and ending
+  reachability are healthy. The highest-value next move is richer story depth.
+  The plain passenger manifest route could still jump from a populated platform
+  into the generic third-car release text, making the rescued crowd feel less
+  present than the more specific lunch-tin, mitten, keepsake, and roll-call
+  variants.
+- Planned work:
+  - Add one optional choice from `passenger_platform` on the plain manifest
+    route.
+  - Add one boarding scene and one intercom payoff that route to the existing
+    `passenger_true_ending`.
+  - Preserve the direct `board_third_car_with_passengers` and
+    `pull_release_with_manifest` path.
+  - Add regression coverage and verify with CLI play plus `npm run health`.
+- Work completed:
+  - Added `make_room_for_passengers_in_third_car` to `passenger_platform`.
+  - Added `passenger_room_boarding`, where the player makes practical space
+    for the newspaper, lunch tin, and mitten passengers.
+  - Added `passenger_room_intercom`, where Mara names that shared space as
+    something the ledger could not count.
+  - Added a regression proving the branch appears, sets
+    `made_room_for_passengers`, reaches `passenger_true_ending`, and can also
+    return to the normal train-car release path.
+- Evidence so far:
+  - Focused story-path suite passed: 143 tests.
+  - CLI validation passed with 133 reachable scenes and 27 endings.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+  - Actual CLI play followed the new room-making route to
+    `passenger_true_ending` with score 276, no remaining objectives, and
+    `made_room_for_passengers` plus `heard_mara_goodbye` recorded.
+  - Commit attempt was blocked by the managed sandbox because `.git/index.lock`
+    could not be created on the read-only `.git` mount.
+- Playtest feedback:
+  - The new beat makes the plain passenger route feel physically crowded before
+    the release, using the same concrete passenger objects already introduced
+    by the manifest.
+  - The intercom payoff is short and keeps the objective clear: pull the
+    release while the car has room for everyone.
+  - The direct route remains available for players who do not want another
+    optional pause.
+- Risks:
+  - The plain passenger platform choice list is one item longer. This is
+    acceptable for now because the new choice is optional, concrete, and
+    located beside the existing threshold and board actions.
+- Next step:
+  - Commit and push this green milestone from the outer loop or any environment
+    with writable `.git` access.
+  - Watch future blind feedback for whether the passenger platform choice list
+    feels too busy; if so, tune labels or fold nearby optional beats rather
+    than adding more parallel choices.
+
 # Cycle 17 Train-Car Mara Handoff
 
 - Date: 2026-06-02
