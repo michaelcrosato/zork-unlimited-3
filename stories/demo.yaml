@@ -1543,6 +1543,7 @@ scenes:
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
             - notFlag: heard_passenger_echoes
+            - notFlag: held_passenger_threshold
         effects:
           set:
             heard_mara_goodbye: true

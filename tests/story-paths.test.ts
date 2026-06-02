@@ -2086,6 +2086,9 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "listen_to_threshold_manifest_intercom"
     );
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "listen_to_mara_manifest_intercom"
+    );
 
     state = choose(story, state, "listen_to_threshold_manifest_intercom");
     observation = observe(story, state);

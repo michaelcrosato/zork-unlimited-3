@@ -12,74 +12,65 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a threshold boarding beat to deepen the direct opened
-  passenger-manifest route.
-- Why this matters: Cycle 11 evidence shows core guidance, coverage, and
-  ideal-ending rates are healthy, so the best next improvement is richer story
-  texture rather than more clue steering. The direct
-  `passengers_released -> passenger_platform -> train_car` route currently
-  jumps quickly from freeing the manifest to the generic release car; a focused
-  threshold beat can make the crowd feel present while preserving the existing
-  `passenger_true_ending`.
+- Main objective: Improve normal-play discovery for the threshold intercom
+  payoff.
+- Why this matters: Cycle 12 evidence showed all scenes were reachable under
+  coverage, but `passenger_threshold_intercom` was missed by the 100-run random
+  sample even after `passenger_threshold_boarding` appeared. A player who
+  chooses to hold the third-car threshold should hear the matching final
+  intercom instead of being offered the generic manifest intercom first.
 - Tasks:
-  - Add an optional third-car threshold scene from `passenger_platform` for the
-    direct opened-manifest route. Done.
-  - Add a matching third-car intercom payoff before the existing direct
-    passenger release ending. Done.
-  - Keep the old direct boarding shortcut and all specialized passenger routes
-    valid. Done.
-  - Add focused regression coverage for the new route. Done.
-  - Run focused tests, validation, full health, and an actual playthrough.
-    Done.
+  - Gate the generic opened-manifest intercom away after the player has held
+    the third-car threshold. Done.
+  - Keep the threshold-specific intercom and existing `passenger_true_ending`
+    route intact. Done.
+  - Add a regression assertion that the threshold route no longer exposes the
+    generic manifest intercom in the train car. Done.
+  - Run focused tests, validation, random/coverage checks, full health, the
+    evidence cycle, and an actual CLI playthrough. Done.
 - Evidence:
-  - Added `hold_third_car_threshold` from `passenger_platform`, gated away from
-    echoed, answered, helped, and reviewed-count passenger variants.
-  - Added `passenger_threshold_boarding` and `passenger_threshold_intercom`,
-    both routing back into the existing `passenger_true_ending` payoff.
-  - Added focused story-path regression coverage for the new threshold route
-    from manifest clearance to `passenger_true_ending`.
+  - Added `notFlag: held_passenger_threshold` to
+    `listen_to_mara_manifest_intercom`, so the direct generic Mara manifest
+    goodbye no longer competes with `listen_to_threshold_manifest_intercom`
+    after the threshold beat.
+  - Updated the threshold story-path test to assert that
+    `listen_to_threshold_manifest_intercom` is visible and
+    `listen_to_mara_manifest_intercom` is not visible in that branch.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 112 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 114
+    scenes, 24 endings, all 114 reachable, and no warnings.
+  - A 100-run random sample ended all runs, had zero unfinished runs, visited
+    all scenes, and now included both `passenger_threshold_boarding` and
+    `passenger_threshold_intercom`.
   - `npm run health` passed with formatting, TypeScript, 133 tests, story
     validation, and coverage playtest.
-  - Health validation passed with 114 scenes, 24 endings, all 114 reachable,
-    and no warnings.
-  - Health coverage playtest visited all scenes including
-    `passenger_threshold_boarding` and `passenger_threshold_intercom`, had zero
-    unfinished runs, best score 100/100, average score 94.32, and 947
-    max-score runs.
-  - Actual CLI play followed the new threshold route and reached
-    `passenger_true_ending` at 100/100 with `held_passenger_threshold` set and
-    no remaining objectives.
+  - Health coverage visited all 114 scenes, had zero unfinished completed
+    routes, best score 100/100, average score 94.3, and 943 max-score runs.
+  - Actual CLI play followed the direct passenger manifest route through
+    `hold_third_car_threshold`, `listen_to_threshold_manifest_intercom`, and
+    `pull_release_after_threshold_manifest`, reaching `passenger_true_ending`
+    at 100/100 with no remaining objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T02-34-48-182Z.md`.
-  - Evidence-cycle MCP validation passed with 114 reachable scenes and no
-    warnings.
-  - Evidence-cycle MCP random play ended all 250 runs, had zero unfinished
-    runs, and visited both new threshold scenes.
-  - Evidence-cycle required MCP route still reached `true_ending` at 100/100;
-    adaptive MCP route reached `passenger_lunch_tin_true_ending` at 100/100.
+    report `ai-runs/cycle-2026-06-02T02-43-47-043Z.md`.
 - Playtest notes:
-  - The new threshold scene makes the direct passenger route feel less abrupt:
-    the player sees the opened passengers board as people before returning to
-    the release.
-  - The matching intercom beat pays off the held threshold without adding a new
-    score beat or ending, so the scoring contract stays stable.
-  - The old direct `board_third_car_with_passengers` shortcut remains available
-    for players who want to move straight to the release.
-  - Specialized passenger routes remain protected by flags; answer-listener
-    routes correctly do not show the new threshold option.
+  - The threshold branch now reads as a coherent cause-and-effect beat: hold
+    the doorway, reach the release, hear Mara respond to the held doorway, then
+    pull the release.
+  - The route still uses the existing `passenger_true_ending`, so the change
+    improves payoff clarity without adding scoring churn or another ending.
+  - The generic manifest intercom remains available to players who skip the
+    threshold beat.
+  - No bugs or dead ends were found in focused tests, validation, random
+    playtest, health, evidence cycle, or the manual CLI route.
 - Follow-up:
-  - Watch random samples for whether `passenger_threshold_intercom` appears
-    often enough in normal play; the 100-run random sample reached
-    `passenger_threshold_boarding` but not the intercom, while MCP random and
-    coverage did reach both.
-  - Continue favoring small passenger payoff beats or report-quality
-    improvements while core route metrics remain healthy.
+  - Continue favoring small payoff-quality improvements while ideal-ending and
+    max-score rates remain healthy.
+  - Watch non-ideal bad/lost/escape pressure only if future random samples show
+    it crowding out normal successful play.
 - Risks:
-  - Adding another optional beat to the already broad passenger route could
-    make the late game feel choice-heavy if it appears on too many variants;
-    the new choice is gated away from echoed, answered, helped, and reviewed
-    count routes.
+  - This makes the threshold-specific intercom mandatory once the player has
+    chosen the threshold beat, slightly reducing late train-car choice variety
+    in that route.
 
 ## Last Completed Cycle
 
