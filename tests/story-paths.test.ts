@@ -695,7 +695,9 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("clock");
-    expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "take_token_return_to_lit_platform"
+    ]);
   });
 
   it("steers fuse carriers toward restoring platform power before boarding", async () => {
@@ -6038,13 +6040,14 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("clock");
-    expect(observation.choices.map((choice) => choice.id)).toContain("take_token");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "take_token_return_to_lit_platform"
+    ]);
     expect(observation.objectives).toContain(
       "Search the stopped tunnel clock for the signal booth token."
     );
 
-    state = choose(story, state, "take_token");
-    state = choose(story, state, "follow_arrows_to_lit_platform");
+    state = choose(story, state, "take_token_return_to_lit_platform");
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
@@ -6076,6 +6079,38 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("hearing Mara name the signal key");
     expect(observation.scene.text).toContain("stopped clock");
     expect(observation.scene.text).toContain("unfinished route");
+  });
+
+  it("returns unlit stairwell listeners to Platform 13 after token recovery", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform",
+      "listen_at_unlit_stairwell",
+      "return_from_stairwell_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("clock");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "take_token_return_to_dark_platform"
+    ]);
+
+    state = choose(story, state, "take_token_return_to_dark_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(observation.state.inventory).toContain("token");
+    expect(observation.state.flags.found_token).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_gate_control");
   });
 
   it("adds a one-time platform glance before early escape", async () => {

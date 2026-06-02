@@ -1,3 +1,56 @@
+# Cycle 14 Stairwell Token Return
+
+- Date: 2026-06-02
+- Main objective: Smooth the adaptive escape-warning route so players who
+  listen to Mara at the stairwell and choose to continue recover the signal
+  token without being dropped back into generic tunnel navigation.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 14 adaptive route ended at
+  `warned_escape_ending` after Mara clearly named the token. The escape ending
+  should remain available, but players who heed that warning should get a
+  cleaner return path to active play.
+- Planned work:
+  - Add stairwell-call-specific token recovery choices from `clock`.
+  - Send lit-platform escape listeners directly back to `lit_platform`.
+  - Send unlit-platform escape listeners directly back to `platform`.
+  - Preserve the existing `warned_escape_ending` branch for players who still
+    choose to leave.
+  - Add regression coverage for both lit and unlit return paths.
+- Work completed:
+  - Added `take_token_return_to_lit_platform`, gated by `heard_escape_call` and
+    `platform_lit`.
+  - Added `take_token_return_to_dark_platform`, gated by `heard_escape_call`,
+    `knows_platform`, and an unlit platform.
+  - Kept the original `take_token` path for normal clock visits and other
+    token-recovery routes.
+  - Updated escape-warning tests and added an unlit stairwell-listener
+    regression.
+- Evidence:
+  - Focused story-path suite passed: 141 tests.
+  - Actual CLI play followed the adaptive unlit stairwell route through
+    `take_token_return_to_dark_platform` and reached `true_ending` at score
+    280 with no active objectives.
+  - `npm run health` passed: format check, TypeScript, 185 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 128 reachable scenes and 26 endings.
+  - Health coverage visited all 128 scenes with zero unfinished runs.
+- Playtest feedback:
+  - The new unlit return choice removes a small but noticeable navigation tax
+    after Mara's strongest escape-warning clue.
+  - The route still asks the player to inspect the gate control and recover
+    missing parts, so the shortcut improves orientation without skipping the
+    core preparation loop.
+  - `warned_escape_ending` remains intact for players who intentionally abandon
+    the route after hearing the token clue.
+- Risks:
+  - The clock now has contextual token choices after `heard_escape_call`; watch
+    future blind sessions for whether the changed label feels too directive or
+    appropriately helpful.
+- Next step:
+  - Let blind consolidation decide whether escape-warning routes need more
+    softening; otherwise continue with small route payoffs or transcript/report
+    critique.
+
 # Cycle 17 Morning Chorus Boarding
 
 - Date: 2026-06-02

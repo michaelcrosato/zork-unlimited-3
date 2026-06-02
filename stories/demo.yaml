@@ -227,11 +227,39 @@ scenes:
       wedged behind the minute hand, warm as a coin left in sunlight. Its edge
       is stamped SIGNAL BOOTH ACCESS.
     choices:
+      - id: take_token_return_to_lit_platform
+        label: Take the signal token and return to the lit platform
+        to: lit_platform
+        requires:
+          all:
+            - notItem: token
+            - flag: heard_escape_call
+            - flag: platform_lit
+        effects:
+          addItem: token
+          set:
+            found_token: true
+      - id: take_token_return_to_dark_platform
+        label: Take the signal token and return to Platform 13
+        to: platform
+        requires:
+          all:
+            - notItem: token
+            - flag: heard_escape_call
+            - notFlag: platform_lit
+            - flag: knows_platform
+        effects:
+          addItem: token
+          set:
+            found_token: true
+            knows_platform: true
       - id: take_token
         label: Take the maintenance token
         to: tunnel
         requires:
-          notItem: token
+          all:
+            - notItem: token
+            - notFlag: heard_escape_call
         effects:
           addItem: token
           set:
