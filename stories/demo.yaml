@@ -1455,7 +1455,6 @@ scenes:
             - flag: knows_badge_proof
             - notFlag: heard_mara_goodbye
             - notFlag: read_passenger_manifest
-            - notFlag: read_mara_thumbprint
             - notFlag: saw_mara_handoff
             - notFlag: heard_mara_last_dispatch
         effects:

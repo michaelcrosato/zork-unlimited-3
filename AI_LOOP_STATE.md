@@ -1,3 +1,43 @@
+# Cycle 1 Badge-Proof Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play access to the `mara_badge_proof_intercom`
+  payoff without removing the thumbprint or manifest variants.
+- Why this matters: Random evidence showed full coverage overall, but the
+  smaller normal-play sample still missed `mara_badge_proof_intercom`; the
+  route was hidden whenever players also inspected Mara's torn thumbprint.
+- Tasks:
+  - Relax the third-car badge-proof intercom gate so `knows_badge_proof` remains
+    valid after the optional thumbprint memory.
+  - Keep passenger-manifest and last-dispatch branches distinct so existing
+    late-game payoffs do not collapse into one generic scene.
+  - Add a regression test proving badge proof and thumbprint can coexist as
+    selectable third-car payoffs.
+- Risks:
+  - More choices in the third car can slightly increase branch competition, but
+    both are earned clue payoffs and the direct release remains available.
+- Status:
+  - Implemented story-gate and regression-test changes.
+  - Focused story-path suite passed: 112 tests.
+  - `npm run health` passed: format, lint, 133 tests, validation, and coverage
+    playtest.
+  - Coverage playtest visited all 115 scenes, including
+    `mara_badge_proof_intercom`, with 0 unfinished runs.
+  - Actual CLI playthrough followed the badge-back plus thumbprint route,
+    selected `listen_to_badge_proof_intercom`, and reached `true_ending` at
+    100/100.
+- Playtest feedback:
+  - The combined clue route now feels more natural: reading the badge back and
+    touching the thumbprint no longer makes one earned final clue erase the
+    other.
+  - The third car now offers two optional earned intercom beats plus the direct
+    release on that route. This is acceptable for now, but future passes should
+    watch whether late-game choice lists become too dense.
+- Next step:
+  - Review random samples for late-game routes with three or more optional
+    intercom payoffs and consider grouping transcript/report output so pacing
+    critiques are easier.
+
 # AI Loop State
 
 This file is the handoff point for future autonomous agents.

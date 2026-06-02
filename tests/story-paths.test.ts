@@ -4072,6 +4072,8 @@ describe("demo story critical paths", () => {
       "search_locker",
       "take_fuse",
       "take_badge",
+      "inspect_badge_back",
+      "return_from_badge_memory",
       "close_locker",
       "go_to_platform",
       "install_fuse",
@@ -4088,8 +4090,10 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.state.flags.read_mara_thumbprint).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_badge_proof_intercom",
       "listen_to_mara_thumbprint_intercom",
       "pull_release"
     ]);
