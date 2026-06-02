@@ -4835,10 +4835,31 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "press_transfer_to_speaker_grille",
       "pull_release_after_transfer_handoff"
     ]);
 
-    state = choose(story, state, "pull_release_after_transfer_handoff");
+    const transferHandoffState = state;
+
+    state = choose(story, state, "press_transfer_to_speaker_grille");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
+    expect(observation.scene.text).toContain("The star hole lines up with Mara's voice");
+    expect(observation.scene.text).toContain("Now it belongs to them too");
+    expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_transfer_proof"
+    ]);
+
+    state = choose(story, state, "pull_release_after_transfer_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(story, transferHandoffState, "pull_release_after_transfer_handoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
@@ -5056,8 +5077,19 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_transfer_handoff");
     expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "press_transfer_to_speaker_grille",
+      "pull_release_after_transfer_handoff"
+    ]);
 
-    handoffState = choose(story, handoffState, "pull_release_after_transfer_handoff");
+    handoffState = choose(story, handoffState, "press_transfer_to_speaker_grille");
+    observation = observe(story, handoffState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
+    expect(observation.scene.text).toContain("throwing one small morning-shaped mark");
+    expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+
+    handoffState = choose(story, handoffState, "pull_release_after_transfer_proof");
     observation = observe(story, handoffState);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");

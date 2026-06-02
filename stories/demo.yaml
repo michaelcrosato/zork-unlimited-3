@@ -3215,8 +3215,31 @@ scenes:
       Mara laughs once, startled by proof light enough to pass hand to hand.
       "That is enough," she says. "Pull it now."
     choices:
+      - id: press_transfer_to_speaker_grille
+        label: Press the punched transfer flat against Mara's speaker grille
+        to: passenger_conductor_transfer_proof
+        requires:
+          notFlag: pressed_transfer_to_speaker
+        effects:
+          set:
+            pressed_transfer_to_speaker: true
       - id: pull_release_after_transfer_handoff
         label: Pull the release after the punched transfer reaches Mara
+        to: passenger_conductor_transfer_true_ending
+
+  passenger_conductor_transfer_proof:
+    routeImportance: optional
+    text: >
+      You press the punched transfer against the speaker grille. The star hole
+      lines up with Mara's voice and the carriage lights shine through it,
+      throwing one small morning-shaped mark across the ceiling. The child sees
+      it first. Then the newspaper woman, the lunch-tin worker, and the old
+      conductor look up together, all of them watching proof pass through paper
+      instead of being trapped inside it. Mara whispers, "Now it belongs to
+      them too."
+    choices:
+      - id: pull_release_after_transfer_proof
+        label: Pull the release while the punched transfer shines through
         to: passenger_conductor_transfer_true_ending
 
   passenger_conductor_roll_call:

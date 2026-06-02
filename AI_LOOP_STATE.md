@@ -1,3 +1,56 @@
+# Cycle 21 Conductor Transfer Proof
+
+- Date: 2026-06-02
+- Main objective: Add a small optional proof beat to the conductor-transfer
+  handoff so the punched transfer feels more tactile before the ideal release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current supplied evidence shows healthy completion, full coverage,
+  and no unfinished runs. With the earlier handoff discoverability issue already
+  addressed in the current repo, the best focused improvement is richer
+  late-game payoff on a strong passenger prop without adding another ending or
+  broad route complexity.
+- Planned work:
+  - Add one optional scene after `passenger_conductor_transfer_handoff` where
+    the player presses the punched transfer to Mara's speaker grille.
+  - Preserve the existing direct release from the handoff.
+  - Extend conductor-transfer regression coverage for both the new proof route
+    and the direct route.
+  - Validate, run health, and actually play the new route through the CLI.
+- Risks:
+  - The handoff scene gains one additional optional choice. It is a one-step
+    sensory beat and returns immediately to the same ideal ending, so route
+    complexity stays bounded.
+- Work completed:
+  - Added `press_transfer_to_speaker_grille` from
+    `passenger_conductor_transfer_handoff` to the new
+    `passenger_conductor_transfer_proof` scene.
+  - Added `pull_release_after_transfer_proof` to preserve the same
+    `passenger_conductor_transfer_true_ending` payoff.
+  - Updated story-path regression coverage for the new proof beat and the
+    preserved direct handoff release.
+- Evidence:
+  - Focused story-path suite passed: 144 tests.
+  - CLI validation passed with 135 reachable scenes, 27 endings, and no
+    warnings.
+  - `npm run health` passed: format check, TypeScript, 188 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 135 scenes, including
+    `passenger_conductor_transfer_proof`, with no unvisited scenes.
+  - Actual CLI play followed `ask_conductor_to_punch_transfer` ->
+    `pass_punched_transfer_to_child` -> `press_transfer_to_speaker_grille` ->
+    `pull_release_after_transfer_proof`, ending at
+    `passenger_conductor_transfer_true_ending` with score 327, no objectives,
+    and `pressed_transfer_to_speaker` recorded.
+- Playtest feedback:
+  - The new proof beat gives the punched transfer a clearer visual payoff: the
+    star hole lines up with Mara's speaker and becomes something the whole car
+    can see before release.
+  - The direct handoff release still works, so players who are ready to finish
+    are not forced through the extra beat.
+- Next step:
+  - Watch future blind feedback for whether late conductor-transfer routes feel
+    overfull. If they do, trim adjacent labels before adding more beats.
+
 # Cycle 24 Mara-Note HOME Sign Recovery
 
 - Date: 2026-06-02
