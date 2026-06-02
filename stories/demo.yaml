@@ -2850,6 +2850,20 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: wait_for_thumbprint_mara_at_far_door
+        label: Wait for Mara to carry the torn thumbprint to the far door
+        to: mara_thumbprint_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_mara_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: saw_mara_handoff
+        effects:
+          set:
+            saw_mara_handoff: true
+            heard_mara_goodbye: true
       - id: listen_to_mara_thumbprint_intercom
         label: Listen as Mara remembers the torn thumbprint
         to: mara_thumbprint_intercom

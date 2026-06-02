@@ -1,3 +1,59 @@
+# Cycle 88 Direct-Board Thumbprint Handoff Recovery
+
+- Date: 2026-06-02
+- Main objective: Let players who already found Mara's torn thumbprint recover
+  the Mara handoff route even after they choose the direct third-car boarding
+  option.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence points at `mara_handoff_intercom`,
+  `mara_handoff_true_ending`, and `mara_thumbprint_handoff_intercom` as the
+  remaining normal-play discovery gap. The direct boarding route is a natural
+  player choice after clearing Mara's ledger row, but previously it could bury
+  the stronger thumbprint-handoff payoff behind earlier platform choices.
+- Planned work:
+  - Add a train-car choice for thumbprint readers to wait while Mara carries
+    the torn thumbprint to the far door.
+  - Route that choice to `mara_thumbprint_handoff_intercom` and set the same
+    handoff/goodbye flags as the established handoff route.
+  - Lock the direct-board recovery route with a focused story-path regression.
+  - Run focused tests, full health, and an actual playthrough.
+- Risks:
+  - Choice ordering may slightly increase random traffic into the
+    `mara_handoff_true_ending` family, but only for players who already earned
+    the torn-thumbprint clue and have not entered a passenger-manifest route.
+- Status:
+  - Completed.
+  - Added `wait_for_thumbprint_mara_at_far_door` from `train_car` to
+    `mara_thumbprint_handoff_intercom`.
+  - Updated the thumbprint direct-release expectation to show the new recovery
+    option before the generic thumbprint intercom.
+  - Added a focused regression for boarding directly after reading the
+    thumbprint, choosing the new wait option, and reaching
+    `mara_handoff_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "thumbprint readers recover the Mara handoff"`.
+  - `npm run health` passed: format check, TypeScript, 234 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+  - Actual CLI play followed the direct-board thumbprint route through
+    `wait_for_thumbprint_mara_at_far_door`, ended at
+    `mara_handoff_true_ending`, scored 275, and left no objectives.
+- Playtest feedback:
+  - The new train-car choice is a clear recovery beat for players who picked
+    the direct board option but still care about the torn thumbprint clue.
+  - The route now pays off with Mara physically holding the far door, which is
+    more specific than the generic speaker goodbye and directly addresses the
+    missed `mara_thumbprint_handoff_intercom` discovery gap.
+  - No invalid choices, dangling objectives, dead ends, or coverage regressions
+    appeared.
+- Next step:
+  - Watch future random and blind sessions for whether
+    `mara_thumbprint_handoff_intercom` appears more often in normal direct-board
+    routes; if not, tune the post-release choice labels before adding another
+    branch.
+
 # Cycle 87 Unlit Platform Recovery Signpost
 
 - Date: 2026-06-02
