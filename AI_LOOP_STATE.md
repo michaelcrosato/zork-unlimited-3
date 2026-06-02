@@ -1,3 +1,67 @@
+# Cycle 16 Passenger Sign-Off Thumbprint Bridge
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for
+  `mara_manifest_thumbprint_intercom` and
+  `passenger_manifest_thumbprint_true_ending` by letting Mara's new passenger
+  sign-off surface the manifest thumbprint oath.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 16 evidence showed all scenes reachable with a
+  strong ideal-ending rate, but the 100-run random sample still missed
+  `mara_manifest_thumbprint_intercom` and
+  `passenger_manifest_thumbprint_true_ending`. The payoff existed, but normal
+  players had to notice the opened-manifest handoff before the thumbprint
+  route became available.
+- Planned work:
+  - Add one contextual bridge from `passenger_mara_signoff` into the existing
+    manifest thumbprint scene.
+  - Keep direct return, platform-crossing, and third-car boarding choices
+    intact.
+  - Preserve the existing `mara_manifest_thumbprint_intercom` and
+    `passenger_manifest_thumbprint_true_ending` payoff instead of creating a
+    parallel ending.
+  - Add regression coverage proving the new bridge reaches the ideal
+    manifest-thumbprint ending.
+- Work completed:
+  - Added `notice_manifest_thumbprint_after_mara_signoff`, gated before the
+    passengers have answered or gathered, from `passenger_mara_signoff` to
+    `mara_manifest_thumbprint`.
+  - The new choice sets `read_manifest_thumbprint` and
+    `saw_mara_manifest_handoff`, allowing the existing oath-carrying route to
+    continue naturally.
+  - Updated the existing sign-off regression to include the new optional bridge.
+  - Added a dedicated story-path regression for sign-off -> manifest
+    thumbprint -> intercom -> `passenger_manifest_thumbprint_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 138 tests.
+  - `npm run health` passed: format check, TypeScript, 182 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 126 reachable scenes and 26 endings.
+  - Health coverage visited all 126 scenes, including
+    `mara_manifest_thumbprint_intercom` and
+    `passenger_manifest_thumbprint_true_ending`, with zero unfinished runs.
+  - Actual CLI play used `ask_mara_to_sign_off_opened_manifest`,
+    `notice_manifest_thumbprint_after_mara_signoff`, and
+    `carry_manifest_thumbprint_to_third_car`, then reached
+    `passenger_manifest_thumbprint_true_ending` at score 307 with no active
+    objectives.
+- Playtest feedback:
+  - The sign-off bridge reads as a natural visual follow-through: after Mara
+    tells the passengers no one boards alone, the player can notice the mark
+    that once kept her alone on the manifest.
+  - The existing oath scene and ending still carry the payoff, so the change
+    improves discovery without splitting the route into another ending.
+  - Direct boarding remains visible from `passenger_mara_signoff`, preserving
+    momentum for players who do not want another optional beat.
+- Risks:
+  - `passenger_mara_signoff` now has one more optional choice. Watch blind
+    sessions for late passenger-route choice density.
+- Next step:
+  - Watch the next random/blind samples for whether
+    `passenger_manifest_thumbprint_true_ending` appears more often; if it does,
+    shift toward transcript/report critique or another small route-specific
+    payoff.
+
 # Cycle 15 Passenger Mara Sign-Off
 
 - Date: 2026-06-02

@@ -1297,6 +1297,18 @@ scenes:
       cheer but with movement: hands finding handles, shoulders turning toward
       the third car, small proofs of life making room for one another.
     choices:
+      - id: notice_manifest_thumbprint_after_mara_signoff
+        label: Notice Mara's thumbprint holding the opened manifest
+        to: mara_manifest_thumbprint
+        requires:
+          all:
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
       - id: return_from_passenger_mara_signoff
         label: Return to the opened manifest doors
         to: passengers_released

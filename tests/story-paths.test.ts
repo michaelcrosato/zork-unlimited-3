@@ -3831,6 +3831,67 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets Mara's passenger sign-off surface the manifest thumbprint oath", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "ask_mara_to_sign_off_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mara_signoff");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "notice_manifest_thumbprint_after_mara_signoff"
+    );
+
+    state = choose(story, state, "notice_manifest_thumbprint_after_mara_signoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_manifest_thumbprint_to_third_car"
+    );
+
+    state = choose(story, state, "carry_manifest_thumbprint_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expectIdealScore(observation.score);
+  });
+
   it("lets players recover Mara's thumbprint thread after returning to opened doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -7081,6 +7142,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "notice_manifest_thumbprint_after_mara_signoff",
       "return_from_passenger_mara_signoff",
       "cross_after_passenger_mara_signoff",
       "board_after_passenger_mara_signoff"
