@@ -5240,6 +5240,10 @@ describe("demo story critical paths", () => {
     const finalObservation = observe(story, state);
     expect(finalObservation.scene.id).toBe("true_ending");
     expectIdealScore(finalObservation.score);
+    expect(finalObservation.score.awards.map((award) => award.id)).not.toContain(
+      "flag_read_mara_file"
+    );
+    expect(finalObservation.score.awards.map((award) => award.id)).toContain("flag_freed_mara");
   });
 
   it("warns players without the token before they board from the lit platform", async () => {

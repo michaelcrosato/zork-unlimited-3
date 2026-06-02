@@ -52,7 +52,7 @@ const FLAG_AWARDS: Array<{
     id: "read_mara_file",
     label: "Read Mara Vale's personnel file",
     points: 10,
-    earned: (state) => state.flags.read_mara_file === true || state.flags.freed_mara === true
+    earned: (state) => state.flags.read_mara_file === true
   },
   {
     id: "knows_release",

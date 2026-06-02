@@ -1,3 +1,50 @@
+# Cycle 20 Personnel File Score Audit
+
+- Date: 2026-06-02
+- Main objective: Fix a transcript scoring inconsistency where true-ending
+  recovery routes could claim the player read Mara Vale's personnel file even
+  when they skipped it.
+- Why this matters: Current checked-out code already contains the suggested
+  `morning_clock_catch_up` improvement, and no consolidated blind-play digest
+  is available yet. The highest-signal open risk in the prior state was score
+  trust: AI and blind playtest reports depend on point-award text to critique
+  routes accurately.
+- Planned work:
+  - Separate the personnel-file award from the broader `freed_mara` state.
+  - Preserve true-ending and ledger-clear scoring.
+  - Add regression coverage for a no-personnel-file true-ending route.
+- Work completed:
+  - Updated `flag_read_mara_file` so it is earned only from
+    `read_mara_file`.
+  - Added a regression assertion on the no-radio true-ending path that
+    `flag_read_mara_file` is absent while `flag_freed_mara` remains present.
+- Evidence:
+  - Focused story-path suite passed: 126 tests.
+  - `npm run health` passed: format check, TypeScript, 170 tests, validation,
+    and coverage playtest.
+  - Health validation reported 121 reachable scenes and 26 endings.
+  - Health coverage visited all 121 scenes, including
+    `morning_clock_catch_up`, with zero unfinished runs.
+  - Actual CLI play skipped `read_personnel_file`, reached `true_ending` at
+    score 267, and the transcript omitted `Read Mara Vale's personnel file`
+    while retaining `Cleared Mara's name from the signal ledger`.
+- Playtest feedback:
+  - The no-personnel-file recovery route still reads cleanly: notice, lantern,
+    clock token, map, locker supplies, ledger, release.
+  - The score breakdown now matches the fiction. The player gets credit for
+    clearing Mara and opening every door, but not for reading a file they never
+    opened.
+  - The route has no active objectives at the ending and preserves the intended
+    shortcut where Mara can tell the player the third-car release after her
+    ledger row is cleared.
+- Risks:
+  - High scores on true-ending routes that skip the personnel file will drop by
+    10 points. This is intentional because the prior award label was factually
+    wrong.
+- Next step:
+  - Watch future transcript/report feedback for other award labels that imply
+    facts the player may not have actually discovered on shortcut routes.
+
 # Cycle 19 Morning Clock Catch-Up
 
 - Date: 2026-06-02
