@@ -5668,9 +5668,31 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("CLOCK OUT AFTER EVERYONE ELSE");
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_reading_lunch_tin_roster",
       "hear_roster_clock_out_roll_call",
       "pull_release_after_lunch_tin_roster"
     ]);
+
+    state = choose(story, state, "listen_after_reading_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_lunch_tin_roll_call",
+      "pull_release_after_lunch_tin_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = boardingState;
+    state = choose(story, state, "read_lunch_tin_roster_from_boarding");
+    observation = observe(story, state);
 
     state = choose(story, state, "pull_release_after_lunch_tin_roster");
     observation = observe(story, state);
@@ -5750,6 +5772,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Dispatcher Vale");
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_reading_lunch_tin_roster",
       "hear_roster_clock_out_roll_call",
       "pull_release_after_lunch_tin_roster"
     ]);

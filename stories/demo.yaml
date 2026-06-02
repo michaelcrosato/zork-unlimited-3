@@ -3898,6 +3898,9 @@ scenes:
       mitten. Newspaper woman. Old conductor. Dispatcher Vale. At the bottom,
       his own name waits beside the words CLOCK OUT AFTER EVERYONE ELSE.
     choices:
+      - id: listen_after_reading_lunch_tin_roster
+        label: Listen as the roster count reaches the third car
+        to: passenger_lunch_tin_intercom
       - id: hear_roster_clock_out_roll_call
         label: Hear the roster clock out each passenger by name
         to: passenger_lunch_tin_roll_call

@@ -1,3 +1,50 @@
+# Cycle 59 Roster-to-Intercom Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `passenger_lunch_tin_intercom`
+  after players inspect the lunch-tin roster.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 59 random evidence missed
+  `passenger_lunch_tin_intercom` while coverage proved it reachable. The
+  lunch-tin route already had a strong roster clue, but reading that roster
+  removed the more embodied third-car intercom beat unless the player had
+  listened first.
+- Planned work:
+  - Preserve direct `passenger_lunch_tin_true_ending` releases.
+  - Preserve the roster-specific roll-call branch.
+  - Add an optional route from `passenger_lunch_tin_roster` back to
+    `passenger_lunch_tin_intercom`.
+  - Add regression coverage proving the new recovery route and old direct
+    release both remain valid.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The roster scene gains a third choice. It is optional and ordered as a
+    sensory listen beat before the existing roll-call and release options, so it
+    should improve discoverability without forcing extra pacing.
+- Status:
+  - Completed.
+  - Added `listen_after_reading_lunch_tin_roster` from the roster scene to the
+    lunch-tin intercom.
+  - Updated focused story-path coverage; 175 story-path tests passed.
+  - `npm run health` passed: format check, TypeScript, 219 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `read_lunch_tin_roster_from_boarding` ->
+    `listen_after_reading_lunch_tin_roster` ->
+    `pull_release_after_lunch_tin_intercom`, ending at
+    `passenger_lunch_tin_true_ending` with score 320 and no objectives.
+- Playtest feedback:
+  - The roster clue now keeps the embodied lunch-tin timing beat available
+    instead of narrowing immediately to roster-specific roll call or release.
+  - The direct roster release and roster roll-call branch remain visible, so
+    the added recovery beat does not block quick completion.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch the next random sample for whether `passenger_lunch_tin_intercom`
+    appears more consistently in normal play; if late passenger choice density
+    rises, tune ordering before adding more branches.
+
 # Cycle 63 Lunch-Tin Roll-Call Bridge
 
 - Date: 2026-06-02
