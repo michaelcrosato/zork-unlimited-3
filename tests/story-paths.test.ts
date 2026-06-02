@@ -5820,11 +5820,21 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_on_conductor_signal",
       "inspect_conductor_punch_memory",
       "follow_conductor_signal_to_third_car"
     ]);
 
     const conductorSignalState = state;
+
+    state = choose(story, conductorSignalState, "pull_release_on_conductor_signal");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.text).toContain("conductor's clear signal");
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, conductorSignalState, "inspect_conductor_punch_memory");
     observation = observe(story, state);

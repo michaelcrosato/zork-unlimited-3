@@ -2256,6 +2256,15 @@ scenes:
       umbrellas lifted away from the wheels, Mara's speaker quiet enough to
       let another worker hold the line.
     choices:
+      - id: pull_release_on_conductor_signal
+        label: Follow the conductor's clear signal and pull the release
+        to: passenger_conductor_true_ending
+        requires:
+          notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: inspect_conductor_punch_memory
         label: Ask what the conductor's punch remembers
         to: passenger_conductor_punch_memory

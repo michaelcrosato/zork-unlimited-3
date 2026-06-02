@@ -1,3 +1,59 @@
+# Cycle 52 Direct Conductor Signal Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_conductor_true_ending` easier to discover in
+  normal play by paying off the conductor's clear signal immediately.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 52 evidence. Health and
+  coverage are strong, but short random samples still miss
+  `passenger_conductor_true_ending` even after reaching conductor setup scenes.
+  The player-facing signal scene says the conductor has called "Platform
+  clear"; a direct release choice lets that promise resolve without requiring
+  an extra roll-call beat.
+- Planned work:
+  - Add a direct release choice from `passenger_conductor_signal` to
+    `passenger_conductor_true_ending`.
+  - Preserve the existing punch-memory and final-roll-call routes.
+  - Set the same clearance and final roll-call flags as the longer route.
+  - Add regression coverage, run health, and play the changed route.
+- Risks:
+  - The direct payoff slightly reduces friction on one conductor branch. This
+    is intentional because the longer roll-call choice remains available for
+    players who want the additional passenger beat.
+- Status:
+  - Added `pull_release_on_conductor_signal` from
+    `passenger_conductor_signal` to `passenger_conductor_true_ending`.
+  - The new choice sets `heard_conductor_clearance` and
+    `heard_final_roll_call`, matching the direct conductor payoff state.
+  - Preserved the existing punch-memory and final-roll-call choices from the
+    conductor signal scene.
+  - Added regression coverage for the direct signal-to-ending route.
+  - Focused story-path suite passed: 172 tests.
+  - `npm run health` passed: format check, TypeScript, 216 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `pull_release_on_conductor_signal`, ending
+    at `passenger_conductor_true_ending` with score 309 and no objectives.
+  - Follow-up 100-run random sample ended all runs with zero frontier samples
+    but still missed `passenger_conductor_true_ending`,
+    `mara_manifest_handoff_intercom`, and
+    `passenger_manifest_handoff_true_ending` in that short deterministic
+    sample.
+- Playtest feedback:
+  - The signal route now reads more directly: once the conductor calls
+    "Platform clear," the player can immediately trust that signal and release
+    the doors.
+  - The older roll-call and punch-memory options still provide richer
+    conductor texture for exploratory players.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - If short random samples keep missing the conductor ending, move a conductor
+    prompt earlier from `passenger_answers` or `passengers_released` rather
+    than adding more late-branch release choices. Continue watching the manifest
+    handoff misses as the larger discoverability gap.
+
 # Cycle 56 Answered Count Bridge
 
 - Date: 2026-06-02
