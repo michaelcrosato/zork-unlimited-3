@@ -1,3 +1,55 @@
+# Cycle 26 Returned-Mitten Pair Memory
+
+- Date: 2026-06-02
+- Main objective: Add a small optional payoff beat to the returned-mitten
+  passenger route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and supplied Cycle 26 evidence showed healthy completion, full
+  coverage, and no unfinished runs. With core guidance stable, the best focused
+  improvement is richer late-passenger story depth without adding route
+  complexity or another ending.
+- Planned work:
+  - Add one optional scene from `passenger_mitten_intercom` where the child uses
+    both mittens to help identify another passenger before release.
+  - Preserve direct final roll-call and direct release routes.
+  - Add regression coverage for the new branch and verify it rejoins the
+    existing returned-mitten ending.
+  - Validate, run health, and actually play the new route through the CLI.
+- Risks:
+  - The mitten intercom scene gains a third visible choice. The new beat is
+    one-step optional story payoff and returns immediately to the existing
+    ending path, so route complexity stays bounded.
+- Work completed:
+  - Added `tap_paired_mittens_for_missing_name` from
+    `passenger_mitten_intercom` to new scene
+    `passenger_mitten_pair_memory`.
+  - Added exits from the new scene to the final roll-call epilogue and directly
+    to `passenger_mitten_true_ending`.
+  - Updated returned-mitten story-path regression coverage for the new scene,
+    choice order, state flag, and ending rejoin.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - CLI validation passed with 136 reachable scenes, 27 endings, and no
+    warnings.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 136 scenes, including
+    `passenger_mitten_pair_memory`, with no unvisited scenes.
+  - Actual CLI play followed `return_lost_mitten` ->
+    `lead_mitten_child_to_third_car` ->
+    `tap_paired_mittens_for_missing_name` ->
+    `hear_roll_call_after_paired_mittens` ->
+    `pull_release_after_mitten_roll_call`, ending at
+    `passenger_mitten_true_ending` with score 317 and no objectives.
+- Playtest feedback:
+  - The paired-mitten beat gives the child a second active moment before the
+    final release and makes the returned object help identify another passenger.
+  - The route still allows direct roll-call or release from the intercom, so
+    players are not forced through the extra sensory beat.
+- Next step:
+  - Watch future blind feedback for whether late passenger intercoms feel
+    choice-heavy. If they do, trim labels before adding more optional beats.
+
 # Cycle 26 Conductor Transfer Handoff Priority
 
 - Date: 2026-06-02

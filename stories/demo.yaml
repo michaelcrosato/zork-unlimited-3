@@ -3399,6 +3399,14 @@ scenes:
       his own way of saying the door is still open, while the emergency release
       waits under the first seat.
     choices:
+      - id: tap_paired_mittens_for_missing_name
+        label: Let the child tap both mittens for the name still missing
+        to: passenger_mitten_pair_memory
+        requires:
+          notFlag: heard_mitten_pair_memory
+        effects:
+          set:
+            heard_mitten_pair_memory: true
       - id: hear_final_mitten_roll_call
         label: Hear the child finish the final roll call
         to: passenger_roll_call_epilogue
@@ -3409,6 +3417,28 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_mitten_child_intercom
         label: Pull the release while the child's door stays open
+        to: passenger_mitten_true_ending
+
+  passenger_mitten_pair_memory:
+    routeImportance: optional
+    text: >
+      The child taps one mitten against the frame, then the other. The knocks
+      sound different: one wool-soft and one stiff with station dust. "This one
+      was mine," he says, lifting the returned mitten, "but somebody kept it
+      warm." Mara checks the manifest without asking him to wait. The next
+      name answers from the crowd before she can finish reading it, and the
+      child grins like the door has learned a second language.
+    choices:
+      - id: hear_roll_call_after_paired_mittens
+        label: Hear the roll call answer the child's paired knocks
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_paired_mittens
+        label: Pull the release after both mittens answer
         to: passenger_mitten_true_ending
 
   passenger_newspaper_intercom:
