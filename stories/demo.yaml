@@ -2573,6 +2573,9 @@ scenes:
       the count the line cannot keep," Mara says. "Pull the release while they
       are counting one another home."
     choices:
+      - id: pull_release_before_reviewed_count_finishes
+        label: Pull the release before Mara has to finish the count
+        to: passenger_reviewed_count_true_ending
       - id: pull_release_after_counted_manifest_goodbye
         label: Pull the release while the reviewed count holds
         to: passenger_counted_true_ending

@@ -2966,6 +2966,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_before_reviewed_count_finishes",
       "pull_release_after_counted_manifest_goodbye"
     ]);
 
@@ -2976,6 +2977,44 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the reviewed count falls apart");
     expect(observation.scene.text).toContain("not a total");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets the reviewed count intercom pay off the reviewed-count ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "board_with_reviewed_manifest_count",
+      "pull_release_before_reviewed_count_finishes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's reviewed count");
+    expect(observation.scene.text).toContain("prove the count can end");
     expectIdealScore(observation.score);
   });
 

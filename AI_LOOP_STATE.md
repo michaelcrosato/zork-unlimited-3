@@ -1,3 +1,57 @@
+# Cycle 18 Reviewed-Count Intercom Payoff
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for
+  `passenger_reviewed_count_true_ending` from the reviewed-count branch.
+- Why this matters: Fresh random evidence missed
+  `passenger_reviewed_count_true_ending` even though coverage reaches it. The
+  most visible reviewed-count boarding route currently pays off only the
+  counted ending, while the reviewed-count ending requires the less specific
+  generic train-car boarding route.
+- Planned work:
+  - Add a direct reviewed-count release choice inside the existing
+    `passenger_counted_manifest_intercom` scene.
+  - Preserve the existing counted-manifest ending choice.
+  - Add regression coverage for the new intercom-to-reviewed-ending path.
+- Work completed:
+  - Added `pull_release_before_reviewed_count_finishes` from
+    `passenger_counted_manifest_intercom` to
+    `passenger_reviewed_count_true_ending`.
+  - Kept `pull_release_after_counted_manifest_goodbye` available from the same
+    intercom so the counted-manifest ending remains reachable.
+  - Added regression coverage for the new intercom-to-reviewed-ending path and
+    updated the existing counted-intercom test to expect both terminal choices.
+- Evidence:
+  - Focused story-path suite passed: 125 tests.
+  - `npm run health` passed: format check, TypeScript, 169 tests, validation,
+    and coverage playtest.
+  - Health validation reported 120 reachable scenes and 26 endings.
+  - Health coverage visited all 120 scenes with zero unfinished runs, and
+    `passenger_reviewed_count_true_ending` rose to 177 coverage hits.
+  - Actual CLI play used `review_open_manifest_count`,
+    `board_with_reviewed_manifest_count`, and
+    `pull_release_before_reviewed_count_finishes`, reaching
+    `passenger_reviewed_count_true_ending` at score 288 with no active
+    objectives.
+  - A 250-run random sanity playtest reached
+    `passenger_reviewed_count_true_ending` 2 times, with zero unfinished runs
+    and no unvisited scenes.
+- Playtest feedback:
+  - The new terminal choice reads naturally from the intercom text: Mara is
+    counting, the passengers are answering, and the player can release before
+    the count becomes another obligation.
+  - The branch now gives the explicit reviewed-count boarding route a matching
+    reviewed-count payoff, instead of requiring players to find the less
+    specific `board_after_manifest_count` path.
+- Risks:
+  - Adds one late-game choice to an already rich passenger route. The choice is
+    terminal and only appears after the player explicitly pursues the reviewed
+    count, so loop risk is low.
+- Next step:
+  - Watch blind-play feedback for whether late passenger manifest branches now
+    present too many terminal choices; if so, clarify labels rather than adding
+    more route branches.
+
 # Cycle 17 Unlit Platform Retreat Warning
 
 - Date: 2026-06-02
