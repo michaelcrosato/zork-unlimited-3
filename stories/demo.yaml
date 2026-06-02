@@ -1155,6 +1155,14 @@ scenes:
             matched_manifest_keepsakes: true
             helped_passengers_gather: true
             heard_gathered_passengers: true
+      - id: study_newspaper_transfer_column
+        label: Study the blank transfer column before boarding
+        to: passenger_newspaper_transfer
+        requires:
+          notFlag: studied_newspaper_transfer
+        effects:
+          set:
+            studied_newspaper_transfer: true
       - id: help_passengers_after_newspaper_memory
         label: Use the transfer column to gather passengers into the third car
         to: passenger_newspaper_intercom
@@ -1166,6 +1174,23 @@ scenes:
             heard_gathered_passengers: true
       - id: board_after_newspaper_memory
         label: Board the third car by the transfer column
+        to: passenger_newspaper_intercom
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+
+  passenger_newspaper_transfer:
+    text: >
+      The blank transfer column is not blank anymore. As the newspaper woman
+      reads each passenger's intended stop, rain-dark ink rises where the
+      timetable gave up: Warden Street, then morning transfer, then a row of
+      smaller streets no one has spoken aloud since the signal fire. The old
+      conductor rests two fingers beside the column and says, "That is enough
+      route for a clear signal."
+    choices:
+      - id: carry_newspaper_transfer_to_third_car
+        label: Carry the restored transfer column into the third car
         to: passenger_newspaper_intercom
         effects:
           set:

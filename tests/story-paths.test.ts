@@ -1118,6 +1118,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_lost_mitten_after_newspaper_memory",
       "match_keepsakes_after_newspaper_memory",
+      "study_newspaper_transfer_column",
       "help_passengers_after_newspaper_memory",
       "board_after_newspaper_memory"
     ]);
@@ -1128,6 +1129,26 @@ describe("demo story critical paths", () => {
     expect(
       observation.choices.find((choice) => choice.id === "board_after_newspaper_memory")?.label
     ).toBe("Board the third car by the transfer column");
+
+    const transferState = choose(story, state, "study_newspaper_transfer_column");
+    observation = observe(story, transferState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_transfer");
+    expect(observation.scene.text).toContain("The blank transfer column is not blank anymore");
+    expect(observation.scene.text).toContain("enough route for a clear signal");
+    expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_newspaper_transfer_to_third_car"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, transferState, "carry_newspaper_transfer_to_third_car")
+    );
+
+    expect(observation.scene.id).toBe("passenger_newspaper_intercom");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
 
     state = choose(story, state, "help_passengers_after_newspaper_memory");
     observation = observe(story, state);

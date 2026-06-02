@@ -12,60 +12,59 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a small conductor-punch memory beat to deepen the
-  passenger conductor route.
+- Main objective: Add a small transfer-column proof beat to deepen the
+  passenger newspaper route.
 - Why this matters: Current evidence shows true-ending guidance and route
   completion are healthy, so the next improvement should strengthen story depth
-  on a normal high-value passenger route without adding another ending or
-  changing scoring. The conductor is already a strong support character; giving
-  his punch a brief memory makes his later clear signal feel earned.
+  on an existing high-value passenger route without adding another ending or
+  changing scoring. The newspaper route already names Warden Street as a way
+  out; letting the blank transfer column fill in gives that route a clearer
+  object-level payoff before the release.
 - Tasks:
-  - Add an optional one-time conductor-punch memory after the conductor raises
-    his clear signal. Done.
-  - Route the memory cleanly back into the existing third-car conductor branch.
+  - Add an optional one-time transfer-column scene after the newspaper memory.
     Done.
-  - Preserve the direct conductor route and all existing endings. Done.
+  - Route the scene cleanly back into the existing newspaper intercom and ending.
+    Done.
+  - Preserve existing direct newspaper, conductor, keepsake, and mitten routes.
+    Done.
   - Update focused story-path regression coverage. Done.
-  - Run validation, full health, an actual CLI/MCP playthrough, and the
-    evidence cycle. Done.
+  - Run validation, full health, an actual CLI/MCP playthrough, and the evidence
+    cycle. Done.
 - Evidence:
-  - Added `passenger_conductor_punch_memory`, reachable once from
-    `passenger_conductor_signal`.
-  - The new scene sets `heard_conductor_punch_memory` and returns through
-    `follow_punch_memory_to_third_car` to `passenger_conductor_intercom`.
-  - Kept the original `follow_conductor_signal_to_third_car` direct choice
-    available from the conductor signal scene.
-  - Updated `tests/story-paths.test.ts` to assert the optional memory beat, its
-    flag, and both routes into the same conductor intercom payoff.
+  - Added `passenger_newspaper_transfer`, reachable once from
+    `passenger_newspaper_memory`.
+  - The new scene sets `studied_newspaper_transfer` and returns through
+    `carry_newspaper_transfer_to_third_car` to `passenger_newspaper_intercom`.
+  - Updated `tests/story-paths.test.ts` to assert the optional beat, its flag,
+    and the route back into the existing newspaper intercom payoff.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 108
-    scenes, 24 endings, all 108 reachable, and no warnings.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 109 scenes,
+    24 endings, all 109 reachable, and no warnings.
   - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
     and coverage playtest.
-  - Health coverage visited all 108 scenes including
-    `passenger_conductor_punch_memory`, with zero unfinished runs and best score
+  - Health coverage visited all 109 scenes including
+    `passenger_newspaper_transfer`, with zero unfinished runs and best score
     100/100.
-  - Manual CLI play followed `listen_to_passenger_answers` ->
-    `ask_conductor_from_answers` -> `inspect_conductor_punch_memory` ->
-    `follow_punch_memory_to_third_car` -> `hear_final_conductor_roll_call` ->
-    `pull_release_after_conductor_roll_call`, reaching
-    `passenger_conductor_true_ending` at 100/100 with no objectives.
+  - Manual CLI play followed `ask_newspaper_woman_about_stop` ->
+    `study_newspaper_transfer_column` -> `carry_newspaper_transfer_to_third_car`
+    -> `hear_final_newspaper_roll_call` ->
+    `pull_release_after_newspaper_roll_call`, reaching
+    `passenger_newspaper_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T01-13-50-881Z.md`.
+    report `ai-runs/cycle-2026-06-02T01-22-46-602Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play visited `passenger_conductor_punch_memory`, ended
-    all 100 runs, and had zero unfinished runs.
-  - Evidence-cycle coverage visited all 108 scenes with zero unfinished runs.
+  - Evidence-cycle random play visited `passenger_newspaper_transfer`, ended all
+    100 runs, and had zero unfinished runs.
+  - Evidence-cycle coverage visited all 109 scenes with zero unfinished runs.
   - Evidence-cycle MCP validation passed, the required MCP route reached
     `true_ending` at 100/100, and the adaptive MCP route reached
     `passenger_lunch_tin_true_ending` at 100/100.
 - Playtest notes:
-  - The new punch memory reads as a character beat, not a mechanical detour:
-    the conductor's old ticket punch becomes a reason his clear signal can help
-    the passengers leave.
-  - The direct conductor route remains available for players who want to board
-    immediately.
+  - The new transfer-column beat makes the newspaper route's promised
+    Warden-Street-to-morning path feel more concrete before the final roll call.
+  - The branch reads as an optional object payoff, not a required clue; direct
+    boarding and other passenger help routes remain available.
   - No objective, scoring, reachability, or unfinished-run regressions were
     found in focused tests, full health, manual CLI play, or evidence-cycle MCP
     routes.
@@ -77,8 +76,8 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 - Risks:
   - Extra optional beats can make late passenger routes feel over-segmented if
     labels are too similar or if random routes linger before ending.
-  - The new conductor memory should remain a character beat, not a required
-    mechanical clue.
+  - The new transfer-column beat should remain an optional character/object
+    payoff, not a required mechanical clue.
 
 ## Last Completed Cycle
 
