@@ -50,6 +50,47 @@
     as prior cycles observed. The verified dirty tree is ready for the outer
     loop or a writable Git session to commit if local commit fails.
 
+# Cycle 7 Conductor Transfer Direct Release
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for
+  `passenger_conductor_transfer_true_ending`.
+- Why this matters: The current health and MCP evidence is green, but ordinary
+  random play still missed `passenger_conductor_transfer_true_ending` while
+  coverage reached it. The route already has a strong earned clue, but players
+  had to choose the transfer, then choose a roll-call continuation, then release.
+  Letting the player pull the release while the punched transfer is being passed
+  makes the payoff available at the moment the story promise is clearest.
+- Work completed:
+  - Completed: added one direct, gated choice from `passenger_conductor_transfer` to the
+    existing transfer true ending.
+  - Completed: kept reviewed-count conductor transfer routes pointed at the counted
+    conductor payoff.
+  - Completed: added focused regression coverage.
+  - Completed: ran focused tests, `npm run health`, and one actual CLI route.
+- Evidence:
+  - Focused story-path suite passed: 116 tests.
+  - `npm run health` passed: format check, TypeScript, 160 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.45, and 1217 max-score runs.
+  - Actual CLI play used `pull_release_with_punched_transfer` and reached
+    `passenger_conductor_transfer_true_ending` at 100/100 with no active
+    objectives.
+- Playtest feedback:
+  - The new release choice reads naturally because it appears while the transfer
+    is being passed from passenger to passenger.
+  - The counted conductor transfer route remains distinct and still resolves to
+    the counted conductor ending.
+  - No route bugs, dangling objectives, score issues, or unfinished coverage
+    runs appeared.
+- Risks:
+  - Late passenger hubs are accumulating choices; keep this scoped to the
+    already-earned conductor transfer scene and watch blind feedback for choice
+    density.
+
 # Cycle 5 Keepsake Roll-Call Discoverability
 
 - Date: 2026-06-02

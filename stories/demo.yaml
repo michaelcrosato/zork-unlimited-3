@@ -2461,6 +2461,11 @@ scenes:
       lunch-tin worker, and Mara all touch the same small proof that the line
       has to let them change trains.
     choices:
+      - id: pull_release_with_punched_transfer
+        label: Pull the release while the punched transfer is still being passed
+        to: passenger_conductor_transfer_true_ending
+        requires:
+          notFlag: reviewed_open_manifest_count
       - id: hear_counted_transfer_conductor_roll_call
         label: Let the punched transfer carry the counted clear call
         to: passenger_conductor_count_roll_call

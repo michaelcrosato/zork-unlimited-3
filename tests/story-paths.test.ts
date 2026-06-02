@@ -3215,11 +3215,19 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("star-shaped hole");
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_with_punched_transfer",
       "hear_transfer_conductor_roll_call",
       "hold_for_transfer_conductor_roll_call"
     ]);
 
     const conductorTransferState = state;
+
+    state = choose(story, conductorTransferState, "pull_release_with_punched_transfer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = choose(story, conductorTransferState, "hear_transfer_conductor_roll_call");
     observation = observe(story, state);
