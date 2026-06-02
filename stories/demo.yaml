@@ -3518,7 +3518,7 @@ scenes:
             escaped_home_sign_dispatch: true
       - id: step_into_false_home_after_dispatch
         label: Step toward the porch light instead of Mara's voice
-        to: lost_ending
+        to: lost_after_dispatch_ending
         effects:
           set:
             surrendered_home_after_dispatch: true
@@ -3908,6 +3908,18 @@ scenes:
       childhood street, your kitchen window, your own silhouette waving you in.
       The marked map falls unread beside your shoe. The doors close before you
       remember your real name.
+    choices: []
+
+  lost_after_dispatch_ending:
+    routeImportance: optional
+    ending: true
+    endingType: bad
+    endingGroup: Failure
+    text: >
+      The porch light wins because you step toward it while Mara is still
+      speaking. Her last useful words, clock token, fuse, badge, ledger, flatten
+      into station noise behind you. The marked map falls unread beside your
+      shoe, and the HOME sign closes around the name you meant to bring back.
     choices: []
 
   bad_ending:

@@ -1994,11 +1994,12 @@ describe("demo story critical paths", () => {
     }
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("lost_ending");
+    expect(observation.scene.id).toBe("lost_after_dispatch_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
     expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");
+    expect(observation.scene.text).toContain("clock token, fuse, badge, ledger");
 
     state = initialState(story);
     for (const choiceId of [

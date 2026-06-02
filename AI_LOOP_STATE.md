@@ -1,3 +1,53 @@
+# Cycle 19 HOME Dispatch Failure Feedback
+
+- Date: 2026-06-02
+- Main objective: Improve feedback quality for the recurring HOME-sign
+  dispatch loss path without making the route easier or changing the main
+  true-ending requirements.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, while Cycle 19 random evidence showed the only recurring
+  `lost_ending` samples came from stepping toward the false HOME after Mara
+  explicitly named the recovery route. Splitting that failure gives transcripts
+  and future blind reports a clearer diagnosis than the generic HOME loss.
+- Planned work:
+  - Route `step_into_false_home_after_dispatch` to a specific bad ending.
+  - Preserve the existing recoveries from `home_sign_dispatch` and
+    `home_sign_grip`.
+  - Keep ending metadata in story data and classify the new ending as a bad
+    Failure ending.
+  - Update regression coverage for the changed path.
+- Work completed:
+  - Added `lost_after_dispatch_ending` with text that names the ignored
+    `clock token, fuse, badge, ledger` route.
+  - Updated `step_into_false_home_after_dispatch` to use the new ending while
+    preserving `surrendered_home_after_dispatch`.
+  - Updated the HOME-sign regression to assert the new ending and feedback
+    text.
+- Evidence:
+  - Focused story-path suite passed: 141 tests.
+  - CLI validation passed with 131 reachable scenes and 27 endings.
+  - Actual CLI play followed the HOME dispatch loss path and reached
+    `lost_after_dispatch_ending` with the new transcript text.
+  - `npm run health` passed: format check, TypeScript, 185 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 131 scenes, including
+    `lost_after_dispatch_ending`, with zero unfinished runs.
+- Playtest feedback:
+  - The new ending makes the failure feel specifically tied to ignoring Mara
+    rather than merely staring at the sign.
+  - The transcript now preserves the clue list the player walked away from,
+    which should make future blind feedback easier to interpret.
+  - The route remains intentionally lossy after a clearly labeled bad choice;
+    the existing turn-back and map-cover choices still provide recovery.
+- Risks:
+  - Ending counts changed from 26 to 27. Existing metadata-driven reporting
+    handles this, but future trend comparisons should treat the new ending as
+    a split of the previous HOME-sign lost pressure.
+- Next step:
+  - Watch the next blind digest for whether HOME-sign losses continue; if they
+    do, tune visible choice labels or player-view objective timing instead of
+    adding another warning scene.
+
 # Cycle 15 Manifest Answers
 
 - Date: 2026-06-02
