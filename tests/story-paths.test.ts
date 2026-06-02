@@ -5227,6 +5227,59 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("unfinished route");
   });
 
+  it("lets unlit-platform explorers retreat to the early escape warning", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("platform_escape_warning");
+    expect(observation.scene.text).toContain("unfinished work");
+    expect(choiceIds).toEqual([
+      "listen_at_unlit_stairwell",
+      "return_to_platform_from_escape_warning",
+      "confirm_unlit_flee_platform"
+    ]);
+
+    state = choose(story, state, "return_to_platform_from_escape_warning");
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(choiceIds).toContain("inspect_gate_control");
+    expect(choiceIds).toContain("return_to_service_room");
+    expect(choiceIds).toContain("retreat_to_stairs_from_platform");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform",
+      "confirm_unlit_flee_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_ending");
+    expect(observation.scene.ending).toBe(true);
+  });
+
   it("routes ledger-warning players directly to the stopped clock for the token", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

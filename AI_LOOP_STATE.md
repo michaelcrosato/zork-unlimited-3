@@ -1,3 +1,44 @@
+# Cycle 17 Unlit Platform Retreat Warning
+
+- Date: 2026-06-02
+- Main objective: Preserve an underprepared platform retreat as a fair,
+  recoverable warning instead of only a direct map escape, forced gate, or
+  service-room backtrack.
+- Why this matters: The generated evidence cycle introduced an unlit-platform
+  stairwell retreat but initially routed it through the lit-platform warning,
+  which made the fiction and state disagree. This pass keeps the new player
+  option while making the scene honest about the dark platform and returning
+  players to the correct unpowered route.
+- Work completed:
+  - Added `platform_escape_warning`, a dedicated warning scene for players who
+    retreat from Platform 13 before finding the fuse or token.
+  - Routed the new `retreat_to_stairs_from_platform` choice to the dedicated
+    dark-platform warning instead of the existing lit-platform warning.
+  - Updated regression coverage to verify the warning choices, recovery back to
+    `platform`, and the early escape ending.
+- Evidence:
+  - `npm run health` passed: format check, TypeScript, 168 tests, validation,
+    and coverage playtest.
+  - Health validation reports 120 reachable scenes and 26 endings.
+  - Health coverage visited all 120 scenes, including
+    `platform_escape_warning`, with zero unfinished runs.
+  - Actual CLI play used `retreat_to_stairs_from_platform`,
+    `return_to_platform_from_escape_warning`, and `return_to_service_room`,
+    recovering to `service_room` with sensible active objectives.
+- Playtest feedback:
+  - The warning now names the dark platform, blank sign, empty token slot, and
+    nearby service-room route, so it reads as a fair hesitation beat rather
+    than a state jump.
+  - Returning from the warning preserves normal unprepared-platform choices and
+    does not pretend the platform lights are on.
+- Next step:
+  - Watch random and blind-play evidence for whether this extra escape pressure
+    increases early `escape_ending` rates too much; if so, gate it behind a
+    prior warning interaction or make the service-room return more prominent.
+- Risks:
+  - This adds one optional early escape-pressure choice to `platform`, where
+    choice density is already meaningful for underprepared players.
+
 # Cycle 16 Gate-Control Plaque Guidance
 
 - Date: 2026-06-02
@@ -67,12 +108,32 @@
     its roll-call finish, and its conductor exit.
 - Evidence:
   - Focused story-path suite passed: 123 tests.
+  - `npm run health` passed after the change: format check, TypeScript, 167
+    tests, validation, and coverage playtest.
+  - Health validation reported 119 reachable scenes and 26 endings.
+  - Health coverage visited all 119 scenes, including
+    `passenger_missing_count`, with zero unfinished runs.
+  - Actual CLI play used `check_for_unanswered_manifest_row`,
+    `let_unanswered_row_become_roll_call`,
+    `board_after_answered_passengers`, and
+    `pull_release_after_answered_boarding`, reaching
+    `passenger_answered_boarding_true_ending` at score 301 with no active
+    objectives.
+  - `npm run ai:cycle` wrote ignored evidence artifacts, but the nested
+    `codex exec` phase hung after producing additional tracked edits; it was
+    terminated and the resulting generated retreat branch was reviewed and
+    corrected in Cycle 17.
 - Playtest feedback:
-  - Pending full health and an actual playthrough through the new branch.
+  - The unanswered-row beat reads naturally after Mara reviews the opened
+    manifest count, turning a mechanical count into a collective answer.
+  - Returning from the beat removes the one-time choice, so it does not create
+    a repeat loop.
+  - The branch can finish through the answered-passenger ideal ending without
+    dangling objectives.
 - Next step:
-  - Run `npm run health`, then play the new branch through the CLI or MCP and
-    record whether the added beat improves the passenger-count payoff without
-    making the late-game choice list feel noisy.
+  - Watch late-game choice density around `passenger_manifest_count`; if blind
+    players skip the core release too often, consider folding the unanswered-row
+    language into the base count scene.
 - Risks:
   - This adds one optional choice to an already rich passenger-count scene. The
     one-time flag prevents repeat loops, but late-game choice density remains

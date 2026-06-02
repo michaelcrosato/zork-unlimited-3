@@ -528,6 +528,13 @@ scenes:
           all:
             - item: map
             - notItem: fuse
+      - id: retreat_to_stairs_from_platform
+        label: Retreat to the stairwell before the train chooses you
+        to: platform_escape_warning
+        requires:
+          all:
+            - notItem: fuse
+            - notItem: token
       - id: return_to_service_room
         label: Return to the service room and prepare
         to: service_room
@@ -550,6 +557,32 @@ scenes:
         effects:
           set:
             knows_token_location: true
+
+  platform_escape_warning:
+    routeImportance: optional
+    text: >
+      The stairwell back to Warden Street is still open, but the dark platform
+      does not let the train feel harmless. Its blank sign waits without a
+      destination, the gate control keeps tapping its empty token slot, and the
+      service-room door is close enough that leaving now would mean choosing
+      the street over unfinished work.
+    choices:
+      - id: listen_at_unlit_stairwell
+        label: Listen before you leave Mara behind
+        to: mara_stairwell_call
+        requires:
+          notFlag: heard_escape_call
+        effects:
+          set:
+            heard_escape_call: true
+            met_mara: true
+            knows_token_location: true
+      - id: return_to_platform_from_escape_warning
+        label: Return to the dark platform and keep searching
+        to: platform
+      - id: confirm_unlit_flee_platform
+        label: Leave the unfinished platform and run back to the street
+        to: escape_ending
 
   gate_control:
     routeImportance: supporting
