@@ -1641,6 +1641,15 @@ scenes:
       more like a shift change. Under the first seat, the emergency release
       waits for the count to become movement.
     choices:
+      - id: read_lunch_tin_roster_from_boarding
+        label: Read the shift roster tucked inside the lunch tin before the release
+        to: passenger_lunch_tin_roster
+        requires:
+          notFlag: read_lunch_tin_roster
+        effects:
+          set:
+            heard_gathered_passengers: true
+            read_lunch_tin_roster: true
       - id: listen_to_lunch_tin_worker_from_boarding
         label: Listen as the lunch-tin worker keeps time
         to: passenger_lunch_tin_intercom

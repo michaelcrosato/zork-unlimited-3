@@ -1,3 +1,47 @@
+# Cycle 6 Lunch-Tin Roster Boarding Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `passenger_lunch_tin_roster`.
+- Why this matters: Current validation and playtest evidence is green, but
+  random normal play still missed the lunch-tin roster while coverage could
+  reach it. The boarding scene already centers the worker's tin count, so the
+  roster proof should be available at that moment instead of only after the
+  intercom beat.
+- Work completed:
+  - Added `read_lunch_tin_roster_from_boarding`, a direct choice from
+    `passenger_lunch_tin_boarding` to the existing
+    `passenger_lunch_tin_roster`.
+  - Set `heard_gathered_passengers` and `read_lunch_tin_roster` on the direct
+    route so later text and gating stay coherent.
+  - Preserved the existing lunch-tin intercom and direct release choices from
+    boarding.
+  - Updated regression coverage for the direct boarding-to-roster route through
+    `passenger_lunch_tin_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 116 tests.
+  - Actual CLI play used `read_lunch_tin_roster_from_boarding` and reached
+    `passenger_lunch_tin_true_ending` at 100/100 with no active objectives.
+  - `npm run health` passed: format check, TypeScript, 160 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.52, and 1237 max-score runs.
+- Playtest feedback:
+  - The roster read lands naturally from the boarding scene because the lunch
+    tin is already visible and actively counting passengers into the third car.
+  - The scene now has three focused choices: inspect the roster, hear the
+    worker's intercom beat, or release immediately.
+  - No route bugs, dangling objectives, or score issues appeared in the focused
+    playthrough.
+- Next step:
+  - Watch whether random play samples `passenger_lunch_tin_roster` more often,
+    and avoid adding more one-off late passenger choices unless blind feedback
+    calls for them.
+- Risks:
+  - Late passenger boarding scenes are getting denser; future work should
+    consider consolidating payoff choices if blind players report overload.
+
 # Cycle 8 Echoed Manifest Boarding Payoff
 
 - Date: 2026-06-02

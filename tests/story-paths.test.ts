@@ -2880,6 +2880,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
       "pull_release_after_lunch_tin_boarding"
     ]);
@@ -2891,6 +2892,21 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.text).toContain("lunch-tin worker's count");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+
+    state = boardingState;
+    state = choose(story, state, "read_lunch_tin_roster_from_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster");
+    expect(observation.scene.text).toContain("CLOCK OUT AFTER EVERYONE ELSE");
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
 
@@ -3004,6 +3020,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
       "pull_release_after_lunch_tin_boarding"
     ]);
@@ -3664,6 +3681,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
       "pull_release_after_lunch_tin_boarding"
     ]);
