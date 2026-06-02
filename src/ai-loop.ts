@@ -5,6 +5,26 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import {
+  exploratoryMaxSteps,
+  formatIdealEndingBreakdown,
+  getRestartSensitiveChangedPaths,
+  idealEndingRate,
+  parsePathLines,
+  parsePorcelainPaths,
+  requiresLoopRestart,
+  restartRequestedExitCode
+} from "./ai-loop-metrics.js";
+
+export {
+  exploratoryMaxSteps,
+  formatIdealEndingBreakdown,
+  getRestartSensitiveChangedPaths,
+  idealEndingRate,
+  parsePorcelainPaths,
+  requiresLoopRestart,
+  restartRequestedExitCode
+} from "./ai-loop-metrics.js";
 
 interface CommandResult {
   command: string;
@@ -55,6 +75,7 @@ interface McpPlaytestRun {
   maxScore: number;
   steps: number;
   path: string[];
+  readablePath?: string[];
 }
 
 interface CycleArtifacts {
@@ -88,8 +109,6 @@ const autoCommit = process.env.AI_LOOP_AUTO_COMMIT !== "0";
 const autoPush = process.env.AI_LOOP_AUTO_PUSH !== "0";
 const allowDirtyBaseline = process.env.AI_LOOP_ALLOW_DIRTY_BASELINE === "1";
 
-const restartSensitivePaths = new Set(["package.json", "package-lock.json", "src/ai-loop.ts"]);
-
 let stopped = false;
 process.on("SIGINT", () => {
   stopped = true;
@@ -109,7 +128,7 @@ async function main(): Promise<void> {
     const agentPath = `ai-runs/cycle-${stamp}-agent.md`;
     const postAgentPath = `ai-runs/cycle-${stamp}-post-agent.md`;
 
-    const artifacts = await runCycle(cycle);
+    const artifacts = await runCycleWithRecovery(cycle);
     await writeText(reportPath, artifacts.report);
     await writeText(promptPath, artifacts.prompt);
     console.log(`Wrote ${reportPath}`);
@@ -135,13 +154,15 @@ async function main(): Promise<void> {
       await writeText(postAgentPath, renderPostAgentResult(postAgentResult));
       console.log(`Wrote ${postAgentPath}`);
       const changedPaths = await getChangedPathsSince(baselineHead.output.trim());
-      if (requiresLoopRestart(changedPaths)) {
+      const restartPaths = getRestartSensitiveChangedPaths(changedPaths);
+      if (restartPaths.length > 0) {
         console.log(
-          `Loop runtime changed (${changedPaths
-            .filter((path) => restartSensitivePaths.has(path))
-            .join(", ")}); restart ./loop.sh before the next cycle.`
+          `Loop runtime changed (${restartPaths.join(
+            ", "
+          )}); exiting with code ${restartRequestedExitCode} so ./loop.sh can restart with fresh code.`
         );
         stopped = true;
+        process.exitCode = restartRequestedExitCode;
       }
     } else {
       console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
@@ -150,6 +171,18 @@ async function main(): Promise<void> {
     if (once || cycle >= maxCycles || stopped) break;
     await sleep(delayMs);
   } while (!stopped);
+}
+
+async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
+  try {
+    return await runCycle(cycle);
+  } catch (error) {
+    const report = renderCycleFailureReport(cycle, error);
+    return {
+      report,
+      prompt: await renderAgentPrompt(cycle, report)
+    };
+  }
 }
 
 async function runCycle(cycle: number): Promise<CycleArtifacts> {
@@ -170,21 +203,44 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const randomSummary = parseLastJson(results[4].output);
   const coverageSummary = parseLastJson(results[5].output);
   const mcpEvidence = await runMcpEvidence(cycle);
-  if (mcpEvidence.error) {
-    throw new Error(`MCP validation or playtest failed: ${mcpEvidence.error}`);
-  }
   const mcpPlay = await runMcpPlaythrough();
-  if (!mcpPlay.ok) {
-    throw new Error(
-      `True ending regression play failed: ${mcpPlay.error ?? "true_ending was not reached"}`
-    );
-  }
   const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpEvidence, mcpPlay);
 
   return {
     report,
     prompt: await renderAgentPrompt(cycle, report)
   };
+}
+
+function renderCycleFailureReport(cycle: number, error: unknown): string {
+  const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
+
+  return `# AI Loop Cycle ${cycle}
+
+Generated: ${new Date().toISOString()}
+
+## Loop Failure
+
+The pre-agent evidence phase threw before it could produce a normal report.
+The outer loop is preserving this as an actionable cycle instead of exiting.
+
+\`\`\`text
+${message.slice(-6000)}
+\`\`\`
+
+## AI Feedback
+
+- Treat this as the highest-priority blocker for the next autonomous change.
+- Inspect the failing loop, story, MCP server, and tests.
+- Make the smallest fix that restores a complete plan/build/health/play cycle.
+- Run \`npm run health\` and actually play the game through MCP or the CLI before finishing.
+
+## Suggested Next Actions
+
+- Reproduce the failure locally.
+- Fix the loop or game regression that prevented evidence gathering.
+- Add or update a regression test when practical.
+`;
 }
 
 function renderReport(
@@ -288,6 +344,10 @@ ${(
 ).slice(-3000)}
 \`\`\`
 
+## Long-Run Effectiveness Signals
+
+${renderEffectivenessSignals(randomSummary, coverageSummary, mcpEvidence)}
+
 ## AI Feedback
 
 ${failed.length > 0 ? "- Fix failing health checks before changing content." : "- Health checks are green."}
@@ -322,6 +382,22 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
 
   if (coverage?.unvisitedScenes?.length) {
     suggestions.push(`Fix coverage gaps for: ${coverage.unvisitedScenes.join(", ")}.`);
+  }
+
+  const idealRate = idealEndingRate(random);
+  const maxScoreRate = random?.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  if (
+    random &&
+    coverage &&
+    random.unfinished === 0 &&
+    !random.unvisitedScenes?.length &&
+    !coverage.unvisitedScenes?.length &&
+    idealRate >= 0.35 &&
+    maxScoreRate >= 0.25
+  ) {
+    suggestions.push(
+      "Core route metrics are healthy; favor meaningful new scenes, stronger character beats, or pacing improvements over another clue-only polish pass."
+    );
   }
 
   if (suggestions.length === 0) {
@@ -364,12 +440,93 @@ async function readPromptContract(): Promise<string> {
 
 function asSummary(value: unknown):
   | {
+      runs?: number;
       unfinished?: number;
       unvisitedScenes?: string[];
+      endings?: Record<string, number>;
+      averageScore?: number;
+      maxScoreRuns?: number;
     }
   | undefined {
   if (!value || typeof value !== "object") return undefined;
   return value as { unfinished?: number; unvisitedScenes?: string[] };
+}
+
+function renderEffectivenessSignals(
+  randomSummary: unknown,
+  coverageSummary: unknown,
+  mcpEvidence: McpEvidence
+): string {
+  const random = asSummary(randomSummary);
+  const coverage = asSummary(coverageSummary);
+  if (!random || !coverage) {
+    return "- Summary data was unavailable; repair report parsing before using long-run trends.";
+  }
+
+  const idealRate = idealEndingRate(random);
+  const badEndingRate = endingRate(random, "bad_ending");
+  const lostEndingRate = endingRate(random, "lost_ending");
+  const escapeEndingRate = endingRate(random, "escape_ending", "warned_escape_ending");
+  const maxScoreRate = random.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  const coverageComplete = (coverage.unvisitedScenes?.length ?? 0) === 0;
+  const exploratoryComplete = mcpEvidence.exploratory?.ok === true;
+
+  return [
+    `- Random ideal-ending rate: ${formatPercent(idealRate)} (${formatIdealEndingBreakdown(
+      random
+    )}).`,
+    `- Random non-ideal ending pressure: bad ${formatPercent(badEndingRate)}, lost ${formatPercent(
+      lostEndingRate
+    )}, escape ${formatPercent(escapeEndingRate)}.`,
+    `- Random max-score rate: ${formatPercent(maxScoreRate)}; average score: ${
+      random.averageScore ?? "unknown"
+    }.`,
+    `- Coverage completeness: ${
+      coverageComplete ? "all scenes visited" : `missing ${coverage.unvisitedScenes?.join(", ")}`
+    }.`,
+    `- Adaptive route: ${
+      exploratoryComplete
+        ? `finished at ${mcpEvidence.exploratory?.finalScene ?? "an ending"}`
+        : `stopped at ${mcpEvidence.exploratory?.finalScene ?? "unknown"}`
+    }.`,
+    `- Primary long-run pressure: ${identifyLongRunPressure(random, coverage, exploratoryComplete)}`
+  ].join("\n");
+}
+
+function identifyLongRunPressure(
+  random: NonNullable<ReturnType<typeof asSummary>>,
+  coverage: NonNullable<ReturnType<typeof asSummary>>,
+  exploratoryComplete: boolean
+): string {
+  if (random.unfinished && random.unfinished > 0) {
+    return "reduce dead ends or excessive loops before expanding content.";
+  }
+  if (coverage.unvisitedScenes?.length) {
+    return "repair coverage reachability before adding new branches.";
+  }
+  if (!exploratoryComplete) {
+    return "smooth the route where adaptive play stalls, especially repeated hub returns.";
+  }
+  if (idealEndingRate(random) >= 0.35 && (random.averageScore ?? 0) >= 60) {
+    return "core guidance is healthy; invest in richer story depth, endings, or systems.";
+  }
+  return "improve normal-player discoverability for the true ending.";
+}
+
+function endingRate(
+  summary: { runs?: number; endings?: Record<string, number> } | undefined,
+  ...endingIds: string[]
+): number {
+  if (!summary?.runs) return 0;
+  const total = endingIds.reduce(
+    (sum, endingId) => sum + Number(summary.endings?.[endingId] ?? 0),
+    0
+  );
+  return total / summary.runs;
+}
+
+function formatPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
 }
 
 function parseLastJson(output: string): unknown {
@@ -545,7 +702,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
       );
       for (const run of suspicious.slice(0, 3)) {
         suspiciousPaths.push(
-          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${run.path.join(" -> ")}`
+          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${formatSuspiciousPath(run)}`
         );
       }
     }
@@ -557,7 +714,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
           arguments: {
             storyPath: mainStory,
             runs: 100,
-            maxSteps: 50,
+            maxSteps: 60,
             strategy: "coverage",
             includeRuns: false
           }
@@ -609,6 +766,10 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
   }
 }
 
+function formatSuspiciousPath(run: McpPlaytestRun): string {
+  return (run.readablePath?.length ? run.readablePath : run.path).join(" -> ");
+}
+
 function seededRandom(seed: number): () => number {
   let h = seed ^ 0xdeadbeef;
   return () => {
@@ -635,10 +796,9 @@ async function runMcpExploratoryRoute(
     );
 
     const history: string[] = [observation.scene.id];
-    const maxSteps = 30;
     const rng = seededRandom(cycle + 4242);
 
-    for (let step = 0; step < maxSteps; step += 1) {
+    for (let step = 0; step < exploratoryMaxSteps; step += 1) {
       // Repeatedly call get_scene before choices to verify state
       observation = JSON.parse(
         textContent(
@@ -856,32 +1016,6 @@ async function getChangedPathsSince(baselineHead: string): Promise<string[]> {
   return [...parsePathLines(committed.output), ...parsePorcelainPaths(worktree.output)].sort();
 }
 
-export function requiresLoopRestart(changedPaths: string[]): boolean {
-  return changedPaths.some((path) => restartSensitivePaths.has(path));
-}
-
-function parsePathLines(output: string): string[] {
-  return output
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
-
-export function parsePorcelainPaths(output: string): string[] {
-  return output
-    .split(/\r?\n/)
-    .filter((line) => line.trim().length > 0)
-    .flatMap((line) => {
-      const path = line.slice(3);
-      const renameSeparator = " -> ";
-      if (path.includes(renameSeparator)) {
-        const [from, to] = path.split(renameSeparator);
-        return [from, to];
-      }
-      return [path];
-    });
-}
-
 async function writeText(path: string, text: string): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, text, "utf8");
@@ -909,6 +1043,7 @@ async function runMcpPlaythrough(): Promise<McpPlayResult> {
     "use_token_slot",
     "inspect_signal_ledger",
     "mark_mara_clear_from_ledger",
+    "board_after_clearing_mara",
     "pull_release"
   ];
 

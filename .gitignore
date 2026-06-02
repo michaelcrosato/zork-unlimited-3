@@ -6,3 +6,4 @@ transcripts/*.md
 ai-runs/*
 !ai-runs/.gitkeep
 coverage/
+OUTPUTLOG.md

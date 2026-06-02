@@ -23,6 +23,12 @@ export interface Observation {
   score: {
     score: number;
     maxScore: number;
+    achievements: Array<{
+      id: string;
+      label: string;
+      points: number;
+      earned: boolean;
+    }>;
   };
   objectives: string[];
 }
@@ -144,9 +150,17 @@ function getObjectives(state: GameState): string[] {
   const objectives: string[] = [];
   const has = (item: string) => state.inventory.includes(item);
   const flag = (name: string) => state.flags[name] === true;
+  const hasReadSignalRecords =
+    flag("inspected_signal_ledger") ||
+    flag("read_passenger_manifest") ||
+    flag("heard_passenger_echoes");
 
   if (!has("lantern") && !flag("lights_on")) {
     objectives.push("Find a reliable way to see in the underpass.");
+  }
+
+  if (flag("promised_mara") && !has("map")) {
+    objectives.push("Recover the marked Platform 13 map before boarding.");
   }
 
   if (!flag("knows_platform")) {
@@ -157,12 +171,13 @@ function getObjectives(state: GameState): string[] {
     flag("knows_platform") &&
     !flag("knows_release") &&
     !flag("freed_mara") &&
+    !hasReadSignalRecords &&
     !(has("map") && has("token") && has("fuse") && has("badge"))
   ) {
     objectives.push("Learn how to survive the driverless train before boarding it.");
   }
 
-  if (flag("knows_platform") && !has("map")) {
+  if (flag("knows_platform") && !flag("promised_mara") && !has("map")) {
     objectives.push("Recover the marked Platform 13 map before boarding.");
   }
 
@@ -181,7 +196,10 @@ function getObjectives(state: GameState): string[] {
     objectives.push("Find a way to power the platform gate control.");
   }
 
-  if ((has("fuse") || flag("met_mara") || flag("read_mara_file")) && !has("badge")) {
+  if (
+    (has("fuse") || flag("met_mara") || flag("read_mara_file") || flag("knows_badge_proof")) &&
+    !has("badge")
+  ) {
     objectives.push("Find proof of Mara Vale's identity before clearing her name.");
   }
 
@@ -190,7 +208,18 @@ function getObjectives(state: GameState): string[] {
   }
 
   if (flag("platform_lit") && has("token") && !flag("freed_mara")) {
-    objectives.push("Use the signal booth to resolve Mara's ledger entry.");
+    if (
+      flag("inspected_signal_ledger") &&
+      has("map") &&
+      has("badge") &&
+      !flag("read_passenger_manifest")
+    ) {
+      objectives.push("Check the kept-passenger manifest before deciding whose names to clear.");
+    } else if (flag("inspected_signal_ledger") && has("map") && has("badge")) {
+      objectives.push("Clear Mara's ledger entry with her badge proof.");
+    } else {
+      objectives.push("Use the signal booth to resolve Mara's ledger entry.");
+    }
   }
 
   if (flag("freed_mara")) {

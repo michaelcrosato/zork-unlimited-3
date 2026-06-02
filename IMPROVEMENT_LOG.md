@@ -4,6 +4,660 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-01 - Newspaper Route Label Clarity
+
+### Current Plan
+
+- Main objective: Make the newspaper passenger's help route more readable in
+  normal play.
+- Why this matters: The newspaper-specific intercom payoff was present, but the
+  entry choice still sounded like generic crowd handling instead of using the
+  remembered transfer column.
+- Tasks:
+  - Rename the newspaper-memory help choice to name the transfer-column tactic.
+  - Add regression coverage for the specific label.
+  - Verify the route through tests, health, and manual CLI play.
+- Risks: Too much instruction in choice labels can feel mechanical, so keep the
+  phrasing tied to a story object the player just discovered.
+
+### Work Completed
+
+- Changes made:
+  - Renamed `help_passengers_after_newspaper_memory` to "Use the transfer
+    column to gather passengers into the third car."
+  - Added a story-path assertion for the new label.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Clearer player-facing guidance into the newspaper-specific intercom payoff.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - Manual CLI route through `passenger_newspaper_memory`,
+    `passenger_newspaper_intercom`, final roll call, and
+    `passenger_helped_true_ending`
+  - `npm run health`
+- What worked:
+  - Focused story-path tests passed with 88 tests.
+  - Manual CLI play showed the new label before selection and reached
+    `passenger_helped_true_ending` at 100/100.
+  - Full health passed with formatting, TypeScript, 109 tests, validation, and
+    coverage playtest.
+  - Coverage playtest visited all 70 scenes, including
+    `passenger_newspaper_intercom`.
+- What felt bad/confusing:
+  - No new player-facing confusion surfaced. The final roll-call choice still
+    read clearly after the newspaper intercom.
+- Bugs found:
+  - None in the game. The manual script initially used the wrong final-roll-call
+    choice id, and the displayed choice corrected the route.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether normal random samples still miss
+  `passenger_newspaper_intercom`; if so, consider a small route-shape change
+  rather than more label text.
+
+## 2026-06-01 - Mara Handoff Ending
+
+### Current Plan
+
+- Main objective: Add a distinct payoff ending for the optional Mara handoff
+  route without weakening normal completion.
+- Why this matters: Core route metrics are healthy, so the best next
+  improvement is richer character payoff. Players could already watch Mara
+  step away from the booth, but the final ending did not acknowledge that
+  choice.
+- Tasks:
+  - Route the handoff intercom release to a new ending.
+  - Count the new ending as an ideal max-score completion.
+  - Cover the new route with regression tests.
+- Risks: Adding another ending label can skew ideal-ending reporting unless
+  score, playtest strategy, and AI-loop summaries all recognize it.
+
+### Work Completed
+
+- Changes made:
+  - Added `mara_handoff_true_ending`.
+  - Routed `pull_release_after_handoff_goodbye` to the new ending.
+  - Updated score, playtest destination scoring, and AI-loop ideal-ending
+    reporting.
+  - Added and updated story-path, playtest, and AI-loop tests.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/score.ts`
+  - `src/playtest.ts`
+  - `src/ai-loop.ts`
+  - `tests/story-paths.test.ts`
+  - `tests/playtest.test.ts`
+  - `tests/ai-loop.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A handoff-specific true ending where Mara physically holds the far doors
+    open after leaving the booth.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts tests/playtest.test.ts
+tests/ai-loop.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random
+--summary --json`
+  - `npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage
+--summary --json`
+  - `npm run health`
+  - Manual CLI route through Mara's handoff, final intercom, and
+    `mara_handoff_true_ending`
+- What worked:
+  - Focused tests passed with 90 tests.
+  - Full health passed with formatting, TypeScript, 98 tests, validation, and
+    coverage playtest.
+  - Validation reports 57 scenes, 8 endings, and all 57 reachable.
+  - Random playtest ended 100/100 runs, visited all scenes, reached the new
+    ending 7 times, and preserved 72 max-score runs.
+  - Coverage playtest visited all scenes with best score 100/100, average score
+    98.09, and 74664 max-score runs.
+  - Manual CLI play reached `mara_handoff_true_ending` at 100/100 with no
+    lingering objectives.
+- What felt bad/confusing:
+  - No new confusion surfaced. The handoff payoff is clearer, while the direct
+    `true_ending` route remains available for players who skip the intercom.
+- Bugs found:
+  - Existing tests and ideal-ending helpers initially assumed the handoff
+    intercom still ended at `true_ending`; those assumptions were updated.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether the increasing number of ideal
+  ending labels makes reports harder to scan.
+- Reason: The route quality improved, but summary readability can degrade as
+  ending variants accumulate.
+- Planned action:
+  - Consider grouping ideal endings in reports while preserving individual
+    ending counts.
+
+## 2026-06-01 - Stairwell Clock Recovery
+
+### Current Plan
+
+- Main objective: Smooth the stairwell escape-warning recovery route.
+- Why this matters: The adaptive exploratory route showed a player wavering at
+  the stairs after powering the platform without the signal token. Mara's clue
+  named the stopped clock, but the recovery path returned to the lit platform
+  and made the player navigate extra hubs before acting on that clue.
+- Tasks:
+  - Route Mara's stairwell-call recovery directly to the stopped clock.
+  - Keep the escape ending available after the player hears her warning.
+  - Cover the revised branch with focused story-path tests.
+- Risks: Direct clock routing abstracts travel back through the tunnel; focused
+  playtesting needs to confirm the transition remains readable.
+
+### Work Completed
+
+- Changes made:
+  - Changed `return_from_stairwell_call` to land on `clock`.
+  - Added `leave_after_stairwell_call` as an immediate escape option from
+    Mara's stairwell warning.
+  - Updated story-path regression coverage for both token recovery and escape.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A cleaner late-escape recovery branch that turns Mara's clock clue into
+    immediate playable progress.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run cyoa -- validate stories/demo.yaml --json`
+  - `npm run health`
+  - Manual CLI route through `mara_stairwell_call`, direct clock recovery,
+    `signal_map_warning`, and `true_ending`
+- What worked:
+  - Focused story-path tests passed with 67 tests.
+  - Full health passed with format check, TypeScript, 88 tests, validation, and
+    coverage playtest.
+  - Validation reports 50 scenes, 7 endings, and all 50 reachable.
+  - Coverage playtest reports 0 unfinished completed routes, all scenes visited,
+    best score 100/100, average score 91.91, and 15372 max-score runs.
+  - The manual route reached `true_ending` at 100/100 after returning directly
+    from Mara's warning to the clock.
+- What felt bad/confusing:
+  - No new confusion surfaced. The branch now has less backtracking while still
+    preserving the decision to leave.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Watch whether random routes still spend too much
+  time in late-game hub loops.
+- Reason: The direct clock recovery removes one known detour, but random-route
+  samples can reveal remaining repeated platform/service-room churn.
+- Planned action:
+  - Compare future suspicious path samples for repeated `lit_platform` and
+    `service_room` returns before adding more story content.
+
+## 2026-06-01 - Manifest Ledger Return
+
+### Current Plan
+
+- Main objective: Smooth the optional passenger-manifest branch so it returns
+  directly to Mara's ledger row.
+- Why this matters: The adaptive exploratory route stopped at
+  `passenger_manifest` with a valid progress choice still available. The
+  manifest branch should carry players into final ledger resolution instead of
+  routing them back through the signal-booth hub.
+- Tasks:
+  - Offer the passenger-echo beat directly from `passenger_manifest`.
+  - Return from the manifest and passenger echoes to `signal_ledger`.
+  - Preserve mapless recovery and manifest true-ending coverage.
+- Risks: Moving late-game returns out of `signal_booth` could make optional
+  passenger echoes or mapless recovery unreachable if the tests miss a branch.
+
+### Work Completed
+
+- Changes made:
+  - Added `listen_to_manifest_doors_from_manifest` to `passenger_manifest`.
+  - Changed manifest and passenger-echo returns to land on `signal_ledger` and
+    set `inspected_signal_ledger`.
+  - Updated story-path regressions for direct manifest resolution, mapless
+    recovery, objective text, and the passenger true-ending branch.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - A smoother late-game manifest route with one fewer hub bounce.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through `passenger_manifest`,
+    `listen_to_manifest_doors_from_manifest`, and `passenger_true_ending`
+- What worked:
+  - Focused story-path tests passed with 48 tests.
+  - Full health passed with 68 tests, validation, and coverage playtest.
+  - Validation reports 38 scenes, 6 endings, and all 38 reachable.
+  - Coverage playtest reports 0 unfinished runs, all scenes visited, best score
+    100/100, average score 82.25, and 960 max-score runs.
+  - The manual route reached `passenger_true_ending` at 100/100 after returning
+    from the passenger echoes directly to Mara's ledger row.
+  - Evidence-only `npm run ai:cycle` passed health, MCP verification, MCP
+    validation, MCP random/coverage/goal playtests, and an actual MCP
+    true-ending route at 100/100.
+  - The adaptive exploratory route no longer stops at `passenger_manifest`; it
+    now stops at `signal_booth` with the ledger and manifest choices visible.
+- What felt bad/confusing:
+  - The revised route reads more cleanly; the signal-booth menu no longer
+    interrupts the manifest-to-ledger payoff.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Inspect whether the adaptive `signal_booth` stop
+  reflects route-depth limits or a remaining choice-prioritization issue.
+- Reason: The manifest branch now continues cleanly, and the next incomplete
+  route has a compact final-state audit with visible legal progress choices.
+- Planned action:
+  - Compare adaptive route depth against the signal-booth choice ordering before
+    making another story-routing change.
+
+## 2026-06-01 - Transcript Final-State Audit
+
+### Current Plan
+
+- Main objective: Improve transcript/report clarity for stalled or exploratory
+  routes.
+- Why this matters: Current route metrics are healthy. When adaptive play stops
+  before an ending, the transcript should expose the current objective and legal
+  choices so future cycles can tell whether the route is actually blocked or
+  simply unfinished.
+- Tasks:
+  - Add a compact final-state audit to transcript output.
+  - Cover both an in-progress signal-booth route and a completed true-ending
+    route.
+  - Run full health and manually inspect generated CLI transcripts.
+- Risks: Longer transcripts could bury useful information in report tails, so
+  the audit needs to remain compact and placed at the end.
+
+### Work Completed
+
+- Changes made:
+  - `renderTranscript` now appends final scene status, score, objectives,
+    available choices, inventory, and flags.
+  - Added transcript tests for a stalled `signal_booth` route and a completed
+    `true_ending` route.
+- Files/systems touched:
+  - `src/transcript.ts`
+  - `tests/transcript.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - Transcript final-state audit for MCP and CLI review workflows.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/transcript.test.ts`
+  - `npm run health`
+  - CLI route to `signal_booth` followed by transcript inspection
+  - CLI route to `true_ending` followed by transcript inspection
+- What worked:
+  - Focused transcript tests passed with 2 tests.
+  - Full health passed with 65 tests, validation, and coverage playtest.
+  - Validation reports 36 scenes, 6 endings, and all 36 reachable.
+  - Coverage playtest reports 0 unfinished runs, all scenes visited, and best
+    score 100/100.
+  - The signal-booth transcript ends with the active ledger objective and the
+    two legal progress/lore choices.
+  - The true-ending transcript ends with `Score: 100/100`, no objectives, and
+    no available choices.
+- What felt bad/confusing:
+  - The signal-booth stall is now readable as an unfinished exploratory route,
+    not a broken or hidden-progression state.
+- Bugs found:
+  - No gameplay bug found.
+
+### Next Iteration
+
+- Highest-priority next task: Use the clearer transcript tail in the next
+  adaptive-route report before deciding whether to tune exploratory depth.
+- Reason: Evidence quality is now better; the next cycle can make a more
+  grounded call between route tuning and another story-depth improvement.
+- Planned action:
+  - Run the normal AI evidence cycle and inspect whether adaptive stops still
+    lack actionable choices after the transcript audit.
+
+## 2026-06-01 - Signal-Booth Manifest Beat
+
+### Current Plan
+
+- Main objective: Add an optional kept-passenger manifest scene in the signal
+  booth.
+- Why this matters: The latest evidence showed healthy route metrics and no
+  unvisited scenes, so the best next improvement is richer story payoff on the
+  successful path. The signal booth names Mara's ledger row, but it does not
+  linger on the many people the true ending will release.
+- Tasks:
+  - Add a one-time optional manifest scene from `signal_booth`.
+  - Keep the direct Mara-ledger action first.
+  - Add regression coverage for the optional detour and true-ending recovery.
+  - Run health and an actual route through the new scene.
+- Risks: An extra choice in a critical late-game scene could lower random
+  true-ending rate or distract automated players if the direct ledger path is
+  not still clearly prioritized.
+
+### Work Completed
+
+- Changes made:
+  - Added `passenger_manifest`, an optional lore scene that shows ordinary
+    kept-passenger details and points back to Mara's still-shut door.
+  - Added `read_passenger_manifest` from `signal_booth`, gated by a one-time
+    flag.
+  - Added `return_to_signal_ledger_from_manifest` so the detour returns to the
+    existing signal-booth flow.
+  - Added a regression proving the detour returns, disappears after reading,
+    and still reaches `true_ending` at max score.
+  - Updated the existing badge-proof test so the new optional signal-booth beat
+    does not invalidate the direct ledger path.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - New optional late-game lore scene: `passenger_manifest`.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through `passenger_manifest`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+- What worked:
+  - Focused story-path tests pass with 41 tests.
+  - Full health passes with formatting, TypeScript, 57 tests, validation, and
+    coverage playtest.
+  - Validation now reports 32 scenes, 5 endings, all 32 reachable.
+  - Coverage playtest visits `passenger_manifest`, has 0 unfinished runs, and
+    keeps best score at 100/100.
+  - The direct `inspect_signal_ledger` action remains first in the signal booth.
+  - The optional manifest sets `read_passenger_manifest`, returns to
+    `signal_booth`, and does not reappear.
+  - Manual CLI play through the manifest route reached `true_ending` at 100/100.
+  - Evidence-only cycle passed health, MCP validation, MCP random/coverage/goal
+    playtests, and an actual MCP true-ending playthrough at 100/100.
+  - Random metrics stayed stable: 100/100 random runs ended, all 32 scenes were
+    visited, `true_ending` reached 54 times, and average score remained 70.7.
+- What felt bad/confusing:
+  - The adaptive exploratory route still stops at fully prepared `lit_platform`
+    with map, token, fuse, and badge. The choice list is already focused there,
+    so this looks more like route-depth/continuation pressure than a content
+    signposting bug.
+- Bugs found:
+  - One older test assumed `signal_booth` had exactly one choice. The assertion
+    was too narrow for optional late-game story content and now checks that the
+    ledger path remains first.
+
+### Next Iteration
+
+- Highest-priority next task: Decide whether to tune adaptive route continuation
+  or add another focused story payoff.
+- Reason: The change touches a late critical-path scene and must stay clear in
+  direct play while preserving route metrics.
+- Planned action:
+  - Inspect whether the adaptive route needs a deeper step budget/continuation
+    once it reaches a one-choice late-game state, or add another small story
+    payoff that preserves focused route choices.
+
+## 2026-06-01 - Last-Missing-Map Focus
+
+### Current Plan
+
+- Main objective: Remove the late-game service-room bounce when the marked map
+  is the last missing preparation item.
+- Why this matters: The adaptive exploratory route had already collected Mara's
+  badge, the platform fuse, and the signal token, but kept returning to the
+  tunnel instead of taking the map. That made the next objective technically
+  visible but mechanically easy to ignore.
+- Tasks:
+  - Hide `return_to_tunnel` once the map is the only missing preparation item.
+  - Preserve tunnel return while the token, fuse, or badge can still be found.
+  - Add regression coverage for the adaptive stall state.
+  - Run health and a real CLI route through the changed moment.
+- Risks: Removing a backtrack could accidentally block token recovery if the
+  condition is too broad.
+
+### Work Completed
+
+- Changes made:
+  - `return_to_tunnel` now depends on missing token, fuse, or badge, not merely
+    missing map.
+  - Added regression coverage for the exact state with `promised_mara`,
+    `knows_release`, `read_mara_file`, badge, fuse, and token.
+  - Strengthened the existing missing-map test to ensure the stale tunnel
+    return is absent.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is a route-focus polish pass for the service-room hub.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+  - Manual CLI route through the former adaptive stall and on to `true_ending`
+- What worked:
+  - Story-path tests pass with 39 tests.
+  - Full health passes with formatting, TypeScript, 55 tests, validation, and
+    coverage playtest.
+  - Coverage playtest remains stable: 698 runs, 672 ended, 0 unfinished, all 31
+    scenes visited, best score 100/100.
+  - At the former stall, the service room now offered exactly `take_map`.
+  - Continuing from that state reached `true_ending` at 100/100 after the Mara
+    intercom beat.
+  - Evidence-only cycle passed health, MCP validation, MCP
+    random/coverage/goal playtests, and an actual MCP true-ending playthrough
+    at 100/100.
+  - The adaptive route now takes the map and reaches the gate-control clue
+    before stopping back in the service room with all four tools.
+- What felt bad/confusing:
+  - The service-room prose is still generic when only the map is missing. The
+    choice list is now clear, but a future content pass could add state-aware
+    hub text if the engine gains support for it.
+- Bugs found:
+  - No new bug found. The old loop was a stale recovery option rather than a
+    broken transition.
+
+### Next Iteration
+
+- Highest-priority next task: Smooth the fully equipped service-room handoff
+  after the gate-control clue if repeated evidence keeps stopping there.
+- Reason: The map stall is gone, but the adaptive route now pauses one step
+  later with every required tool and `go_to_platform` as the obvious next move.
+- Planned action:
+  - Inspect the exact choice list in that state, then decide whether stronger
+    choice text or adaptive playtest tuning is the right fix.
+
+## 2026-06-01 - Long-Run Loop Hardening
+
+### Current Plan
+
+- Main objective: Keep the autonomous loop alive and useful during long AFK
+  runs.
+- Why this matters: The captured loop output showed that a stale MCP
+  true-ending route could throw before the agent received a repair prompt. A
+  two-week run needs both uptime recovery and enough report context to avoid
+  repetitive low-impact changes.
+- Tasks:
+  - Preserve pre-agent evidence failures as actionable reports/prompts.
+  - Retry unexpected `npm run ai:loop` exits from `loop.sh`.
+  - Add long-run effectiveness signals to each cycle report.
+  - Verify with health, evidence-only AI cycle, and a player-style route.
+- Risks: Retrying should keep failures visible in `ai-runs/` instead of hiding
+  persistent bugs.
+
+### Work Completed
+
+- Changes made:
+  - `src/ai-loop.ts` now reports MCP/playthrough failures in the generated
+    cycle instead of throwing before the agent prompt is written.
+  - `loop.sh` retries unexpected loop exits with `AI_LOOP_RETRY_DELAY_MS` and
+    supports `AI_LOOP_EXIT_ON_ERROR=1` for debugging.
+  - Cycle reports now include true-ending rate, non-ideal ending pressure,
+    max-score rate, coverage completeness, adaptive route status, and a primary
+    long-run pressure recommendation.
+  - Root `OUTPUTLOG.md` is ignored so pasted terminal transcripts do not create
+    a dirty AFK baseline.
+- Files/systems touched:
+  - `src/ai-loop.ts`
+  - `loop.sh`
+  - `README.md`
+  - `.gitignore`
+  - `AI_LOOP_STATE.md`
+- New content/features added:
+  - Long-run effectiveness reporting for autonomous prioritization.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+  - Manual CLI true-ending route
+- What worked:
+  - Health passes with formatting, TypeScript, 53 tests, validation, and
+    coverage playtest.
+  - The latest evidence-only cycle wrote a report with the new effectiveness
+    section and reached `true_ending` through the actual MCP playthrough.
+  - Manual CLI play reached `true_ending` at 100/100.
+- What felt bad/confusing:
+  - The adaptive route can still stall at the service room after repeated hub
+    returns, so future content work should focus on pacing and richer progress
+    once core reachability remains healthy.
+- Bugs found:
+  - The original loop could terminate before giving the agent a fix prompt when
+    pre-agent MCP evidence failed.
+
+### Next Iteration
+
+- Highest-priority next task: Use the new long-run pressure signal to choose
+  larger design gains when route metrics are saturated.
+- Reason: Current true-ending and coverage metrics are healthy enough that the
+  game now benefits more from depth and pacing than from another clue-only pass.
+- Planned action:
+  - Add a new meaningful late-game beat or system only after preserving health,
+    MCP play, and coverage explainability.
+
+## 2026-06-01 - Promise-Aware Platform Routing
+
+### Current Plan
+
+- Main objective: Make Mara's explicit map request affect platform routing.
+- Why this matters: The latest evidence showed players can promise Mara they
+  will find the map, leave the service room without any useful platform tool,
+  and force the rusted gate into the bad ending. Follow-up evidence showed a
+  fuse-only platform route could still abandon the map promise through the
+  escape ending. After the promise, the hub should make Mara's map request feel
+  like the immediate commitment.
+- Tasks:
+  - Hide Platform 13 travel after `promise_to_help` until the map is recovered.
+  - Preserve early no-tool platform exploration before Mara is contacted.
+  - Add promise-specific regression coverage.
+  - Run health and an actual route through the changed moment.
+- Risks: This narrows one post-Mara route, so the forced-gate bad ending must
+  remain reachable through early platform exploration.
+
+### Work Completed
+
+- Changes made:
+  - Added `notFlag: promised_mara` to the no-tool `go_to_platform` allowance.
+  - Added matching promise-aware gating to the tunnel `follow_arrows` route so
+    players cannot bypass the service-room guidance without the map.
+  - Tightened the promise gate after evidence showed a fuse-only route could
+    still restore the platform and flee without the map.
+  - Updated objective generation so Mara's promise surfaces the marked-map
+    objective before Platform 13 is discovered.
+  - Added a regression proving Mara-promising players stay in the service room
+    until they recover the marked map.
+  - Added a regression proving the tunnel arrows stay unavailable after the
+    promise until the player recovers the marked map.
+- Files/systems touched:
+  - `stories/demo.yaml`
+  - `src/engine.ts`
+  - `tests/story-paths.test.ts`
+  - `AI_LOOP_STATE.md`
+  - `IMPROVEMENT_LOG.md`
+- New content/features added:
+  - No new scene; this is a route-steering improvement that makes an existing
+    character promise mechanically visible.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/story-paths.test.ts`
+  - `npm run health`
+  - Manual CLI route through the changed promise branch
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`
+- What worked:
+  - Story-path tests pass with 36 tests.
+  - Full health passes with formatting, TypeScript, 52 tests, validation, and
+    coverage playtest.
+  - Validation remains clean: 30 scenes, 5 endings, 30 reachable.
+  - Coverage remains stable: 697 runs, 672 ended, 0 unfinished, 25 frontier
+    samples, all scenes visited, best score 100/100.
+  - Manual CLI play confirmed that after promising Mara and collecting only the
+    fuse and badge, the tunnel offers `open_service_door` and `inspect_clock`,
+    with no `follow_arrows`, and the objective list explicitly asks for the
+    marked map.
+  - Continuing that route after taking the map reached `true_ending` at
+    100/100.
+  - Evidence cycle passed health, MCP tool verification, MCP validation, MCP
+    random/coverage/goal playtests, and an actual MCP true-ending playthrough
+    at 100/100.
+  - Final MCP random playtest ended all 250 runs, visited all scenes, reached
+    `true_ending` 142 times, and kept best score at 100/100.
+- What felt bad/confusing:
+  - The adaptive exploratory route now stops in the service room with badge,
+    fuse, and token but no map. The route is no longer falling into a bad or
+    escape ending, but the next pass should make the map-last state feel more
+    directed.
+- Bugs found:
+  - Initial promise gating only covered `go_to_platform`; evidence showed the
+    player could bypass it via `return_to_tunnel` and `follow_arrows`, then via
+    a fuse-only platform route. Both gaps are now covered by tests.
+
+### Next Iteration
+
+- Highest-priority next task: Improve the service-room handoff when the marked
+  map is the last missing promise item.
+- Reason: The adaptive route now correctly avoids premature Platform 13 travel,
+  but it can idle between the service room and tunnel instead of taking the map.
+- Planned action:
+  - Consider a map-specific choice label or ordering rule for
+    `promised_mara && !map` states, then verify it does not reduce ending
+    reachability.
+
 ## 2026-06-01 - Post-Poster Route Focus
 
 ### Current Plan

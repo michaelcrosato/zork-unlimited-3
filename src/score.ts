@@ -75,7 +75,26 @@ const ACHIEVEMENTS: Array<{
     id: "true_ending",
     label: "Opened every door with the emergency release",
     points: 10,
-    earned: (state) => state.currentScene === "true_ending"
+    earned: (state) =>
+      state.currentScene === "true_ending" ||
+      state.currentScene === "mara_handoff_true_ending" ||
+      state.currentScene === "passenger_true_ending" ||
+      state.currentScene === "passenger_answered_true_ending" ||
+      state.currentScene === "passenger_answered_boarding_true_ending" ||
+      state.currentScene === "passenger_counted_true_ending" ||
+      state.currentScene === "passenger_reviewed_count_true_ending" ||
+      state.currentScene === "passenger_manifest_true_ending" ||
+      state.currentScene === "passenger_manifest_handoff_true_ending" ||
+      state.currentScene === "passenger_manifest_thumbprint_true_ending" ||
+      state.currentScene === "passenger_answered_handoff_true_ending" ||
+      state.currentScene === "passenger_echoed_true_ending" ||
+      state.currentScene === "passenger_helped_true_ending" ||
+      state.currentScene === "passenger_roll_call_true_ending" ||
+      state.currentScene === "passenger_lunch_tin_true_ending" ||
+      state.currentScene === "passenger_conductor_true_ending" ||
+      state.currentScene === "passenger_keepsake_true_ending" ||
+      state.currentScene === "passenger_newspaper_true_ending" ||
+      state.currentScene === "passenger_mitten_true_ending"
   }
 ];
 
