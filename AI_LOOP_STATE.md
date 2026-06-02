@@ -1,3 +1,58 @@
+# Cycle 34 Post-Dispatch Lost Ending Pressure
+
+- Date: 2026-06-02
+- Main objective: Make `lost_after_dispatch_ending` more visible in ordinary
+  play after Mara has already named the recovery checklist.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current Cycle 34 evidence is green, all scenes are reachable, and
+  random play still missed `lost_after_dispatch_ending` while coverage reached
+  it. The post-dispatch failure is a useful fair-play consequence because the
+  player hears the correct route and then chooses HOME anyway.
+- Planned work:
+  - Route `let_home_sign_drown_mara` from `home_sign_dispatch` directly to
+    `lost_after_dispatch_ending`.
+  - Preserve the pre-dispatch `home_sign_grip` warning from the original HOME
+    stare and porch-light choices.
+  - Add regression coverage proving the promoted branch lands in the
+    post-dispatch ending with the expected flags and text.
+  - Run focused tests, full health, and an actual route through the changed
+    branch.
+- Risks:
+  - This removes one extra recovery chance only after Mara has explicitly named
+    the safe route. The recovery choice still sits immediately beside the
+    failure choice in `home_sign_dispatch`.
+- Work completed:
+  - Routed `let_home_sign_drown_mara` from `home_sign_dispatch` directly to
+    `lost_after_dispatch_ending`.
+  - Preserved `home_sign_grip` as the earlier recoverable warning reached from
+    staring at HOME or stepping toward the porch light before Mara's dispatch.
+  - Added regression coverage for the promoted drown-Mara branch and verified
+    it sets both `surrendered_home_after_dispatch` and
+    `let_home_drown_mara`.
+- Evidence:
+  - Focused story-path suite passed: 153 tests.
+  - `npm run health` passed: format check, TypeScript, 198 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `look_at_sign` ->
+    `listen_for_mara_under_home_warning` -> `let_home_sign_drown_mara`, ending
+    at `lost_after_dispatch_ending` with score 50, no objectives, and the
+    expected post-dispatch flags.
+  - A 250-run random sample ended all 250 runs, had zero unfinished runs,
+    visited every scene, and reached `lost_after_dispatch_ending` once.
+- Playtest feedback:
+  - The changed branch reads cleaner: after Mara explicitly names "clock token,
+    fuse, badge, ledger," choosing to let HOME drown her out now pays off as
+    the specific consequence instead of another generic warning.
+  - The game still provides fair recovery at the same scene through
+    `turn_back_after_home_sign_dispatch`, so the failure feels earned rather
+    than sudden.
+- Next step:
+  - Watch future random/blind samples for whether `lost_after_dispatch_ending`
+    remains visible; if hard issues stay absent, promote another remaining
+    normal-random miss or add a small late-passenger payoff.
+
 # Cycle 37 Direct Morning Warning Mark
 
 - Date: 2026-06-02

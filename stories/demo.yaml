@@ -3841,10 +3841,11 @@ scenes:
             surrendered_home_after_dispatch: true
       - id: let_home_sign_drown_mara
         label: Let HOME drown Mara out
-        to: home_sign_grip
+        to: lost_after_dispatch_ending
         effects:
           set:
-            felt_home_sign_grip: true
+            surrendered_home_after_dispatch: true
+            let_home_drown_mara: true
 
   home_sign_grip:
     routeImportance: optional

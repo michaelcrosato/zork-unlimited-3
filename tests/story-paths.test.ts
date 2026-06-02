@@ -2210,6 +2210,29 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
     expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "listen_for_mara_under_home_warning",
+      "let_home_sign_drown_mara"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_after_dispatch_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
+    expect(observation.state.flags.let_home_drown_mara).toBe(true);
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+    expect(observation.scene.text).toContain("Mara is still speaking");
+    expect(observation.scene.text).toContain("clock token, fuse, badge, ledger");
   });
 
   it("adds a final recoverable HOME sign warning before the lost ending", async () => {
