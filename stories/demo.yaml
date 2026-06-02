@@ -3272,6 +3272,16 @@ scenes:
         to: passenger_conductor_count_true_ending
         requires:
           flag: punched_conductor_transfer
+      - id: pass_counted_punched_transfer_to_mara
+        label: Let the child carry the counted punched transfer to Mara
+        to: passenger_conductor_transfer_handoff
+        requires:
+          all:
+            - flag: punched_conductor_transfer
+            - notFlag: punched_transfer_carried_forward
+        effects:
+          set:
+            punched_transfer_carried_forward: true
 
   passenger_gathered_intercom:
     routeImportance: optional

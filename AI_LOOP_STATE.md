@@ -1,3 +1,62 @@
+# Cycle 23 Counted Transfer Handoff
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of
+  `passenger_conductor_transfer_handoff` by surfacing it from the counted
+  conductor-transfer route as well as the uncounted transfer route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Supplied Cycle 23 evidence showed healthy completion, full coverage,
+  and no unfinished runs, but the 100-run random sample still missed
+  `passenger_conductor_transfer_handoff`. The handoff is a strong passenger
+  payoff, so it should remain available when players first review Mara's opened
+  manifest count and then ask the conductor to punch the morning transfer.
+- Planned work:
+  - Add one gated handoff choice from `passenger_conductor_count_roll_call`
+    when the conductor has punched the transfer.
+  - Reuse the existing handoff scene and ending path to avoid expanding ending
+    taxonomy.
+  - Preserve the direct counted-transfer release branch.
+  - Add regression coverage, validate, run health, and play the route.
+- Risks:
+  - The counted-transfer roll-call scene gains a second choice. Both choices
+    are immediate payoffs for the same punched transfer, and the direct release
+    remains available.
+- Work completed:
+  - Added `pass_counted_punched_transfer_to_mara` from
+    `passenger_conductor_count_roll_call` to the existing
+    `passenger_conductor_transfer_handoff` scene.
+  - Gated the new choice to the counted conductor-transfer state with
+    `punched_conductor_transfer` and `notFlag: punched_transfer_carried_forward`.
+  - Preserved `pull_release_after_conductor_count_transfer` as the direct
+    counted-transfer ending path.
+  - Extended the reviewed-manifest conductor regression test to cover the new
+    handoff route and the preserved direct release route.
+- Evidence:
+  - Focused story-path suite passed: 143 tests.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 134 scenes, including
+    `passenger_conductor_transfer_handoff`, with no unvisited scenes.
+  - Actual CLI play followed `review_open_manifest_count` ->
+    `ask_conductor_after_manifest_count` -> `ask_conductor_to_punch_transfer`
+    -> `hear_counted_transfer_conductor_roll_call` ->
+    `pass_counted_punched_transfer_to_mara` ->
+    `pull_release_after_transfer_handoff`, ending at
+    `passenger_conductor_transfer_true_ending` with score 322, no objectives,
+    and `punched_transfer_carried_forward` recorded.
+  - A 250-run random playtest ended 250/250 runs, had zero frontier samples,
+    and visited `passenger_conductor_transfer_handoff`.
+- Playtest feedback:
+  - The counted manifest branch now has a clear passenger-scale payoff for the
+    punched transfer instead of forcing players directly from the counted clear
+    call into an ending.
+  - The added choice reads as a continuation of the existing transfer prop and
+    did not disrupt the direct counted-transfer release.
+- Next step:
+  - Watch blind feedback for whether the conductor/count/transfer route now has
+    too many adjacent optional beats; if so, consolidate labels around the
+    transfer payoff rather than adding another conductor branch.
+
 # Cycle 19 Room Intercom Shared Release
 
 - Date: 2026-06-02

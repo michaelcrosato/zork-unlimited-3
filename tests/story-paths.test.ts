@@ -4974,10 +4974,35 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("opened count folded against his punch");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_count_transfer"
+      "pull_release_after_conductor_count_transfer",
+      "pass_counted_punched_transfer_to_mara"
     ]);
 
-    state = choose(story, state, "pull_release_after_conductor_count_transfer");
+    const countedTransferRollCallState = state;
+
+    let handoffState = choose(
+      story,
+      countedTransferRollCallState,
+      "pass_counted_punched_transfer_to_mara"
+    );
+    observation = observe(story, handoffState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_handoff");
+    expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
+    expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
+
+    handoffState = choose(story, handoffState, "pull_release_after_transfer_handoff");
+    observation = observe(story, handoffState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(
+      story,
+      countedTransferRollCallState,
+      "pull_release_after_conductor_count_transfer"
+    );
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
@@ -4991,7 +5016,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the count has become a crowd");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_count_transfer"
+      "pull_release_after_conductor_count_transfer",
+      "pass_counted_punched_transfer_to_mara"
     ]);
   });
 
