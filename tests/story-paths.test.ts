@@ -3409,16 +3409,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("witnessed the last door open");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_handoff",
       "carry_thumbprint_handoff_to_far_door"
     ]);
 
-    state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("mara_handoff_intercom");
-    expect(observation.scene.text).toContain("opening the last door from the other side");
-
-    state = choose(story, state, "pull_release_after_handoff_goodbye");
+    state = choose(story, state, "pull_release_after_thumbprint_handoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_handoff_true_ending");
@@ -3470,6 +3465,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
     expect(observation.scene.text).toContain("same hand that tore the ledger");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_handoff",
+      "carry_thumbprint_handoff_to_far_door"
+    ]);
 
     state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
     observation = observe(story, state);
@@ -9706,15 +9705,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("witnessed the last door open");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_handoff",
       "carry_thumbprint_handoff_to_far_door"
     ]);
 
-    state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("mara_handoff_intercom");
-
-    state = choose(story, state, "pull_release_after_handoff_goodbye");
+    state = choose(story, state, "pull_release_after_thumbprint_handoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_handoff_true_ending");

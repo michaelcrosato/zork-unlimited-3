@@ -1,3 +1,56 @@
+# Cycle 86 Direct Thumbprint Handoff Release
+
+- Date: 2026-06-02
+- Main objective: Make the earned torn-thumbprint handoff payoff immediately
+  actionable instead of requiring a generic intercom bridge before the final
+  release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence keeps pointing at rare Mara handoff scenes
+  as the remaining normal-play discovery gap. The handoff route is now easier
+  to enter, but the thumbprint-specific payoff still forces players through
+  `mara_handoff_intercom` before they can finish, which blurs the strongest
+  clue-specific moment.
+- Planned work:
+  - Add a direct release choice from `mara_thumbprint_handoff_intercom` to
+    `mara_handoff_true_ending`.
+  - Preserve the existing option to carry Mara's thumbprint to the far door.
+  - Update focused path tests for the new actionable choice.
+  - Run focused tests, full health, and an actual playthrough.
+- Risks:
+  - Adding a direct ending choice may slightly change random route distribution
+    for the rare thumbprint handoff route, but it should improve player clarity
+    without affecting required routes.
+- Status:
+  - Completed.
+  - Added `pull_release_after_thumbprint_handoff` from
+    `mara_thumbprint_handoff_intercom` directly to
+    `mara_handoff_true_ending`.
+  - Preserved `carry_thumbprint_handoff_to_far_door` as the optional bridge to
+    the generic Mara handoff intercom.
+  - Updated focused story-path coverage for the direct payoff and the preserved
+    bridge route.
+  - Focused story-path suite passed: 186 tests.
+  - Actual CLI play followed the torn-thumbprint handoff route through
+    `pull_release_after_thumbprint_handoff`, ending at
+    `mara_handoff_true_ending` with score 283 and no objectives.
+  - `npm run health` passed: format check, TypeScript, 233 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+- Playtest feedback:
+  - The revised thumbprint handoff now resolves at the strongest clue-specific
+    moment instead of forcing the player through the generic handoff intercom.
+  - The preserved far-door bridge still works for players who want an extra
+    confirmation beat.
+  - No invalid choices, dangling objectives, dead ends, or coverage regressions
+    appeared.
+- Next step:
+  - Watch future random and blind sessions for whether players reach
+    `mara_thumbprint_handoff_intercom` more often now that its payoff is more
+    direct; if not, tune the earlier handoff choice labels before adding new
+    scenes.
+
 # Cycle 85 Structured MCP Invalid Choice Recovery
 
 - Date: 2026-06-02
