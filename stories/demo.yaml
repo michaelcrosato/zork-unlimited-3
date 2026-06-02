@@ -3376,9 +3376,9 @@ scenes:
       last door open instead. Pull the release while I am still on this side
       of the threshold."
     choices:
-      - id: pull_release_after_thumbprint_handoff_goodbye
-        label: Pull the release while Mara witnesses the last door
-        to: mara_handoff_true_ending
+      - id: carry_thumbprint_handoff_to_far_door
+        label: Let Mara carry the thumbprint to the far door
+        to: mara_handoff_intercom
 
   mara_manifest_handoff_intercom:
     routeImportance: optional

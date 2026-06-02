@@ -3366,33 +3366,30 @@ describe("demo story critical paths", () => {
       "mark_mara_clear_from_ledger",
       "watch_mara_leave_booth",
       "return_from_mara_handoff",
-      "board_after_mara_handoff"
+      "ask_mara_about_handoff_thumbprint_before_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
     expect(observation.state.flags.read_mara_thumbprint).toBe(true);
     expect(observation.state.flags.saw_mara_handoff).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_thumbprint_after_handoff",
-      "pull_release"
-    ]);
-
-    state = choose(story, state, "listen_to_mara_thumbprint_after_handoff");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("mara_thumbprint_handoff_intercom");
     expect(observation.scene.text).toContain("same hand that tore the ledger");
     expect(observation.scene.text).toContain("witnessed the last door open");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_thumbprint_handoff_goodbye"
+      "carry_thumbprint_handoff_to_far_door"
     ]);
 
-    state = choose(story, state, "pull_release_after_thumbprint_handoff_goodbye");
+    state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_intercom");
+    expect(observation.scene.text).toContain("opening the last door from the other side");
+
+    state = choose(story, state, "pull_release_after_handoff_goodbye");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_handoff_true_ending");
@@ -3444,7 +3441,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("same hand that tore the ledger");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
-    state = choose(story, state, "pull_release_after_thumbprint_handoff_goodbye");
+    state = choose(story, state, "carry_thumbprint_handoff_to_far_door");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_handoff_intercom");
+
+    state = choose(story, state, "pull_release_after_handoff_goodbye");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_handoff_true_ending");

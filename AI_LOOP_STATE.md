@@ -1,3 +1,104 @@
+# Cycle 69 Shared Handoff Far-Door Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `mara_handoff_intercom` appear in normal play even when
+  the sampled route takes the stronger torn-thumbprint handoff branch.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied evidence and a fresh deterministic 100-run random sample
+  still showed `mara_handoff_intercom` as unvisited, while the only sampled
+  physical-handoff route reached `mara_handoff_true_ending` through
+  `mara_thumbprint_handoff_intercom`. The generic far-door handoff beat should
+  be a shared payoff for Mara physically leaving the booth, not a scene that
+  disappears whenever the thumbprint clue is known.
+- Planned work:
+  - Route generic boarding from `mara_handoff_boarding` directly into
+    `mara_handoff_intercom`.
+  - Route the torn-thumbprint handoff through the shared far-door handoff beat
+    before the release.
+  - Preserve the explicit torn-thumbprint scene as the stronger clue-specific
+    handoff beat.
+  - Update focused story-path coverage for the revised sequence.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The torn-thumbprint physical handoff route gains one extra beat before the
+    ending. This is intentional because the added beat resolves the repeated
+    random-sample miss while keeping the release one clear choice away.
+- Status:
+  - Completed.
+  - `board_after_mara_handoff` now goes to `mara_handoff_intercom` and records
+    `heard_mara_goodbye`.
+  - `mara_thumbprint_handoff_intercom` now continues with
+    `carry_thumbprint_handoff_to_far_door` into the shared far-door handoff
+    scene, then releases via `pull_release_after_handoff_goodbye`.
+  - Updated focused story-path tests for generic handoff boarding and the
+    two-beat thumbprint handoff payoff.
+  - Focused story-path suite passed: 177 tests.
+  - Fresh 100-run random playtest now visits all scenes; `unvisitedScenes` is
+    empty and `mara_handoff_intercom` appears in `visitedScenes`.
+  - `npm run health` passed: format check, TypeScript, 222 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed the thumbprint handoff route through
+    `ask_mara_about_handoff_thumbprint_before_boarding` ->
+    `carry_thumbprint_handoff_to_far_door` ->
+    `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 293 and no objectives.
+  - The revised sequence reads cleaner: the thumbprint explains why Mara can
+    leave the ledger, then the shared far-door beat shows what she does with
+    that freedom before the player pulls the release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch future blind and random samples for whether all-scene normal-play
+    coverage remains stable. If story-depth work remains the priority, improve
+    the next lowest-frequency ideal branch rather than adding more handoff
+    branches.
+
+# Cycle 69 Thumbprint Handoff Far-Door Payoff
+
+- Date: 2026-06-02
+- Main objective: Route the torn-thumbprint handoff through Mara's far-door
+  intercom payoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied evidence points at `mara_handoff_intercom` as the one
+  scene normal random play missed while coverage reached it. This checkout
+  already surfaced the generic pre-boarding handoff choice; the remaining
+  high-signal polish was to make the stronger torn-thumbprint handoff also
+  carry into the same far-door intercom beat instead of jumping straight to
+  the ending.
+- Planned work:
+  - Change `mara_thumbprint_handoff_intercom` to send Mara toward the far door.
+  - Reuse `mara_handoff_intercom` as the shared final physical-handoff payoff.
+  - Update focused path coverage for the added thumbprint handoff step.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The torn-thumbprint branch gains one extra step before release. This is
+    acceptable because it is an optional clue-rich route and gives the player
+    the missed `mara_handoff_intercom` payoff with stronger context.
+- Status:
+  - Completed.
+  - Replaced the direct
+    `pull_release_after_thumbprint_handoff_goodbye` ending jump with
+    `carry_thumbprint_handoff_to_far_door` into `mara_handoff_intercom`.
+  - Updated story-path tests for both the thumbprint handoff and generic
+    handoff intercom routes.
+  - `npm run health` passed: format check, TypeScript, 222 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `watch_mara_leave_booth` ->
+    `return_from_mara_handoff` -> `listen_to_handoff_before_boarding` ->
+    `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 275 and no objectives.
+  - The shared far-door intercom remains readable as the final handoff payoff;
+    no invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind sessions for whether `mara_handoff_intercom` now appears in
+    both generic and thumbprint-informed handoff routes. If players still miss
+    it, tune labels before adding more branches.
+
 # Cycle 68 Handoff Intercom Pre-Boarding Discovery
 
 - Date: 2026-06-02
