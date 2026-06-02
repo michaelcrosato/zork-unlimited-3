@@ -8468,10 +8468,12 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
     choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("platform");
-    expect(choiceIds).toContain("inspect_gate_control");
-    expect(choiceIds).toContain("return_to_service_room");
-    expect(choiceIds).toContain("retreat_to_stairs_from_platform");
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.left_unprepared_platform).toBe(true);
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).toContain("read_personnel_file");
+    expect(choiceIds).toContain("return_to_tunnel");
+    expect(choiceIds).not.toContain("go_to_platform");
 
     state = initialState(story);
 
@@ -8523,9 +8525,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "return_after_unlit_escape_glance");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("platform");
-    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_gate_control");
-    expect(observation.choices.map((choice) => choice.id)).toContain("return_to_service_room");
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.left_unprepared_platform).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("search_locker");
+    expect(observation.choices.map((choice) => choice.id)).toContain("go_to_stopped_clock");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain("go_to_platform");
 
     state = initialState(story);
 
