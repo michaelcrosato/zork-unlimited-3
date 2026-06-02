@@ -1,3 +1,63 @@
+# Cycle 38 Direct Passenger Room Intercom
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_room_intercom` easier to discover from the
+  opened passenger platform.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so the cycle uses current random/coverage evidence. Coverage reaches
+  `passenger_room_intercom`, but normal random samples still miss it. The beat
+  is a strong late-game payoff because it turns the manifest release from a
+  ledger action into passengers physically making room for one another before
+  the final release.
+- Planned work:
+  - Add a direct optional `passenger_platform` choice into
+    `passenger_room_intercom`.
+  - Preserve the existing longer `passenger_room_boarding` route and direct
+    release route.
+  - Reuse `made_room_for_passengers` and `heard_mara_goodbye` so downstream
+    state matches the established room-making intercom path.
+  - Add regression coverage proving the direct platform route reaches
+    `passenger_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The passenger platform menu gains one option. This is acceptable because
+    the option is optional, sits near related threshold/room choices, and
+    improves discoverability for a payoff scene that random play currently
+    misses.
+- Work completed:
+  - Added `listen_as_passengers_make_room` from `passenger_platform` directly
+    to `passenger_room_intercom`.
+  - Preserved the existing room-boarding, threshold, passenger gathering, and
+    direct release routes.
+  - Set `made_room_for_passengers` and `heard_mara_goodbye` on the new direct
+    path.
+  - Added regression coverage for the direct room-making intercom into the
+    shared release and `passenger_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 154 tests.
+  - `npm run health` passed: format check, TypeScript, 198 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `listen_as_passengers_make_room` -> `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 258 and no objectives.
+  - A 250-run random sample ended all 250 runs, had zero unfinished runs,
+    visited every scene, and reached `passenger_room_intercom`.
+- Playtest feedback:
+  - The direct intercom works as a clean platform payoff: after the manifest
+    doors open, listening to the passengers make room gives immediate texture
+    to the crowd before the shared release.
+  - The route did not leave dangling objectives and still preserves the longer
+    room-boarding branch for players who want a more physical staging beat.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_room_intercom`
+    appears more often in ordinary play; if hard issues stay absent, promote
+    another remaining normal-random miss such as `passenger_missing_count` or
+    `passenger_keepsake_roll_call`.
+
 # Cycle 34 Post-Dispatch Lost Ending Pressure
 
 - Date: 2026-06-02

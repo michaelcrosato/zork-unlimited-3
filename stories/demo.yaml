@@ -1787,6 +1787,21 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
+      - id: listen_as_passengers_make_room
+        label: Listen as the passengers make room around the release
+        to: passenger_room_intercom
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: made_room_for_passengers
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            made_room_for_passengers: true
+            heard_mara_goodbye: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
