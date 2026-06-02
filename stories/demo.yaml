@@ -1259,6 +1259,24 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: check_opened_manifest_blank_row
+        label: Check the blank row in the opened manifest
+        to: passenger_missing_count
+        requires:
+          notFlag: checked_missing_passenger_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            checked_missing_passenger_count: true
+      - id: match_opened_manifest_keepsakes
+        label: Match the opened manifest keepsakes to their owners
+        to: passenger_keepsake_handoff
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            helped_passengers_gather: true
       - id: listen_to_passenger_morning_chorus
         label: Listen for what the opened passengers remember about morning
         to: passenger_morning_chorus

@@ -1,3 +1,140 @@
+# Cycle 35 Direct Opened Manifest Blank Row
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_missing_count` easier to discover from the
+  opened passenger manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle uses current random/coverage evidence. Coverage reaches
+  `passenger_missing_count`, but normal random samples still miss it. The beat
+  clarifies that the manifest's blank space is Mara's old pause, not a lost
+  passenger, and turns the opened-manifest route into passengers actively
+  counting one another before the release.
+- Planned work:
+  - Add a direct optional `passengers_released` choice into
+    `passenger_missing_count`.
+  - Preserve the existing reviewed-count route into the same scene.
+  - Reuse `reviewed_open_manifest_count` and `checked_missing_passenger_count`
+    so returning from the beat does not duplicate menu work.
+  - Add regression coverage proving the direct route reaches an ideal passenger
+    ending.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest menu gains one option. This is acceptable because the
+    option is optional, sits near the other passenger-listening choices, and
+    improves discoverability for a scene random play currently misses.
+- Work completed:
+  - Added `check_opened_manifest_blank_row` from `passengers_released`
+    directly to `passenger_missing_count`.
+  - Preserved the older `review_open_manifest_count` ->
+    `check_for_unanswered_manifest_row` route.
+  - Set both reviewed-count and missing-count flags on the new direct path.
+  - Added regression coverage for the direct blank-row route into
+    `passenger_counted_true_ending`.
+  - Added `match_opened_manifest_keepsakes` from `passengers_released`
+    directly to `passenger_keepsake_handoff`, with regression coverage through
+    `passenger_keepsake_boarding`, `passenger_keepsake_roll_call`, and
+    `passenger_keepsake_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 154 tests.
+  - Final `npm run health` passed: format check, TypeScript, 199 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `check_opened_manifest_blank_row` ->
+    `board_with_unanswered_row_resolved` ->
+    `pull_release_after_counted_manifest_goodbye`, ending at
+    `passenger_counted_true_ending` with score 261 and no objectives.
+  - Actual CLI play also followed `clear_manifest_and_mara_from_ledger` ->
+    `match_opened_manifest_keepsakes` ->
+    `lead_keepsake_passengers_to_third_car` ->
+    `hear_keepsake_roll_call_from_boarding` ->
+    `pull_release_after_keepsake_roll_call`, ending at
+    `passenger_keepsake_true_ending` with score 313 and no objectives.
+  - A 250-run random sample ended all 250 runs, had zero unfinished runs,
+    visited `passenger_missing_count`, and had one remaining unvisited optional
+    scene: `passenger_manifest_answers`.
+- Playtest feedback:
+  - The direct blank-row option reads like a natural opened-manifest follow-up:
+    after every door clicks open, the player can immediately inspect the one
+    space the line still uses to isolate Mara.
+  - The branch resolves cleanly into the counted-passenger ideal ending and
+    keeps the older reviewed-count route intact for players who first choose a
+    more formal manifest review.
+  - The direct keepsake branch makes the opened manifest feel more tactile:
+    players can move from the clicked-open doors straight into matching the
+    lunch tin, newspaper, mitten, and conductor's punch before boarding.
+- Next step:
+  - Watch future random/blind samples for `passenger_missing_count` frequency;
+    if hard issues stay absent, consider making `passenger_manifest_answers` or
+    another remaining optional miss easier to encounter in ordinary play.
+
+# Cycle 39 Opened Manifest Keepsake Discovery
+
+- Date: 2026-06-02
+- Main objective: Make the matched-keepsake passenger payoff easier to find
+  directly from the opened manifest doors.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows current random/coverage evidence. Random play
+  still missed `passenger_keepsake_boarding` and
+  `passenger_keepsake_roll_call`, even though coverage reaches them. The
+  opened-manifest hub already describes the lunch tin, child's laugh, and
+  umbrellas, so letting players match those keepsakes at that moment should
+  improve normal discovery without adding a new system.
+- Planned work:
+  - Add an optional `passengers_released` choice into the existing
+    `passenger_keepsake_handoff` scene.
+  - Reuse `matched_manifest_keepsakes` and `helped_passengers_gather` so this
+    branch behaves like the established passenger-platform keepsake route.
+  - Preserve existing manifest count, blank-row, morning chorus, Mara signoff,
+    lunch-tin, answer, and direct boarding choices.
+  - Add regression coverage proving the direct opened-manifest keepsake route
+    reaches `passenger_keepsake_boarding`,
+    `passenger_keepsake_roll_call`, and `passenger_keepsake_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new branch.
+- Risks:
+  - The opened-manifest menu gains one more optional choice. This is acceptable
+    because the scene text already foregrounds the relevant objects, and the
+    branch is gated so it cannot duplicate passenger-gathering work.
+- Work completed:
+  - Added `match_opened_manifest_keepsakes` from `passengers_released`
+    directly to `passenger_keepsake_handoff`.
+  - Reused `matched_manifest_keepsakes` and `helped_passengers_gather` so the
+    new branch shares state with the established passenger-platform keepsake
+    route.
+  - Preserved existing opened-manifest count, blank-row, morning chorus, Mara
+    signoff, lunch-tin, answered-passenger, and boarding routes.
+  - Added regression coverage for the direct opened-manifest keepsake route
+    through `passenger_keepsake_boarding`, `passenger_keepsake_roll_call`, and
+    `passenger_keepsake_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 155 tests.
+  - `npm run health` passed: format check, TypeScript, 199 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `match_opened_manifest_keepsakes` ->
+    `lead_keepsake_passengers_to_third_car` ->
+    `hear_keepsake_roll_call_from_boarding` ->
+    `pull_release_after_keepsake_roll_call`, ending at
+    `passenger_keepsake_true_ending` with score 313 and no objectives.
+- Playtest feedback:
+  - The new choice reads naturally because `passengers_released` already names
+    the lunch tin, child, and umbrellas. Matching keepsakes there feels like a
+    direct response to the scene rather than a detour.
+  - The route cleanly stages the payoff: manifest objects become people,
+    boarding fills by object, then the roll call becomes ordinary proof before
+    the release.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_keepsake_boarding`
+    and `passenger_keepsake_roll_call` appear more often in ordinary play. If
+    hard issues stay absent, promote another remaining normal-random miss such
+    as `home_sign_echo`, `mara_last_dispatch_intercom`, or
+    `passenger_threshold_intercom`.
+
 # Cycle 38 Direct Passenger Room Intercom
 
 - Date: 2026-06-02

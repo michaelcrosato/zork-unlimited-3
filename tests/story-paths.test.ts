@@ -1780,6 +1780,38 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "check_opened_manifest_blank_row",
+      "board_with_unanswered_row_resolved",
+      "pull_release_after_counted_manifest_goodbye"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("lets the passengers finish Mara's reviewed count together", async () => {
@@ -8076,6 +8108,8 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "watch_mara_open_manifest",
       "review_open_manifest_count",
+      "check_opened_manifest_blank_row",
+      "match_opened_manifest_keepsakes",
       "listen_to_passenger_morning_chorus",
       "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
@@ -8254,6 +8288,62 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces matched keepsakes directly from the opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "match_opened_manifest_keepsakes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_handoff");
+    expect(observation.scene.text).toContain("people finding their places");
+    expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_matched_keepsakes_to_speaker",
+      "lead_keepsake_passengers_to_third_car"
+    ]);
+
+    state = choose(story, state, "lead_keepsake_passengers_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_boarding");
+    expect(observation.scene.text).toContain("fills by object before it fills by name");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "hear_keepsake_roll_call_from_boarding"
+    );
+
+    state = choose(story, state, "hear_keepsake_roll_call_from_boarding");
+    state = choose(story, state, "pull_release_after_keepsake_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
