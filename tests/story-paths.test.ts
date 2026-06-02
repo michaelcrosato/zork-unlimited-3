@@ -3834,7 +3834,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("lets opened-manifest players make room directly in the third car", async () => {
+  it("lets opened-manifest players make room physically before the intercom payoff", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -3862,12 +3862,25 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_room_boarding");
+    expect(observation.scene.text).toContain("the first seat has become more than");
+    expect(observation.scene.text).toContain("crowded instead of haunted");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_room_made_for_passengers",
+      "ask_conductor_to_clear_room_made",
+      "reach_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "listen_to_room_made_for_passengers");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_room_intercom");
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.scene.text).toContain("Enough space for everyone");
-    expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
       "pull_release_after_making_room"

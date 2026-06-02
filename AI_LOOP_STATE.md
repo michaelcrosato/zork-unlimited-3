@@ -1,3 +1,57 @@
+# Cycle 59 Opened Manifest Room Boarding
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_room_boarding` appear on the direct opened
+  manifest room-making route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 59 evidence. Health and MCP
+  play are green, but the short random sample still missed
+  `passenger_room_boarding` while suggesting it as a normal-play discovery
+  target. The main opened-manifest choice says the player makes room in the
+  third car, but it skipped the physical room-making scene and jumped straight
+  to Mara's intercom payoff. Sending that choice through
+  `passenger_room_boarding` exposes the stronger player action and also keeps
+  the room-made conductor branch visible from a high-traffic route.
+- Planned work:
+  - Route `make_room_from_opened_manifest` to `passenger_room_boarding`.
+  - Do not set `heard_mara_goodbye` until the player actually chooses the room
+    intercom beat.
+  - Update regression coverage for the revised opened-manifest room route.
+  - Run health and play the changed route.
+- Risks:
+  - The route adds one extra beat before the shared-release payoff. This is
+    acceptable because the scene makes the player's action concrete and still
+    offers direct release, intercom, and conductor-clear options.
+- Status:
+  - Routed `make_room_from_opened_manifest` to `passenger_room_boarding`
+    instead of skipping directly to `passenger_room_intercom`.
+  - Removed the early `heard_mara_goodbye` effect from that choice so Mara's
+    intercom goodbye is only set after `listen_to_room_made_for_passengers`.
+  - Updated regression coverage for the opened-manifest room route through
+    `passenger_room_boarding`, `passenger_room_intercom`,
+    `passenger_room_release`, and `passenger_true_ending`.
+  - Focused story-path suite passed: 173 tests.
+  - `npm run health` passed: format check, TypeScript, 217 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `make_room_from_opened_manifest` ->
+    `listen_to_room_made_for_passengers` ->
+    `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 254 and no objectives.
+- Playtest feedback:
+  - The revised route reads more physically: the player first makes room in the
+    third car, then hears Mara name what that action proves.
+  - The choice no longer marks the intercom beat as heard before the player
+    chooses it.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch the next short random sample for whether `passenger_room_boarding`
+    appears consistently. If `passenger_conductor_true_ending` remains
+    underrepresented, tune the high-traffic room scene's conductor choice label
+    or ordering rather than adding another late branch.
+
 # Cycle 58 Room-Made Conductor Clear
 
 - Date: 2026-06-02

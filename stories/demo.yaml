@@ -1442,7 +1442,7 @@ scenes:
             held_passenger_threshold: true
       - id: make_room_from_opened_manifest
         label: Make room in the third car as the opened passengers board
-        to: passenger_room_intercom
+        to: passenger_room_boarding
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -1451,7 +1451,6 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
-            heard_mara_goodbye: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
