@@ -4127,6 +4127,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("a car full of people proving");
     expect(observation.state.flags.manifest_names_answered_once).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_manifest_answers_to_platform",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -7978,6 +7979,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("The lunch-tin worker clicks his clasp");
     expect(observation.state.flags.manifest_names_answered_once).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_manifest_answers_to_platform",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -9527,11 +9529,43 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.manifest_names_answered_once).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_manifest_answers_to_platform",
       "pull_release_after_manifest_answers"
     ]);
 
-    state = choose(story, state, "pull_release_after_manifest_answers");
-    observation = observe(story, state);
+    const carriedState = choose(story, state, "carry_manifest_answers_to_platform");
+    observation = observe(story, carriedState);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("Warden Street");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_after_answered_passengers"
+    );
+
+    const boardedState = choose(story, carriedState, "board_after_answered_passengers");
+    observation = observe(story, boardedState);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding");
+    expect(observation.scene.text).toContain("The answered passengers board");
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_answered_boarding"
+    );
+
+    observation = observe(
+      story,
+      choose(story, boardedState, "pull_release_after_answered_boarding")
+    );
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    const releaseState = choose(story, state, "pull_release_after_manifest_answers");
+    observation = observe(story, releaseState);
 
     expect(observation.scene.id).toBe("passenger_manifest_true_ending");
     expect(observation.scene.ending).toBe(true);

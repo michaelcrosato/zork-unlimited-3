@@ -3393,6 +3393,14 @@ scenes:
       themselves. "Now," Mara says, almost smiling. "Before the line remembers
       how to interrupt."
     choices:
+      - id: carry_manifest_answers_to_platform
+        label: Carry the manifest answers toward the third car
+        to: passenger_answers
+        requires:
+          notFlag: heard_passenger_answers
+        effects:
+          set:
+            heard_passenger_answers: true
       - id: pull_release_after_manifest_answers
         label: Pull the release after the manifest answers
         to: passenger_manifest_true_ending

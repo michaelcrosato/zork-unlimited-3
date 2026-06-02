@@ -1,3 +1,80 @@
+# Cycle 62 Manifest Answers Boarding Bridge
+
+- Date: 2026-06-02
+- Main objective: Make the manifest-answer branch read and test like a complete
+  passenger boarding route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 62 evidence shows healthy coverage with high ideal-ending
+  rates. The best focused improvement was to strengthen late-game route depth:
+  after the opened manifest names answer, normal players should be able to carry
+  that answer beat into the fuller passenger roll-call route instead of only
+  ending immediately.
+- Planned work:
+  - Preserve the direct `passenger_manifest_true_ending` release.
+  - Keep the optional bridge from `passenger_manifest_answers` to
+    `passenger_answers`.
+  - Clarify the bridge label so it points toward third-car boarding.
+  - Extend regression coverage through boarding and release.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The branch adds an extra optional choice to a clean release beat. The direct
+    release remains available, so pacing stays under player control.
+- Status:
+  - Completed.
+  - Renamed the bridge label to `Carry the manifest answers toward the third car`.
+  - Extended the manifest-answer regression through `passenger_answers`,
+    `passenger_answered_boarding`, and
+    `passenger_answered_boarding_true_ending`, while still asserting the direct
+    manifest release.
+  - Focused story-path suite passed: 175 tests.
+  - `npm run health` passed: format check, TypeScript, 219 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `let_opened_manifest_names_answer_once` ->
+    `carry_manifest_answers_to_platform` -> `board_after_answered_passengers`
+    -> `pull_release_after_answered_boarding`, ending at
+    `passenger_answered_boarding_true_ending` with score 303 and no objectives.
+- Playtest feedback:
+  - The new label makes the optional bridge read like a concrete boarding action
+    rather than abstract flavor.
+  - The route now flows cleanly from manifest proof, to answered roll call, to
+    boarding, to release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind sessions for late-game choice density around
+    `passenger_manifest_answers` and `passenger_answers`; if players hesitate,
+    tune choice ordering before adding more passenger variants.
+
+# Cycle 57 Manifest Answers Bridge
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `passenger_answers` from an
+  already-discovered manifest-answer route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 57 random sample reached all scenes except
+  `passenger_answers`. Coverage proved the scene is reachable, but normal play
+  could hit `passenger_manifest_answers` and immediately end before seeing the
+  fuller answered-passengers beat.
+- Planned work:
+  - Add an optional bridge from `passenger_manifest_answers` to
+    `passenger_answers`.
+  - Preserve the direct `passenger_manifest_true_ending` release.
+  - Add regression coverage for both the new bridge and the old direct release.
+  - Run health and play the updated route through the CLI.
+- Risks:
+  - This adds a second choice to a clean release beat. The direct release stays
+    available, so the change should improve discoverability without forcing an
+    extra scene.
+- Status:
+  - Completed in Cycle 62.
+- Playtest feedback:
+  - Focused CLI playthrough completed in Cycle 62 and reached
+    `passenger_answered_boarding_true_ending` with no objectives.
+- Next step:
+  - Watch blind sessions for late-game choice density around the manifest-answer
+    bridge before adding more branches.
+
 # Cycle 61 Manifest Objective Alignment
 
 - Date: 2026-06-02
