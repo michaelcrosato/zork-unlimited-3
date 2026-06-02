@@ -4173,13 +4173,48 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "board_after_releasing_passengers",
-      "board_third_car_with_passengers"
+      "board_after_releasing_passengers"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "ask_mara_finish_manifest_from_platform"
+    );
+
+    const manifestPlatformState = state;
+
+    let platformIntercomState = choose(
+      story,
+      manifestPlatformState,
+      "ask_mara_finish_manifest_from_platform"
+    );
+    observation = observe(story, platformIntercomState);
+
+    expect(observation.scene.id).toBe("mara_manifest_intercom");
+    expect(observation.scene.text).toContain("They remember the way out now");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_manifest_names_answer_once",
+      "pull_release_after_manifest_goodbye"
+    ]);
+
+    platformIntercomState = choose(
+      story,
+      platformIntercomState,
+      "pull_release_after_manifest_goodbye"
+    );
+    observation = observe(story, platformIntercomState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, manifestPlatformState, "board_third_car_with_passengers");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.read_passenger_manifest).toBe(true);
@@ -4202,16 +4237,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_manifest_ready).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_finish_ready_manifest",
-      "pull_release_after_ready_manifest"
+      "listen_to_mara_finish_ready_manifest"
     ]);
-
-    const readyReleaseState = choose(story, readyState, "pull_release_after_ready_manifest");
-    observation = observe(story, readyReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
 
     readyState = choose(story, readyState, "listen_to_mara_finish_ready_manifest");
     observation = observe(story, readyState);
@@ -4219,6 +4246,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_intercom");
     expect(observation.scene.text).toContain("They remember the way out now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_manifest_names_answer_once",
+      "pull_release_after_manifest_goodbye"
+    ]);
 
     state = choose(story, state, "listen_to_mara_manifest_intercom");
     observation = observe(story, state);

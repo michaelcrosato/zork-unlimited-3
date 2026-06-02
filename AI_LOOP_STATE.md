@@ -1,3 +1,64 @@
+# Cycle 75 Manifest Count Discovery Bridges
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `mara_manifest_intercom`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence is healthy overall, but the random summaries
+  still called out `mara_manifest_intercom` as a normal-player miss even though
+  coverage reaches it. The plain opened-manifest route could reach the intercom
+  only after boarding the third car, and the ready-check beat could previously
+  skip directly to release. This cycle gives players clearer ways to hear
+  Mara's final manifest count from both the platform and the ready-check beat.
+- Planned work:
+  - Add a guarded `passenger_platform` choice for the plain opened-manifest
+    route.
+  - Tighten `passenger_manifest_ready_intercom` so confirming every passenger
+    is aboard naturally carries into Mara's final count.
+  - Route that choice to the existing `mara_manifest_intercom` and
+    `passenger_manifest_true_ending` payoff.
+  - Keep the choice hidden from handoff, answer, gather, echo, threshold, room,
+    and reviewed-count variants.
+  - Add focused regression coverage, then run health and an actual CLI
+    playthrough.
+- Risks:
+  - `passenger_platform` already has several optional passenger beats. The new
+    choice uses the same plain-route guards as the train-car intercom, so it
+    should improve discoverability without taking over specialized branches.
+- Status:
+  - Completed.
+  - Added `ask_mara_finish_manifest_from_platform`, which sets
+    `heard_mara_goodbye` and routes from `passenger_platform` to the existing
+    `mara_manifest_intercom`.
+  - Revised `passenger_manifest_ready_intercom` into a single bridge to
+    `mara_manifest_intercom`, with text that explicitly says Mara is about to
+    finish the count properly.
+  - Added focused test coverage for the new platform bridge, its ending path,
+    and the unchanged third-car manifest intercom route.
+  - Focused story-path suite passed: 181 tests.
+  - `npm run health` passed: format check, TypeScript, 226 tests, validation,
+    and coverage playtest.
+  - Validation reports 141 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `ask_mara_finish_manifest_from_platform` ->
+    `pull_release_after_manifest_goodbye`, ending at
+    `passenger_manifest_true_ending` with score 281 and no objectives.
+  - A second CLI play followed `confirm_manifest_passengers_are_aboard` ->
+    `listen_to_mara_finish_ready_manifest` ->
+    `let_manifest_names_answer_once` ->
+    `pull_release_after_manifest_answers`, ending at
+    `passenger_manifest_true_ending` with score 291 and no objectives.
+  - The new choice reads naturally on the platform because the passengers are
+    already looking to Mara's speaker; asking her to finish the count before
+    boarding clarifies why the manifest intercom matters.
+  - No invalid choices, dead ends, dangling objectives, or coverage
+    regressions appeared.
+- Next step:
+  - Watch random and blind play for whether `mara_manifest_intercom` appears
+    more often from normal routes. If it remains rare, tune the platform label
+    before adding more manifest route branches.
+
 # Cycle 74 Manifest Ready Third-Car Check
 
 - Date: 2026-06-02

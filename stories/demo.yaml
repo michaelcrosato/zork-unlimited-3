@@ -2195,6 +2195,22 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: ask_mara_finish_manifest_from_platform
+        label: Ask Mara to finish the opened manifest count before you board
+        to: mara_manifest_intercom
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_echoes
+            - notFlag: held_passenger_threshold
+            - notFlag: made_room_for_passengers
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
@@ -3486,8 +3502,9 @@ scenes:
       You keep one hand on the release and look back through the third car.
       The newspaper is folded clear of the aisle. The lunch tin rests under a
       seat. The child with one mitten stands where Mara can see him from the
-      speaker grille. "Every kept name is aboard," Mara says, and for once the
-      manifest sounds like a passenger list instead of a sentence.
+      speaker grille. "Every kept name is aboard," Mara says. Then she draws
+      breath to finish the count properly, and for once the manifest sounds
+      like a passenger list instead of a sentence.
     choices:
       - id: listen_to_mara_finish_ready_manifest
         label: Let Mara finish the ready manifest count
@@ -3497,9 +3514,6 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
-      - id: pull_release_after_ready_manifest
-        label: Pull the release once every manifest passenger is aboard
-        to: passenger_manifest_true_ending
 
   passenger_manifest_answers:
     routeImportance: optional
