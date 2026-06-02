@@ -1343,6 +1343,14 @@ scenes:
       the release. "I can hold it from here," she says, and this time here
       means beside you.
     choices:
+      - id: check_mara_far_door_before_release
+        label: Check that Mara reaches the far door before the release
+        to: mara_handoff_check
+        requires:
+          notFlag: checked_mara_handoff
+        effects:
+          set:
+            checked_mara_handoff: true
       - id: listen_to_handoff_before_boarding
         label: Listen as Mara reaches the far door before you board
         to: mara_handoff_intercom
@@ -1367,6 +1375,28 @@ scenes:
             heard_mara_goodbye: true
       - id: board_after_mara_handoff
         label: Reach the emergency release while Mara holds the doors
+        to: train_car
+
+  mara_handoff_check:
+    routeImportance: optional
+    text: >
+      You follow Mara to the far end of the third car before touching the
+      release. She stops at the last door with both feet on the platform side,
+      one hand braced on the rail and the other held out to the passengers
+      still learning that the line has let go. The old speaker hisses behind
+      you, but Mara is close enough now that you hear her without it: "All
+      right. I am here."
+    choices:
+      - id: carry_checked_handoff_to_speaker
+        label: Carry Mara's far-door check back through the speaker
+        to: mara_handoff_intercom
+        requires:
+          notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: return_to_release_after_handoff_check
+        label: Return to the emergency release with Mara at the far door
         to: train_car
 
   passengers_released:

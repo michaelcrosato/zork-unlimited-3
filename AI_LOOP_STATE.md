@@ -1,3 +1,53 @@
+# Cycle 81 Mara Handoff Far-Door Check
+
+- Date: 2026-06-02
+- Main objective: Add a physical verification beat to the Mara-only handoff
+  route before the emergency release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence shows healthy completion, full coverage, and no
+  unfinished runs. Recent cycles deepened passenger routes with optional
+  confirmation beats; the rare `mara_handoff_true_ending` route is
+  story-important and benefits from showing Mara physically reaching the far
+  doors rather than only saying she will hold them.
+- Planned work:
+  - Add an optional one-time `mara_handoff_check` scene from
+    `mara_handoff_boarding`.
+  - Let checked players either carry the moment back through Mara's speaker or
+    return directly to the existing release.
+  - Preserve existing handoff, thumbprint-handoff, intercom, and direct release
+    paths.
+  - Cover the new branch in focused story-path tests, then run health and an
+    actual playthrough.
+- Risks:
+  - The handoff boarding scene gains one more choice. It is optional and routes
+    back to existing payoff scenes, so it should add grounding without creating
+    a new ending family or dead-end.
+- Status:
+  - Completed.
+  - Added `mara_handoff_check`, reachable from Mara's handoff boarding scene.
+  - The checked route sets `checked_mara_handoff` and can continue to the
+    existing handoff intercom or return to the third-car release.
+  - Focused story-path suite passed: 185 tests.
+  - `npm run health` passed: format check, TypeScript, 232 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `mara_handoff_check`, with
+    zero unvisited scenes and zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `watch_mara_leave_booth` ->
+    `return_from_mara_handoff` -> `check_mara_far_door_before_release` ->
+    `carry_checked_handoff_to_speaker` ->
+    `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 280 and no objectives.
+  - The new check makes Mara's handoff feel more physical: she is visibly at
+    the last door, on the platform side, before the release fires.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether handoff-route players choose the far-door
+    check. If it is skipped, tune the label before adding more Mara-only route
+    detail.
+
 # Cycle 80 Lunch-Tin Passenger Check
 
 - Date: 2026-06-02
