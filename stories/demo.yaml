@@ -2052,6 +2052,14 @@ scenes:
       are carrying their own names now, and the emergency release waits beneath
       their feet.
     choices:
+      - id: check_answered_passengers_before_release
+        label: Check that every answered name has someone aboard
+        to: passenger_answered_check
+        requires:
+          notFlag: checked_answered_passengers
+        effects:
+          set:
+            checked_answered_passengers: true
       - id: listen_to_answered_passengers_from_boarding
         label: Listen once more as the answered passengers settle
         to: passenger_answered_intercom
@@ -2060,6 +2068,28 @@ scenes:
             heard_answered_passengers: true
       - id: pull_release_after_answered_boarding
         label: Pull the release while the answered names hold
+        to: passenger_answered_boarding_true_ending
+
+  passenger_answered_check:
+    routeImportance: optional
+    text: >
+      You check the roll call against faces before your hand finds the release.
+      The child who kept saying present is gripping the rail with both hands.
+      The newspaper woman has folded Warden Street small enough to fit in her
+      coat pocket. The old conductor waits until you meet his eye, then calls
+      the aisle clear without touching his punch. Every answer has a body
+      behind it now, and none of them are waiting for Mara to say the names
+      again.
+    choices:
+      - id: carry_checked_answers_to_speaker
+        label: Let Mara hear the checked answers settle
+        to: passenger_answered_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
+            heard_answered_passengers: true
+      - id: pull_release_after_checked_answers
+        label: Pull the release after checking every answer
         to: passenger_answered_boarding_true_ending
 
   passenger_platform:

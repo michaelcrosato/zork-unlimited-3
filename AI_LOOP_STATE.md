@@ -1,3 +1,55 @@
+# Cycle 79 Answered Passenger Check
+
+- Date: 2026-06-02
+- Main objective: Add a physical confirmation beat to the answered-passenger
+  boarding route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence shows the game is healthy with all scenes
+  covered. The highest-value next step is late-route depth rather than broader
+  systems work. Several passenger variants now have a final grounding check
+  before release; the answered-roll-call branch still jumped from hearing names
+  to ending, so this adds a visible person-behind-each-answer pause.
+- Planned work:
+  - Add an optional one-time `passenger_answered_check` scene from
+    `passenger_answered_boarding`.
+  - Let checked players either carry the verified answers to Mara's speaker or
+    pull the release directly.
+  - Preserve the existing direct intercom and direct release routes.
+  - Cover the new branch in focused story-path tests, then run health and an
+    actual CLI playthrough.
+- Risks:
+  - The boarding scene gains one more choice. It is optional, appears once, and
+    returns to existing payoff scenes, so it should add texture without
+    trapping players.
+- Status:
+  - Completed.
+  - `passenger_answered_check` is reachable from
+    `passenger_answered_boarding`, sets `checked_answered_passengers`, and
+    confirms the child, newspaper woman, and old conductor before release.
+  - Focused story-path suite passed: 184 tests.
+  - `npm run health` passed: format check, TypeScript, 229 tests, validation,
+    and coverage playtest.
+  - Validation reports 145 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_answered_check`, with zero unvisited scenes and zero unfinished
+    complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `board_after_answered_passengers` ->
+    `check_answered_passengers_before_release` ->
+    `carry_checked_answers_to_speaker` ->
+    `pull_release_after_answered_intercom`, ending at
+    `passenger_answered_true_ending` with score 303 and no objectives.
+  - The check usefully grounds the roll call: the child, newspaper woman, and
+    old conductor become visible passengers in the car before Mara hears the
+    settled answers.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether answered-route players choose the check or
+    skip directly to the release. If it is skipped, tune the label before
+    adding more answered-route depth.
+
 # Cycle 78 Dark HOME Recovery and Echoed Passenger Check
 
 - Date: 2026-06-02

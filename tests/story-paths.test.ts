@@ -6957,8 +6957,39 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_answered_passengers_before_release",
       "listen_to_answered_passengers_from_boarding",
       "pull_release_after_answered_boarding"
+    ]);
+
+    const checkedState = choose(story, state, "check_answered_passengers_before_release");
+    observation = observe(story, checkedState);
+
+    expect(observation.scene.id).toBe("passenger_answered_check");
+    expect(observation.scene.text).toContain("Every answer has a body behind it");
+    expect(observation.state.flags.checked_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_answers_to_speaker",
+      "pull_release_after_checked_answers"
+    ]);
+
+    let checkedRelease = choose(story, checkedState, "pull_release_after_checked_answers");
+    observation = observe(story, checkedRelease);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    checkedRelease = choose(story, checkedState, "carry_checked_answers_to_speaker");
+    observation = observe(story, checkedRelease);
+
+    expect(observation.scene.id).toBe("passenger_answered_intercom");
+    expect(observation.state.flags.checked_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_intercom"
     ]);
 
     state = choose(story, state, "listen_to_answered_passengers_from_boarding");
@@ -7111,6 +7142,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_answered_passengers_before_release",
       "listen_to_answered_passengers_from_boarding",
       "pull_release_after_answered_boarding"
     ]);
@@ -9727,6 +9759,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_boarding");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_answered_passengers_before_release",
       "listen_to_answered_passengers_from_boarding",
       "pull_release_after_answered_boarding"
     ]);
