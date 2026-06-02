@@ -12,86 +12,80 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add an optional conductor-transfer beat to the passenger
-  conductor route.
-- Why this matters: The conductor path is common in normal passenger play and
-  already has a clear role in helping the crowd leave. A small tactile beat
-  gives his route a stronger object-level payoff without adding another ending
-  or weakening the direct release path. The added scene also exposed excessive
-  coverage-state expansion, so this cycle tightened coverage playtest memory
-  and runtime behavior.
+- Main objective: Preserve the reviewed-manifest count payoff through the
+  conductor transfer route.
+- Why this matters: Current evidence showed core guidance and true-ending
+  discovery are healthy, while `passenger_conductor_count_roll_call` was the
+  next specific normal-play discovery target. The newer conductor-transfer beat
+  could be chosen after reviewing Mara's opened count, but it then routed only
+  to the generic conductor roll call. Keeping the count-specific payoff through
+  that tactile detour makes the passenger route more coherent without adding
+  another ending.
 - Tasks:
-  - Add an optional punched-transfer scene from the conductor intercom. Done.
-  - Preserve direct conductor release and final roll-call choices. Done.
+  - Reorder conductor intercom choices so the context-specific clear call is
+    offered before the optional transfer detour. Done.
+  - Let the conductor-transfer scene route to the counted clear call when
+    `reviewed_open_manifest_count` is set. Done.
+  - Keep the regular transfer-to-final-clear branch available for non-counted
+    conductor routes. Done.
   - Update focused story-path regression coverage. Done.
-  - Reduce coverage playtest state explosion after the 107-scene graph exposed
-    a Vitest heap/timeout failure. Done.
   - Run validation, full health, an actual CLI playthrough, and the evidence
     cycle. Done.
 - Evidence:
-  - Added `passenger_conductor_transfer`, where the conductor punches a blank
-    transfer valid for morning and passes it through the third car.
-  - Wired the new beat from `passenger_conductor_intercom` with a
-    `punched_conductor_transfer` flag.
-  - Preserved direct release to `passenger_conductor_true_ending` and the
-    existing final/count roll-call branches.
-  - Updated `tests/story-paths.test.ts` to cover the new transfer beat, the
-    transfer-to-roll-call branch, and the direct transfer release branch.
-  - Optimized coverage playtests in `src/playtest.ts` by recording newly
-    discovered destination scenes when enqueued, avoiding duplicate queued
-    state signatures, using stack-style frontier operations, and pruning
-    coverage signatures to flags that positively gate future choices.
-  - Focused `npm test -- tests/playtest.test.ts` passed with 6 tests after the
-    coverage-state fix.
+  - Moved `ask_conductor_to_punch_transfer` after the final/count roll-call
+    choices in `passenger_conductor_intercom`, so the specific payoff is easier
+    to notice when present.
+  - Added `hear_counted_transfer_conductor_roll_call` from
+    `passenger_conductor_transfer` to `passenger_conductor_count_roll_call`,
+    gated on `reviewed_open_manifest_count`.
+  - Tightened the generic transfer roll-call choice so it appears only when the
+    reviewed count is not active.
+  - Updated `tests/story-paths.test.ts` to assert the new choice ordering and
+    the reviewed-count transfer detour.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
   - `npm run cyoa -- validate stories/demo.yaml --json` passed with 107
     scenes, 24 endings, all 107 reachable, and no warnings.
-  - Focused coverage playtest passed with 1043 runs, zero unfinished runs, all
-    107 scenes visited including `passenger_conductor_transfer`, best score
-    100/100, average score 94.65, and 923 max-score runs.
   - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
     and coverage playtest.
-  - Manual CLI play followed `ask_conductor_to_punch_transfer` ->
-    `hear_transfer_conductor_roll_call` ->
-    `pull_release_after_conductor_roll_call`, reaching
-    `passenger_conductor_true_ending` at 100/100 with no objectives and
-    `punched_conductor_transfer` set.
+  - Manual CLI play followed `review_open_manifest_count` ->
+    `ask_conductor_after_manifest_count` ->
+    `ask_conductor_to_punch_transfer` ->
+    `hear_counted_transfer_conductor_roll_call` ->
+    `pull_release_after_conductor_count`, reaching
+    `passenger_conductor_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T00-55-27-421Z.md`.
+    report `ai-runs/cycle-2026-06-02T01-04-11-150Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play reached `passenger_conductor_transfer`, ended
-    all 100 runs, and had zero unfinished runs.
+  - Evidence-cycle random play visited both `passenger_conductor_transfer` and
+    `passenger_conductor_count_roll_call`, ended all 100 runs, and had zero
+    unfinished runs.
   - Evidence-cycle coverage visited all 107 scenes with zero unfinished runs.
   - Evidence-cycle MCP validation passed, the required MCP route reached
     `true_ending` at 100/100, and the adaptive MCP route reached
     `passenger_lunch_tin_true_ending` at 100/100.
-  - A normal `npm run ai:cycle` was also attempted first; it produced evidence
-    but spawned the configured nested agent command and refused post-agent
-    auto-commit because the repo was already dirty. The nested process was
-    stopped, then the evidence-only cycle completed cleanly.
 - Playtest notes:
-  - The new transfer-punch scene gives the conductor route a concrete object
-    beat: the punch turns the newspaper woman's blank transfer into proof that
-    the passengers can change trains into morning.
-  - The branch still feels optional because players can pull the conductor
-    ending directly from the intercom or take the established final roll call.
+  - The counted conductor route now survives the optional transfer beat instead
+    of losing the reviewed-manifest context.
+  - The transfer still feels optional because players can pull the conductor
+    ending directly, take the counted clear call immediately, or add the punch
+    beat first.
+  - The manual route reads coherently: Mara reviews the count, the conductor
+    punches proof of transfer, then carries the counted clear call to the
+    release.
   - No objective, scoring, or ending regressions were found in focused tests,
     full health, the manual CLI playthrough, or the evidence-cycle MCP routes.
-  - Coverage playtests are much faster and no longer try to preserve every
-    flavor-flag permutation as a distinct pending state.
 - Follow-up:
-  - Watch whether the faster coverage summary remains sufficiently explanatory
-    for future route critique now that it samples 1043 runs instead of
-    hundreds of thousands.
-  - Consider adding report metadata that distinguishes discovery-frontier
-    samples from full terminal route samples more clearly.
+  - Core route metrics remain healthy; favor meaningful new scenes, stronger
+    character beats, or pacing improvements over another clue-only polish pass.
+  - Consider a focused pass on non-ideal endings only if random bad/lost/escape
+    pressure rises above the current evidence-cycle baseline.
 - Risks:
   - Extra optional beats can make late passenger routes feel over-segmented if
     labels are too similar or if random routes linger before ending.
-  - Pruning coverage signatures to positive-gated flags is appropriate for
-    scene discovery but may hide differences in purely repeat-suppression
-    flags; focused route tests should continue covering deep optional beats.
+  - Choice ordering now favors the context-specific clear call over the newer
+    transfer beat; this is intentional for discoverability but should be watched
+    if the transfer scene becomes under-visited again.
 
 ## Last Completed Cycle
 
