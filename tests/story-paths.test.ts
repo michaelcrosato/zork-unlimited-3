@@ -2411,6 +2411,68 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("recovers echoed passenger boarding after a morning-chorus train-car detour", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "listen_to_manifest_doors_from_manifest",
+      "return_from_passenger_echoes",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "board_after_passenger_morning_chorus"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "follow_echoes_back_to_boarding"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_echoed_manifest_intercom"
+    );
+
+    state = choose(story, state, "follow_echoes_back_to_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.scene.text).toContain("waiting has turned into boarding");
+
+    state = choose(story, state, "reach_release_with_echoed_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "follow_echoes_back_to_boarding"
+    );
+
+    state = choose(story, state, "listen_to_echoed_manifest_intercom");
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expectIdealScore(observation.score);
+  });
+
   it("adds a one-time Mara handoff beat after opening the passenger manifest", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

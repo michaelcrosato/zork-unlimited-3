@@ -1,3 +1,53 @@
+# Cycle 13 Echoed-Boarding Train-Car Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `passenger_echoed_boarding`
+  when players earn the passenger-echo route, clear the manifest, then detour
+  through the morning-chorus train-car beat before using the boarding payoff.
+- Why this matters: Current cycle evidence still called out
+  `passenger_echoed_boarding` as the one random-play miss. The direct platform
+  boarding payoff existed, but players who naturally listened to the passenger
+  morning chorus and boarded from there could bypass the scene even though they
+  had earned its setup.
+- Work completed:
+  - Added a one-time `echoed_manifest_boarded` flag when players use the direct
+    echoed-manifest boarding beat.
+  - Added `follow_echoes_back_to_boarding` from `train_car` back to
+    `passenger_echoed_boarding`, gated by the existing passenger-echo route,
+    freed Mara, and exclusions for answer/gather/count/handoff variants.
+  - Added regression coverage for the morning-chorus detour path that reaches
+    `passenger_echoed_boarding`, returns to the release, then finishes at
+    `passenger_echoed_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 121 tests.
+  - `npm run health` passed: format check, TypeScript, 165 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 117 scenes with zero unfinished runs,
+    best score 390, and average score 318.27.
+  - Actual CLI play used `follow_echoes_back_to_boarding` after the
+    morning-chorus train-car detour and reached `passenger_echoed_true_ending`
+    at score 303 with no active objectives.
+  - `npm run ai:cycle` wrote ignored evidence artifacts, then the nested
+    `codex exec` recursively started another `npm run ai:cycle`; I terminated
+    that process tree to avoid an indefinite loop. No tracked files were
+    changed by the nested run.
+- Playtest feedback:
+  - The new label and scene text read as a natural recovery from train-car
+    hesitation: the echoes are already aboard, but the player can still pause
+    to recognize that waiting has turned into boarding.
+  - Returning from `passenger_echoed_boarding` to `train_car` does not expose
+    the recovery choice again, so the branch does not create a repeat loop.
+  - No dangling objectives, invalid choices, validation errors, or unfinished
+    coverage runs appeared.
+- Next step:
+  - Watch random and blind-play evidence for whether `passenger_echoed_boarding`
+    now appears in ordinary routes. If it still misses, inspect other train-car
+    detours that skip `passenger_platform`.
+- Risks:
+  - This adds one optional train-car choice in a late-game choice set. It is
+    tightly gated and one-time, but choice density around release scenes remains
+    worth monitoring.
+
 # Cycle 12 Badge-Proof Thumbprint Recovery
 
 - Date: 2026-06-02

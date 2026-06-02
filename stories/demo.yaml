@@ -1377,6 +1377,9 @@ scenes:
             - flag: heard_passenger_echoes
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
+        effects:
+          set:
+            echoed_manifest_boarded: true
       - id: hold_third_car_threshold
         label: Hold the third-car threshold while the passengers board
         to: passenger_threshold_boarding
@@ -1871,6 +1874,23 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: follow_echoes_back_to_boarding
+        label: Follow the familiar passenger echoes into the third car
+        to: passenger_echoed_boarding
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: echoed_manifest_boarded
+        effects:
+          set:
+            echoed_manifest_boarded: true
       - id: listen_to_threshold_manifest_intercom
         label: Listen as the threshold holds for every passenger
         to: passenger_threshold_intercom
