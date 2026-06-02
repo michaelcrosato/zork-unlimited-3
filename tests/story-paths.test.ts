@@ -3417,6 +3417,73 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets Mara's manifest handoff point players toward making room in the third car", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.scene.text).toContain("asking for room");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "make_room_after_mara_manifest_handoff"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "hold_threshold_after_mara_manifest_handoff"
+    );
+
+    state = choose(story, state, "make_room_after_mara_manifest_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_boarding");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_room_made_for_passengers",
+      "reach_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "listen_to_room_made_for_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pass_room_release_after_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("pays off Mara's opened manifest count before a direct passenger release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3723,6 +3790,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_after_mara_manifest_handoff",
+      "make_room_after_mara_manifest_handoff",
       "hold_threshold_after_mara_manifest_handoff",
       "touch_mara_manifest_thumbprint",
       "continue_manifest_handoff_roll_call",

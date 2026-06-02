@@ -1449,10 +1449,20 @@ scenes:
       waits for its answer, then touches the next line as if steadiness can be
       handed from name to name. By the time she reaches her own row, the
       speaker is full of people breathing with her instead of waiting for her.
+      The third car answers with crowded shuffles, asking for room as plainly
+      as it asks for the release.
     choices:
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: train_car
+      - id: make_room_after_mara_manifest_handoff
+        label: Make room in the third car while Mara calls the opened doors
+        to: passenger_room_boarding
+        requires:
+          notFlag: made_room_for_passengers
+        effects:
+          set:
+            made_room_for_passengers: true
       - id: hold_threshold_after_mara_manifest_handoff
         label: Hold the third-car threshold while Mara calls the opened doors
         to: passenger_threshold_boarding

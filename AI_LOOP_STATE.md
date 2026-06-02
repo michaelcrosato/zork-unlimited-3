@@ -1,3 +1,64 @@
+# Cycle 34 Passenger Room Handoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of
+  `passenger_room_intercom` and `passenger_room_release`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 34 evidence shows full coverage, all runs ending,
+  and strong ideal-ending pressure, but random MCP samples still missed the
+  passenger-room intercom/release scenes. These scenes are already reachable
+  and narratively useful because they make the final release a shared action
+  instead of a solo switch pull.
+- Planned work:
+  - Add a direct room-making choice from `mara_manifest_handoff` to
+    `passenger_room_boarding`.
+  - Revise the handoff text so the third car visibly asks for room, making the
+    new branch feel motivated.
+  - Preserve direct boarding, threshold, thumbprint, answered-passenger, and
+    return routes from the handoff.
+  - Add regression coverage for the new handoff-to-room route through
+    `passenger_room_intercom`, `passenger_room_release`, and the final
+    passenger true ending.
+  - Run focused tests, full health, a random sample, and an actual CLI route
+    through the promoted room payoff.
+- Risks:
+  - The handoff menu gains one more option before the existing threshold
+    branch. This is intentional pressure toward a previously missed payoff,
+    and the direct boarding/threshold paths remain available.
+- Work completed:
+  - Added `make_room_after_mara_manifest_handoff` from
+    `mara_manifest_handoff` to `passenger_room_boarding`.
+  - Revised Mara's opened-manifest handoff text so the third car visibly asks
+    for room before the release.
+  - Added regression coverage proving the new handoff path reaches
+    `passenger_room_intercom`, `passenger_room_release`, and
+    `passenger_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 148 tests.
+  - `npm run health` passed: format check, TypeScript, 192 tests,
+    validation, and coverage playtest.
+  - Coverage playtest still visited all 136 scenes.
+  - A 250-run random sample ended all 250 runs, had no unfinished runs, and
+    visited every scene, including `passenger_room_boarding`,
+    `passenger_room_intercom`, and `passenger_room_release`.
+  - Actual CLI play followed `watch_mara_open_manifest` ->
+    `make_room_after_mara_manifest_handoff` ->
+    `listen_to_room_made_for_passengers` ->
+    `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 270 and no objectives.
+- Playtest feedback:
+  - The new choice reads naturally after Mara calls the opened doors: the
+    speaker fills with passengers, the third car asks for room, and the player
+    can make space before touching the release.
+  - The intercom and shared-release beats now feel like part of the handoff
+    escalation rather than a side branch hidden behind returning to the
+    platform.
+- Next step:
+  - Watch future random and blind samples for whether newly all-scene random
+    coverage holds, then shift toward richer late-game story depth or any
+    recurring blind-play S0-S2 issue once a digest window appears.
+
 # Cycle 33 Matched Keepsake Intercom Discovery
 
 - Date: 2026-06-02
