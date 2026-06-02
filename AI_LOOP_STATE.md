@@ -46,9 +46,10 @@
   - Coverage playtest visited all scenes, including
     `mara_last_dispatch_intercom`, with zero unfinished runs.
   - A follow-up 100-run random sample now visited both
-    `mara_last_dispatch_intercom` and `passenger_answers`; remaining random
+    `mara_last_dispatch_intercom` and `passenger_answers`; the latest random
+    sample also reached `passenger_conductor_true_ending`. Remaining random
     misses were `mara_manifest_handoff_intercom`,
-    `passenger_conductor_true_ending`, and
+    `passenger_answered_boarding_true_ending`, and
     `passenger_manifest_handoff_true_ending`.
 - Playtest feedback:
   - The branch now reads as one continuous promise: ask Mara for the last
