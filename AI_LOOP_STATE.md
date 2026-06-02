@@ -1,3 +1,112 @@
+# Cycle 55 Direct Conductor Release
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_conductor_true_ending` more natural from the
+  conductor intercom branch.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 55 evidence. Core route
+  health is strong and coverage reaches all scenes, but the 100-run random
+  sample missed `passenger_conductor_true_ending` while still visiting the
+  conductor setup scenes. At `passenger_conductor_intercom`, the prose says the
+  emergency release is already in the player's hand and Mara says to pull it on
+  the conductor's clear, but the choices only offered extra roll-call or
+  transfer elaborations before release.
+- Planned work:
+  - Add a direct release choice from `passenger_conductor_intercom` to
+    `passenger_conductor_true_ending` when the route has not shifted into the
+    punched-transfer or reviewed-count variants.
+  - Set `heard_final_roll_call` on that direct release so the state reflects
+    the conductor's final clear signal.
+  - Preserve the existing final roll-call, counted roll-call, and punched
+    transfer variants.
+  - Preserve the covered platform shortcut into Mara's opened-door handoff
+    intercom, which also targets a Cycle 55 random-sample miss.
+  - Update regression coverage for the direct conductor release.
+  - Run focused tests, full health, a manual CLI playthrough through the changed
+    route, and a follow-up random sample.
+- Risks:
+  - Adding one more intercom choice can slightly widen the branch, but it
+    matches the scene text and does not remove any authored conductor variant.
+- Status:
+  - Added `pull_release_on_conductor_clear` from
+    `passenger_conductor_intercom` to `passenger_conductor_true_ending`.
+  - The new choice requires no punched transfer and no reviewed manifest count,
+    preserving the transfer and counted conductor endings.
+  - `passenger_platform` also contains the covered
+    `board_with_mara_manifest_handoff_from_platform` branch into
+    `mara_manifest_handoff_intercom`, improving the other low-traffic
+    manifest-handoff payoff from the latest evidence.
+  - Updated `tests/story-paths.test.ts` to expect and exercise the direct
+    conductor release.
+  - Focused story-path suite passed: 171 tests.
+  - Actual CLI play followed `ask_conductor_from_answers` ->
+    `inspect_conductor_punch_memory` -> `follow_punch_memory_to_third_car` ->
+    `pull_release_on_conductor_clear`, ending at
+    `passenger_conductor_true_ending` with score 321 and no objectives.
+  - `npm run health` passed: format check, TypeScript, 215 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_conductor_true_ending`, with zero unfinished complete paths.
+  - Follow-up 100-run random sample ended all runs and had zero frontier
+    samples. It still missed `passenger_conductor_true_ending`, indicating this
+    branch remains low-probability in short random samples despite the more
+    coherent direct release.
+- Playtest feedback:
+  - The changed branch reads more cleanly: once the player has asked the
+    conductor to call the platform clear and carries that signal into the third
+    car, they can immediately pull the release on the exact clear signal the
+    prose highlights.
+  - The longer roll-call and punched-transfer choices still remain available
+    for players who want the extra passenger detail.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Improve normal-play discovery for `mara_manifest_handoff_intercom` and
+    `passenger_manifest_handoff_true_ending`, since they remain absent from the
+    latest 100-run random sample. If the conductor ending remains absent across
+    later non-deterministic samples, consider moving one direct conductor call
+    earlier from `passenger_conductor_signal`.
+
+# Cycle 51 Platform Manifest Handoff Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending` more discoverable after players
+  watch Mara call the opened manifest doors.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 51 evidence. Core health and
+  coverage are strong, but random samples still missed the clean Mara manifest
+  handoff payoff. After watching the handoff, a player could return to the
+  passenger platform and board into a generic train-car pause where the
+  authored handoff intercom became optional again.
+- Planned work:
+  - Add a platform-level boarding choice for the clean Mara manifest handoff
+    state.
+  - Route that choice directly to `mara_manifest_handoff_intercom` and set
+    `heard_mara_goodbye`.
+  - Keep thumbprint, answered-passenger, gathered-passenger, and generic
+    manifest release variants distinct.
+  - Update story-path regression coverage for the platform handoff payoff.
+  - Preserve and validate the adjacent conductor-clear direct release changes
+    already present in the working tree.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - This adds one contextual platform choice, increasing choice count only for
+    a narrow clean handoff state. The conditions avoid stealing priority from
+    other authored variants.
+- Status:
+  - Added `board_with_mara_manifest_handoff_from_platform` on
+    `passenger_platform`.
+  - Updated the Mara manifest handoff regression so returning to the passenger
+    platform now pays off through the new direct boarding choice.
+  - Focused story-path suite passed: 171 tests.
+  - Full verification pending.
+- Playtest feedback:
+  - Pending actual route play.
+- Next step:
+  - Run full health and play the platform handoff route through the CLI/MCP.
+
 # Cycle 54 Answered Boarding State Payoff
 
 - Date: 2026-06-02
