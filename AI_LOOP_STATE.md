@@ -1,3 +1,49 @@
+# Cycle 17 Train-Car Mara Handoff
+
+- Date: 2026-06-02
+- Main objective: Add a small late-game payoff beat for players who board the
+  third car immediately after clearing Mara, without changing true-ending
+  requirements or adding a new ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 17 evidence says core guidance is healthy and
+  the best next move is richer story depth. The plain Mara route already had
+  strong intercom options, but immediate boarders could only ask for another
+  dispatch, listen to Mara, or pull the release; the existing handoff payoff
+  was easier to miss.
+- Planned work:
+  - Add one optional plain-route choice from `train_car` after Mara is freed.
+  - Reuse the existing `mara_handoff_intercom` and
+    `mara_handoff_true_ending` rather than creating a new ending split.
+  - Preserve the direct `pull_release` route and existing intercom branches.
+  - Add regression coverage and verify with a real CLI playthrough.
+- Work completed:
+  - Added `wait_for_mara_at_far_door` from `train_car` to
+    `mara_handoff_intercom`.
+  - Set `saw_mara_handoff` and `heard_mara_goodbye` on that choice so
+    transcript/state evidence matches the existing handoff route.
+  - Updated story-path tests to expect the new choice and prove it reaches
+    `mara_handoff_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 142 tests.
+  - CLI validation passed with 131 reachable scenes and 27 endings.
+  - Actual CLI play followed `wait_for_mara_at_far_door` from `train_car`,
+    then `pull_release_after_handoff_goodbye`, ending at
+    `mara_handoff_true_ending` with score 279 and no remaining objectives.
+- Playtest feedback:
+  - The new choice makes Mara's physical escape visible even when the player
+    skipped `watch_mara_leave_booth`.
+  - The route remains focused: it is one optional pause before the release, and
+    direct release still stays available.
+  - The reused ending text fits the new path because the intercom beat clearly
+    establishes Mara crossing to the far doors.
+- Risks:
+  - The plain train-car choice list is slightly busier. It still has only four
+    choices and all optional flavor choices point toward the same release goal.
+- Next step:
+  - Watch future blind feedback for whether the third-car choice list feels
+    overfull; if it does, tune labels or collapse redundant Mara intercom
+    options before adding more late-game beats.
+
 # Cycle 20 HOME Sign Porch-Light Branch
 
 - Date: 2026-06-02

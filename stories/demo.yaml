@@ -2110,6 +2110,22 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: wait_for_mara_at_far_door
+        label: Wait for Mara to reach the far door
+        to: mara_handoff_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_passenger_manifest
+            - notFlag: read_mara_thumbprint
+            - notFlag: saw_mara_handoff
+            - notFlag: knows_badge_proof
+            - notFlag: heard_mara_last_dispatch
+        effects:
+          set:
+            saw_mara_handoff: true
+            heard_mara_goodbye: true
       - id: listen_to_mara_after_handoff
         label: Listen for Mara after she leaves the booth
         to: mara_handoff_intercom
