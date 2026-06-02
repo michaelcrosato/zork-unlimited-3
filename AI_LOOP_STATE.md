@@ -1,3 +1,60 @@
+# Cycle 22 Shared Release Payoff
+
+- Date: 2026-06-02
+- Main objective: Add a focused payoff after direct passenger-manifest players
+  make room in the third car, so the emergency release feels shared by the
+  rescued crowd rather than only operated by the player.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and supplied Cycle 22 evidence shows healthy completion, full
+  coverage reachability, and no unfinished runs. The previous cycle added a
+  strong room-making beat, but its direct train-car continuation still fell
+  back to generic manifest release actions. A narrow follow-through improves
+  story texture without changing route requirements or adding ending taxonomy.
+- Planned work:
+  - Add one gated train-car choice after `made_room_for_passengers`.
+  - Route that choice through one new optional scene where the passengers help
+    reach the release together.
+  - Preserve the existing direct room intercom and plain
+    `passenger_true_ending`.
+  - Add regression coverage, validate, run health, and play the route.
+- Work completed:
+  - Added `pass_release_hand_to_hand` from `train_car` after the
+    `made_room_for_passengers` branch.
+  - Added `passenger_room_release`, where the passengers physically help bring
+    the emergency release into reach.
+  - Kept `passenger_true_ending` as the payoff and preserved the direct release
+    path.
+  - Gated the generic manifest intercom away from the room-making train-car
+    continuation so the more specific room payoff is the visible optional beat
+    there.
+  - Extended regression coverage for the direct room route through the new
+    hand-to-hand release scene.
+- Evidence so far:
+  - Focused story-path suite passed: 143 tests.
+  - CLI validation passed with 134 reachable scenes and 27 endings.
+  - `npm run health` passed: format check, TypeScript, 187 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited `passenger_room_release`; all 134 scenes were
+    reachable, 8,152/8,259 runs ended, and there were no unfinished runs.
+  - Actual CLI play followed the room-making route through
+    `pass_release_hand_to_hand` and `pull_shared_release_after_making_room`,
+    ending at `passenger_true_ending` with score 256, no objectives, and
+    `made_room_for_passengers` plus `shared_release_reached` recorded.
+- Playtest feedback:
+  - The room route now has a clearer emotional escalation: make space, reach
+    the handle together, then release everyone.
+  - The new choice felt specific to the preceding room-making action and did
+    not affect normal manifest routes.
+  - The ending text still fits because the new scene frames the same broad
+    passenger release rather than creating a new outcome.
+- Risks:
+  - The train-car choice list gains one branch after room-making. The branch is
+    gated to the room route and replaces the generic manifest intercom there,
+    keeping normal manifest routes unchanged.
+- Next step:
+  - Watch future blind feedback for whether the room-making branch now feels
+    complete or whether the passenger platform choice list needs consolidation.
+
 # Cycle 18 Transfer Column Discoverability
 
 - Date: 2026-06-02

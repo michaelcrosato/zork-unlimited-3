@@ -2241,6 +2241,7 @@ scenes:
             - notFlag: reviewed_open_manifest_count
             - notFlag: heard_passenger_echoes
             - notFlag: held_passenger_threshold
+            - notFlag: made_room_for_passengers
         effects:
           set:
             heard_mara_goodbye: true
@@ -2410,6 +2411,19 @@ scenes:
         effects:
           set:
             heard_gathered_passengers: true
+      - id: pass_release_hand_to_hand
+        label: Pass the release handle hand to hand through the crowded car
+        to: passenger_room_release
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: made_room_for_passengers
+            - notFlag: heard_mara_goodbye
+            - notFlag: shared_release_reached
+        effects:
+          set:
+            shared_release_reached: true
       - id: pull_release_with_manifest
         label: Pull the release for every name in the manifest
         to: passenger_true_ending
@@ -2941,6 +2955,19 @@ scenes:
     choices:
       - id: pull_release_after_making_room
         label: Pull the release while the car holds everyone
+        to: passenger_true_ending
+
+  passenger_room_release:
+    routeImportance: optional
+    text: >
+      You do not pull the release alone. The newspaper woman braces the seat,
+      the lunch-tin worker clears the strap from the floor, and the mittened
+      child puts both hands over yours before the handle gives. The motion
+      travels through the crowded car like a decision everyone is allowed to
+      share.
+    choices:
+      - id: pull_shared_release_after_making_room
+        label: Pull together once every hand has found the release
         to: passenger_true_ending
 
   passenger_counted_manifest_intercom:
