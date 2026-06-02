@@ -4,6 +4,38 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-02 - Open-Ended Score Awards
+
+### Current Plan
+
+- Main objective: Replace fixed `100/100` scoring with open-ended point awards.
+- Why this matters: Players should feel rewarded for useful progress,
+  exploration, character beats, items, and optional content without seeing a
+  fixed completion denominator.
+
+### Work Completed
+
+- Replaced fixed score achievements with earned score awards derived from
+  inventory, flags, positive choice history, and scene exploration after the
+  start.
+- Removed live `maxScore` display and reporting from observations, transcripts,
+  masked blind-play screens, playtest summaries, AI-loop reports, and docs.
+- Added per-observation reward feedback: `delta`, `recentAwards`, and
+  `soundCue: "score_award"`.
+- Changed summary metrics to high-score evidence: `bestScore`,
+  `averageScore`, and `bestScoreRuns`.
+
+### Playtest Notes
+
+- `npm run health` passed with 162 tests, clean validation, and full coverage
+  playtest.
+- `npm run ai:cycle` generated current evidence artifacts; no nested agent ran
+  because `AI_AGENT_CMD` is unset.
+- Manual true-ending route started at 0, reached `true_ending` at score 316,
+  and produced reward cues for every constructive step tested.
+- The final route felt better after adding small awards for keep, return,
+  leave, and close choices; major beats remained meaningfully larger.
+
 ## 2026-06-02 - Core Player-View Metadata Contracts
 
 ### Current Plan

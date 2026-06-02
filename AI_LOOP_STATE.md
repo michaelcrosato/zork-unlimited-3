@@ -1,3 +1,46 @@
+# Cycle 10 Open-Ended Score Awards
+
+- Date: 2026-06-02
+- Main objective: Replace the fixed `100/100` score contract with an
+  open-ended point-award model that rewards progressive, exploratory,
+  character, item, and optional-content behavior.
+- Why this matters: The previous `score/maxScore` display made the game feel
+  solved against a fixed checklist. The new model should feel closer to classic
+  Quest-style scoring: every constructive discovery can pay out, and major
+  story breakthroughs pay out more.
+- Work completed:
+  - Replaced fixed achievements with earned `awards` from inventory, flags,
+    visited scenes after the start, and positive choice history.
+  - Removed player-facing `maxScore` usage from observations, masked blind
+    views, transcripts, playtest summaries, AI-loop reports, docs, and tests.
+  - Added `delta`, `recentAwards`, and `soundCue: "score_award"` to
+    observations so clients can show point bursts and play a reward sound on
+    scoring actions.
+  - Changed playtest reporting from max-score completion to `bestScore`,
+    `averageScore`, and `bestScoreRuns`.
+  - Kept historical blind-feedback `max_score` rows readable by making that
+    field optional for compatibility.
+- Evidence:
+  - `npm run health` passed: format check, TypeScript, 162 tests, validation,
+    and coverage playtest.
+  - `npm run ai:cycle` wrote current evidence artifacts and stopped after
+    evidence generation because `AI_AGENT_CMD` is not set.
+  - Manual true-ending route started at score 0 and reached `true_ending` with
+    open-ended score 316 across 48 awards.
+  - Manual route feedback showed rewarding deltas on constructive actions:
+    small utility actions such as closing the locker paid +1, progression beats
+    paid +12 to +29, clearing Mara paid +42, and the final release paid +53.
+  - Coverage playtest still visited all 117 scenes with zero unfinished runs;
+    best score was 390 and average score was 318.27.
+- Playtest feedback:
+  - The score no longer appears as `X/Y`.
+  - Reward cues were present on every positive step in the tested route after
+    adding small awards for keep, return, leave, and close choices.
+  - The initial score is now 0 instead of awarding points for merely starting.
+- Next step:
+  - Watch blind-play transcripts for whether visible `Award: +N ...` lines feel
+    motivating or too verbose in dense routes.
+
 # Cycle 9 Thumbprint-First Manifest Recovery
 
 - Date: 2026-06-02

@@ -2,7 +2,6 @@ import { GameState, Story } from "./schema.js";
 
 export interface ScoreBreakdown {
   score: number;
-  maxScore: number;
   awards: ScoreAward[];
 }
 
@@ -182,11 +181,8 @@ export function scoreState(state: GameState, story?: Story): ScoreBreakdown {
     ...historyAwards(state, story)
   ].sort((left, right) => left.id.localeCompare(right.id));
 
-  const score = awards.reduce((total, award) => total + award.points, 0);
-
   return {
-    score,
-    maxScore: score,
+    score: awards.reduce((total, award) => total + award.points, 0),
     awards
   };
 }
