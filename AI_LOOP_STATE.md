@@ -29,6 +29,9 @@
   - Actual CLI play used `look_back_from_escape_warning` and
     `leave_after_escape_glance`, reaching `escape_ending` at score 88 with no
     active objectives.
+  - Recovery CLI play used `look_back_from_escape_warning`, returned from
+    `escape_platform_glance`, recovered the map/token/ledger route, and
+    reached `true_ending` at score 297 with no active objectives.
 - Playtest feedback:
   - The new glance reads as a consequence beat rather than a hard warning:
     the player sees Mara's badge number and the token slot one more time, but
@@ -36,13 +39,17 @@
   - The branch preserves agency. Returning to the lit platform remains
     available, while leaving through the new scene still produces the same
     early escape ending cleanly.
+  - Returning from the glance does not strand the player: the lit platform
+    points back to the service room, then the route resumes through the map,
+    radio/personnel file, clock token, signal booth, and release.
 - Risks:
   - Adds one more optional choice to a route that already has a warning beat.
     The choice is one-time and only appears on the lit-platform flee branch.
 - Next step:
   - Watch random and blind playtest transcripts for whether early escape
     players use the glance as a meaningful reconsideration point or ignore it
-    as extra friction.
+    as extra friction, and whether the badge-number clue makes them expect the
+    ledger to work before they recover the map and token.
 
 # Cycle 20 Personnel File Score Audit
 
