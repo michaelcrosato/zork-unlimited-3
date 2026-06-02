@@ -1,3 +1,59 @@
+# Cycle 91 Thumbprint Intercom Handoff Recovery
+
+- Date: 2026-06-02
+- Main objective: Let players who ask about Mara's torn thumbprint through the
+  intercom still recover the physical far-door handoff route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence continues to name
+  `mara_thumbprint_handoff_intercom` as the remaining normal-play discovery
+  target. Prior cycles added direct-board and checked-handoff recovery routes,
+  but the thumbprint-only intercom still ended as a simple release branch.
+- Planned work:
+  - Add a thumbprint-intercom option that asks Mara to carry the thumbprint to
+    the far door.
+  - Route it through `mara_thumbprint_handoff_intercom` and set the established
+    handoff flag.
+  - Preserve the direct thumbprint release ending.
+  - Add focused coverage, run full health, and play the changed route.
+- Risks:
+  - The added choice may nudge some random traffic from `true_ending` into
+    `mara_handoff_true_ending`, but only after the player already found the
+    optional torn-thumbprint clue and chose to hear Mara explain it.
+- Status:
+  - Completed.
+  - Added `ask_mara_to_carry_thumbprint_to_far_door` from
+    `mara_thumbprint_intercom` to `mara_thumbprint_handoff_intercom`.
+  - Kept `pull_release_after_thumbprint_goodbye` available as the direct
+    release path.
+  - Added a focused regression for recovering
+    `mara_thumbprint_handoff_intercom` after asking about the thumbprint before
+    boarding.
+  - Focused thumbprint tests passed:
+    `npm test -- tests/story-paths.test.ts -t "thumbprint"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+  - Actual CLI play followed the pre-boarding thumbprint intercom route through
+    `ask_mara_to_carry_thumbprint_to_far_door`, ended at
+    `mara_handoff_true_ending`, scored 285, and left no objectives.
+  - Commit/push attempted, but this sandbox exposes `.git` as read-only:
+    `git commit` failed because it could not create `.git/index.lock`.
+- Playtest feedback:
+  - The new recovery option reads naturally after Mara explains why the
+    thumbprint tore the ledger: the player can still pull immediately, or turn
+    the mark into the physical far-door handoff.
+  - The route now exposes `mara_thumbprint_handoff_intercom` from the
+    thumbprint-only intercom path, which directly targets the normal-play
+    discovery gap without removing the concise `true_ending` branch.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether players choose the new
+    thumbprint carry option; if the handoff family stays healthy, shift to
+    richer passenger-manifest critique or transcript quality.
+
 # Cycle 90 Last-Dispatch Handoff Recovery
 
 - Date: 2026-06-02

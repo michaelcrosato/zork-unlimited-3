@@ -3655,6 +3655,14 @@ scenes:
       hold, and the release will do what I could not finish from the booth: all
       doors, all at once."
     choices:
+      - id: ask_mara_to_carry_thumbprint_to_far_door
+        label: Ask Mara to carry the thumbprint to the far door
+        to: mara_thumbprint_handoff_intercom
+        requires:
+          notFlag: saw_mara_handoff
+        effects:
+          set:
+            saw_mara_handoff: true
       - id: pull_release_after_thumbprint_goodbye
         label: Pull the release for every door Mara held open
         to: true_ending
