@@ -1849,6 +1849,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "cover_home_sign_after_dispatch",
       "turn_back_after_home_sign_dispatch",
+      "step_into_false_home_after_dispatch",
       "let_home_sign_drown_mara"
     ]);
 
@@ -1887,6 +1888,28 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "stare_at_home",
+      "listen_under_home_sign",
+      "step_into_false_home_after_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+    expect(observation.scene.text).toContain("The marked map falls unread");
 
     state = initialState(story);
     for (const choiceId of [

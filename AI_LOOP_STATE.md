@@ -1,3 +1,56 @@
+# Cycle 25 HOME-Sign Lost-Ending Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `lost_ending` more naturally discoverable from normal
+  HOME-sign play without making the route feel like an unfair surprise.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so the cycle used current loop evidence. Random play had missed
+  `lost_ending` while coverage could reach it, indicating a discoverability
+  gap rather than a validation problem. The HOME-sign hazard is already a
+  strong thematic failure route, but one bad-ending branch required letting the
+  sign finish and then surrendering from the grip scene.
+- Planned work:
+  - Add one clearly labeled failure choice after Mara breaks through the HOME
+    sign.
+  - Preserve the safe morning-transfer route and the service-room recovery
+    route from the same scene.
+  - Add regression coverage for the new loss route and its state flag.
+- Work completed:
+  - Added `step_into_false_home_after_dispatch` from `home_sign_dispatch` to
+    `lost_ending`.
+  - The new choice sets `surrendered_home_after_dispatch` so transcripts and
+    future analytics can distinguish this failure from the older grip route.
+  - Updated the HOME-sign regression test to assert the new choice appears
+    alongside the two recovery choices and reaches `lost_ending` intentionally.
+- Evidence:
+  - Focused story-path suite passed: 132 tests.
+  - `npm run health` passed: format check, TypeScript, 176 tests, validation,
+    and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes with zero unfinished runs.
+  - Actual CLI play used `listen_under_home_sign` and
+    `step_into_false_home_after_dispatch`, reaching `lost_ending` at score 51
+    with no active objectives.
+  - A 250-run random playtest ended every run, visited `lost_ending`, and
+    reached it twice; the previous supplied 250-run MCP random sample did not
+    visit `lost_ending`.
+- Playtest feedback:
+  - The new choice reads as a deliberate temptation after Mara has explicitly
+    said the sign is false, so the player gets both fiction and agency before
+    the bad ending.
+  - The same scene still offers a clean escape to `good_ending` and a practical
+    recovery to the service room, so the added loss does not block or obscure
+    the rescue route.
+  - The ending remains short and sharp; no dangling objectives appear after the
+    failure.
+- Risks:
+  - Random lost-ending pressure increased slightly. This is intentional for
+    discoverability, but future blind sessions should confirm players read the
+    label as danger rather than a plausible rescue action.
+- Next step:
+  - Watch blind-play records for HOME-sign confusion, especially whether
+    players choose the porch-light branch while still believing it is safe.
+
 # Cycle 24 Last-Dispatch Payoff Discovery
 
 - Date: 2026-06-02
