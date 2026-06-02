@@ -1,3 +1,57 @@
+# Cycle 70 Passenger Platform Sign-Off Bridge
+
+- Date: 2026-06-02
+- Main objective: Surface Mara's passenger sign-off from the passenger platform
+  hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full scene coverage, and
+  strong ideal-ending rates, so the next best improvement is story-depth polish
+  on a normally reached late passenger route. Players who cross to
+  `passenger_platform` can currently jump into several passenger vignettes or
+  board directly; this cycle adds a clearer Mara-led reassurance beat at that
+  exact pause.
+- Planned work:
+  - Add an optional `passenger_platform` choice to ask Mara to sign off to the
+    gathered passengers.
+  - Reuse the existing `passenger_mara_signoff` scene and flags.
+  - Add focused path coverage showing the new bridge, return, and ending path.
+  - Run focused tests, health, and an actual CLI playthrough of the changed
+    route.
+- Risks:
+  - The passenger platform already has many options. The new bridge is guarded
+    by the existing sign-off flag and placed near the direct boarding choice so
+    it adds a clear optional reassurance beat without disrupting the first
+    passenger vignette choices.
+- Status:
+  - Completed.
+  - Added `ask_mara_to_sign_off_from_platform` from `passenger_platform` to the
+    existing `passenger_mara_signoff` scene.
+  - Guarded the bridge with `heard_passenger_mara_signoff`,
+    `heard_passenger_answers`, and `helped_passengers_gather` so it remains a
+    one-time pre-boarding reassurance beat.
+  - Added focused path coverage for the bridge, return to platform, direct
+    boarding, and `passenger_true_ending`.
+  - Focused story-path suite passed: 178 tests.
+  - `npm run health` passed: format check, TypeScript, 223 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `ask_mara_to_sign_off_from_platform` ->
+    `cross_after_passenger_mara_signoff` ->
+    `board_third_car_with_passengers` -> `pull_release_with_manifest`, ending
+    at `passenger_true_ending` with score 286 and no objectives.
+  - The sign-off reads cleanly in context: Mara tells the gathered passengers
+    they were held rather than late, and the "no one boards alone" line gives
+    the direct passenger-platform route a stronger emotional cue before the
+    release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind sessions for whether passenger-platform players use the new
+    sign-off or still skip straight to boarding. If they skip it, tune the
+    label or platform text before adding more content.
+
 # Cycle 69 Thumbprint Handoff Far-Door Payoff
 
 - Date: 2026-06-02

@@ -4534,6 +4534,75 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets passenger-platform players ask Mara to sign off before boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "ask_mara_to_sign_off_from_platform"
+    );
+
+    state = choose(story, state, "ask_mara_to_sign_off_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mara_signoff");
+    expect(observation.scene.text).toContain("no one boards alone");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "cross_after_passenger_mara_signoff"
+    );
+
+    state = choose(story, state, "cross_after_passenger_mara_signoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "ask_mara_to_sign_off_from_platform"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_third_car_with_passengers"
+    );
+
+    state = choose(story, state, "board_third_car_with_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+
+    state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("can release during Mara's opened-door handoff without the intercom detour", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

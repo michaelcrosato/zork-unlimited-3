@@ -2157,6 +2157,17 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: ask_mara_to_sign_off_from_platform
+        label: Ask Mara to sign off to the gathered passengers
+        to: passenger_mara_signoff
+        requires:
+          all:
+            - notFlag: heard_passenger_mara_signoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_mara_signoff: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
