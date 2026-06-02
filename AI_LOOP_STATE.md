@@ -1,3 +1,57 @@
+# Cycle 25 Direct Conductor Transfer Proof
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the conductor-transfer proof
+  beat by surfacing it directly from the punched-transfer scene.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Supplied Cycle 25 evidence showed full coverage and healthy
+  completion, but the 100-run random sample still missed
+  `passenger_conductor_transfer_proof` and
+  `passenger_conductor_transfer_handoff`. The proof scene is the strongest
+  tactile payoff for the punched transfer, so it should be visible on ordinary
+  passenger-conductor routes without requiring a two-step optional detour.
+- Planned work:
+  - Add a direct proof choice from `passenger_conductor_transfer` to
+    `passenger_conductor_transfer_proof`.
+  - Keep the direct release and child handoff choices available.
+  - Put the proof choice first so normal random and player scanning see the
+    prop payoff before the immediate release.
+  - Extend regression coverage, validate, run health, and play the route.
+- Risks:
+  - The transfer scene keeps five visible choices on the uncounted branch. The
+    added option is a one-step payoff that rejoins the existing ideal ending,
+    and direct release remains available for players ready to finish.
+- Work completed:
+  - Added `press_punched_transfer_to_speaker` from
+    `passenger_conductor_transfer` to `passenger_conductor_transfer_proof`.
+  - The new choice sets both `punched_transfer_carried_forward` and
+    `pressed_transfer_to_speaker`, then returns through the existing
+    `pull_release_after_transfer_proof` ending path.
+  - Updated conductor-transfer story-path regression coverage for the new
+    direct proof route and adjusted expected choice ordering.
+- Evidence:
+  - Focused story-path suite passed: 144 tests.
+  - CLI validation passed with 135 reachable scenes, 27 endings, and no
+    warnings.
+  - Actual CLI play followed `ask_conductor_to_punch_transfer` ->
+    `press_punched_transfer_to_speaker` ->
+    `pull_release_after_transfer_proof`, ending at
+    `passenger_conductor_transfer_true_ending` with score 323, no objectives,
+    and both transfer proof flags recorded.
+  - A 100-run random playtest now visits
+    `passenger_conductor_transfer_proof`; `passenger_conductor_transfer_handoff`
+    remains a rarer optional beat for larger/random or coverage samples.
+- Playtest feedback:
+  - The route now gives the punched transfer an immediate visible payoff: the
+    star hole catches Mara's voice and projects a morning-shaped mark before
+    release.
+  - The direct release path remains present, so the change improves scanning
+    without forcing the extra sensory beat.
+- Next step:
+  - Watch future blind feedback for whether the five-choice transfer scene
+    feels crowded. If it does, consolidate roll-call labels before adding any
+    more conductor-transfer branches.
+
 # Cycle 21 Conductor Transfer Proof
 
 - Date: 2026-06-02

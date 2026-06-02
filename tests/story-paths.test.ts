@@ -1433,6 +1433,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "press_punched_transfer_to_speaker",
       "pull_release_with_punched_transfer",
       "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
@@ -4812,6 +4813,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("star-shaped hole");
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "press_punched_transfer_to_speaker",
       "pull_release_with_punched_transfer",
       "pass_punched_transfer_to_child",
       "hear_transfer_conductor_roll_call",
@@ -4821,6 +4823,21 @@ describe("demo story critical paths", () => {
     const conductorTransferState = state;
 
     state = choose(story, conductorTransferState, "pull_release_with_punched_transfer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorTransferState, "press_punched_transfer_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
+    expect(observation.scene.text).toContain("The star hole lines up with Mara's voice");
+    expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
+    expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+
+    state = choose(story, state, "pull_release_after_transfer_proof");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");

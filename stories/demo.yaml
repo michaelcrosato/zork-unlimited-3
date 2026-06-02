@@ -3148,6 +3148,17 @@ scenes:
       lunch-tin worker, and Mara all touch the same small proof that the line
       has to let them change trains.
     choices:
+      - id: press_punched_transfer_to_speaker
+        label: Press the punched transfer to Mara's speaker before pulling the release
+        to: passenger_conductor_transfer_proof
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: pressed_transfer_to_speaker
+        effects:
+          set:
+            punched_transfer_carried_forward: true
+            pressed_transfer_to_speaker: true
       - id: pull_release_with_punched_transfer
         label: Pull the release while the punched transfer is still being passed
         to: passenger_conductor_transfer_true_ending
