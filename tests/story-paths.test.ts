@@ -4187,8 +4187,38 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_mara_manifest_intercom",
+      "confirm_manifest_passengers_are_aboard",
       "pull_release_with_manifest"
     ]);
+
+    const manifestTrainState = state;
+
+    let readyState = choose(story, manifestTrainState, "confirm_manifest_passengers_are_aboard");
+    observation = observe(story, readyState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_ready_intercom");
+    expect(observation.scene.text).toContain("Every kept name is aboard");
+    expect(observation.scene.text).toContain("passenger list instead of a sentence");
+    expect(observation.state.flags.heard_manifest_ready).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_finish_ready_manifest",
+      "pull_release_after_ready_manifest"
+    ]);
+
+    const readyReleaseState = choose(story, readyState, "pull_release_after_ready_manifest");
+    observation = observe(story, readyReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    readyState = choose(story, readyState, "listen_to_mara_finish_ready_manifest");
+    observation = observe(story, readyState);
+
+    expect(observation.scene.id).toBe("mara_manifest_intercom");
+    expect(observation.scene.text).toContain("They remember the way out now");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
     state = choose(story, state, "listen_to_mara_manifest_intercom");
     observation = observe(story, state);
@@ -10002,6 +10032,7 @@ describe("demo story critical paths", () => {
       "return_from_passenger_morning_chorus",
       "cross_after_passenger_morning_chorus",
       "let_morning_chorus_answer_names",
+      "gather_after_passenger_morning_chorus",
       "board_after_passenger_morning_chorus"
     ]);
 
@@ -10044,6 +10075,53 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets the passenger morning chorus gather the third-car boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "gather_after_passenger_morning_chorus"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.text).toContain("became a crowd");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers_from_boarding",
+      "answer_final_roll_call_from_gathered_boarding",
+      "pull_release_after_gathered_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });

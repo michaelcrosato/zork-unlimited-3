@@ -1,3 +1,107 @@
+# Cycle 74 Manifest Ready Third-Car Check
+
+- Date: 2026-06-02
+- Main objective: Add a final third-car confirmation beat for direct manifest
+  boarders.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full scene coverage, and
+  strong ideal-ending rates, so this cycle continues story-depth polish rather
+  than route repair. The direct manifest route could jump from boarding straight
+  to release; the new beat lets players verify the opened passengers are truly
+  aboard before ending the run.
+- Planned work:
+  - Add a guarded `train_car` choice for the plain manifest route only.
+  - Add a short `passenger_manifest_ready_intercom` scene that confirms the
+    newspaper, lunch tin, and mitten passengers are physically aboard.
+  - Let the scene either release directly or flow into Mara's existing manifest
+    intercom, avoiding a new ending or duplicated payoff.
+  - Add focused route coverage, then run health and an actual CLI playthrough.
+- Risks:
+  - `train_car` already hosts many late-route intercom choices. The new choice
+    uses the same guards as the plain manifest intercom, and is hidden from
+    answered, gathered, echoed, reviewed-count, threshold, room, and Mara
+    handoff variants.
+- Status:
+  - Completed.
+  - Added `confirm_manifest_passengers_are_aboard` from `train_car` for the
+    plain manifest route.
+  - Added `passenger_manifest_ready_intercom`, confirming the newspaper, lunch
+    tin, and mitten passengers are physically aboard before the release.
+  - The new scene can either pull directly into `passenger_manifest_true_ending`
+    or continue into Mara's existing manifest intercom via
+    `listen_to_mara_finish_ready_manifest`.
+  - Focused story-path suite passed: 181 tests.
+  - `npm run health` passed: format check, TypeScript, 226 tests, validation,
+    and coverage playtest.
+  - Validation reports 141 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `board_third_car_with_passengers` ->
+    `confirm_manifest_passengers_are_aboard` ->
+    `pull_release_after_ready_manifest`, ending at
+    `passenger_manifest_true_ending` with score 278 and no objectives.
+  - The new beat reads well as a final physical check: it turns the manifest
+    from abstract names into passengers seated or standing in the third car
+    before the player pulls the release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether direct manifest boarders use the
+    confirmation beat or skip straight to release. If skipped, tune the label
+    before adding more third-car choices.
+
+# Cycle 73 Morning Chorus Gathered Boarding
+
+- Date: 2026-06-02
+- Main objective: Make the passenger morning chorus actionable as a gathered
+  third-car boarding route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full coverage, and strong
+  ideal-ending rates, so this cycle continues focused late-passenger polish.
+  The morning chorus is now discoverable from both the opened manifest and
+  passenger platform, but it previously offered atmosphere, roll-call answers,
+  or direct boarding without letting that shared memory visibly organize the
+  crowd.
+- Planned work:
+  - Add a `passenger_morning_chorus` choice that gathers passengers into the
+    third car.
+  - Reuse `passenger_gathered_boarding` and the existing
+    `passenger_helped_true_ending` payoff.
+  - Add focused path coverage for the new gathered-boarding continuation.
+  - Run focused tests, full health, and an actual CLI playthrough of the
+    changed route.
+- Risks:
+  - `passenger_morning_chorus` gains one more option. The choice is guarded by
+    `helped_passengers_gather` and routes to existing content, so it should
+    make the chorus more actionable without adding branch sprawl.
+- Status:
+  - Completed.
+  - Added `gather_after_passenger_morning_chorus`, setting
+    `helped_passengers_gather` and routing to `passenger_gathered_boarding`.
+  - Added focused route coverage through `passenger_helped_true_ending`.
+  - Focused story-path suite passed: 181 tests.
+  - `npm run health` passed: format check, TypeScript, 226 tests,
+    validation, and coverage playtest.
+  - Validation reports 141 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `listen_to_passenger_morning_chorus` ->
+    `gather_after_passenger_morning_chorus` ->
+    `pull_release_after_gathered_boarding`, ending at
+    `passenger_helped_true_ending` with score 295 and no objectives.
+  - The new continuation reads cleanly: the passengers remember practical
+    mornings, then that shared memory becomes a reason to board by looking
+    after one another.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether players use the new morning chorus gather
+    option or still choose direct boarding. If it is skipped, tune the label
+    before adding more optional late-passenger continuations.
+  - Commit/push remains for the outer loop or a less-restricted environment:
+    this sandbox can read `.git` but cannot create `.git/index.lock`.
+
 # Cycle 72 Passenger Platform Morning Chorus
 
 - Date: 2026-06-02
