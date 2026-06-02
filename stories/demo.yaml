@@ -1413,12 +1413,21 @@ scenes:
       - id: listen_to_echoed_manifest_from_boarding
         label: Listen as the boarded echoes answer Mara
         to: passenger_echoed_manifest_intercom
+        requires:
+          notFlag: heard_mara_goodbye
         effects:
           set:
             heard_mara_goodbye: true
       - id: reach_release_with_echoed_manifest
         label: Follow the familiar echoes to the emergency release
         to: train_car
+        requires:
+          notFlag: heard_mara_goodbye
+      - id: pull_release_after_echoed_boarding
+        label: Pull the release once the familiar echoes are aboard
+        to: passenger_echoed_true_ending
+        requires:
+          flag: heard_mara_goodbye
 
   passenger_threshold_boarding:
     routeImportance: optional
@@ -2014,6 +2023,18 @@ scenes:
           all:
             - flag: freed_mara
             - flag: read_passenger_manifest
+            - notFlag: heard_passenger_echoes
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+      - id: pull_release_after_echoed_boarding
+        label: Pull the release while the familiar echoes answer
+        to: passenger_echoed_true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_echoes
+            - flag: echoed_manifest_boarded
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
       - id: pull_release_after_reviewed_manifest_count
@@ -2411,6 +2432,14 @@ scenes:
       enough that Mara stops before reading the first name twice. "You heard
       them waiting," she says. "Now let the line hear them leaving."
     choices:
+      - id: pause_for_echoed_boarding
+        label: Pause long enough to watch the familiar echoes board
+        to: passenger_echoed_boarding
+        requires:
+          notFlag: echoed_manifest_boarded
+        effects:
+          set:
+            echoed_manifest_boarded: true
       - id: pull_release_after_echoed_manifest_goodbye
         label: Pull the release while the opened doors answer
         to: passenger_echoed_true_ending

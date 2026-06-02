@@ -1,3 +1,61 @@
+# Cycle 14 Echoed-Boarding Intercom Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `passenger_echoed_boarding`
+  when players hear the echoed-manifest train-car intercom before pausing to
+  watch the passengers board.
+- Why this matters: Fresh random evidence after Cycle 13 still missed
+  `passenger_echoed_boarding` in 200 ordinary runs, while coverage could reach
+  it. The remaining missed order was intercom-first: choosing the train-car
+  echoed-manifest goodbye set `heard_mara_goodbye`, which closed the
+  train-car boarding recovery before the earned boarding beat could appear.
+- Work completed:
+  - Added `pause_for_echoed_boarding` from
+    `passenger_echoed_manifest_intercom` to `passenger_echoed_boarding`, gated
+    by `notFlag: echoed_manifest_boarded`.
+  - Gated `listen_to_echoed_manifest_from_boarding` behind
+    `notFlag: heard_mara_goodbye` so intercom-first recovery does not loop back
+    into the same goodbye.
+  - Added `pull_release_after_echoed_boarding` so intercom-first players who
+    pause for boarding still finish at `passenger_echoed_true_ending` instead
+    of falling through to the generic manifest release.
+  - Split the generic train-car manifest release away from echoed-manifest
+    routes after `echoed_manifest_boarded`, preserving the echoed ending for
+    boarding-first players who return to the release before hearing the
+    intercom.
+  - Added regression coverage for the intercom-first route.
+- Evidence:
+  - Fresh pre-change random playtest: 200/200 ended, zero unfinished, but
+    `passenger_echoed_boarding` remained unvisited.
+  - Fresh pre-change coverage playtest: all 117 scenes visited, zero unfinished
+    coverage runs, confirming the scene was reachable but still weak in
+    ordinary play.
+  - Focused story-path suite passed: 122 tests.
+  - `npm run health` passed: format check, TypeScript, 166 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 117 scenes with zero unfinished runs; the
+    echoed passenger ending count rose to 81 in the coverage summary.
+  - Actual CLI play used `listen_to_echoed_manifest_intercom`,
+    `pause_for_echoed_boarding`, and `pull_release_after_echoed_boarding`,
+    reaching `passenger_echoed_true_ending` at score 299 with no active
+    objectives.
+- Playtest feedback:
+  - The new choice reads as a natural pause after Mara names the sounds the
+    player already heard, and the follow-up release preserves the earned
+    echoed-manifest ending instead of collapsing into the generic manifest
+    ending.
+  - Gating the boarding-to-intercom choice after the goodbye prevents a repeat
+    loop while still allowing the original boarding-first route to hear the
+    intercom.
+- Next step:
+  - Watch fresh random and blind-play evidence for whether
+    `passenger_echoed_boarding` now appears in ordinary routes. If it remains
+    rare, inspect player-facing choice labels around the passenger platform
+    before adding more branches.
+- Risks:
+  - This adds one optional choice to an already late-game intercom scene. It is
+    one-time and only appears on the passenger-echo route.
+
 # Cycle 13 Echoed-Boarding Train-Car Recovery
 
 - Date: 2026-06-02
@@ -27,10 +85,10 @@
   - Actual CLI play used `follow_echoes_back_to_boarding` after the
     morning-chorus train-car detour and reached `passenger_echoed_true_ending`
     at score 303 with no active objectives.
-  - `npm run ai:cycle` wrote ignored evidence artifacts, then the nested
-    `codex exec` recursively started another `npm run ai:cycle`; I terminated
-    that process tree to avoid an indefinite loop. No tracked files were
-    changed by the nested run.
+  - `npm run ai:cycle` wrote ignored evidence artifacts, but the nested
+    `codex exec` failed to initialize the in-process app-server client because
+    this environment reports a read-only filesystem while updating PATH. No
+    tracked files were changed by the nested run.
 - Playtest feedback:
   - The new label and scene text read as a natural recovery from train-car
     hesitation: the echoes are already aboard, but the player can still pause
