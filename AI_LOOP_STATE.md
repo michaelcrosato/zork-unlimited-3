@@ -1,3 +1,47 @@
+# Cycle 9 Manifest Thumbprint Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve discoverability for
+  `mara_manifest_thumbprint_intercom` and
+  `passenger_manifest_thumbprint_true_ending`.
+- Why this matters: Latest cycle evidence kept core metrics healthy but still
+  under-sampled the manifest-thumbprint payoff in normal random play. The
+  thread was already earned when players watched Mara open the manifest, but
+  returning to `passengers_released` could strand that thread behind the older
+  handoff scene.
+- Work completed:
+  - Added `touch_manifest_thumbprint_from_opened_doors`, gated by
+    `saw_mara_manifest_handoff` and `notFlag: read_manifest_thumbprint`, so
+    players can resume Mara's torn-thumbprint clue after returning to the opened
+    doors.
+  - Added `carry_manifest_thumbprint_from_opened_doors`, gated by the same
+    handoff plus `read_manifest_thumbprint` and `notFlag: heard_mara_goodbye`,
+    so players who touched the thumbprint and returned can still carry the oath
+    into the third-car intercom.
+  - Preserved the existing direct thumbprint route, generic boarding route, and
+    return route.
+  - Added regression coverage for the recovery path through
+    `passenger_manifest_thumbprint_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 117 tests.
+  - Manual CLI play used `touch_manifest_thumbprint_from_opened_doors` and
+    `carry_manifest_thumbprint_from_opened_doors`, reaching
+    `passenger_manifest_thumbprint_true_ending` at 100/100 with no active
+    objectives.
+  - `npm run health` passed: format check, TypeScript, 161 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.52, and 1237 max-score runs.
+  - `npm run ai:cycle` passed; MCP validation stayed clean, actual MCP play
+    reached `true_ending` at 100/100, and the adaptive route reached
+    `passenger_answered_true_ending` at 100/100.
+- Risks:
+  - `passengers_released` has more context-sensitive choices after the player
+    watches Mara open the manifest. The new choices are gated behind that prior
+    action and are not visible in the first opened-doors choice set.
+
 # Cycle 6 Lunch-Tin Roster Boarding Discovery
 
 - Date: 2026-06-02

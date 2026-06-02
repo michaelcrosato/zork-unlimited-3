@@ -1036,6 +1036,27 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+      - id: touch_manifest_thumbprint_from_opened_doors
+        label: Touch Mara's torn thumbprint before boarding
+        to: mara_manifest_thumbprint
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - notFlag: read_manifest_thumbprint
+        effects:
+          set:
+            read_manifest_thumbprint: true
+      - id: carry_manifest_thumbprint_from_opened_doors
+        label: Carry Mara's thumbprint oath to the third car
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_to_passenger_answers
         label: Listen as the passengers answer their names
         to: passenger_answers
