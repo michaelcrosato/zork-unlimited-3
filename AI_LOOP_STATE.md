@@ -1,3 +1,95 @@
+# Cycle 47 Direct Gathered-Passenger Boarding Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_gathered_boarding`,
+  `passenger_gathered_intercom`, and `passenger_helped_true_ending` easier to
+  discover from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 47 random/coverage evidence.
+  Coverage reaches every scene, but random samples missed the gathered
+  passenger boarding and helped-passenger payoff. The opened-manifest hub
+  already describes shoulders shifting to make room, so giving that movement a
+  direct action should make the existing route visible without requiring a
+  detour through answered-name content.
+- Planned work:
+  - Add one direct `passengers_released` choice into the existing gathered
+    passenger boarding branch.
+  - Preserve existing count, handoff, echo, keepsake, mitten, lunch-tin,
+    threshold, room-making, answered-passenger, morning, and direct boarding
+    routes.
+  - Add regression coverage proving the hub route reaches
+    `passenger_gathered_boarding`, `passenger_gathered_intercom`, and
+    `passenger_helped_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because it reuses an existing scene sequence and appears alongside the
+    already described passenger movement toward the third car.
+- Status:
+  - In progress.
+
+# Cycle 43 Direct Roll-Call Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_roll_call_epilogue` and
+  `passenger_roll_call_true_ending` more naturally discoverable from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 43 random/coverage evidence.
+  Coverage reaches every scene, but random samples missed
+  `passenger_roll_call_true_ending` and related gathered-passenger scenes. Once
+  players help the opened passengers gather, a final roll call is a readable
+  next action and should not require first choosing a generic intercom listen
+  beat.
+- Planned work:
+  - Add one direct `passenger_gathered_boarding` choice into the existing
+    final roll-call epilogue.
+  - Preserve the gathered intercom and direct helped-passenger release routes.
+  - Add regression coverage proving the gathered boarding route reaches
+    `passenger_roll_call_epilogue` and `passenger_roll_call_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The gathered boarding scene gains one more optional action. This is
+    acceptable because the action reuses an existing payoff and appears only
+    after the player has already committed to helping the passengers gather.
+- Status:
+  - Added `help_opened_passengers_gather` from `passengers_released` directly
+    to `passenger_gathered_boarding`, setting `helped_passengers_gather`.
+  - Kept the gathered boarding beat broad by exposing both the existing
+    helped-passenger release and a final-roll-call continuation to
+    `passenger_roll_call_true_ending`.
+  - Updated the opened-manifest hub choice-order coverage and added regression
+    coverage for the direct route through `passenger_gathered_boarding`,
+    `passenger_gathered_intercom`, `passenger_helped_true_ending`, and the
+    optional `passenger_roll_call_true_ending` payoff.
+  - Focused story-path suite passed: 168 tests.
+  - `npm run health` passed: format check, TypeScript, 212 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_gathered_boarding`,
+    `passenger_gathered_intercom`, `passenger_helped_true_ending`, and
+    `passenger_roll_call_true_ending`, with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `help_opened_passengers_gather` ->
+    `listen_to_gathered_passengers_from_boarding` ->
+    `pull_release_after_gathered_intercom`, ending at
+    `passenger_helped_true_ending` with score 305 and no objectives.
+- Playtest feedback:
+  - The direct hub action reads naturally because the hub already describes the
+    opened passengers shifting together toward the third car.
+  - The boarding scene now gives a clear choice between releasing once everyone
+    is ready and taking the optional final roll-call beat.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether the gathered-passenger and
+    final-roll-call passenger payoffs appear more often in normal play. If
+    hard issues remain absent, continue with remaining low-random intercom
+    payoffs such as `mara_last_dispatch_intercom` or
+    `passenger_conductor_transfer_proof`.
+
 # Cycle 42 Opened Manifest Echo Discovery
 
 - Date: 2026-06-02
