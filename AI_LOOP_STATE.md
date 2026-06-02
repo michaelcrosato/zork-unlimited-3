@@ -1,3 +1,53 @@
+# Cycle 24 Direct HOME-Reflection Loss Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `lost_ending` without
+  restoring accidental late HOME-sign failure pressure.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  and the supplied Cycle 24 evidence showed healthy completion and full
+  coverage while the 100-run random sample missed `lost_ending`. The prior
+  HOME-sign recovery pass made the final grip state fairer, so this cycle
+  should make the bad ending easier to find only through an explicit exploratory
+  choice.
+- Planned work:
+  - Add a clear direct failure choice from `home_sign_echo` to `lost_ending`.
+  - Keep safe escape, Mara-listening, and final recovery choices ahead of the
+    failure choice.
+  - Extend the HOME-sign regression test for the new choice order and direct
+    lost-ending route.
+  - Validate, run health, and play the changed route through the CLI.
+- Risks:
+  - Random bad-ending pressure may rise slightly. This is acceptable because
+    the route requires ignoring the sign warning first, and the unsafe choice is
+    explicitly labeled as letting the map fall.
+- Work completed:
+  - Added `step_into_home_reflection` from `home_sign_echo` to `lost_ending`,
+    setting `surrendered_home_to_reflection`.
+  - Updated story-path regression coverage for the added choice and resulting
+    `lost_ending`.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - CLI validation passed with 136 reachable scenes, 27 endings, and no
+    warnings.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes, including `lost_ending`,
+    with no unvisited scenes.
+  - A 250-run random playtest ended all 250 runs and reached `lost_ending` 3
+    times, with no unfinished runs.
+  - Actual CLI play followed `look_at_sign` -> `stare_at_home` ->
+    `step_into_home_reflection`, ending at `lost_ending` with score 39 and
+    `surrendered_home_to_reflection` set.
+- Playtest feedback:
+  - The new route makes the failure legible as a chosen surrender to the HOME
+    reflection after a prior warning, not a surprise punishment.
+  - Safe map escape and Mara-listening choices still appear before the unsafe
+    reflection choice, so recovery remains more prominent than failure.
+- Next step:
+  - Watch future blind feedback for whether the HOME-sign branch now feels too
+    punitive. If it does, keep the direct route but soften the label or add one
+    more line of warning rather than hiding the ending again.
+
 # Cycle 23 HOME-Sign Grip Recovery
 
 - Date: 2026-06-02

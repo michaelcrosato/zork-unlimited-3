@@ -3702,6 +3702,12 @@ scenes:
             met_mara: true
             knows_token_location: true
             knows_badge_proof: true
+      - id: step_into_home_reflection
+        label: Step into the HOME reflection and let the map fall
+        to: lost_ending
+        effects:
+          set:
+            surrendered_home_to_reflection: true
       - id: let_home_sign_finish
         label: Let HOME finish spelling itself
         to: home_sign_grip
