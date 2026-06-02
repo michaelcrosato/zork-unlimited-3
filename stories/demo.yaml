@@ -1148,6 +1148,18 @@ scenes:
             - flag: heard_passenger_echoes
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
+      - id: hold_third_car_threshold
+        label: Hold the third-car threshold while the passengers board
+        to: passenger_threshold_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: board_third_car_with_passengers
         label: Board the third car and reach the release
         to: train_car
@@ -1167,6 +1179,19 @@ scenes:
     choices:
       - id: reach_release_with_echoed_manifest
         label: Follow the familiar echoes to the emergency release
+        to: train_car
+
+  passenger_threshold_boarding:
+    text: >
+      You stand at the third-car threshold instead of rushing for the release.
+      The opened passengers cross one by one with the practical care of people
+      remembering how to board: newspaper folded flat, lunch tin held clear of
+      the door, child's mitten tapping the rail before the next person moves.
+      Mara does not count over them. She lets the threshold prove they are
+      becoming a crowd.
+    choices:
+      - id: reach_release_after_threshold_boarding
+        label: Reach the release after the last passenger clears the threshold
         to: train_car
 
   passenger_newspaper_memory:
@@ -1529,6 +1554,22 @@ scenes:
             - flag: freed_mara
             - flag: read_passenger_manifest
             - flag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: listen_to_threshold_manifest_intercom
+        label: Listen as the threshold holds for every passenger
+        to: passenger_threshold_intercom
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: held_passenger_threshold
             - notFlag: heard_mara_goodbye
             - notFlag: saw_mara_manifest_handoff
             - notFlag: heard_passenger_answers
@@ -2012,6 +2053,19 @@ scenes:
       - id: pull_release_after_echoed_manifest_goodbye
         label: Pull the release while the opened doors answer
         to: passenger_echoed_true_ending
+
+  passenger_threshold_intercom:
+    text: >
+      The third-car speaker stays open on the threshold you held. Mara names
+      the first passenger, then stops when the doorway answers in footsteps
+      instead: newspaper, lunch tin, mitten, umbrella, breath. The line tries
+      to make the pause into a count, but the passengers keep moving through
+      it together. "That is enough proof," Mara says. "Pull the release before
+      the threshold remembers how to close."
+    choices:
+      - id: pull_release_after_threshold_manifest
+        label: Pull the release while the threshold stays open
+        to: passenger_true_ending
 
   passenger_counted_manifest_intercom:
     text: >
