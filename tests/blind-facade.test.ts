@@ -5,7 +5,12 @@ import { maskObservation, renderMaskedScene } from "../src/blind-facade.js";
 function sampleObservation(): Observation {
   return {
     story: { id: "demo", title: "Demo" },
-    scene: { id: "secret_room", text: "A heavy door blocks the way.", ending: false },
+    scene: {
+      id: "secret_room",
+      text: "A heavy door blocks the way.",
+      ending: false,
+      routeImportance: "optional"
+    },
     choices: [
       { id: "open_door", label: "Open the door", to: "hidden_vault" },
       { id: "flee", label: "Flee back outside", to: "entrance" }

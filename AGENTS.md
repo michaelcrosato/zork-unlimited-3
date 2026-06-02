@@ -92,8 +92,8 @@ Two tiers of testing run independently:
 - The **main dev loop** (`./loop.sh`) keeps its single MCP playthrough as a fast crash/bug smoke
   gate. Unchanged.
 - A **separate parallel loop** (`./playtest_loop.sh`) does deep, brutally-honest _blind_ testing:
-  each session plays the game with a rotating persona through a **masked** interface
-  (`src/blind-facade.ts` hides internal ids, choice destinations, flags, and the achievement model),
+  each session plays the game with a rotating persona through the engine's **player-view** interface
+  (`observePlayer` exposes only visible text, numbered choices, score, and optional objectives),
   optionally on a rotating pool of model families (`AI_PLAYTEST_CMDS`). Configured model runs make
   per-turn choices from the masked screen; invalid decision JSON falls back to the built-in persona
   heuristic and is counted in the record. It writes a verbose log to `ai-runs/playtest/`
@@ -122,6 +122,8 @@ loop; it only writes `PLAYTEST_DIGEST.md` and `playtest-feedback/sessions.jsonl`
 ## Development Rules
 
 - Keep story data in `stories/*.yaml`.
+- Keep objective rules, route importance, and ending classification in story metadata; do not
+  reintroduce side lists for ideal endings or route priority.
 - Keep generated saves/transcripts out of commits.
 - Prefer small, testable improvements over broad rewrites.
 - Add or update tests when changing engine behavior, validation, playtest strategy, or critical story paths.

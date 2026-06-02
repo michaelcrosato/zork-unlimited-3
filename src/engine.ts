@@ -1,4 +1,12 @@
-import { Choice, Condition, Effects, GameState, Story } from "./schema.js";
+import {
+  Choice,
+  Condition,
+  Effects,
+  EndingType,
+  GameState,
+  RouteImportance,
+  Story
+} from "./schema.js";
 import { scoreState } from "./score.js";
 
 export interface Observation {
@@ -10,6 +18,10 @@ export interface Observation {
     id: string;
     text: string;
     ending: boolean;
+    routeImportance: RouteImportance;
+    endingType?: EndingType;
+    endingGroup?: string;
+    endingFamily?: string;
   };
   choices: Array<{
     id: string;
@@ -33,6 +45,30 @@ export interface Observation {
   objectives: string[];
 }
 
+export interface PlayerObservation {
+  story: {
+    title: string;
+  };
+  scene: {
+    text: string;
+    ending: boolean;
+    routeImportance: RouteImportance;
+  };
+  choices: Array<{
+    index: number;
+    label: string;
+  }>;
+  score: {
+    score: number;
+    maxScore: number;
+  };
+  objectives?: string[];
+}
+
+export interface PlayerObservationOptions {
+  includeObjectives?: boolean;
+}
+
 export function initialState(story: Story): GameState {
   return {
     storyId: story.id,
@@ -54,7 +90,11 @@ export function observe(story: Story, state: GameState): Observation {
     scene: {
       id: state.currentScene,
       text: scene.text,
-      ending: scene.ending
+      ending: scene.ending,
+      routeImportance: scene.routeImportance ?? "optional",
+      endingType: scene.endingType,
+      endingGroup: scene.endingGroup,
+      endingFamily: scene.endingFamily
     },
     choices: scene.choices
       .filter((choice) => canChoose(state, choice))
@@ -67,9 +107,39 @@ export function observe(story: Story, state: GameState): Observation {
       flags: { ...state.flags },
       inventory: [...state.inventory]
     },
-    score: scoreState(state),
-    objectives: scene.ending ? [] : getObjectives(state)
+    score: scoreState(state, story),
+    objectives: scene.ending ? [] : getObjectives(story, state)
   };
+}
+
+export function observePlayer(
+  story: Story,
+  state: GameState,
+  options: PlayerObservationOptions = {}
+): PlayerObservation {
+  const raw = observe(story, state);
+  const player: PlayerObservation = {
+    story: { title: raw.story.title },
+    scene: {
+      text: raw.scene.text,
+      ending: raw.scene.ending,
+      routeImportance: raw.scene.routeImportance
+    },
+    choices: raw.choices.map((choice, index) => ({
+      index,
+      label: choice.label
+    })),
+    score: {
+      score: raw.score.score,
+      maxScore: raw.score.maxScore
+    }
+  };
+
+  if (options.includeObjectives) {
+    player.objectives = [...raw.objectives];
+  }
+
+  return player;
 }
 
 export function choose(story: Story, state: GameState, choiceId: string): GameState {
@@ -146,87 +216,9 @@ function asArray(value: string | string[] | undefined): string[] {
   return Array.isArray(value) ? value : [value];
 }
 
-function getObjectives(state: GameState): string[] {
-  const objectives: string[] = [];
-  const has = (item: string) => state.inventory.includes(item);
-  const flag = (name: string) => state.flags[name] === true;
-  const hasReadSignalRecords =
-    flag("inspected_signal_ledger") ||
-    flag("read_passenger_manifest") ||
-    flag("heard_passenger_echoes");
-
-  if (!has("lantern") && !flag("lights_on")) {
-    objectives.push("Find a reliable way to see in the underpass.");
-  }
-
-  if (flag("promised_mara") && !has("map")) {
-    objectives.push("Recover the marked Platform 13 map before boarding.");
-  }
-
-  if (!flag("knows_platform")) {
-    objectives.push("Find out where the chalk arrows and old line are leading.");
-  }
-
-  if (
-    flag("knows_platform") &&
-    !flag("knows_release") &&
-    !flag("freed_mara") &&
-    !hasReadSignalRecords &&
-    !(has("map") && has("token") && has("fuse") && has("badge"))
-  ) {
-    objectives.push("Learn how to survive the driverless train before boarding it.");
-  }
-
-  if (flag("knows_platform") && !flag("promised_mara") && !has("map")) {
-    objectives.push("Recover the marked Platform 13 map before boarding.");
-  }
-
-  if (
-    (flag("knows_shutdown") ||
-      flag("met_mara") ||
-      flag("knows_release") ||
-      flag("read_mara_file") ||
-      flag("knows_token_location")) &&
-    !has("token")
-  ) {
-    objectives.push("Search the stopped tunnel clock for the signal booth token.");
-  }
-
-  if (flag("knows_platform") && !has("fuse")) {
-    objectives.push("Find a way to power the platform gate control.");
-  }
-
-  if (
-    (has("fuse") || flag("met_mara") || flag("read_mara_file") || flag("knows_badge_proof")) &&
-    !has("badge")
-  ) {
-    objectives.push("Find proof of Mara Vale's identity before clearing her name.");
-  }
-
-  if (has("token") && has("fuse") && !flag("platform_lit")) {
-    objectives.push("Restore power at Platform 13 and try the token slot.");
-  }
-
-  if (flag("platform_lit") && has("token") && !flag("freed_mara")) {
-    if (
-      flag("inspected_signal_ledger") &&
-      has("map") &&
-      has("badge") &&
-      !flag("read_passenger_manifest")
-    ) {
-      objectives.push("Check the kept-passenger manifest before deciding whose names to clear.");
-    } else if (flag("inspected_signal_ledger") && has("map") && has("badge")) {
-      objectives.push("Clear Mara's ledger entry with her badge proof.");
-    } else {
-      objectives.push("Use the signal booth to resolve Mara's ledger entry.");
-    }
-  }
-
-  if (flag("freed_mara")) {
-    objectives.push("Pull the emergency release in the third car.");
-  } else if (has("map") && !(has("token") && has("fuse") && has("badge"))) {
-    objectives.push("Use the marked map if you need a safe way out.");
-  }
-
-  return objectives.slice(0, 4);
+export function getObjectives(story: Story, state: GameState): string[] {
+  return (story.objectives ?? [])
+    .filter((objective) => evaluateCondition(state, objective.requires))
+    .map((objective) => objective.text)
+    .slice(0, 4);
 }

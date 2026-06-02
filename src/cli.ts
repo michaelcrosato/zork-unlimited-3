@@ -72,7 +72,8 @@ async function state(args: string[]): Promise<void> {
 async function score(args: string[]): Promise<void> {
   const savePath = required(option(args, "--save"), "--save");
   const save = await readSave(savePath);
-  print(scoreState(save.state), hasFlag(args, "--json"));
+  const story = await loadStory(save.storyPath);
+  print(scoreState(save.state, story), hasFlag(args, "--json"));
 }
 
 async function transcript(args: string[]): Promise<void> {

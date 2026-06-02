@@ -67,9 +67,9 @@ describe("AI loop restart detection", () => {
     };
 
     expect(idealEndingRate(summary)).toBe(0.97);
-    expect(formatIdealEndingBreakdown(summary)).toBe(
-      "Mara: 37 (Core: 37 (true_ending: 27, mara_handoff_true_ending: 10)); Passengers: 60 (Core: 34 (passenger_true_ending: 22, passenger_helped_true_ending: 5, passenger_roll_call_true_ending: 3, passenger_lunch_tin_true_ending: 4), Manifest: 6 (passenger_manifest_true_ending: 1, passenger_manifest_handoff_true_ending: 1, passenger_manifest_thumbprint_true_ending: 1, passenger_echoed_true_ending: 1, passenger_counted_true_ending: 1, passenger_reviewed_count_true_ending: 1), Roll call: 11 (passenger_answered_true_ending: 2, passenger_answered_boarding_true_ending: 1, passenger_answered_handoff_true_ending: 1, passenger_conductor_true_ending: 6, passenger_conductor_transfer_true_ending: 0, passenger_conductor_count_true_ending: 1), Keepsakes: 9 (passenger_keepsake_true_ending: 3, passenger_newspaper_true_ending: 2, passenger_mitten_true_ending: 4))"
-    );
+    expect(formatIdealEndingBreakdown(summary)).toContain("Ideal: 97");
+    expect(formatIdealEndingBreakdown(summary)).toContain("true_ending: 27");
+    expect(formatIdealEndingBreakdown(summary)).not.toContain("good_ending");
   });
 
   it("allows exploratory MCP routes enough steps for late-game detours", () => {

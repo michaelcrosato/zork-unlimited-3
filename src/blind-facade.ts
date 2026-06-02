@@ -1,4 +1,4 @@
-import type { Observation } from "./engine.js";
+import type { Observation, PlayerObservation } from "./engine.js";
 
 /**
  * A masked view of a scene that is safe to show a *blind* playtester.
@@ -37,23 +37,68 @@ export interface MaskOptions {
 }
 
 export function maskObservation(observation: Observation, options: MaskOptions = {}): MaskedView {
-  const choiceIds = observation.choices.map((choice) => choice.id);
+  const player = playerObservationFromRaw(observation, options);
+  return {
+    masked: playerToMaskedScene(player),
+    choiceIds: observation.choices.map((choice) => choice.id)
+  };
+}
+
+export function maskPlayerObservation(
+  observation: PlayerObservation,
+  choiceIds: string[]
+): MaskedView {
+  return {
+    masked: playerToMaskedScene(observation),
+    choiceIds: [...choiceIds]
+  };
+}
+
+function playerObservationFromRaw(
+  observation: Observation,
+  options: MaskOptions
+): PlayerObservation {
+  const player: PlayerObservation = {
+    story: { title: observation.story.title },
+    scene: {
+      text: observation.scene.text,
+      ending: observation.scene.ending,
+      routeImportance: "optional"
+    },
+    choices: observation.choices.map((choice, index) => ({
+      index,
+      label: choice.label
+    })),
+    score: {
+      score: observation.score.score,
+      maxScore: observation.score.maxScore
+    }
+  };
+
+  if (options.includeObjectives) {
+    player.objectives = [...observation.objectives];
+  }
+
+  return player;
+}
+
+function playerToMaskedScene(observation: PlayerObservation): MaskedScene {
   const masked: MaskedScene = {
     text: observation.scene.text,
     ending: observation.scene.ending,
-    choices: observation.choices.map((choice, index) => ({
-      index,
+    choices: observation.choices.map((choice) => ({
+      index: choice.index,
       label: choice.label
     })),
     score: observation.score.score,
     maxScore: observation.score.maxScore
   };
 
-  if (options.includeObjectives) {
+  if (observation.objectives) {
     masked.objectives = [...observation.objectives];
   }
 
-  return { masked, choiceIds };
+  return masked;
 }
 
 /**

@@ -136,7 +136,8 @@ server.registerTool(
   },
   async ({ savePath }) => {
     const save = await readSave(savePath);
-    return jsonResult(scoreState(save.state));
+    const story = await loadStory(save.storyPath);
+    return jsonResult(scoreState(save.state, story));
   }
 );
 

@@ -98,7 +98,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         steps: current.steps,
         path: current.path,
         readablePath: describePath(story, current.path),
-        ...scoreOnly(current.state)
+        ...scoreOnly(story, current.state)
       });
     }
 
@@ -112,7 +112,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
         steps: current.steps,
         path: current.path,
         readablePath: describePath(story, current.path),
-        ...scoreOnly(current.state)
+        ...scoreOnly(story, current.state)
       });
       continue;
     }
@@ -138,7 +138,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
           steps,
           path,
           readablePath: describePath(story, path),
-          ...scoreOnly(next)
+          ...scoreOnly(story, next)
         });
       }
 
@@ -220,7 +220,7 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
   const unvisitedScenes = Object.keys(story.scenes)
     .filter((sceneId) => !visited.has(sceneId))
     .sort();
-  const maxScore = runs[0]?.maxScore ?? scoreState(initialState(story)).maxScore;
+  const maxScore = runs[0]?.maxScore ?? scoreState(initialState(story), story).maxScore;
   const bestScore = runs.reduce((best, run) => Math.max(best, run.score), 0);
   const averageScore =
     runs.length > 0
@@ -260,7 +260,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
         steps: step,
         path,
         readablePath: describePath(story, path),
-        ...scoreOnly(state)
+        ...scoreOnly(story, state)
       };
     }
 
@@ -280,7 +280,7 @@ function runOne(story: Story, run: number, maxSteps: number): PlaytestRun {
     steps: maxSteps,
     path,
     readablePath: describePath(story, path),
-    ...scoreOnly(state)
+    ...scoreOnly(story, state)
   };
 }
 
@@ -302,16 +302,16 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
         steps: step,
         path,
         readablePath: describePath(story, path),
-        ...scoreOnly(state)
+        ...scoreOnly(story, state)
       };
     }
 
-    const currentScore = scoreState(state).score;
+    const currentScore = scoreState(state, story).score;
     const ranked = observation.choices
       .map((choice) => {
         const next = choose(story, state, choice.id);
         const nextObservation = observe(story, next);
-        const nextScore = scoreState(next).score;
+        const nextScore = scoreState(next, story).score;
         const signature = stateSignature(next);
         const visits = seen.get(signature) ?? 0;
         return {
@@ -319,7 +319,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
           next,
           rank:
             (nextScore - currentScore) * 100 +
-            scoreDestination(nextObservation.scene.id) +
+            scoreDestination(story, nextObservation.scene.id) +
             scoreChoiceId(choice.id) +
             countNewItems(state.inventory, next.inventory) * 30 +
             countNewFlags(state.flags, next.flags) * 20 -
@@ -345,7 +345,7 @@ function runGoalOriented(story: Story, run: number, maxSteps: number): PlaytestR
     steps: maxSteps,
     path,
     readablePath: describePath(story, path),
-    ...scoreOnly(state)
+    ...scoreOnly(story, state)
   };
 }
 
@@ -362,32 +362,13 @@ function describePath(story: Story, path: string[]): string[] {
   });
 }
 
-function scoreDestination(sceneId: string): number {
-  if (
-    sceneId === "true_ending" ||
-    sceneId === "mara_handoff_true_ending" ||
-    sceneId === "passenger_true_ending" ||
-    sceneId === "passenger_answered_true_ending" ||
-    sceneId === "passenger_answered_boarding_true_ending" ||
-    sceneId === "passenger_counted_true_ending" ||
-    sceneId === "passenger_reviewed_count_true_ending" ||
-    sceneId === "passenger_manifest_true_ending" ||
-    sceneId === "passenger_manifest_handoff_true_ending" ||
-    sceneId === "passenger_manifest_thumbprint_true_ending" ||
-    sceneId === "passenger_answered_handoff_true_ending" ||
-    sceneId === "passenger_echoed_true_ending" ||
-    sceneId === "passenger_helped_true_ending" ||
-    sceneId === "passenger_roll_call_true_ending" ||
-    sceneId === "passenger_lunch_tin_true_ending" ||
-    sceneId === "passenger_conductor_true_ending" ||
-    sceneId === "passenger_conductor_transfer_true_ending" ||
-    sceneId === "passenger_conductor_count_true_ending" ||
-    sceneId === "passenger_keepsake_true_ending" ||
-    sceneId === "passenger_newspaper_true_ending" ||
-    sceneId === "passenger_mitten_true_ending"
-  ) {
-    return 1000;
-  }
+function scoreDestination(story: Story, sceneId: string): number {
+  const endingType = story.scenes[sceneId]?.endingType;
+  if (endingType === "ideal") return 1000;
+  if (endingType === "good") return 200;
+  if (endingType === "escape") return 50;
+  if (endingType === "bad") return -400;
+  if (sceneId === "true_ending" || sceneId.endsWith("_true_ending")) return 1000;
   if (sceneId === "good_ending") return 200;
   if (sceneId === "escape_ending" || sceneId === "warned_escape_ending") return 50;
   if (sceneId === "bad_ending" || sceneId === "lost_ending") return -400;
@@ -419,8 +400,8 @@ function scoreChoiceId(choiceId: string): number {
   return 0;
 }
 
-function scoreOnly(state: GameState): { score: number; maxScore: number } {
-  const score = scoreState(state);
+function scoreOnly(story: Story, state: GameState): { score: number; maxScore: number } {
+  const score = scoreState(state, story);
   return { score: score.score, maxScore: score.maxScore };
 }
 

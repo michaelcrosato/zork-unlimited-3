@@ -1,4 +1,4 @@
-import { Choice, Condition, Story } from "./schema.js";
+import { Choice, Condition, ObjectiveRule, Story } from "./schema.js";
 
 export interface ValidationResult {
   ok: boolean;
@@ -16,6 +16,7 @@ export function validateStory(story: Story): ValidationResult {
   const warnings: string[] = [];
   const sceneIds = new Set(Object.keys(story.scenes));
   const knownReferences = collectKnownReferences(story);
+  const endingGroupTypes = new Map<string, Set<string>>();
 
   if (!sceneIds.has(story.start)) {
     errors.push(`Start scene '${story.start}' does not exist`);
@@ -25,6 +26,26 @@ export function validateStory(story: Story): ValidationResult {
     const choiceIds = new Set<string>();
     if (!scene.ending && scene.choices.length === 0) {
       warnings.push(`Scene '${sceneId}' is a non-ending dead end`);
+    }
+    if (!scene.routeImportance) {
+      warnings.push(`Scene '${sceneId}' is missing routeImportance metadata`);
+    }
+    if (scene.ending && !scene.endingType) {
+      warnings.push(`Ending scene '${sceneId}' is missing endingType metadata`);
+    }
+    if (!scene.ending && scene.endingType) {
+      errors.push(`Scene '${sceneId}' has endingType but is not marked as an ending`);
+    }
+    if (scene.endingType === "ideal" && !scene.endingGroup) {
+      errors.push(`Ideal ending '${sceneId}' is missing endingGroup metadata`);
+    }
+    if (scene.endingGroup && !scene.endingType) {
+      errors.push(`Scene '${sceneId}' has endingGroup but no endingType`);
+    }
+    if (scene.endingGroup && scene.endingType) {
+      const types = endingGroupTypes.get(scene.endingGroup) ?? new Set<string>();
+      types.add(scene.endingType);
+      endingGroupTypes.set(scene.endingGroup, types);
     }
 
     for (const choice of scene.choices) {
@@ -51,6 +72,19 @@ export function validateStory(story: Story): ValidationResult {
     if (!reachable.has(sceneId)) {
       warnings.push(`Scene '${sceneId}' is unreachable`);
     }
+    if (!reachable.has(sceneId) && story.scenes[sceneId]?.routeImportance === "main") {
+      errors.push(`Main-path scene '${sceneId}' is unreachable`);
+    }
+  }
+
+  for (const objective of story.objectives ?? []) {
+    validateObjectiveReferences(knownReferences, objective, warnings);
+  }
+
+  for (const [group, types] of endingGroupTypes) {
+    if (types.size > 1) {
+      errors.push(`Ending group '${group}' mixes ending types: ${[...types].sort().join(", ")}`);
+    }
   }
 
   return {
@@ -63,6 +97,27 @@ export function validateStory(story: Story): ValidationResult {
       reachable: reachable.size
     }
   };
+}
+
+function validateObjectiveReferences(
+  knownReferences: KnownReferences,
+  objective: ObjectiveRule,
+  warnings: string[]
+): void {
+  for (const item of collectObjectiveConditionValues(objective.requires, "item")) {
+    if (!knownReferences.items.has(item)) {
+      warnings.push(
+        `Objective '${objective.text}' references item '${item}', but no choice adds it`
+      );
+    }
+  }
+  for (const flag of collectObjectiveConditionValues(objective.requires, "flag")) {
+    if (!knownReferences.flags.has(flag)) {
+      warnings.push(
+        `Objective '${objective.text}' references flag '${flag}', but no choice sets it`
+      );
+    }
+  }
 }
 
 export function getReachableScenes(story: Story): Set<string> {
@@ -137,6 +192,18 @@ function collectConditionValues(condition: Condition, key: "item" | "flag"): str
     return condition.all.flatMap((nested) => collectConditionValues(nested, key));
   if ("any" in condition)
     return condition.any.flatMap((nested) => collectConditionValues(nested, key));
+  return [];
+}
+
+function collectObjectiveConditionValues(condition: Condition, key: "item" | "flag"): string[] {
+  if (key === "item" && "item" in condition) return [condition.item];
+  if (key === "item" && "notItem" in condition) return [condition.notItem];
+  if (key === "flag" && "flag" in condition) return [condition.flag];
+  if (key === "flag" && "notFlag" in condition) return [condition.notFlag];
+  if ("all" in condition)
+    return condition.all.flatMap((nested) => collectObjectiveConditionValues(nested, key));
+  if ("any" in condition)
+    return condition.any.flatMap((nested) => collectObjectiveConditionValues(nested, key));
   return [];
 }
 

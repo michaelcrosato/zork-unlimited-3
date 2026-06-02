@@ -1,3 +1,77 @@
+# Cycle 2 Health Recovery And Conductor Discovery Addendum
+
+- Date: 2026-06-02
+- Main objective: Restore failing health checks from the metadata migration and
+  make `passenger_conductor_true_ending` easier to discover in normal play.
+- Why this matters: The cycle began with failing format, lint, and tests, and
+  prior random evidence reached the plain conductor ending only 2 times in 250
+  runs. A verified tree matters more than adding broad new content.
+- Work completed:
+  - Restored legacy objective guidance as a fallback when a story has no
+    `objectives` block, while keeping story-level objectives available.
+  - Made validation tolerate omitted objectives in lightweight stories.
+  - Restored the stable Mara/Passenger ideal-ending breakdown for callers that
+    do not pass story metadata.
+  - Added `ask_conductor_punch_from_answers`, a new answered-passenger choice
+    that routes through `passenger_conductor_punch_memory` before the conductor
+    intercom.
+  - Cleaned duplicate `routeImportance` keys on ending scenes.
+- Evidence:
+  - Focused tests passed:
+    `npm test -- tests/story-paths.test.ts tests/engine.test.ts tests/ai-loop.test.ts tests/ai-loop-metrics.test.ts tests/validate.test.ts`
+    with 128 tests.
+  - `npm run health` passed: formatting, TypeScript, 154 tests, clean story
+    validation, and coverage playtest.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 94.7, and 1025 max-score runs.
+  - Random 250-run playtest reached `passenger_conductor_true_ending` 11 times.
+  - Actual CLI play used `ask_conductor_punch_from_answers` and reached
+    `passenger_conductor_true_ending` with no remaining objectives or choices.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    reports `ai-runs/cycle-2026-06-02T05-32-20-106Z.md` and
+    `ai-runs/cycle-2026-06-02T05-32-20-106Z-prompt.md`.
+- Blocker:
+  - Commit/push is blocked in this sandbox because `.git` is read-only and Git
+    cannot create `.git/index.lock`. The verified dirty tree is ready for the
+    outer loop or a writable Git session to commit.
+
+# Cycle 2 Core Player-View And Story Metadata Contracts
+
+- Date: 2026-06-02
+- Main objective: Move blind-playtest assumptions into first-class engine and
+  story contracts: player-visible observations, declarative objectives, route
+  importance, and ending classification.
+- Why this matters: The blind-playtesting sidecar was useful enough to show
+  duplicated core assumptions. AFK loops need one source of truth for what
+  players can see, which objective hints can appear, how important a route is,
+  and which endings count as ideal.
+- Tasks:
+  - Add `observePlayer()` as the player-facing API and route blind playtesting
+    through it.
+  - Move objective rules from hardcoded engine checks into `stories/demo.yaml`.
+  - Annotate all demo scenes with route importance.
+  - Annotate all demo endings with `endingType`, `endingGroup`, and
+    `endingFamily` where relevant.
+  - Make scoring, playtest destination ranking, feedback consolidation, and
+    validation consume story metadata instead of duplicated side lists.
+  - Update docs so future loops preserve these contracts.
+- Risks:
+  - AI-loop summaries without story context use a naming fallback for legacy
+    summary objects; story-aware consumers now use metadata.
+- Status:
+  - Implemented and verified.
+  - `npm run health` passed: formatting, TypeScript, 156 tests, story validation,
+    and coverage playtest.
+  - Validation is clean with 117 reachable scenes, 26 endings, and no warnings.
+  - Coverage playtest visited all scenes, had zero unfinished runs, best score
+    100/100, average score 94.7, and 1025 max-score runs.
+- Playtest feedback:
+  - The metadata migration did not change route text. The next playable pass can
+    use the now-clean player-view and route metadata to prioritize blind feedback.
+- Next step:
+  - Run `npm run ai:cycle` and a manual route after the full migration, then
+    commit and push the verified milestone.
+
 # Cycle 1 Counted-Conductor Payoff
 
 - Date: 2026-06-02

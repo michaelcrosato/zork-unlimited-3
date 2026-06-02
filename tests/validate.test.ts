@@ -61,4 +61,45 @@ describe("validateStory", () => {
       "Choice 'start.open' requires flag 'missing_flag', but no choice sets it"
     );
   });
+
+  it("rejects ending groups that mix ending types", () => {
+    const story: Story = {
+      id: "ending-groups",
+      title: "Ending Groups",
+      start: "start",
+      objectives: [],
+      scenes: {
+        start: {
+          text: "Start",
+          ending: false,
+          routeImportance: "main",
+          choices: [
+            { id: "ideal", label: "Ideal", to: "ideal" },
+            { id: "bad", label: "Bad", to: "bad" }
+          ]
+        },
+        ideal: {
+          text: "Ideal",
+          ending: true,
+          routeImportance: "optional",
+          endingType: "ideal",
+          endingGroup: "Shared",
+          choices: []
+        },
+        bad: {
+          text: "Bad",
+          ending: true,
+          routeImportance: "optional",
+          endingType: "bad",
+          endingGroup: "Shared",
+          choices: []
+        }
+      }
+    };
+
+    const result = validateStory(story);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors).toContain("Ending group 'Shared' mixes ending types: bad, ideal");
+  });
 });

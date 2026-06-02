@@ -6,10 +6,16 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 
 - MCP-first autonomous maintenance loop with report, prompt, verification,
   commit, and push automation.
-- Haunted transit interactive-fiction story with 94 reachable scenes and 16
+- Haunted transit interactive-fiction story with 117 reachable scenes and 26
   endings.
 - Deterministic 100-point score model exposed through observations, CLI, MCP,
   and playtest summaries.
+- First-class player-view observations expose only player-visible text,
+  numbered choices, visible score, and optional objective hints; raw engine
+  observations remain available for trusted tooling.
+- Story metadata owns objective rules, route importance, and ending
+  classification so scoring, reports, validation, and blind playtesting share
+  one contract.
 - Score-guided goal self-play reaches the 100/100 true ending reliably; chaotic
   random self-play now discovers every scene in 250 runs but still rarely earns
   max score.
@@ -108,12 +114,12 @@ metrics and maintainer feedback.
 
 ## Blind Playtesting
 
-A separate, parallel loop runs _blind_ playtests: a rotating persona plays the game through a
-masked interface (no internal ids, choice destinations, flags, or score model) and produces
-structured, brutally-honest feedback. Configured model runs choose one turn at a time from that
-masked screen, with invalid decision JSON counted and safely falling back to the built-in persona
-heuristic. Every 24h the feedback is consolidated into `PLAYTEST_DIGEST.md`, which the autonomous
-coding agent reads when planning the next window.
+A separate, parallel loop runs _blind_ playtests: a rotating persona plays the game through the
+engine's player-view API (no internal ids, choice destinations, flags, or achievement model) and
+produces structured, brutally-honest feedback. Configured model runs choose one turn at a time from
+that masked screen, with invalid decision JSON counted and safely falling back to the built-in
+persona heuristic. Every 24h the feedback is consolidated into `PLAYTEST_DIGEST.md`, which the
+autonomous coding agent reads when planning the next window.
 
 ```bash
 npm run playtest:session -- --persona goal_seeker --variant no_hints   # one blind run
@@ -166,9 +172,11 @@ Available tools:
 6. Read `transcript` output for playtest feedback.
 7. Run `playtest` to sample paths automatically and inspect ending/scene coverage.
 
-Observations include a derived `objectives` array. These are not stored in saves;
-they are generated from the current flags and inventory so agents have lightweight
-guidance without the story needing a separate quest log.
+Raw observations include a derived `objectives` array for trusted tools.
+Player-facing observations use `observePlayer(story, state, { includeObjectives })`
+and omit scene ids, choice ids, destinations, flags, inventory, and achievement
+internals. Objective hints are generated from declarative story rules, not
+hardcoded engine checks, and are never stored in saves.
 
 ## Story Format
 
@@ -180,6 +188,7 @@ title: Lantern in the Underpass
 start: entrance
 scenes:
   entrance:
+    routeImportance: main
     text: You stand at the mouth of a rain-dark underpass.
     choices:
       - id: take_lantern
@@ -189,4 +198,13 @@ scenes:
           addItem: lantern
           set:
             has_light: true
+objectives:
+  - text: Find a reliable way to see in the underpass.
+    requires:
+      all:
+        - notItem: lantern
+        - notFlag: lights_on
 ```
+
+Ending scenes can declare `endingType: bad|escape|good|ideal` plus
+`endingGroup`/`endingFamily` for scoring, reporting, and digest grouping.

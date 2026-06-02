@@ -4,6 +4,36 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-02 - Core Player-View Metadata Contracts
+
+### Current Plan
+
+- Main objective: Move blind-playtest assumptions into engine/story contracts.
+- Why this matters: Player visibility, objective hints, route priority, and
+  ending classification were split across hardcoded helpers and sidecar lists.
+
+### Work Completed
+
+- Added `observePlayer()` for player-visible text, numbered choices, visible
+  score, route importance, and optional objectives.
+- Moved demo objective rules, route importance, and ending
+  type/group/family metadata into `stories/demo.yaml`.
+- Rewired scoring, playtest ranking, feedback consolidation, validation, and
+  AI-loop metrics to consume story metadata.
+- Updated docs and regression tests for the new contracts.
+
+### Playtest Notes
+
+- `npm run health` passed: formatting, TypeScript, 156 tests, clean story
+  validation, and coverage playtest.
+- `npm run ai:cycle` passed its evidence commands; MCP validation had no
+  warnings, actual MCP play reached `true_ending` at 100/100, and the adaptive
+  route reached `passenger_conductor_true_ending` at 100/100.
+- `npm run playtest:session -- --persona goal_seeker --variant no_hints --max-turns 20 --no-write`
+  exercised the player-view blind path without writing tracked feedback. The
+  short smoke stopped at `service_room` at 65/100, which is acceptable for the
+  20-turn cap.
+
 ## 2026-06-01 - Newspaper Route Label Clarity
 
 ### Current Plan

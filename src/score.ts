@@ -1,4 +1,4 @@
-import { GameState } from "./schema.js";
+import { GameState, Story } from "./schema.js";
 
 export interface ScoreBreakdown {
   score: number;
@@ -15,7 +15,7 @@ const ACHIEVEMENTS: Array<{
   id: string;
   label: string;
   points: number;
-  earned: (state: GameState) => boolean;
+  earned: (state: GameState, story?: Story) => boolean;
 }> = [
   {
     id: "lantern",
@@ -75,37 +75,16 @@ const ACHIEVEMENTS: Array<{
     id: "true_ending",
     label: "Opened every door with the emergency release",
     points: 10,
-    earned: (state) =>
-      state.currentScene === "true_ending" ||
-      state.currentScene === "mara_handoff_true_ending" ||
-      state.currentScene === "passenger_true_ending" ||
-      state.currentScene === "passenger_answered_true_ending" ||
-      state.currentScene === "passenger_answered_boarding_true_ending" ||
-      state.currentScene === "passenger_counted_true_ending" ||
-      state.currentScene === "passenger_reviewed_count_true_ending" ||
-      state.currentScene === "passenger_manifest_true_ending" ||
-      state.currentScene === "passenger_manifest_handoff_true_ending" ||
-      state.currentScene === "passenger_manifest_thumbprint_true_ending" ||
-      state.currentScene === "passenger_answered_handoff_true_ending" ||
-      state.currentScene === "passenger_echoed_true_ending" ||
-      state.currentScene === "passenger_helped_true_ending" ||
-      state.currentScene === "passenger_roll_call_true_ending" ||
-      state.currentScene === "passenger_lunch_tin_true_ending" ||
-      state.currentScene === "passenger_conductor_true_ending" ||
-      state.currentScene === "passenger_conductor_transfer_true_ending" ||
-      state.currentScene === "passenger_conductor_count_true_ending" ||
-      state.currentScene === "passenger_keepsake_true_ending" ||
-      state.currentScene === "passenger_newspaper_true_ending" ||
-      state.currentScene === "passenger_mitten_true_ending"
+    earned: (state, story) => isIdealEnding(story, state.currentScene)
   }
 ];
 
-export function scoreState(state: GameState): ScoreBreakdown {
+export function scoreState(state: GameState, story?: Story): ScoreBreakdown {
   const achievements = ACHIEVEMENTS.map((achievement) => ({
     id: achievement.id,
     label: achievement.label,
     points: achievement.points,
-    earned: achievement.earned(state)
+    earned: achievement.earned(state, story)
   }));
 
   return {
@@ -115,6 +94,12 @@ export function scoreState(state: GameState): ScoreBreakdown {
     maxScore: achievements.reduce((total, achievement) => total + achievement.points, 0),
     achievements
   };
+}
+
+export function isIdealEnding(story: Story | undefined, sceneId: string): boolean {
+  const scene = story?.scenes[sceneId];
+  if (scene?.endingType) return scene.endingType === "ideal";
+  return sceneId === "true_ending" || sceneId.endsWith("_true_ending");
 }
 
 function hasItem(state: GameState, item: string): boolean {

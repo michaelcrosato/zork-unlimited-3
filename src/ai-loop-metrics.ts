@@ -1,3 +1,5 @@
+import type { Story } from "./schema.js";
+
 export const restartSensitivePaths = new Set([
   "package.json",
   "package-lock.json",
@@ -36,71 +38,22 @@ export function parsePorcelainPaths(output: string): string[] {
     });
 }
 
-const idealEndingGroups = [
-  {
-    label: "Mara",
-    families: [
-      {
-        label: "Core",
-        endings: ["true_ending", "mara_handoff_true_ending"]
-      }
-    ]
-  },
-  {
-    label: "Passengers",
-    families: [
-      {
-        label: "Core",
-        endings: [
-          "passenger_true_ending",
-          "passenger_helped_true_ending",
-          "passenger_roll_call_true_ending",
-          "passenger_lunch_tin_true_ending"
-        ]
-      },
-      {
-        label: "Manifest",
-        endings: [
-          "passenger_manifest_true_ending",
-          "passenger_manifest_handoff_true_ending",
-          "passenger_manifest_thumbprint_true_ending",
-          "passenger_echoed_true_ending",
-          "passenger_counted_true_ending",
-          "passenger_reviewed_count_true_ending"
-        ]
-      },
-      {
-        label: "Roll call",
-        endings: [
-          "passenger_answered_true_ending",
-          "passenger_answered_boarding_true_ending",
-          "passenger_answered_handoff_true_ending",
-          "passenger_conductor_true_ending",
-          "passenger_conductor_transfer_true_ending",
-          "passenger_conductor_count_true_ending"
-        ]
-      },
-      {
-        label: "Keepsakes",
-        endings: [
-          "passenger_keepsake_true_ending",
-          "passenger_newspaper_true_ending",
-          "passenger_mitten_true_ending"
-        ]
-      }
-    ]
-  }
-];
+interface EndingFamily {
+  label: string;
+  endings: string[];
+}
 
-const idealEndingIds = idealEndingGroups.flatMap((group) =>
-  group.families.flatMap((family) => family.endings)
-);
+interface EndingGroup {
+  label: string;
+  families: EndingFamily[];
+}
 
 export function idealEndingRate(
-  summary: { runs?: number; endings?: Record<string, number> } | undefined
+  summary: { runs?: number; endings?: Record<string, number> } | undefined,
+  story?: Story
 ): number {
   if (!summary?.runs) return 0;
-  const idealEndings = idealEndingIds.reduce(
+  const idealEndings = getIdealEndingIds(summary, story).reduce(
     (total, endingId) => total + Number(summary.endings?.[endingId] ?? 0),
     0
   );
@@ -108,9 +61,10 @@ export function idealEndingRate(
 }
 
 export function formatIdealEndingBreakdown(
-  summary: { endings?: Record<string, number> } | undefined
+  summary: { endings?: Record<string, number> } | undefined,
+  story?: Story
 ): string {
-  return idealEndingGroups
+  return getIdealEndingGroups(summary, story)
     .map((group) => {
       const total = group.families.reduce(
         (sum, family) => sum + countEndings(summary, family.endings),
@@ -128,6 +82,45 @@ export function formatIdealEndingBreakdown(
       return `${group.label}: ${total} (${detail})`;
     })
     .join("; ");
+}
+
+function getIdealEndingIds(
+  summary: { endings?: Record<string, number> } | undefined,
+  story?: Story
+): string[] {
+  if (story) {
+    return Object.entries(story.scenes)
+      .filter(([, scene]) => scene.endingType === "ideal")
+      .map(([sceneId]) => sceneId);
+  }
+  return Object.keys(summary?.endings ?? {}).filter(
+    (sceneId) => sceneId === "true_ending" || sceneId.endsWith("_true_ending")
+  );
+}
+
+function getIdealEndingGroups(
+  summary: { endings?: Record<string, number> } | undefined,
+  story?: Story
+): EndingGroup[] {
+  const endings = getIdealEndingIds(summary, story);
+  const groups = new Map<string, Map<string, string[]>>();
+
+  for (const endingId of endings) {
+    const scene = story?.scenes[endingId];
+    const group = scene?.endingGroup ?? "Ideal";
+    const family = scene?.endingFamily ?? "All";
+    if (!groups.has(group)) groups.set(group, new Map());
+    const families = groups.get(group)!;
+    families.set(family, [...(families.get(family) ?? []), endingId]);
+  }
+
+  return [...groups.entries()].map(([label, families]) => ({
+    label,
+    families: [...families.entries()].map(([familyLabel, endingIds]) => ({
+      label: familyLabel,
+      endings: endingIds
+    }))
+  }));
 }
 
 function countEndings(

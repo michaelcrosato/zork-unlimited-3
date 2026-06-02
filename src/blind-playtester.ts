@@ -4,11 +4,11 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 
-import { choose, initialState, observe } from "./engine.js";
+import { choose, initialState, observe, observePlayer } from "./engine.js";
 import { loadStory } from "./story.js";
 import { scoreState } from "./score.js";
 import type { GameState, Story } from "./schema.js";
-import { maskObservation, renderMaskedScene, type MaskedView } from "./blind-facade.js";
+import { maskPlayerObservation, renderMaskedScene, type MaskedView } from "./blind-facade.js";
 import { runAgentCommand } from "./agent-runner.js";
 import {
   FeedbackRecordSchema,
@@ -111,17 +111,27 @@ function buildTranscript(
   const blocks: string[] = [];
   let state = initialState(story);
   for (const turn of turns) {
-    const view = maskObservation(observe(story, state), {
+    const raw = observe(story, state);
+    const player = observePlayer(story, state, {
       includeObjectives: variant === "with_hints"
     });
+    const view = maskPlayerObservation(
+      player,
+      raw.choices.map((choice) => choice.id)
+    );
     blocks.push(
       `## Turn ${turn.turn}\n${renderMaskedScene(view.masked)}\n> You chose: ${turn.chosenLabel}`
     );
     state = choose(story, state, turn.chosenId);
   }
-  const finalView = maskObservation(observe(story, finalState), {
+  const finalRaw = observe(story, finalState);
+  const finalPlayer = observePlayer(story, finalState, {
     includeObjectives: variant === "with_hints"
   });
+  const finalView = maskPlayerObservation(
+    finalPlayer,
+    finalRaw.choices.map((choice) => choice.id)
+  );
   blocks.push(`## Final\n${renderMaskedScene(finalView.masked)}`);
   return blocks.join("\n\n");
 }
@@ -222,7 +232,11 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
       stuckTurn = turn;
     }
 
-    const view = maskObservation(observation, { includeObjectives: variant === "with_hints" });
+    const player = observePlayer(story, state, { includeObjectives: variant === "with_hints" });
+    const view = maskPlayerObservation(
+      player,
+      observation.choices.map((choice) => choice.id)
+    );
     const taken = takenPerScene.get(sceneId) ?? new Set<string>();
     let index: number | null = null;
 
@@ -263,8 +277,8 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
   const finalObs = observe(story, state);
   const ended = finalObs.scene.ending;
   const finalScene = finalObs.scene.id;
-  const { score, maxScore } = scoreState(state);
-  const progress = scoreState(state)
+  const { score, maxScore } = scoreState(state, story);
+  const progress = scoreState(state, story)
     .achievements.filter((a) => a.earned)
     .map((a) => a.id);
   const lastTurn = Math.max(turns.length - 1, 0);

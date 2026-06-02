@@ -1,8 +1,115 @@
 id: demo
 title: Lantern in the Underpass
 start: entrance
+objectives:
+  - text: Find a reliable way to see in the underpass.
+    requires:
+      all:
+        - notItem: lantern
+        - notFlag: lights_on
+  - text: Recover the marked Platform 13 map before boarding.
+    requires:
+      all:
+        - flag: promised_mara
+        - notItem: map
+  - text: Find out where the chalk arrows and old line are leading.
+    requires:
+      notFlag: knows_platform
+  - text: Learn how to survive the driverless train before boarding it.
+    requires:
+      all:
+        - flag: knows_platform
+        - notFlag: knows_release
+        - notFlag: freed_mara
+        - notFlag: inspected_signal_ledger
+        - notFlag: read_passenger_manifest
+        - notFlag: heard_passenger_echoes
+        - any:
+            - notItem: map
+            - notItem: token
+            - notItem: fuse
+            - notItem: badge
+  - text: Recover the marked Platform 13 map before boarding.
+    requires:
+      all:
+        - flag: knows_platform
+        - notFlag: promised_mara
+        - notItem: map
+  - text: Search the stopped tunnel clock for the signal booth token.
+    requires:
+      all:
+        - any:
+            - flag: knows_shutdown
+            - flag: met_mara
+            - flag: knows_release
+            - flag: read_mara_file
+            - flag: knows_token_location
+        - notItem: token
+  - text: Find a way to power the platform gate control.
+    requires:
+      all:
+        - flag: knows_platform
+        - notItem: fuse
+  - text: Find proof of Mara Vale's identity before clearing her name.
+    requires:
+      all:
+        - any:
+            - item: fuse
+            - flag: met_mara
+            - flag: read_mara_file
+            - flag: knows_badge_proof
+        - notItem: badge
+  - text: Restore power at Platform 13 and try the token slot.
+    requires:
+      all:
+        - item: token
+        - item: fuse
+        - notFlag: platform_lit
+  - text: Check the kept-passenger manifest before deciding whose names to clear.
+    requires:
+      all:
+        - flag: platform_lit
+        - item: token
+        - notFlag: freed_mara
+        - flag: inspected_signal_ledger
+        - item: map
+        - item: badge
+        - notFlag: read_passenger_manifest
+  - text: Clear Mara's ledger entry with her badge proof.
+    requires:
+      all:
+        - flag: platform_lit
+        - item: token
+        - notFlag: freed_mara
+        - flag: inspected_signal_ledger
+        - item: map
+        - item: badge
+        - flag: read_passenger_manifest
+  - text: Use the signal booth to resolve Mara's ledger entry.
+    requires:
+      all:
+        - flag: platform_lit
+        - item: token
+        - notFlag: freed_mara
+        - any:
+            - notFlag: inspected_signal_ledger
+            - notItem: map
+            - notItem: badge
+  - text: Pull the emergency release in the third car.
+    requires:
+      flag: freed_mara
+  - text: Use the marked map if you need a safe way out.
+    requires:
+      all:
+        - notFlag: freed_mara
+        - item: map
+        - any:
+            - notItem: token
+            - notItem: fuse
+            - notItem: badge
 scenes:
   entrance:
+    routeImportance: main
     text: >
       Rain ticks against Warden Street. At the mouth of the underpass, a brass
       lantern hangs from a bent nail beside a transit notice stamped SERVICE
@@ -26,6 +133,7 @@ scenes:
         to: dark_tunnel
 
   notice:
+    routeImportance: main
     text: >
       The notice warns that Platform 13 was sealed after a signal fire. Someone
       has scratched a newer message into the glass: IF THE TRAIN ARRIVES EMPTY,
@@ -50,6 +158,7 @@ scenes:
         to: dark_tunnel
 
   notice_back:
+    routeImportance: optional
     text: >
       The notice backing is covered in transfer stamps that never reached the
       city archive. One blank line is labeled DISPATCHER CLEARANCE: BADGE
@@ -68,6 +177,7 @@ scenes:
         to: dark_tunnel
 
   tunnel:
+    routeImportance: main
     text: >
       Lantern light reveals chalk arrows on the concrete wall. One points
       toward a service door. Another points deeper into the tunnel, where a
@@ -110,6 +220,7 @@ scenes:
           notItem: token
 
   clock:
+    routeImportance: main
     text: >
       The clock hands are wired in place at 1:13. A maintenance token has been
       wedged behind the minute hand, warm as a coin left in sunlight. Its edge
@@ -131,6 +242,7 @@ scenes:
           notFlag: knows_token_location
 
   dark_tunnel:
+    routeImportance: optional
     text: >
       The tunnel swallows the last streetlight. Your hand finds cold concrete,
       then a chain hanging from the ceiling. Far ahead, a woman speaks through
@@ -150,6 +262,7 @@ scenes:
         to: entrance
 
   dispatcher:
+    routeImportance: supporting
     text: >
       "This is Mara Vale, night dispatcher," the speaker says. "If you can hear
       me, the line has chosen you. Find the map. Do not trust the blank sign."
@@ -170,6 +283,7 @@ scenes:
             lights_on: true
 
   mara_warning:
+    routeImportance: optional
     text: >
       Mara says the last train kept returning without its driver. The city
       sealed the platform, then forgot the people still listed as "in transit."
@@ -184,6 +298,7 @@ scenes:
             knows_token_location: true
 
   service_room:
+    routeImportance: main
     text: >
       A breaker panel hums beside a desk covered with old transit maps. A
       cracked radio repeats a number station. Someone circled Platform 13 in
@@ -296,6 +411,7 @@ scenes:
             knows_platform: true
 
   radio:
+    routeImportance: main
     text: >
       Beneath the numbers, Mara whispers a route: "Third car. Emergency release
       under the first seat. If the sign says HOME, look away."
@@ -311,6 +427,7 @@ scenes:
         to: service_room
 
   personnel_file:
+    routeImportance: main
     text: >
       The file belongs to Mara Vale, night dispatcher, missing since the signal
       fire. Her last note says: "Badge clears the ledger. Token opens the booth.
@@ -323,6 +440,7 @@ scenes:
         to: service_room
 
   locker:
+    routeImportance: main
     text: >
       The locker contains a wet uniform coat, a fuse stamped PLATFORM LIGHTS,
       and an employee badge for Mara Vale. The badge number matches a blank
@@ -365,6 +483,7 @@ scenes:
             - item: badge
 
   badge_memory:
+    routeImportance: optional
     text: >
       The badge is heavier than it should be. On the back, under Mara Vale's
       number, someone scratched a route in tiny block letters: LAST TRAIN,
@@ -377,6 +496,7 @@ scenes:
         to: locker
 
   platform:
+    routeImportance: main
     text: >
       Platform 13 waits behind a rusted gate. A driverless train rests on the
       track, doors open, destination sign blank. The gate control has an empty
@@ -430,6 +550,7 @@ scenes:
             knows_token_location: true
 
   gate_control:
+    routeImportance: supporting
     text: >
       The gate control is less a lock than a ritual. A burned diagram inside
       the access plate shows three steps: restore PLATFORM LIGHTS, insert the
@@ -474,6 +595,7 @@ scenes:
         to: service_room
 
   lit_platform:
+    routeImportance: supporting
     text: >
       The platform lights buzz awake. Every advertisement shows the same face:
       Mara Vale, smiling from a missing-person poster dated forty-three years
@@ -535,6 +657,7 @@ scenes:
           notItem: token
 
   mara_posters:
+    routeImportance: optional
     text: >
       Up close, every poster has been altered by the same careful hand. The
       printed word MISSING is crossed out and replaced with IN TRANSIT. Mara's
@@ -546,6 +669,7 @@ scenes:
         to: lit_platform
 
   signal_map_warning:
+    routeImportance: optional
     text: >
       The token turns, but the signal booth unlocks only halfway. Behind the
       glass, the ledger bell rings in time with the blank destination sign.
@@ -564,6 +688,7 @@ scenes:
         to: signal_booth
 
   signal_map_recovered:
+    routeImportance: optional
     text: >
       The marked map feels heavier when you bring it back to the half-open
       booth. Its pencil route ends at Platform 13, then hooks upward to the
@@ -575,6 +700,7 @@ scenes:
         to: signal_booth
 
   escape_warning:
+    routeImportance: optional
     text: >
       The stairwell back to Warden Street is still open, but the lit platform
       makes the empty train look less like a ghost story and more like unfinished
@@ -599,6 +725,7 @@ scenes:
         to: escape_ending
 
   mara_stairwell_call:
+    routeImportance: optional
     text: >
       Halfway up the stairs, the public-address speaker finds one clear breath.
       "If you walk out now, I will understand," Mara says. "But the signal key
@@ -613,6 +740,7 @@ scenes:
         to: warned_escape_ending
 
   ledger_warning:
+    routeImportance: optional
     text: >
       One foot crosses the train threshold, and the public-address speaker
       coughs up Mara's badge number. The blank destination sign waits, but the
@@ -639,6 +767,7 @@ scenes:
           item: map
 
   signal_booth:
+    routeImportance: main
     text: >
       The token unlocks a signal booth above the track. Inside, a ledger lists
       every passenger the line has kept. Mara's name is the last one not crossed
@@ -677,6 +806,7 @@ scenes:
           flag: inspected_signal_ledger
 
   passenger_manifest:
+    routeImportance: supporting
     text: >
       The earlier pages are not a passenger list so much as a weather report:
       umbrellas left dripping by the stairs, lunch tins still warm, a child's
@@ -700,6 +830,7 @@ scenes:
             inspected_signal_ledger: true
 
   passenger_echoes:
+    routeImportance: optional
     text: >
       Behind the stamped doors, the kept passengers are not wailing. They are
       waiting in the small noises people make when they expect a train to be
@@ -715,6 +846,7 @@ scenes:
             inspected_signal_ledger: true
 
   signal_ledger:
+    routeImportance: main
     text: >
       Mara's row is written in a steadier hand than the others: DISPATCHER
       REMAINING ON DUTY UNTIL ALL PASSENGERS CLEAR. Beside the badge number,
@@ -783,6 +915,7 @@ scenes:
           notItem: badge
 
   mara_thumbprint:
+    routeImportance: optional
     text: >
       The torn paper warms under your thumb. For a moment, the booth is full of
       raincoats and tired voices. Mara stands at the dispatch panel, pressing
@@ -795,6 +928,7 @@ scenes:
         to: signal_ledger
 
   mara_released:
+    routeImportance: optional
     text: >
       The ledger ink lifts from Mara's name like smoke. Far below, the train
       doors open with a softer sound, and the booth speaker carries her first
@@ -822,6 +956,7 @@ scenes:
         to: train_car
 
   mara_last_dispatch:
+    routeImportance: main
     text: >
       Mara is quiet long enough that the booth relays the rain outside. Then
       she keys the speaker with the care of someone signing off after a double
@@ -835,6 +970,7 @@ scenes:
         to: train_car
 
   mara_handoff:
+    routeImportance: optional
     text: >
       The signal booth windows clear one by one. For the first time, Mara is
       not a voice in the walls but a woman stepping away from a desk she kept
@@ -846,6 +982,7 @@ scenes:
         to: mara_handoff_boarding
 
   mara_handoff_boarding:
+    routeImportance: optional
     text: >
       Mara does not vanish back into the speaker. She walks the platform edge
       with one hand brushing each open door, counting by touch instead of by
@@ -858,6 +995,7 @@ scenes:
         to: train_car
 
   passengers_released:
+    routeImportance: optional
     text: >
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
@@ -902,6 +1040,7 @@ scenes:
         to: passenger_platform
 
   passenger_morning_chorus:
+    routeImportance: optional
     text: >
       The opened passengers do not remember morning as sunrise. They remember
       it as practical things waiting past the transfer: a kettle left on a
@@ -921,6 +1060,7 @@ scenes:
         to: train_car
 
   passenger_manifest_count:
+    routeImportance: optional
     text: >
       Mara checks the opened manifest before anyone moves. The doors are no
       longer stamped shut, but the page still remembers what each person
@@ -954,6 +1094,7 @@ scenes:
         to: train_car
 
   mara_manifest_handoff:
+    routeImportance: optional
     text: >
       Mara does not leave the booth at once. She reads the first opened door,
       waits for its answer, then touches the next line as if steadiness can be
@@ -993,6 +1134,7 @@ scenes:
         to: passengers_released
 
   mara_manifest_thumbprint:
+    routeImportance: optional
     text: >
       The torn thumbprint warms under your hand while the opened manifest keeps
       answering Mara. For a moment, her old oath changes shape: not a dispatcher
@@ -1008,6 +1150,7 @@ scenes:
         to: passengers_released
 
   passenger_answers:
+    routeImportance: supporting
     text: >
       The opened manifest does not cheer. It answers roll call in small,
       stubborn proofs of life: a man clearing his throat before saying "here,"
@@ -1041,6 +1184,18 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
+      - id: ask_conductor_punch_from_answers
+        label: Ask what the old conductor's punch remembers
+        to: passenger_conductor_punch_memory
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_conductor_punch_memory
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_punch_memory: true
       - id: ask_conductor_from_answers
         label: Ask the old conductor to call the answered passengers clear
         to: passenger_conductor_signal
@@ -1068,6 +1223,7 @@ scenes:
           notFlag: saw_mara_manifest_handoff
 
   passenger_answered_boarding:
+    routeImportance: optional
     text: >
       The answered passengers board by repeating themselves softly enough that
       the train cannot turn the words into a command. The child says present at
@@ -1088,6 +1244,7 @@ scenes:
         to: passenger_answered_boarding_true_ending
 
   passenger_platform:
+    routeImportance: supporting
     text: >
       The platform is no longer empty. People step out of the manifest doors
       carrying ordinary burdens: a folded newspaper, a paper sack darkened by
@@ -1103,6 +1260,15 @@ scenes:
         effects:
           set:
             heard_newspaper_memory: true
+      - id: ask_lunch_tin_worker_to_set_pace
+        label: Ask the lunch-tin worker to set the boarding pace
+        to: passenger_farewell
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
       - id: ask_conductor_to_call_platform_clear
         label: Ask the old conductor to call the platform clear
         to: passenger_conductor_signal
@@ -1170,6 +1336,7 @@ scenes:
             - flag: helped_passengers_gather
 
   passenger_echoed_boarding:
+    routeImportance: optional
     text: >
       The passengers board quietly, but the sounds you heard behind the stamped
       doors come with them: thermos cap, folded paper, the soft knock of a
@@ -1182,6 +1349,7 @@ scenes:
         to: train_car
 
   passenger_threshold_boarding:
+    routeImportance: optional
     text: >
       You stand at the third-car threshold instead of rushing for the release.
       The opened passengers cross one by one with the practical care of people
@@ -1195,6 +1363,7 @@ scenes:
         to: train_car
 
   passenger_newspaper_memory:
+    routeImportance: optional
     text: >
       The woman smooths the wet newspaper against her sleeve until the ink
       remembers a date. "Warden Street, then morning transfer," she says,
@@ -1263,6 +1432,7 @@ scenes:
             heard_gathered_passengers: true
 
   passenger_newspaper_transfer:
+    routeImportance: optional
     text: >
       The blank transfer column is not blank anymore. As the newspaper woman
       reads each passenger's intended stop, rain-dark ink rises where the
@@ -1280,6 +1450,7 @@ scenes:
             heard_gathered_passengers: true
 
   passenger_conductor_signal:
+    routeImportance: optional
     text: >
       The old conductor straightens when you ask for his signal. He does not
       have a lantern, only a punch clipped to a chain, but he raises it like
@@ -1304,6 +1475,7 @@ scenes:
             heard_conductor_clearance: true
 
   passenger_conductor_punch_memory:
+    routeImportance: optional
     text: >
       The conductor turns the punch over in both hands. Its brass mouth is
       nicked with old transfers, each star-shaped bite a passenger who was
@@ -1320,6 +1492,7 @@ scenes:
             heard_conductor_clearance: true
 
   passenger_mitten_memory:
+    routeImportance: optional
     text: >
       The child accepts the mitten with both hands, then turns it inside out to
       show a transit stamp older than anyone on the platform should remember.
@@ -1336,6 +1509,7 @@ scenes:
             heard_gathered_passengers: true
 
   passenger_keepsake_handoff:
+    routeImportance: optional
     text: >
       The manifest's details become a way to make the crowd real again. You
       give the warm lunch tin to the man whose hands still expect its handle,
@@ -1350,6 +1524,7 @@ scenes:
         to: passenger_keepsake_boarding
 
   passenger_keepsake_boarding:
+    routeImportance: optional
     text: >
       The third car fills by object before it fills by name. The lunch tin
       worker sets his tin under the first seat where the release waits, the
@@ -1369,6 +1544,7 @@ scenes:
         to: passenger_keepsake_true_ending
 
   passenger_farewell:
+    routeImportance: optional
     text: >
       You start with the man holding the paper sack. Inside, his lunch tin is
       still warm, packed for a double shift he never reached. When he snaps the
@@ -1389,6 +1565,7 @@ scenes:
         to: train_car
 
   passenger_gathered_boarding:
+    routeImportance: optional
     text: >
       The gathered passengers board by looking after the person nearest them.
       The newspaper woman folds her transfer column into the child's mittened
@@ -1408,6 +1585,7 @@ scenes:
         to: passenger_helped_true_ending
 
   passenger_lunch_tin_boarding:
+    routeImportance: optional
     text: >
       The lunch-tin worker boards first and does not sit. He plants one hand on
       the rail, keeps the warm tin tucked against his hip, and clicks the latch
@@ -1428,6 +1606,7 @@ scenes:
         to: passenger_lunch_tin_true_ending
 
   train_car:
+    routeImportance: main
     text: >
       The third car smells of rain and hot dust. Under the first seat, your
       fingers find an emergency release. The blank destination sign begins to
@@ -1771,6 +1950,7 @@ scenes:
           notFlag: freed_mara
 
   train_map:
+    routeImportance: main
     text: >
       Under the train's flickering light, the marked map looks less like a
       route and more like a promise someone kept badly: one transfer marked
@@ -1787,6 +1967,7 @@ scenes:
         to: sign_warning
 
   morning_transfer:
+    routeImportance: optional
     text: >
       The marked map does exactly what it promised. The train skips every
       impossible station and opens on a tiled transfer platform bright with
@@ -1835,6 +2016,7 @@ scenes:
             met_mara: true
 
   morning_map_note:
+    routeImportance: optional
     text: >
       On the back of the marked map, a conductor's pencil has left one last
       instruction: SAFE TRANSFER IS NOT CLEARANCE. Survive first, then send
@@ -1878,6 +2060,7 @@ scenes:
             met_mara: true
 
   morning_doors:
+    routeImportance: optional
     text: >
       At the closing doors, the underpass is only a dark reflection in the
       glass. Mara is not begging. She is reading the ledger in a steady night
@@ -1921,6 +2104,7 @@ scenes:
             met_mara: true
 
   morning_warning_mark:
+    routeImportance: optional
     text: >
       You press the conductor's pencil into the soft back of the map until the
       warning darkens under your hand: CLOCK TOKEN. BADGE PROOF. FUSE BEFORE
@@ -1956,6 +2140,7 @@ scenes:
             met_mara: true
 
   mara_intercom:
+    routeImportance: supporting
     text: >
       Mara's voice returns through the ceiling speaker, no longer buried in
       static. "When the doors open, do not count the passengers," she says.
@@ -1974,6 +2159,7 @@ scenes:
           notFlag: read_passenger_manifest
 
   mara_badge_proof_intercom:
+    routeImportance: optional
     text: >
       The ceiling speaker warms before Mara speaks. "You found the proof line,"
       she says. "Badge proof required. For forty-three years that sounded like
@@ -1987,6 +2173,7 @@ scenes:
         to: true_ending
 
   mara_last_dispatch_intercom:
+    routeImportance: main
     text: >
       The speaker repeats Mara's last dispatch, but the train cannot flatten it
       into another order. Route held. Doors ready. Release authorized. Between
@@ -1999,6 +2186,7 @@ scenes:
         to: true_ending
 
   mara_thumbprint_intercom:
+    routeImportance: optional
     text: >
       Mara's voice steadies when the train shudders around the torn thumbprint
       memory. "I left that mark because the line wanted a last dispatcher more
@@ -2011,6 +2199,7 @@ scenes:
         to: true_ending
 
   mara_handoff_intercom:
+    routeImportance: optional
     text: >
       The speaker clicks after Mara has already left the booth, and for a
       moment you hear her crossing the platform instead of haunting it. "I
@@ -2023,6 +2212,7 @@ scenes:
         to: mara_handoff_true_ending
 
   mara_thumbprint_handoff_intercom:
+    routeImportance: optional
     text: >
       The speaker opens on the sound of Mara touching the far doors with the
       same hand that tore the ledger. "The line wanted my print to mean I
@@ -2035,6 +2225,7 @@ scenes:
         to: mara_handoff_true_ending
 
   mara_manifest_handoff_intercom:
+    routeImportance: optional
     text: >
       The speaker stays open after Mara has called every stamped door. You can
       hear the care in the pauses she leaves between names: long enough for
@@ -2047,6 +2238,7 @@ scenes:
         to: passenger_manifest_handoff_true_ending
 
   mara_manifest_thumbprint_intercom:
+    routeImportance: optional
     text: >
       The third car carries Mara's voice and the soft scrape of her thumb over
       the torn ledger page. "I thought that mark meant I had to be last," she
@@ -2059,6 +2251,7 @@ scenes:
         to: passenger_manifest_thumbprint_true_ending
 
   mara_manifest_intercom:
+    routeImportance: optional
     text: >
       Mara reads from the opened manifest, and each name answers with a small
       ordinary sound: a lunch tin clasp, a mitten shaken free, umbrellas
@@ -2070,6 +2263,7 @@ scenes:
         to: passenger_manifest_true_ending
 
   passenger_echoed_manifest_intercom:
+    routeImportance: optional
     text: >
       The third car answers with the same small sounds you heard behind the
       stamped doors: thermos cap, newspaper fold, mittened knock against the
@@ -2082,6 +2276,7 @@ scenes:
         to: passenger_echoed_true_ending
 
   passenger_threshold_intercom:
+    routeImportance: optional
     text: >
       The third-car speaker stays open on the threshold you held. Mara names
       the first passenger, then stops when the doorway answers in footsteps
@@ -2095,6 +2290,7 @@ scenes:
         to: passenger_true_ending
 
   passenger_counted_manifest_intercom:
+    routeImportance: optional
     text: >
       Mara brings the reviewed count into the third car like a folded timetable.
       She names what each opened door carried back: newspaper, lunch tin,
@@ -2109,6 +2305,7 @@ scenes:
         to: passenger_counted_true_ending
 
   passenger_answered_handoff_roll_call:
+    routeImportance: optional
     text: >
       The third car does not board in silence. Mara calls from the speaker, but
       the opened passengers answer before her pauses can become another kind of
@@ -2125,6 +2322,7 @@ scenes:
             heard_mara_goodbye: true
 
   passenger_answered_handoff_intercom:
+    routeImportance: optional
     text: >
       The third car fills with the rhythm Mara began at the opened manifest:
       her voice offering each name, each passenger answering before the line
@@ -2140,6 +2338,7 @@ scenes:
         to: passenger_answered_handoff_true_ending
 
   passenger_answered_intercom:
+    routeImportance: optional
     text: >
       The passengers who answered roll call board without rushing. The child
       repeats his own name under his breath, the newspaper woman folds her
@@ -2153,6 +2352,7 @@ scenes:
         to: passenger_answered_true_ending
 
   passenger_conductor_intercom:
+    routeImportance: supporting
     text: >
       The conductor's borrowed signal carries into the third car before Mara
       speaks. Under the first seat, the emergency release waits in your hand.
@@ -2212,6 +2412,7 @@ scenes:
             heard_final_roll_call: true
 
   passenger_conductor_transfer:
+    routeImportance: optional
     text: >
       The old conductor takes the blank transfer from the newspaper woman's
       hand and slides it into his punch. The tool bites once, leaving a clean
@@ -2262,6 +2463,7 @@ scenes:
             heard_final_roll_call: true
 
   passenger_conductor_roll_call:
+    routeImportance: supporting
     text: >
       The conductor walks the aisle one last time, not punching tickets, only
       touching each open pole and calling the doors clear. The answered
@@ -2283,6 +2485,7 @@ scenes:
           flag: punched_conductor_transfer
 
   passenger_conductor_count_roll_call:
+    routeImportance: optional
     text: >
       The conductor walks the aisle with Mara's opened count folded against his
       punch. He does not ask for tickets. He reads what each passenger carried
@@ -2304,6 +2507,7 @@ scenes:
           flag: punched_conductor_transfer
 
   passenger_gathered_intercom:
+    routeImportance: optional
     text: >
       The passengers gather themselves before Mara can call again. The child
       with the mitten counts the open doors, the old conductor answers each
@@ -2331,6 +2535,7 @@ scenes:
           flag: returned_lost_mitten
 
   passenger_lunch_tin_intercom:
+    routeImportance: optional
     text: >
       The lunch-tin worker reaches the third car last, because he keeps stopping
       to count the people who fall into step behind him. His tin latch clicks
@@ -2360,6 +2565,7 @@ scenes:
         to: passenger_lunch_tin_true_ending
 
   passenger_lunch_tin_roster:
+    routeImportance: optional
     text: >
       Folded under the tin's lid is a shift roster softened by steam. The
       worker has written the passenger names in the margin whenever the line
@@ -2372,6 +2578,7 @@ scenes:
         to: passenger_lunch_tin_true_ending
 
   passenger_mitten_intercom:
+    routeImportance: optional
     text: >
       The child stands in the third-car doorway with both mittens pressed
       against the frame, one found and one returned. When Mara reaches his name
@@ -2394,6 +2601,7 @@ scenes:
         to: passenger_mitten_true_ending
 
   passenger_newspaper_intercom:
+    routeImportance: optional
     text: >
       The newspaper woman's transfer column becomes the crowd's timetable.
       She reads Warden Street, then morning transfer, and the old conductor
@@ -2414,6 +2622,7 @@ scenes:
         to: passenger_newspaper_true_ending
 
   passenger_newspaper_roll_call:
+    routeImportance: optional
     text: >
       Mara begins the final roll call, but the newspaper woman has already
       turned the blank transfer column into a route everyone can answer. The
@@ -2426,6 +2635,7 @@ scenes:
         to: passenger_newspaper_true_ending
 
   passenger_keepsake_intercom:
+    routeImportance: optional
     text: >
       The returned keepsakes make the platform answer before Mara has to ask.
       The lunch tin knocks twice against its owner's knee, the newspaper snaps
@@ -2448,6 +2658,7 @@ scenes:
         to: passenger_keepsake_true_ending
 
   passenger_keepsake_roll_call:
+    routeImportance: optional
     text: >
       Mara begins the final roll call, but the matched keepsakes answer with
       the passengers. The lunch tin clicks shut after its owner's name, the
@@ -2461,6 +2672,7 @@ scenes:
         to: passenger_keepsake_true_ending
 
   passenger_roll_call_epilogue:
+    routeImportance: optional
     text: >
       Mara starts with the names whose doors opened first, but the passengers
       finish the roll call for her. The newspaper woman says the conductor's
@@ -2481,6 +2693,7 @@ scenes:
           flag: returned_lost_mitten
 
   gate_warning:
+    routeImportance: optional
     text: >
       The gate bends, but the platform answers with a deep knock from beneath
       the track. The train doors begin to close without you. Whatever is below
@@ -2508,6 +2721,7 @@ scenes:
         to: gate_collapse
 
   gate_echo:
+    routeImportance: optional
     text: >
       Under the bent gate, the dark repeats the sound you made: metal shriek,
       wheel scrape, breath held too long. Then it answers in Mara's borrowed
@@ -2527,6 +2741,7 @@ scenes:
         to: gate_collapse
 
   gate_collapse:
+    routeImportance: optional
     text: >
       The gate lifts only far enough to show the gap beneath it. The track
       exhales cold air through your sleeves, and the driverless train answers
@@ -2546,6 +2761,7 @@ scenes:
         to: bad_ending
 
   sign_warning:
+    routeImportance: optional
     text: >
       The destination sign almost has you. HOME burns across the glass, bright
       enough to show a street you know and a porch light that should not still
@@ -2564,6 +2780,7 @@ scenes:
             heard_home_sign_echo: true
 
   home_sign_echo:
+    routeImportance: optional
     text: >
       HOME keeps adding details it should not know: the chipped step outside
       your door, the warm square of kitchen light, a voice from another room
@@ -2584,6 +2801,7 @@ scenes:
             felt_home_sign_grip: true
 
   home_sign_grip:
+    routeImportance: optional
     text: >
       The sign finishes the word, but the map will not fall. Its pencil line to
       MORNING PLATFORM cuts across the false porch light like a transfer stamp,
@@ -2613,6 +2831,10 @@ scenes:
 
   true_ending:
     ending: true
+    routeImportance: main
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
     text: >
       The release opens every door at once. Names vanish from the signal ledger
       as passengers step into rain-bright morning. Mara's voice thanks you from
@@ -2620,7 +2842,11 @@ scenes:
     choices: []
 
   mara_handoff_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
     text: >
       The release opens every door at once. Names vanish from the signal ledger
       as passengers step into rain-bright morning, and Mara is not only a voice
@@ -2629,7 +2855,11 @@ scenes:
     choices: []
 
   passenger_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
     text: >
       The release opens every door at once. The manifest becomes a platform
       full of ordinary miracles: a lunch tin snapping shut, a lost mitten
@@ -2639,7 +2869,11 @@ scenes:
     choices: []
 
   passenger_answered_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once, and the answered passengers do not
       wait for Mara to read them into morning. The child says present while he
@@ -2650,7 +2884,11 @@ scenes:
     choices: []
 
   passenger_answered_boarding_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once before the answered names can fade
       into another roll call. The child keeps saying present until rain answers
@@ -2661,7 +2899,11 @@ scenes:
     choices: []
 
   passenger_counted_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once, and the reviewed count falls apart
       into people keeping track of one another: the newspaper woman checking
@@ -2672,7 +2914,11 @@ scenes:
     choices: []
 
   passenger_reviewed_count_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once while Mara's reviewed count is still
       warm from the ledger. Newspaper, lunch tin, mitten, conductor's punch:
@@ -2682,7 +2928,11 @@ scenes:
     choices: []
 
   passenger_manifest_handoff_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once while Mara is still mid-handoff.
       She reads the first names, then stops because the passengers are already
@@ -2693,7 +2943,11 @@ scenes:
     choices: []
 
   passenger_manifest_thumbprint_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once, and Mara's torn thumbprint lifts
       from the ledger with the last passenger name. She does not stand behind
@@ -2703,7 +2957,11 @@ scenes:
     choices: []
 
   passenger_manifest_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once while Mara's opened manifest is
       still answering in ordinary sounds. A lunch tin clasp becomes a footstep,
@@ -2714,7 +2972,11 @@ scenes:
     choices: []
 
   passenger_answered_handoff_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once before Mara can finish the last
       name. The passengers finish it for her: child to newspaper woman,
@@ -2724,7 +2986,11 @@ scenes:
     choices: []
 
   passenger_echoed_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
     text: >
       The release opens every door at once, and the small sounds you heard
       behind the stamped manifest doors cross into morning before any name can
@@ -2734,7 +3000,11 @@ scenes:
     choices: []
 
   passenger_helped_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
     text: >
       The release opens every door at once, and the lunch-tin worker's latch
       becomes the first ordinary sound of morning. The child with the mitten
@@ -2744,7 +3014,11 @@ scenes:
     choices: []
 
   passenger_roll_call_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
     text: >
       The release opens every door at once on the passengers' own roll call.
       Mara begins the first name, then falls silent as the crowd carries the
@@ -2755,7 +3029,11 @@ scenes:
     choices: []
 
   passenger_lunch_tin_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
     text: >
       The release opens every door at once on the lunch-tin worker's count. His
       latch clicks each passenger into the rain-bright morning: child, newspaper
@@ -2765,7 +3043,11 @@ scenes:
     choices: []
 
   passenger_conductor_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once on the conductor's clear signal. He
       stands in the rain-bright threshold with his punch raised, not counting
@@ -2776,7 +3058,11 @@ scenes:
     choices: []
 
   passenger_conductor_transfer_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once through the conductor's punched
       transfer. Its star-shaped hole catches the first rain-bright light as it
@@ -2786,7 +3072,11 @@ scenes:
     choices: []
 
   passenger_conductor_count_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
     text: >
       The release opens every door at once on the conductor's counted clear
       call. He carries Mara's opened manifest like a timetable that has finally
@@ -2797,7 +3087,11 @@ scenes:
     choices: []
 
   passenger_keepsake_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
     text: >
       The release opens every door at once, and the matched keepsakes cross the
       threshold with the people they remembered. The lunch tin rides against
@@ -2808,7 +3102,11 @@ scenes:
     choices: []
 
   passenger_newspaper_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
     text: >
       The release opens every door at once, and the newspaper woman's blank
       transfer column fills with destinations as the passengers cross into
@@ -2819,7 +3117,11 @@ scenes:
     choices: []
 
   passenger_mitten_true_ending:
+    routeImportance: optional
     ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
     text: >
       The release opens every door at once, and the first person through is
       the child clutching both mittens in one hand. He waits at the morning
@@ -2830,7 +3132,10 @@ scenes:
     choices: []
 
   good_ending:
+    routeImportance: optional
     ending: true
+    endingType: good
+    endingGroup: Morning escape
     text: >
       The marked map carries you through one impossible transfer and out to a
       morning platform where the rain smells real. Behind the closing doors,
@@ -2840,7 +3145,10 @@ scenes:
     choices: []
 
   escape_ending:
+    routeImportance: optional
     ending: true
+    endingType: escape
+    endingGroup: Early escape
     text: >
       You run before the train can choose you. Dawn finds you on Warden Street
       with rain in your shoes and the certainty that someone else will hear
@@ -2848,7 +3156,10 @@ scenes:
     choices: []
 
   warned_escape_ending:
+    routeImportance: optional
     ending: true
+    endingType: escape
+    endingGroup: Early escape
     text: >
       You leave after hearing Mara name the signal key, so dawn has sharper
       edges when it finds you on Warden Street. The stopped clock behind you is
@@ -2859,7 +3170,10 @@ scenes:
     choices: []
 
   lost_ending:
+    routeImportance: optional
     ending: true
+    endingType: bad
+    endingGroup: Failure
     text: >
       The sign finishes spelling HOME. For one impossible second it shows your
       childhood street, your kitchen window, your own silhouette waving you in.
@@ -2868,7 +3182,10 @@ scenes:
     choices: []
 
   bad_ending:
+    routeImportance: optional
     ending: true
+    endingType: bad
+    endingGroup: Failure
     text: >
       The gate gives way with a scream of metal. The sound wakes something
       below the platform before the train doors can close. It uses Mara's

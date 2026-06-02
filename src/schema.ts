@@ -37,22 +37,43 @@ export const ChoiceSchema = z.object({
 
 export type Choice = z.infer<typeof ChoiceSchema>;
 
+export const RouteImportanceSchema = z.enum(["main", "supporting", "optional"]);
+export type RouteImportance = z.infer<typeof RouteImportanceSchema>;
+
+export const EndingTypeSchema = z.enum(["bad", "escape", "good", "ideal"]);
+export type EndingType = z.infer<typeof EndingTypeSchema>;
+
 export const SceneSchema = z.object({
   text: z.string().min(1),
   ending: z.boolean().optional().default(false),
+  routeImportance: RouteImportanceSchema.optional(),
+  endingType: EndingTypeSchema.optional(),
+  endingGroup: z.string().min(1).optional(),
+  endingFamily: z.string().min(1).optional(),
   choices: z.array(ChoiceSchema).default([])
 });
 
 export type Scene = z.infer<typeof SceneSchema>;
 
+export const ObjectiveRuleSchema = z.object({
+  text: z.string().min(1),
+  requires: ConditionSchema
+});
+
+export type ObjectiveRule = z.infer<typeof ObjectiveRuleSchema>;
+
 export const StorySchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   start: z.string().min(1),
+  objectives: z.array(ObjectiveRuleSchema).default([]),
   scenes: z.record(SceneSchema)
 });
 
-export type Story = z.infer<typeof StorySchema>;
+type ParsedStory = z.infer<typeof StorySchema>;
+export type Story = Omit<ParsedStory, "objectives"> & {
+  objectives?: ObjectiveRule[];
+};
 
 export interface GameState {
   storyId: string;

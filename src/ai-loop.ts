@@ -15,6 +15,8 @@ import {
   requiresLoopRestart,
   restartRequestedExitCode
 } from "./ai-loop-metrics.js";
+import type { Story } from "./schema.js";
+import { loadStory } from "./story.js";
 
 export {
   exploratoryMaxSteps,
@@ -204,7 +206,16 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
   const coverageSummary = parseLastJson(results[5].output);
   const mcpEvidence = await runMcpEvidence(cycle);
   const mcpPlay = await runMcpPlaythrough();
-  const report = renderReport(cycle, results, randomSummary, coverageSummary, mcpEvidence, mcpPlay);
+  const story = await loadStory("stories/demo.yaml");
+  const report = renderReport(
+    cycle,
+    results,
+    randomSummary,
+    coverageSummary,
+    mcpEvidence,
+    mcpPlay,
+    story
+  );
 
   return {
     report,
@@ -249,7 +260,8 @@ function renderReport(
   randomSummary: unknown,
   coverageSummary: unknown,
   mcpEvidence: McpEvidence,
-  mcpPlay: McpPlayResult
+  mcpPlay: McpPlayResult,
+  story?: Story
 ): string {
   const failed = results.filter((result) => result.exitCode !== 0);
 
@@ -346,7 +358,7 @@ ${(
 
 ## Long-Run Effectiveness Signals
 
-${renderEffectivenessSignals(randomSummary, coverageSummary, mcpEvidence)}
+${renderEffectivenessSignals(randomSummary, coverageSummary, mcpEvidence, story)}
 
 ## AI Feedback
 
@@ -359,13 +371,17 @@ ${failed.length > 0 ? "- Fix failing health checks before changing content." : "
 
 ## Suggested Next Actions
 
-${suggestNextActions(randomSummary, coverageSummary)
+${suggestNextActions(randomSummary, coverageSummary, story)
   .map((item) => `- ${item}`)
   .join("\n")}
 `;
 }
 
-function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): string[] {
+function suggestNextActions(
+  randomSummary: unknown,
+  coverageSummary: unknown,
+  story?: Story
+): string[] {
   const suggestions: string[] = [];
   const random = asSummary(randomSummary);
   const coverage = asSummary(coverageSummary);
@@ -384,7 +400,7 @@ function suggestNextActions(randomSummary: unknown, coverageSummary: unknown): s
     suggestions.push(`Fix coverage gaps for: ${coverage.unvisitedScenes.join(", ")}.`);
   }
 
-  const idealRate = idealEndingRate(random);
+  const idealRate = idealEndingRate(random, story);
   const maxScoreRate = random?.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
   if (
     random &&
@@ -455,7 +471,8 @@ function asSummary(value: unknown):
 function renderEffectivenessSignals(
   randomSummary: unknown,
   coverageSummary: unknown,
-  mcpEvidence: McpEvidence
+  mcpEvidence: McpEvidence,
+  story?: Story
 ): string {
   const random = asSummary(randomSummary);
   const coverage = asSummary(coverageSummary);
@@ -463,7 +480,7 @@ function renderEffectivenessSignals(
     return "- Summary data was unavailable; repair report parsing before using long-run trends.";
   }
 
-  const idealRate = idealEndingRate(random);
+  const idealRate = idealEndingRate(random, story);
   const badEndingRate = endingRate(random, "bad_ending");
   const lostEndingRate = endingRate(random, "lost_ending");
   const escapeEndingRate = endingRate(random, "escape_ending", "warned_escape_ending");
@@ -473,7 +490,8 @@ function renderEffectivenessSignals(
 
   return [
     `- Random ideal-ending rate: ${formatPercent(idealRate)} (${formatIdealEndingBreakdown(
-      random
+      random,
+      story
     )}).`,
     `- Random non-ideal ending pressure: bad ${formatPercent(badEndingRate)}, lost ${formatPercent(
       lostEndingRate
@@ -489,14 +507,20 @@ function renderEffectivenessSignals(
         ? `finished at ${mcpEvidence.exploratory?.finalScene ?? "an ending"}`
         : `stopped at ${mcpEvidence.exploratory?.finalScene ?? "unknown"}`
     }.`,
-    `- Primary long-run pressure: ${identifyLongRunPressure(random, coverage, exploratoryComplete)}`
+    `- Primary long-run pressure: ${identifyLongRunPressure(
+      random,
+      coverage,
+      exploratoryComplete,
+      story
+    )}`
   ].join("\n");
 }
 
 function identifyLongRunPressure(
   random: NonNullable<ReturnType<typeof asSummary>>,
   coverage: NonNullable<ReturnType<typeof asSummary>>,
-  exploratoryComplete: boolean
+  exploratoryComplete: boolean,
+  story?: Story
 ): string {
   if (random.unfinished && random.unfinished > 0) {
     return "reduce dead ends or excessive loops before expanding content.";
@@ -507,7 +531,7 @@ function identifyLongRunPressure(
   if (!exploratoryComplete) {
     return "smooth the route where adaptive play stalls, especially repeated hub returns.";
   }
-  if (idealEndingRate(random) >= 0.35 && (random.averageScore ?? 0) >= 60) {
+  if (idealEndingRate(random, story) >= 0.35 && (random.averageScore ?? 0) >= 60) {
     return "core guidance is healthy; invest in richer story depth, endings, or systems.";
   }
   return "improve normal-player discoverability for the true ending.";
