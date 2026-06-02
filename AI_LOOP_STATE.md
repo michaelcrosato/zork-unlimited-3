@@ -27,7 +27,8 @@
     because it reuses an existing scene sequence and appears alongside the
     already described passenger movement toward the third car.
 - Status:
-  - In progress.
+  - Completed as part of the combined gathered-passenger and final-roll-call
+    discoverability milestone recorded below.
 
 # Cycle 43 Direct Roll-Call Discovery
 
@@ -73,9 +74,9 @@
     `passenger_roll_call_true_ending`, with zero unfinished runs.
   - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
     `help_opened_passengers_gather` ->
-    `listen_to_gathered_passengers_from_boarding` ->
-    `pull_release_after_gathered_intercom`, ending at
-    `passenger_helped_true_ending` with score 305 and no objectives.
+    `answer_final_roll_call_from_gathered_boarding` ->
+    `pull_release_after_final_roll_call`, ending at
+    `passenger_roll_call_true_ending` with score 305 and no objectives.
 - Playtest feedback:
   - The direct hub action reads naturally because the hub already describes the
     opened passengers shifting together toward the third car.
