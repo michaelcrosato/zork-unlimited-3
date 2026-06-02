@@ -2294,7 +2294,14 @@ scenes:
     choices:
       - id: pull_release_after_conductor_count
         label: Pull the release after the counted clear call
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_count_true_ending
+        requires:
+          notFlag: punched_conductor_transfer
+      - id: pull_release_after_conductor_count_transfer
+        label: Pull the release after the conductor's counted transfer
+        to: passenger_conductor_count_true_ending
+        requires:
+          flag: punched_conductor_transfer
 
   passenger_gathered_intercom:
     text: >
@@ -2776,6 +2783,17 @@ scenes:
       passes from hand to hand: child, newspaper woman, lunch-tin worker, Mara,
       then the old conductor last. No one asks where the ticket is valid
       anymore. Morning has already accepted the change.
+    choices: []
+
+  passenger_conductor_count_true_ending:
+    ending: true
+    text: >
+      The release opens every door at once on the conductor's counted clear
+      call. He carries Mara's opened manifest like a timetable that has finally
+      reached its stop: newspaper, lunch tin, mitten, punched transfer, each
+      answer becoming a person in rain-bright morning. Mara does not finish the
+      last total. The conductor lowers his punch because the count has already
+      become a crowd.
     choices: []
 
   passenger_keepsake_true_ending:

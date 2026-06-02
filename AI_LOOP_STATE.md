@@ -1,3 +1,60 @@
+# Cycle 1 Counted-Conductor Payoff
+
+- Date: 2026-06-02
+- Main objective: Give the reviewed-manifest conductor route its own ideal
+  ending instead of collapsing back into the generic conductor ending.
+- Why this matters: Current health evidence shows strong true-ending
+  discoverability and all-scene coverage, so the highest-value next step is
+  richer character payoff. The opened manifest count already lets players ask
+  the conductor to carry Mara's count, but the release did not yet reflect that
+  specific choice.
+- Tasks:
+  - Route `passenger_conductor_count_roll_call` to a distinct counted-conductor
+    true ending.
+  - Preserve the existing generic conductor ending and punched-transfer ending
+    for non-counted conductor routes.
+  - Add/update regression coverage for both the plain counted clear call and
+    the punched-transfer counted clear call.
+  - Classify the new ending as ideal in score, playtest search, loop metrics,
+    and feedback consolidation.
+- Risks:
+  - Adds one more ideal-ending id to evidence summaries, widening already broad
+    ending output slightly.
+- Status:
+  - Implemented story, scoring, playtest, metrics, consolidation, and focused
+    regression-test changes.
+  - Focused validation passed with 117 scenes, 26 endings, all reachable, and
+    no warnings.
+  - Focused tests passed:
+    `npm test -- tests/story-paths.test.ts tests/ai-loop.test.ts tests/playtest.test.ts`
+    with 125 tests.
+  - Fixed a blind-playtester test fixture and hardened `runAgentCommand` so
+    commands that close stdin immediately no longer crash the runner with
+    `EPIPE`.
+  - `npm test -- tests/blind-playtester.test.ts` passed with 6 tests.
+  - `npm run health` passed: format, lint, 153 tests, validation, and coverage
+    playtest.
+  - Health coverage visited all 117 scenes including
+    `passenger_conductor_count_true_ending`, had zero unfinished runs, best
+    score 100/100, average score 94.7, and 1025 max-score runs.
+  - Actual CLI play followed the reviewed-manifest conductor route through
+    `hear_counted_conductor_roll_call` and reached
+    `passenger_conductor_count_true_ending` at 100/100.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    reports `ai-runs/cycle-2026-06-02T05-19-27-908Z.md` and
+    `ai-runs/cycle-2026-06-02T05-19-27-908Z-prompt.md`; no `AI_AGENT_CMD` was
+    set, so the cycle stopped after evidence and prompt generation.
+- Playtest feedback:
+  - The new ending reads as a clear payoff for reviewing the opened manifest
+    count and then asking the conductor to carry it; the final image keeps the
+    count from feeling like a generic conductor signal.
+  - No route bugs, dangling objectives, or score issues appeared in focused
+    tests, health coverage, or the actual CLI playthrough.
+- Next step:
+  - Continue favoring small character-payoff improvements while the core route
+    metrics remain healthy; watch whether the expanded ending set makes
+    transcript summaries too wide.
+
 # Cycle 1 Badge-Proof Discoverability
 
 - Date: 2026-06-02

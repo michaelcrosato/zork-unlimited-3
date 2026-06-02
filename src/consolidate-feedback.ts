@@ -27,6 +27,7 @@ const IDEAL_ENDINGS = new Set([
   "passenger_helped_true_ending",
   "passenger_conductor_true_ending",
   "passenger_conductor_transfer_true_ending",
+  "passenger_conductor_count_true_ending",
   "passenger_keepsake_true_ending",
   "passenger_newspaper_true_ending",
   "passenger_mitten_true_ending"

@@ -6,26 +6,20 @@ import { runSession } from "../src/blind-playtester.js";
 import { FeedbackRecordSchema } from "../src/playtest-feedback.js";
 
 async function fakeAgent(dir: string, decision: string): Promise<string> {
-  const script = join(dir, "fake-agent.cjs");
+  const script = join(dir, "fake-agent.sh");
+  const quotedDecision = `'${decision.replace(/'/g, `'\\''`)}'`;
   await writeFile(
     script,
-    `let input = "";
-process.stdin.on("data", (chunk) => input += chunk);
-process.stdin.on("end", () => {
-  if (input.includes('"choice"')) {
-    console.log(${JSON.stringify(decision)});
-  } else {
-    console.log(JSON.stringify({
-      verdict: "terse fake critique",
-      kept_working: "masked transcript was readable",
-      top3: [],
-      issues: []
-    }));
-  }
-});`,
+    `#!/bin/sh
+if grep -q "Return ONE JSON object"; then
+  printf '%s\\n' ${quotedDecision}
+else
+  printf '%s\\n' '{"verdict":"terse fake critique","kept_working":"masked transcript was readable","top3":[],"issues":[]}'
+fi
+`,
     "utf8"
   );
-  return `node ${script}`;
+  return `sh ${script}`;
 }
 
 describe("blind playtester (built-in decider)", () => {
@@ -87,7 +81,7 @@ describe("blind playtester (built-in decider)", () => {
     });
 
     expect(record.decider).toBe("llm");
-    expect(record.model).toBe("node");
+    expect(record.model).toBe("sh");
     expect(record.decision_parse_errors).toBe(0);
     expect(record.decision_fallbacks).toBe(0);
     expect(record.parse_error).toBe(false);

@@ -50,6 +50,10 @@ export function runAgentCommand(
     child.stderr?.on("data", (chunk: Buffer) => {
       output += chunk.toString();
     });
+    child.stdin?.on("error", () => {
+      // Some commands finish without reading stdin; keep the runner from
+      // crashing on EPIPE while still collecting their output and exit code.
+    });
     child.on("error", (error) => {
       output += `\n${error instanceof Error ? error.message : String(error)}`;
     });
@@ -60,6 +64,7 @@ export function runAgentCommand(
       resolve({ command, exitCode: exitCode ?? 1, output, timedOut: false });
     });
 
-    child.stdin?.end(prompt);
+    child.stdin?.write(prompt);
+    child.stdin?.end();
   });
 }

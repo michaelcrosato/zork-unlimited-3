@@ -3213,8 +3213,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_conductor_count");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("conductor's counted clear call");
+    expect(observation.scene.text).toContain("the count has already become a crowd");
     expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = choose(story, conductorIntercomState, "hold_for_conductor_count_before_release");
@@ -3223,6 +3225,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
     expect(observation.scene.text).toContain("opened count folded against his punch");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count"
+    ]);
 
     state = choose(story, conductorIntercomState, "ask_conductor_to_punch_transfer");
     observation = observe(story, state);
@@ -3242,6 +3247,16 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
     expect(observation.scene.text).toContain("opened count folded against his punch");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count_transfer"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_count_transfer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expect(observation.score.score).toBe(observation.score.maxScore);
 
     state = choose(story, countedConductorTransferState, "hold_for_transfer_conductor_count");
     observation = observe(story, state);
@@ -3249,6 +3264,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
     expect(observation.scene.text).toContain("the count has become a crowd");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count_transfer"
+    ]);
   });
 
   it("pays off answered passenger roll call before a direct manifest release", async () => {

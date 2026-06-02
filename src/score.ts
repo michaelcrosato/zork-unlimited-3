@@ -93,6 +93,7 @@ const ACHIEVEMENTS: Array<{
       state.currentScene === "passenger_lunch_tin_true_ending" ||
       state.currentScene === "passenger_conductor_true_ending" ||
       state.currentScene === "passenger_conductor_transfer_true_ending" ||
+      state.currentScene === "passenger_conductor_count_true_ending" ||
       state.currentScene === "passenger_keepsake_true_ending" ||
       state.currentScene === "passenger_newspaper_true_ending" ||
       state.currentScene === "passenger_mitten_true_ending"
