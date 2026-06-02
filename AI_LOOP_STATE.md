@@ -1,10 +1,10 @@
-# Cycle 47 Direct Conductor Clear Payoff
+# Cycle 51 Direct Conductor Clear Payoff
 
 - Date: 2026-06-02
 - Main objective: Make `passenger_conductor_true_ending` more naturally
   discoverable from explicit old-conductor clear-signal play.
 - Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
-  window, so this cycle follows the supplied Cycle 47 random/coverage evidence.
+  window, so this cycle follows the supplied Cycle 51 random/coverage evidence.
   Coverage reaches `passenger_conductor_true_ending`, but the 100-run random
   sample missed it while other conductor transfer/count variants appeared. The
   player-facing conductor signal already says the platform is clear, so sending
@@ -46,7 +46,11 @@
   - Actual CLI play followed `listen_to_passenger_answers` ->
     `ask_conductor_from_answers` -> `follow_conductor_signal_to_third_car` ->
     `pull_release_after_conductor_roll_call`, ending at
-    `passenger_conductor_true_ending` with score 315 and no objectives.
+    `passenger_conductor_true_ending` with score 321 and no objectives.
+  - A 100-run deterministic random sample still missed
+    `passenger_conductor_true_ending`, so the direct route is smoother but
+    future work may need to surface the non-counted conductor prompt from a
+    higher-traffic passenger scene.
 - Playtest feedback:
   - The conductor route now reads as one continuous commitment: ask him to call
     the platform clear, follow that clear signal to the release, then pull on
@@ -58,8 +62,8 @@
     played route.
 - Next step:
   - Watch future random samples for whether `passenger_conductor_true_ending`
-    appears more often. If hard issues remain absent, continue with remaining
-    low-random payoff branches such as `passenger_morning_intercom`.
+    appears more often. If it remains absent, add an earlier non-counted
+    conductor prompt instead of adding more late-car branching.
 
 # Cycle 46 Direct Manifest-Handoff Intercom Boarding
 
