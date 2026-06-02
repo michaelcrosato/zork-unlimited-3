@@ -1,3 +1,73 @@
+# Cycle 78 Dark HOME Recovery and Echoed Passenger Check
+
+- Date: 2026-06-02
+- Main objective: Add a final recovery beat to the early dark-tunnel HOME
+  temptation and deepen the late echoed-passenger route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence is healthy overall, but the adaptive
+  exploratory route still reached `lost_ending` immediately after the player
+  followed the false HOME light twice. The later train-sign route already has a
+  stronger "grip" beat that lets curiosity become either surrender or recovery.
+  Separately, the echoed-manifest route could still jump from recognizing
+  passenger sounds to release without a physical confirmation beat like the
+  newer threshold, room, and keepsake branches.
+- Planned work:
+  - Route `keep_following_false_home` into a new `dark_home_grip` scene instead
+    of directly to `lost_ending`.
+  - Preserve the bad ending through an explicit surrender choice.
+  - Add recovery choices back to the service-room chain and Mara's dispatcher
+    voice.
+  - Add an optional `passenger_echoed_check` scene before the echoed-manifest
+    release.
+  - Let the checked echoed route continue either to Mara's intercom or back to
+    the train-car release without adding an ending family.
+  - Add focused regression coverage for the new beat, both recovery exits, and
+    the preserved lost ending, plus both echoed-check continuations.
+  - Run health and an actual CLI playthrough through the changed route.
+- Risks:
+  - Adding a second warning can soften an early failure. The bad ending remains
+    one explicit choice away, while the added recovery improves fairness for
+    exploratory players who test the false HOME prompt.
+  - The echoed branch gains one more optional choice. It is one-time and
+    returns to existing payoff scenes, so it should add grounding without
+    over-branching.
+- Status:
+  - Completed.
+  - `dark_home_grip` is reachable from the second false-HOME choice and offers
+    recovery to `service_room` or `dispatcher`, plus an explicit preserved
+    `lost_ending`.
+  - `passenger_echoed_check` is reachable from `passenger_echoed_boarding` and
+    lets players match the thermos, newspaper, and mitten sounds to boarded
+    passengers before either carrying them to Mara's speaker or reaching the
+    release.
+  - Focused story-path suite passed: 184 tests.
+  - `npm run health` passed: format check, TypeScript, 229 tests, validation,
+    and coverage playtest.
+  - Validation reports 144 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `dark_home_grip` and
+    `passenger_echoed_check`, with zero unvisited scenes and zero unfinished
+    complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `enter_dark` -> `follow_false_home_light` ->
+    `keep_following_false_home` -> `yank_chain_from_false_home_grip`, then
+    recovered to `service_room` with score 60 and the expected prep objectives
+    still active.
+  - Actual CLI play followed `board_with_echoed_manifest` ->
+    `check_echoed_passengers_before_release` ->
+    `carry_checked_echoes_to_speaker` ->
+    `pull_release_after_echoed_manifest_goodbye`, ending at
+    `passenger_echoed_true_ending` with score 290 and no objectives.
+  - The echoed check makes the route read less abstract: the sounds stop being
+    clues and become individual passengers aboard the car before Mara asks for
+    the release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether early false-HOME explorers recover through
+    `dark_home_grip`, and whether echoed-route players choose the check before
+    release. If either branch is skipped, tune labels before adding more
+    content.
+
 # Cycle 77 Matched Keepsake Check
 
 - Date: 2026-06-02

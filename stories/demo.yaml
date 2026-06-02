@@ -345,6 +345,34 @@ scenes:
             escaped_dark_home_flicker: true
       - id: keep_following_false_home
         label: Keep following the HOME light
+        to: dark_home_grip
+        effects:
+          set:
+            felt_dark_home_grip: true
+
+  dark_home_grip:
+    routeImportance: optional
+    text: >
+      The HOME sign gets close enough to show rain on a familiar porch, but the
+      tunnel has not let go of you yet. The chain knocks against your wrist.
+      Mara's voice is only static now, still shaped like a warning if you answer
+      before the sign learns the rest of your name.
+    choices:
+      - id: yank_chain_from_false_home_grip
+        label: Yank the chain before HOME learns your name
+        to: service_room
+        effects:
+          set:
+            lights_on: true
+            escaped_dark_home_flicker: true
+      - id: call_back_to_mara_from_false_home_grip
+        label: Call back to Mara through the false HOME static
+        to: dispatcher
+        effects:
+          set:
+            escaped_dark_home_flicker: true
+      - id: let_dark_home_finish_your_name
+        label: Let HOME finish your name
         to: lost_ending
         effects:
           set:
@@ -2229,6 +2257,14 @@ scenes:
       recognize the rhythm. Mara leaves the speaker open, as if the train needs
       to hear that waiting has turned into boarding.
     choices:
+      - id: check_echoed_passengers_before_release
+        label: Check each familiar echo against the boarded passengers
+        to: passenger_echoed_check
+        requires:
+          notFlag: checked_echoed_passengers
+        effects:
+          set:
+            checked_echoed_passengers: true
       - id: listen_to_echoed_manifest_from_boarding
         label: Listen as the boarded echoes answer Mara
         to: passenger_echoed_manifest_intercom
@@ -2244,6 +2280,35 @@ scenes:
           notFlag: heard_mara_goodbye
       - id: pull_release_after_echoed_boarding
         label: Pull the release once the familiar echoes are aboard
+        to: passenger_echoed_true_ending
+        requires:
+          flag: heard_mara_goodbye
+
+  passenger_echoed_check:
+    routeImportance: optional
+    text: >
+      You match each sound to a person before touching the release. The thermos
+      cap belongs to a worker holding it with both hands so it will not spill
+      again. The folded paper is tucked under the arm of the woman watching the
+      destination sign refuse to say HOME. The mitten knock comes from the
+      child tapping the frame once for every passenger who made it inside. The
+      echoes are no longer clues. They are a count you can trust.
+    choices:
+      - id: carry_checked_echoes_to_speaker
+        label: Let Mara hear the checked echoes answer
+        to: passenger_echoed_manifest_intercom
+        requires:
+          notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: reach_release_after_checked_echoes
+        label: Reach the release once every familiar echo is aboard
+        to: train_car
+        requires:
+          notFlag: heard_mara_goodbye
+      - id: pull_release_after_checked_echoes
+        label: Pull the release after checking the familiar echoes
         to: passenger_echoed_true_ending
         requires:
           flag: heard_mara_goodbye

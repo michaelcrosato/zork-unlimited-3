@@ -410,7 +410,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
   });
 
-  it("warns dark-tunnel explorers before the false HOME lost ending", async () => {
+  it("gives dark-tunnel explorers a final recovery beat before the false HOME lost ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -433,6 +433,33 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "keep_following_false_home");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("dark_home_grip");
+    expect(observation.scene.text).toContain("The HOME sign gets close enough");
+    expect(observation.scene.text).toContain("the tunnel has not let go of you yet");
+    expect(observation.state.flags.felt_dark_home_grip).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "yank_chain_from_false_home_grip",
+      "call_back_to_mara_from_false_home_grip",
+      "let_dark_home_finish_your_name"
+    ]);
+
+    const recoveredState = choose(story, state, "yank_chain_from_false_home_grip");
+    observation = observe(story, recoveredState);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.lights_on).toBe(true);
+    expect(observation.state.flags.escaped_dark_home_flicker).toBe(true);
+
+    const maraRecoveryState = choose(story, state, "call_back_to_mara_from_false_home_grip");
+    observation = observe(story, maraRecoveryState);
+
+    expect(observation.scene.id).toBe("dispatcher");
+    expect(observation.state.flags.escaped_dark_home_flicker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("ask_mara_about_false_home");
+
+    state = choose(story, state, "let_dark_home_finish_your_name");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("lost_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.surrendered_dark_home_flicker).toBe(true);
@@ -446,7 +473,8 @@ describe("demo story critical paths", () => {
     for (const choiceId of [
       "enter_dark",
       "follow_false_home_light",
-      "pull_chain_before_home_takes_you",
+      "keep_following_false_home",
+      "yank_chain_from_false_home_grip",
       "take_map",
       "tune_radio",
       "note_radio_route",
@@ -4333,15 +4361,28 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_echoed_boarding");
     expect(observation.scene.text).toContain("sounds you heard behind the stamped");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_echoed_passengers_before_release",
       "listen_to_echoed_manifest_from_boarding",
       "reach_release_with_echoed_manifest"
     ]);
 
-    state = choose(story, state, "listen_to_echoed_manifest_from_boarding");
+    state = choose(story, state, "check_echoed_passengers_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.scene.text).toContain("echoes are no longer clues");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_echoes_to_speaker",
+      "reach_release_after_checked_echoes"
+    ]);
+
+    state = choose(story, state, "carry_checked_echoes_to_speaker");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("same small sounds you heard behind the");
     expect(observation.scene.text).toContain("Now let the line hear them leaving");
@@ -4354,6 +4395,58 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_echoed_true_ending");
     expect(observation.scene.text).toContain("ordinary noise");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets echoed passengers be checked before reaching the release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "listen_to_manifest_doors_from_manifest",
+      "return_from_passenger_echoes",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "board_with_echoed_manifest",
+      "check_echoed_passengers_before_release",
+      "reach_release_after_checked_echoes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "follow_echoes_back_to_boarding"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_echoed_manifest_intercom"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_echoed_boarding"
+    );
+
+    state = choose(story, state, "pull_release_after_echoed_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
     expectIdealScore(observation.score);
   });
 
@@ -4469,6 +4562,7 @@ describe("demo story critical paths", () => {
       "listen_to_echoed_manifest_from_boarding"
     );
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_echoed_passengers_before_release",
       "pull_release_after_echoed_boarding"
     ]);
 
@@ -5177,6 +5271,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_echoed_passengers_before_release",
       "listen_to_echoed_manifest_from_boarding",
       "reach_release_with_echoed_manifest"
     ]);
