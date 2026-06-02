@@ -1,3 +1,110 @@
+# Cycle 58 Room-Made Conductor Clear
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_conductor_true_ending` easier to discover
+  from the newly surfaced room-making route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 58 evidence. Health and
+  coverage are strong, but short random samples can still miss
+  `passenger_conductor_true_ending` even though `passenger_room_boarding` is now
+  easier to reach. Once players physically make room in the third car, asking
+  the old conductor to call that room clear is a natural next action and turns
+  the under-discovered conductor payoff into a visible branch.
+- Planned work:
+  - Add a conductor-clear choice from `passenger_room_boarding`.
+  - Set the same passenger-answer and conductor-clear flags expected by the
+    conductor signal scene.
+  - Preserve the existing room intercom and direct release routes.
+  - Add regression coverage, run health, and play the changed route.
+- Risks:
+  - The room-making scene gains a third option. This is acceptable because the
+    new option is thematically distinct from listening to Mara or reaching the
+    release directly.
+- Status:
+  - Added `ask_conductor_to_clear_room_made` from `passenger_room_boarding` to
+    `passenger_conductor_signal`.
+  - The new choice sets `heard_passenger_answers`,
+    `helped_passengers_gather`, and `conductor_cleared_platform` so the
+    conductor signal scene has the expected context.
+  - Preserved the existing room intercom and direct release choices from
+    `passenger_room_boarding`.
+  - Added regression coverage for the room-made conductor route through
+    `passenger_conductor_true_ending`.
+  - Focused story-path suite passed: 173 tests.
+  - `npm run health` passed: format check, TypeScript, 217 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `make_room_for_passengers_in_third_car` ->
+    `ask_conductor_to_clear_room_made` -> `pull_release_on_conductor_signal`,
+    ending at `passenger_conductor_true_ending` with score 303 and no
+    objectives.
+- Playtest feedback:
+  - The new choice reads naturally after the player has physically made room in
+    the third car; the conductor's "Platform clear" call now has a direct place
+    in that branch.
+  - The existing room-made shared-release route remains available and still
+    tested cleanly to `passenger_true_ending`.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch the next short random sample for `passenger_conductor_true_ending`.
+    If it still underappears, consider improving the choice order or label at
+    `passenger_answers` before adding more late conductor branches.
+
+# Cycle 53 Answered Passenger Room Bridge
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_room_boarding` easier to discover after
+  players listen to the opened passengers answer roll call.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 53 evidence. Health and
+  coverage are strong, but short random samples can still miss
+  `passenger_room_boarding`. The passenger-answer scene says the third car is
+  ready, yet returning through the answered crowd hides the direct room-making
+  branch because `heard_passenger_answers` is already set. A contextual
+  room-making choice lets a natural answer-listening route find the existing
+  shared-release scene.
+- Planned work:
+  - Add a `passenger_answers` choice that enters `passenger_room_boarding`.
+  - Keep the reviewed-count route focused on its counted release payoff.
+  - Preserve existing conductor, lunch-tin, newspaper, answered-board, and
+    handoff branches.
+  - Add regression coverage, run health, and play the changed route.
+- Risks:
+  - The answer scene gains one more choice. The tradeoff is acceptable because
+    it exposes an existing, high-quality passenger payoff that normal play can
+    currently bypass.
+- Status:
+  - Added `make_room_after_answered_names` from `passenger_answers` to
+    `passenger_room_boarding`.
+  - Guarded the new bridge out of reviewed-count routes so
+    `pull_release_after_answered_count` remains the count-specific payoff.
+  - Preserved existing newspaper, gather, lunch-tin, conductor, Mara handoff,
+    answered-intercom, and answered-boarding choices.
+  - Added regression coverage for the new route through
+    `passenger_room_boarding`, `passenger_room_intercom`, and
+    `passenger_room_release`.
+  - Focused story-path suite passed: 173 tests.
+  - `npm run health` passed: format check, TypeScript, 217 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `make_room_after_answered_names` -> `listen_to_room_made_for_passengers`
+    -> `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 290 and no objectives.
+- Playtest feedback:
+  - The new choice reads naturally after the answer scene's "third car is
+    ready" prompt and exposes the stronger shared-release sequence.
+  - The route feels coherent: answered names become physical room, then shared
+    action on the release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch the next short random sample for `passenger_room_boarding` frequency.
+    If it still underappears, consider moving the room-making prompt earlier in
+    `passengers_released` rather than adding more late-branch options.
+
 # Cycle 57 Direct Manifest Handoff Release
 
 - Date: 2026-06-02

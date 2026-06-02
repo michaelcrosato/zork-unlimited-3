@@ -3744,12 +3744,34 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_room_made_for_passengers",
+      "ask_conductor_to_clear_room_made",
       "reach_release_after_making_room"
     ]);
 
     const roomState = state;
 
-    state = choose(story, state, "listen_to_room_made_for_passengers");
+    state = choose(story, roomState, "ask_conductor_to_clear_room_made");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_signal");
+    expect(observation.scene.text).toContain("Platform clear");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_on_conductor_signal",
+      "inspect_conductor_punch_memory",
+      "follow_conductor_signal_to_third_car"
+    ]);
+
+    state = choose(story, state, "pull_release_on_conductor_signal");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.text).toContain("conductor's clear signal");
+    expectIdealScore(observation.score);
+
+    state = choose(story, roomState, "listen_to_room_made_for_passengers");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_room_intercom");
@@ -3967,6 +3989,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_room_made_for_passengers",
+      "ask_conductor_to_clear_room_made",
       "reach_release_after_making_room"
     ]);
 
@@ -5809,6 +5832,7 @@ describe("demo story critical paths", () => {
       "follow_newspaper_answer",
       "gather_answered_passengers",
       "let_lunch_tin_worker_keep_count",
+      "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",
@@ -5817,6 +5841,38 @@ describe("demo story critical paths", () => {
     ]);
 
     const answeredState = state;
+
+    state = choose(story, answeredState, "make_room_after_answered_names");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_boarding");
+    expect(observation.scene.text).toContain("ordinary space");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_room_made_for_passengers",
+      "ask_conductor_to_clear_room_made",
+      "reach_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "listen_to_room_made_for_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pass_room_release_after_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, answeredState, "ask_conductor_punch_from_answers");
     observation = observe(story, state);
@@ -8920,6 +8976,7 @@ describe("demo story critical paths", () => {
       "follow_newspaper_answer",
       "gather_answered_passengers",
       "let_lunch_tin_worker_keep_count",
+      "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",
       "ask_conductor_from_answers",
       "return_from_passenger_answers",

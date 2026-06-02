@@ -1856,6 +1856,16 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
+      - id: make_room_after_answered_names
+        label: Make room in the third car for the answered passengers
+        to: passenger_room_boarding
+        requires:
+          all:
+            - notFlag: made_room_for_passengers
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            made_room_for_passengers: true
       - id: ask_conductor_punch_from_answers
         label: Ask what the old conductor's punch remembers
         to: passenger_conductor_punch_memory
@@ -2153,6 +2163,16 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: ask_conductor_to_clear_room_made
+        label: Ask the old conductor to clear the room you made
+        to: passenger_conductor_signal
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
       - id: reach_release_after_making_room
         label: Reach the release once every passenger has room
         to: train_car
