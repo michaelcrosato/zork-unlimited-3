@@ -1,3 +1,52 @@
+# Cycle 11 Badge-Proof Last-Dispatch Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `mara_badge_proof_intercom`
+  after players learn the badge-proof clue and then ask Mara for her last
+  dispatch.
+- Why this matters: Current evidence called out `mara_badge_proof_intercom` as
+  missed in ordinary random play. The clue could already pay off if players
+  boarded immediately after clearing Mara, but the natural extra step of asking
+  for her last dispatch suppressed the badge-proof intercom route.
+- Work completed:
+  - Added `listen_to_badge_proof_after_last_dispatch` from `train_car` to
+    `mara_badge_proof_intercom`, gated by `knows_badge_proof`,
+    `heard_mara_last_dispatch`, `freed_mara`, and the existing Mara-only route
+    exclusions.
+  - Preserved the existing `listen_to_last_dispatch_intercom` and direct release
+    options, so the new route adds a recovery payoff without removing player
+    choice.
+  - Added regression coverage for a notice-back badge-proof route that asks for
+    Mara's last dispatch before boarding, then reaches `true_ending` through the
+    badge-proof intercom.
+- Evidence:
+  - Focused story-path suite passed: 119 tests.
+  - `npm run health` passed: format check, TypeScript, 163 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 117 scenes with zero unfinished runs,
+    best score 390, and average score 318.27.
+  - Actual CLI play used `listen_to_badge_proof_after_last_dispatch` and reached
+    `true_ending` at score 309 with no active objectives.
+  - `npm run ai:cycle` wrote ignored run artifacts and completed its wrapper,
+    but the nested `codex exec` failed to initialize the in-process app-server
+    client because this environment reports a read-only filesystem while
+    updating PATH.
+- Playtest feedback:
+  - The route now reads as a continuous character beat: proof clue, final
+    dispatch, train-car release, then badge proof as an answer instead of a
+    lock.
+  - The new choice appears only after the player has earned both the proof clue
+    and the last-dispatch beat, avoiding noise on the basic route.
+  - No dangling objectives, invalid choices, validation errors, or unfinished
+    coverage runs appeared.
+- Next step:
+  - Watch blind-play feedback for whether late Mara-only train-car choices feel
+    too dense; if so, consolidate badge-proof and last-dispatch language into a
+    single payoff scene.
+- Risks:
+  - This adds one more optional choice to `train_car` for a specific clue order.
+    It is tightly gated, but dense late-game choice sets remain worth watching.
+
 # Cycle 10 Open-Ended Score Awards
 
 - Date: 2026-06-02
