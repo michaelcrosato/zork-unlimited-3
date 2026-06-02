@@ -3797,6 +3797,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("fills by object before it fills by name");
     expect(observation.scene.text).toContain("the ordinary things answer");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_keepsake_roll_call_from_boarding",
       "listen_to_keepsakes_answer_from_boarding",
       "pull_release_after_keepsake_boarding"
     ]);
@@ -3808,6 +3809,54 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("matched keepsakes cross the");
     expect(observation.scene.text).toContain("lets the ordinary things answer back");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("surfaces the matched-keepsake roll call directly from boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "match_manifest_keepsakes",
+      "lead_keepsake_passengers_to_third_car",
+      "hear_keepsake_roll_call_from_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_roll_call");
+    expect(observation.scene.text).toContain("matched keepsakes answer");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_keepsake_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_keepsake_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

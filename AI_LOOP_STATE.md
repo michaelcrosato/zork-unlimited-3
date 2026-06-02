@@ -1,3 +1,45 @@
+# Cycle 5 Keepsake Roll-Call Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for the under-sampled
+  `passenger_keepsake_roll_call` scene without adding a new ending or widening
+  early-game choice pressure.
+- Why this matters: Current evidence shows the game is healthy and fully
+  reachable, but random play still missed `passenger_keepsake_roll_call` in one
+  normal-play sample. The keepsake branch already earns this payoff; players
+  should see the final roll-call option when the boarding text says Mara starts
+  reading the manifest again.
+- Work completed:
+  - Added `hear_keepsake_roll_call_from_boarding`, a direct choice from
+    `passenger_keepsake_boarding` to `passenger_keepsake_roll_call`.
+  - Preserved the existing keepsake intercom and direct keepsake release paths.
+  - Added regression coverage for the direct boarding-to-roll-call path through
+    `passenger_keepsake_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 115 tests.
+  - `npm run health` passed: format check, TypeScript, 159 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.34, and 1185 max-score runs.
+  - Actual CLI play used `hear_keepsake_roll_call_from_boarding` and reached
+    `passenger_keepsake_true_ending` at 100/100 with no active objectives.
+- Playtest feedback:
+  - The route now reads cleanly: match keepsakes, lead matched passengers into
+    the third car, let the keepsakes finish Mara's roll call, then pull the
+    release.
+  - The boarding scene now has three choices, but all are specific and earned:
+    hear the roll call, listen to the intercom beat, or release immediately.
+  - No route bugs, dangling objectives, score issues, or unfinished runs
+    appeared.
+- Next step:
+  - Watch blind-play feedback for whether late passenger boarding scenes feel
+    too dense; if that repeats, consolidate optional passenger payoff choices
+    into clearer thematic groups.
+- Blocker:
+  - Commit/push may still be blocked in this sandbox if `.git` remains
+    unwritable, as prior cycles observed. The verified dirty tree is ready for
+    the outer loop or a writable Git session to commit.
+
 # Cycle 4 Manifest Count And Thumbprint Carry-Forward
 
 - Date: 2026-06-02

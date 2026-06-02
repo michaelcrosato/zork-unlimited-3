@@ -1554,6 +1554,15 @@ scenes:
       read the manifest again, then stops when the ordinary things answer for
       the people holding them.
     choices:
+      - id: hear_keepsake_roll_call_from_boarding
+        label: Let the matched keepsakes finish Mara's roll call
+        to: passenger_keepsake_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: listen_to_keepsakes_answer_from_boarding
         label: Listen as the keepsakes answer from the third car
         to: passenger_keepsake_intercom
