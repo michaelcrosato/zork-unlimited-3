@@ -38,8 +38,7 @@
   - Actual CLI play followed the pre-boarding thumbprint intercom route through
     `ask_mara_to_carry_thumbprint_to_far_door`, ended at
     `mara_handoff_true_ending`, scored 285, and left no objectives.
-  - Commit/push attempted, but this sandbox exposes `.git` as read-only:
-    `git commit` failed because it could not create `.git/index.lock`.
+  - Committed as `e096466 Add thumbprint intercom handoff recovery`.
 - Playtest feedback:
   - The new recovery option reads naturally after Mara explains why the
     thumbprint tore the ledger: the player can still pull immediately, or turn
