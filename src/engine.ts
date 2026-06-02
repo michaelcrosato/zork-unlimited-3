@@ -34,8 +34,15 @@ export interface Observation {
   };
   score: {
     score: number;
-    maxScore: number;
-    achievements: Array<{
+    delta: number;
+    soundCue?: "score_award";
+    recentAwards: Array<{
+      id: string;
+      label: string;
+      points: number;
+      earned: boolean;
+    }>;
+    awards: Array<{
       id: string;
       label: string;
       points: number;
@@ -60,7 +67,12 @@ export interface PlayerObservation {
   }>;
   score: {
     score: number;
-    maxScore: number;
+    delta: number;
+    soundCue?: "score_award";
+    recentAwards: Array<{
+      label: string;
+      points: number;
+    }>;
   };
   objectives?: string[];
 }
@@ -84,6 +96,9 @@ export function observe(story: Story, state: GameState): Observation {
   if (!scene) {
     throw new Error(`Current scene does not exist: ${state.currentScene}`);
   }
+  const score = scoreState(state, story);
+  const recentAwards = recentScoreAwards(story, state, score.awards);
+  const delta = recentAwards.reduce((total, award) => total + award.points, 0);
 
   return {
     story: { id: story.id, title: story.title },
@@ -107,7 +122,12 @@ export function observe(story: Story, state: GameState): Observation {
       flags: { ...state.flags },
       inventory: [...state.inventory]
     },
-    score: scoreState(state, story),
+    score: {
+      ...score,
+      delta,
+      soundCue: delta > 0 ? "score_award" : undefined,
+      recentAwards
+    },
     objectives: scene.ending ? [] : getObjectives(story, state)
   };
 }
@@ -131,7 +151,12 @@ export function observePlayer(
     })),
     score: {
       score: raw.score.score,
-      maxScore: raw.score.maxScore
+      delta: raw.score.delta,
+      soundCue: raw.score.soundCue,
+      recentAwards: raw.score.recentAwards.map((award) => ({
+        label: award.label,
+        points: award.points
+      }))
     }
   };
 
@@ -214,6 +239,28 @@ export function applyEffects(state: GameState, effects: Effects | undefined): Ga
 function asArray(value: string | string[] | undefined): string[] {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+function recentScoreAwards(
+  story: Story,
+  state: GameState,
+  awards: Observation["score"]["awards"]
+): Observation["score"]["recentAwards"] {
+  const choices = state.history
+    .filter((entry) => entry.choice)
+    .map((entry) => entry.choice)
+    .filter((choice): choice is string => typeof choice === "string");
+  if (choices.length === 0) return [];
+
+  try {
+    const previous = choices.slice(0, -1).reduce((current, choiceId) => {
+      return choose(story, current, choiceId);
+    }, initialState(story));
+    const previousAwardIds = new Set(scoreState(previous, story).awards.map((award) => award.id));
+    return awards.filter((award) => !previousAwardIds.has(award.id));
+  } catch {
+    return [];
+  }
 }
 
 export function getObjectives(story: Story, state: GameState): string[] {

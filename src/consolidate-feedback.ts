@@ -40,7 +40,7 @@ interface CompactRecord {
   ended: boolean;
   final_scene: string;
   score: number;
-  max_score: number;
+  max_score?: number;
   turns: number;
   stuck_at: string | null;
   parse_error?: boolean;

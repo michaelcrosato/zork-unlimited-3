@@ -8,17 +8,17 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
   commit, and push automation.
 - Haunted transit interactive-fiction story with 117 reachable scenes and 26
   endings.
-- Deterministic 100-point score model exposed through observations, CLI, MCP,
-  and playtest summaries.
+- Open-ended point-award score model exposed through observations, CLI, MCP,
+  and playtest summaries; the UI shows points earned without a fixed maximum.
 - First-class player-view observations expose only player-visible text,
   numbered choices, visible score, and optional objective hints; raw engine
   observations remain available for trusted tooling.
 - Story metadata owns objective rules, route importance, and ending
   classification so scoring, reports, validation, and blind playtesting share
   one contract.
-- Score-guided goal self-play reaches the 100/100 true ending reliably; chaotic
-  random self-play now discovers every scene in 250 runs but still rarely earns
-  max score.
+- Score-guided goal self-play reaches true endings reliably; chaotic random
+  self-play now discovers every scene in 250 runs while high-score evidence
+  highlights the richest routes found so far.
 
 ## Quickstart
 
@@ -83,7 +83,7 @@ Run without allowing an agent to edit the repo:
 - `health` is the required gate before commits.
 - `ai:cycle` runs one evidence-gathering cycle and writes a report to `ai-runs/`.
   Reports include long-run effectiveness signals such as true-ending rate,
-  non-ideal ending pressure, max-score rate, coverage completeness, and the
+  non-ideal ending pressure, high-score repeat rate, coverage completeness, and the
   current adaptive-route pressure point.
 - `ai:loop` repeats cycles indefinitely until interrupted. After the agent
   returns, it detects repo changes or unpushed commits, reruns `health`, plays

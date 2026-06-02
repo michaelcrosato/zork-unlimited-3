@@ -30,10 +30,11 @@ describe("transcript rendering", () => {
 
     expect(transcript).toContain("## Final State");
     expect(transcript).toContain("Scene: signal_booth (in progress)");
-    expect(transcript).toContain("Score: 55/100");
-    expect(transcript).toContain("Score beats:");
-    expect(transcript).toContain("- earned: Recovered the signal-booth token (10 pts)");
-    expect(transcript).toContain("- missing: Cleared Mara's name from the signal ledger (15 pts)");
+    expect(transcript).toMatch(/Score: \d+\n/);
+    expect(transcript).not.toContain("Score: 55/100");
+    expect(transcript).toContain("Point awards:");
+    expect(transcript).toContain("- +10: Recovered the signal-booth token");
+    expect(transcript).not.toContain("- missing:");
     expect(transcript).toContain("- Use the signal booth to resolve Mara's ledger entry.");
     expect(transcript).toContain(
       "- Read Mara's uncrossed ledger entry (inspect_signal_ledger -> signal_ledger)"
@@ -76,8 +77,9 @@ describe("transcript rendering", () => {
     const transcript = renderTranscript(story, state);
 
     expect(transcript).toContain("Scene: true_ending (ending)");
-    expect(transcript).toContain("Score: 100/100");
-    expect(transcript).toContain("- earned: Opened every door with the emergency release (10 pts)");
+    expect(transcript).toMatch(/Score: \d+\n/);
+    expect(transcript).not.toContain("Score: 100/100");
+    expect(transcript).toContain("- +35: Opened every door with the emergency release");
     expect(transcript).not.toContain("- missing:");
     expect(transcript).toContain("Objectives:\n- none");
     expect(transcript).toContain("Available choices:\n- none");

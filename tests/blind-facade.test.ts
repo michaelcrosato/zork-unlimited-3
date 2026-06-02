@@ -18,8 +18,10 @@ function sampleObservation(): Observation {
     state: { flags: { secret_known: true }, inventory: ["brass_key"] },
     score: {
       score: 10,
-      maxScore: 100,
-      achievements: [{ id: "found_key", label: "Found key", points: 10, earned: true }]
+      delta: 10,
+      soundCue: "score_award",
+      recentAwards: [{ id: "found_key", label: "Found key", points: 10, earned: true }],
+      awards: [{ id: "found_key", label: "Found key", points: 10, earned: true }]
     },
     objectives: ["Find a way into the vault"]
   };
@@ -34,7 +36,9 @@ describe("blind facade", () => {
       { index: 1, label: "Flee back outside" }
     ]);
     expect(masked.score).toBe(10);
-    expect(masked.maxScore).toBe(100);
+    expect(masked.scoreDelta).toBe(10);
+    expect(masked.scoreCue).toBe("score_award");
+    expect(masked.recentAwards).toEqual([{ label: "Found key", points: 10 }]);
     expect(masked.objectives).toBeUndefined();
     expect(choiceIds).toEqual(["open_door", "flee"]);
 
@@ -45,7 +49,7 @@ describe("blind facade", () => {
       "open_door",
       "secret_known",
       "brass_key",
-      "achievements",
+      "awards",
       "found_key"
     ]) {
       expect(serialized).not.toContain(leaked);
@@ -61,7 +65,9 @@ describe("blind facade", () => {
     const { masked } = maskObservation(sampleObservation());
     const rendered = renderMaskedScene(masked);
     expect(rendered).toContain("0. Open the door");
-    expect(rendered).toContain("Score: 10/100");
+    expect(rendered).toContain("Award: +10 Found key");
+    expect(rendered).toContain("Score: 10");
+    expect(rendered).not.toContain("Score: 10/");
     expect(rendered).not.toContain("open_door");
     expect(rendered).not.toContain("hidden_vault");
   });

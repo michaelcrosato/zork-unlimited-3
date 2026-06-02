@@ -277,10 +277,9 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
   const finalObs = observe(story, state);
   const ended = finalObs.scene.ending;
   const finalScene = finalObs.scene.id;
-  const { score, maxScore } = scoreState(state, story);
-  const progress = scoreState(state, story)
-    .achievements.filter((a) => a.earned)
-    .map((a) => a.id);
+  const scoreBreakdown = scoreState(state, story);
+  const score = scoreBreakdown.score;
+  const progress = scoreBreakdown.awards.filter((award) => award.earned).map((award) => award.id);
   const lastTurn = Math.max(turns.length - 1, 0);
 
   let raw: RawFeedback | null = null;
@@ -297,7 +296,6 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
       ended,
       finalScene,
       score,
-      maxScore,
       turns: turns.length
     });
     const result = await runAgentCommand(agentCmd, prompt, {
@@ -326,7 +324,6 @@ export async function runSession(options: SessionOptions = {}): Promise<Feedback
     ended,
     final_scene: finalScene,
     score,
-    max_score: maxScore,
     stuck_at: stuckAt,
     progress,
     parse_error: parseError,
@@ -388,7 +385,7 @@ async function main() {
   const record = await runSession(options);
   console.log(
     `blind playtest ${record.run_id}: persona=${record.persona} model=${record.model} ` +
-      `final=${record.final_scene} score=${record.score}/${record.max_score} ` +
+      `final=${record.final_scene} score=${record.score} ` +
       `turns=${record.turns} issues=${record.issues.length}${record.parse_error ? " (parse_error)" : ""}`
   );
 }

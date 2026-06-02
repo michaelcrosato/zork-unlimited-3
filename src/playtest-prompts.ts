@@ -6,7 +6,7 @@ export const PERSONA_BRIEF: Record<Persona, string> = {
   risk_taker:
     "You take dangerous options and test warnings; you probe what happens if you ignore advice.",
   casual_clicker: "You skim prose and pick whatever label looks appealing; low patience.",
-  completionist: "You try to collect every item and see every branch and the max score.",
+  completionist: "You try to collect every item, see every branch, and earn more points.",
   story_first: "You care about character payoff, emotional beats, and narrative continuity.",
   systems_skeptic:
     "You watch for score/objective inconsistencies, contradictions, and UI weirdness."
@@ -43,7 +43,6 @@ export interface CritiqueInput {
   ended: boolean;
   finalScene: string;
   score: number;
-  maxScore: number;
   turns: number;
 }
 
@@ -105,7 +104,7 @@ ${input.transcript}
 --- TRANSCRIPT END ---
 
 Outcome: ${input.ended ? `ended at "${input.finalScene}"` : "did NOT reach an ending"}, ` +
-    `score ${input.score}/${input.maxScore}, ${input.turns} turns.
+    `score ${input.score}, ${input.turns} turns.
 
 Answer this interview, terse / LLM-shorthand, as ONE JSON object and nothing else after it.
 Cover: goal clarity, onboarding (first turns), getting stuck or looping, choice clarity and

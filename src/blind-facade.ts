@@ -5,7 +5,7 @@ import type { Observation, PlayerObservation } from "./engine.js";
  *
  * The raw `Observation` returned by the engine leaks structure a fresh player
  * could never see: every choice carries its destination scene id (`to`), and
- * the payload includes internal scene ids, raw flags, and the full achievement
+ * the payload includes internal scene ids, raw flags, and the full award
  * model. A genuinely blind playtest must hide all of that and present only what
  * a human reading the screen would have: prose, numbered choice labels, and the
  * visible score. The orchestrator keeps the real choice ids privately (via
@@ -21,7 +21,12 @@ export interface MaskedScene {
   ending: boolean;
   choices: MaskedChoice[];
   score: number;
-  maxScore: number;
+  scoreDelta: number;
+  scoreCue?: "score_award";
+  recentAwards: Array<{
+    label: string;
+    points: number;
+  }>;
   /** Player-facing hint text, included only for the "with-hints" variant. */
   objectives?: string[];
 }
@@ -71,7 +76,12 @@ function playerObservationFromRaw(
     })),
     score: {
       score: observation.score.score,
-      maxScore: observation.score.maxScore
+      delta: observation.score.delta,
+      soundCue: observation.score.soundCue,
+      recentAwards: observation.score.recentAwards.map((award) => ({
+        label: award.label,
+        points: award.points
+      }))
     }
   };
 
@@ -91,7 +101,12 @@ function playerToMaskedScene(observation: PlayerObservation): MaskedScene {
       label: choice.label
     })),
     score: observation.score.score,
-    maxScore: observation.score.maxScore
+    scoreDelta: observation.score.delta,
+    scoreCue: observation.score.soundCue,
+    recentAwards: observation.score.recentAwards.map((award) => ({
+      label: award.label,
+      points: award.points
+    }))
   };
 
   if (observation.objectives) {
@@ -115,7 +130,12 @@ export function renderMaskedScene(masked: MaskedScene): string {
     }
     lines.push("");
   }
-  lines.push(`Score: ${masked.score}/${masked.maxScore}`);
+  if (masked.recentAwards.length > 0) {
+    const total = masked.recentAwards.reduce((sum, award) => sum + award.points, 0);
+    const labels = masked.recentAwards.map((award) => award.label).join("; ");
+    lines.push(`Award: +${total} ${labels}`);
+  }
+  lines.push(`Score: ${masked.score}`);
   if (masked.ending) {
     lines.push("[THE STORY HAS ENDED]");
   } else {

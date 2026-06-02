@@ -877,6 +877,17 @@ scenes:
         effects:
           set:
             read_passenger_manifest: true
+      - id: read_manifest_after_thumbprint
+        label: Follow Mara's thumbprint back through the kept-passenger manifest
+        to: passenger_manifest
+        requires:
+          all:
+            - item: badge
+            - flag: read_mara_thumbprint
+            - notFlag: read_passenger_manifest
+        effects:
+          set:
+            read_passenger_manifest: true
       - id: mark_mara_clear_from_ledger
         label: Enter Mara's badge number and clear only her name
         to: mara_released

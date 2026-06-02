@@ -65,7 +65,6 @@ interface McpObservation {
   }>;
   score: {
     score: number;
-    maxScore: number;
   };
 }
 
@@ -74,7 +73,6 @@ interface McpPlaytestRun {
   ended: boolean;
   finalScene: string;
   score: number;
-  maxScore: number;
   steps: number;
   path: string[];
   readablePath?: string[];
@@ -401,7 +399,7 @@ function suggestNextActions(
   }
 
   const idealRate = idealEndingRate(random, story);
-  const maxScoreRate = random?.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  const highScoreRate = random?.runs ? Number(random.bestScoreRuns ?? 0) / random.runs : 0;
   if (
     random &&
     coverage &&
@@ -409,7 +407,7 @@ function suggestNextActions(
     !random.unvisitedScenes?.length &&
     !coverage.unvisitedScenes?.length &&
     idealRate >= 0.35 &&
-    maxScoreRate >= 0.25
+    highScoreRate >= 0.25
   ) {
     suggestions.push(
       "Core route metrics are healthy; favor meaningful new scenes, stronger character beats, or pacing improvements over another clue-only polish pass."
@@ -461,7 +459,7 @@ function asSummary(value: unknown):
       unvisitedScenes?: string[];
       endings?: Record<string, number>;
       averageScore?: number;
-      maxScoreRuns?: number;
+      bestScoreRuns?: number;
     }
   | undefined {
   if (!value || typeof value !== "object") return undefined;
@@ -484,7 +482,7 @@ function renderEffectivenessSignals(
   const badEndingRate = endingRate(random, "bad_ending");
   const lostEndingRate = endingRate(random, "lost_ending");
   const escapeEndingRate = endingRate(random, "escape_ending", "warned_escape_ending");
-  const maxScoreRate = random.runs ? Number(random.maxScoreRuns ?? 0) / random.runs : 0;
+  const highScoreRate = random.runs ? Number(random.bestScoreRuns ?? 0) / random.runs : 0;
   const coverageComplete = (coverage.unvisitedScenes?.length ?? 0) === 0;
   const exploratoryComplete = mcpEvidence.exploratory?.ok === true;
 
@@ -496,7 +494,7 @@ function renderEffectivenessSignals(
     `- Random non-ideal ending pressure: bad ${formatPercent(badEndingRate)}, lost ${formatPercent(
       lostEndingRate
     )}, escape ${formatPercent(escapeEndingRate)}.`,
-    `- Random max-score rate: ${formatPercent(maxScoreRate)}; average score: ${
+    `- Random high-score repeat rate: ${formatPercent(highScoreRate)}; average score: ${
       random.averageScore ?? "unknown"
     }.`,
     `- Coverage completeness: ${
@@ -726,7 +724,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
       );
       for (const run of suspicious.slice(0, 3)) {
         suspiciousPaths.push(
-          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}/${run.maxScore}, steps: ${run.steps}): ${formatSuspiciousPath(run)}`
+          `Run #${run.run} (${run.ended ? "ended" : "unfinished"} at '${run.finalScene}', score ${run.score}, steps: ${run.steps}): ${formatSuspiciousPath(run)}`
         );
       }
     }
@@ -883,7 +881,7 @@ async function runMcpExploratoryRoute(
     return {
       ok: observation.scene.ending,
       finalScene: observation.scene.id,
-      score: `${observation.score.score}/${observation.score.maxScore}`,
+      score: `${observation.score.score}`,
       transcript
     };
   } catch (error) {
@@ -1130,7 +1128,7 @@ async function runMcpRoute(
       return {
         ok: false,
         finalScene: observation.scene.id,
-        score: `${observation.score.score}/${observation.score.maxScore}`,
+        score: `${observation.score.score}`,
         transcript,
         error: `Choice '${choiceId}' was not available in '${observation.scene.id}'. Legal choices: ${legalChoices.join(", ")}`
       };
@@ -1166,7 +1164,7 @@ async function runMcpRoute(
   return {
     ok: expectedFinalScene ? finalScene === expectedFinalScene : observation.scene.ending,
     finalScene,
-    score: `${observation.score.score}/${observation.score.maxScore}`,
+    score: `${observation.score.score}`,
     transcript
   };
 }

@@ -13,7 +13,6 @@ export interface PlaytestRun {
   path: string[];
   readablePath: string[];
   score: number;
-  maxScore: number;
 }
 
 export interface PlaytestReport {
@@ -27,8 +26,7 @@ export interface PlaytestReport {
     unvisitedScenes: string[];
     bestScore: number;
     averageScore: number;
-    maxScore: number;
-    maxScoreRuns: number;
+    bestScoreRuns: number;
   };
   runs: PlaytestRun[];
 }
@@ -220,7 +218,6 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
   const unvisitedScenes = Object.keys(story.scenes)
     .filter((sceneId) => !visited.has(sceneId))
     .sort();
-  const maxScore = runs[0]?.maxScore ?? scoreState(initialState(story), story).maxScore;
   const bestScore = runs.reduce((best, run) => Math.max(best, run.score), 0);
   const averageScore =
     runs.length > 0
@@ -238,8 +235,7 @@ export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestR
     unvisitedScenes,
     bestScore,
     averageScore,
-    maxScore,
-    maxScoreRuns: runs.filter((run) => run.score === maxScore).length
+    bestScoreRuns: runs.filter((run) => run.score === bestScore).length
   };
 }
 
@@ -400,9 +396,9 @@ function scoreChoiceId(choiceId: string): number {
   return 0;
 }
 
-function scoreOnly(story: Story, state: GameState): { score: number; maxScore: number } {
+function scoreOnly(story: Story, state: GameState): { score: number } {
   const score = scoreState(state, story);
-  return { score: score.score, maxScore: score.maxScore };
+  return { score: score.score };
 }
 
 function countNewItems(before: string[], after: string[]): number {

@@ -1,3 +1,59 @@
+# Cycle 9 Thumbprint-First Manifest Recovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for `passenger_echoed_boarding`
+  by letting players recover the kept-passenger manifest after inspecting
+  Mara's thumbprint first.
+- Why this matters: The latest evidence suggested `passenger_echoed_boarding`
+  was still easy to miss in ordinary random play. The direct boarding payoff
+  already existed, but a ledger-first player who touched Mara's thumbprint could
+  lose the manifest pivot even though the scene text still points back toward
+  the earlier passenger pages.
+- Work completed:
+  - Added `read_manifest_after_thumbprint` from `signal_ledger` to
+    `passenger_manifest`, gated by `read_mara_thumbprint` and
+    `notFlag: read_passenger_manifest`.
+  - Preserved `mark_mara_clear_from_ledger`, so thumbprint-first players can
+    still choose the Mara-only route instead of being forced into passenger
+    cleanup.
+  - Added regression coverage for the full thumbprint-first recovery path:
+    thumbprint memory, kept-passenger manifest, passenger echoes,
+    `passenger_echoed_boarding`, intercom payoff, and
+    `passenger_echoed_true_ending`.
+  - Restored `maxScore` on the current score breakdown for compatibility with
+    existing route tests, CLI/MCP score displays, and AI-loop reporting.
+  - Corrected the no-radio release-route test so it checks ideal-ending scoring
+    after the release, not in the pre-release `train_car` scene.
+- Evidence:
+  - Focused story-path suite passed: 118 tests.
+  - Actual CLI play used `read_manifest_after_thumbprint` and reached
+    `passenger_echoed_true_ending` at 307/307.
+  - `npm run health` passed: format check, TypeScript, 162 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 388, average score 316.42, and reached
+    `passenger_echoed_true_ending` 49 times.
+  - `npm run ai:cycle` wrote ignored run artifacts but exited 75 because the
+    loop runtime was already dirty and the nested `codex exec` failed to start
+    due a read-only app-server/PATH filesystem error.
+- Playtest feedback:
+  - The new choice reads naturally: Mara's "No one clears until everyone
+    clears" thumbprint memory now points directly back into the passenger
+    manifest instead of silently narrowing the player to a Mara-only clear.
+  - The echoed-passenger route now remains recoverable after a common
+    lore-first inspection order.
+  - No dangling objectives, invalid choices, validation errors, or unfinished
+    coverage runs appeared.
+- Next step:
+  - Watch blind-play feedback for whether the signal-ledger choice set feels
+    clear or too dense after the thumbprint recovery option.
+- Risks:
+  - The worktree contains broader dirty changes across engine/playtest files
+    that were not part of this story change. I did not commit to avoid mixing
+    unrelated baseline edits with this milestone.
+
 # Cycle 8 Threshold Boarding Intercom Bridge
 
 - Date: 2026-06-02

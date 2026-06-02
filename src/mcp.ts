@@ -129,7 +129,7 @@ server.registerTool(
   "get_score",
   {
     title: "Get Score",
-    description: "Read the current score, max score, and earned puzzle achievements.",
+    description: "Read the current open-ended score and earned point awards.",
     inputSchema: z.object({
       savePath: z.string().default(DEFAULT_SAVE)
     })

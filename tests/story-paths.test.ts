@@ -3,6 +3,11 @@ import { choose, initialState, observe } from "../src/engine.js";
 import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
+function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
+  expect(score.score).toBeGreaterThan(0);
+  expect(score.awards.some((award) => award.id === "flag_ideal_ending")).toBe(true);
+}
+
 describe("demo story critical paths", () => {
   it("can reach the true ending", async () => {
     const story = await loadStory("stories/demo.yaml");
@@ -38,7 +43,7 @@ describe("demo story critical paths", () => {
     expect(finalObservation.scene.ending).toBe(true);
     expect(finalObservation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);
     expect(finalObservation.state.flags.freed_mara).toBe(true);
-    expect(finalObservation.score.score).toBe(finalObservation.score.maxScore);
+    expectIdealScore(finalObservation.score);
   });
 
   it("warns before the forced-gate bad ending", async () => {
@@ -1166,7 +1171,7 @@ describe("demo story critical paths", () => {
     );
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     observation = observe(
       story,
@@ -1213,7 +1218,7 @@ describe("demo story critical paths", () => {
     );
 
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
 
@@ -1222,7 +1227,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
     expect(observation.scene.text).toContain("blank transfer column fills with destinations");
     expect(observation.scene.text).toContain("folds tomorrow's route into her coat");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = initialState(story);
 
@@ -1589,7 +1594,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = initialState(story);
     for (const choiceId of [
@@ -1688,7 +1693,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("pays off the notice-back badge proof clue in Mara's final intercom", async () => {
@@ -1743,7 +1748,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds an optional last-dispatch beat after clearing Mara's ledger row", async () => {
@@ -1807,7 +1812,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps the direct release available after Mara's handoff beat", async () => {
@@ -1880,7 +1885,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara is not only a voice");
     expect(observation.scene.text).toContain("holding them open");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("pays off the torn thumbprint when Mara leaves the booth", async () => {
@@ -1937,7 +1942,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_handoff_true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds an optional kept-passenger manifest before Mara's ledger row", async () => {
@@ -2009,7 +2014,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_echoed_true_ending");
     expect(observation.scene.text).toContain("small sounds you heard");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets ledger-first players pivot to the kept-passenger manifest before clearing Mara", async () => {
@@ -2071,7 +2076,66 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets thumbprint-first players recover the kept-passenger manifest route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "read_manifest_after_thumbprint"
+    );
+
+    state = choose(story, state, "read_manifest_after_thumbprint");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest");
+    expect(observation.state.flags.read_passenger_manifest).toBe(true);
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.scene.text).toContain("Mara's dispatcher row is set apart");
+
+    for (const choiceId of [
+      "listen_to_manifest_doors_from_manifest",
+      "return_from_passenger_echoes",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "board_with_echoed_manifest",
+      "listen_to_echoed_manifest_from_boarding",
+      "pull_release_after_echoed_manifest_goodbye"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.text).toContain("ordinary noise");
+    expectIdealScore(observation.score);
   });
 
   it("adds a threshold beat before the direct passenger manifest release", async () => {
@@ -2130,7 +2194,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = initialState(story);
     for (const choiceId of [
@@ -2224,7 +2288,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("opened manifest is still answering");
     expect(observation.scene.text).toContain("finish the count in morning air");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("pays off listening to passenger echoes before opening the manifest doors", async () => {
@@ -2289,7 +2353,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_echoed_true_ending");
     expect(observation.scene.text).toContain("ordinary noise");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a one-time Mara handoff beat after opening the passenger manifest", async () => {
@@ -2452,7 +2516,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds an optional opened-manifest count before the passenger roll call", async () => {
@@ -2570,7 +2634,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's reviewed count");
     expect(observation.scene.text).toContain("prove the count can end");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("pays off the reviewed manifest count in the third car", async () => {
@@ -2620,7 +2684,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the reviewed count falls apart");
     expect(observation.scene.text).toContain("not a total");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets Mara's manifest handoff lead directly to its third-car intercom", async () => {
@@ -2728,7 +2792,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara is still mid-handoff");
     expect(observation.scene.text).toContain("no longer a duty in one voice");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("pays off Mara's manifest thumbprint oath during the passenger handoff", async () => {
@@ -2798,7 +2862,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
     expect(observation.scene.text).toContain("walks through with the crowd");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets players recover Mara's thumbprint thread after returning to opened doors", async () => {
@@ -2861,7 +2925,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets passenger answer listeners still help the released crowd gather", async () => {
@@ -3008,7 +3072,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.text).toContain("lunch-tin worker's count");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = boardingState;
     state = choose(story, state, "read_lunch_tin_roster_from_boarding");
@@ -3023,7 +3087,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = boardingState;
     state = choose(story, state, "listen_to_lunch_tin_worker_from_boarding");
@@ -3037,7 +3101,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds an optional lunch-tin roster proof before the lunch-tin ending", async () => {
@@ -3086,7 +3150,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets platform explorers ask the lunch-tin worker to set the boarding pace", async () => {
@@ -3151,7 +3215,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets manifest explorers follow the lunch-tin latch before crossing the platform", async () => {
@@ -3194,7 +3258,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
@@ -3275,7 +3339,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, answeredState, "ask_conductor_from_answers");
     observation = observe(story, state);
@@ -3351,7 +3415,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
     expect(observation.scene.text).toContain("punched transfer");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, conductorTransferState, "hear_transfer_conductor_roll_call");
     observation = observe(story, state);
@@ -3368,7 +3432,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
     expect(observation.scene.text).toContain("star-shaped hole");
     expect(observation.scene.text).toContain("Morning has already accepted the change");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = conductorTransferState;
     state = choose(story, state, "hold_for_transfer_conductor_roll_call");
@@ -3386,7 +3450,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
     expect(observation.scene.text).toContain("punched transfer");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, conductorIntercomState, "hear_final_conductor_roll_call");
     observation = observe(story, state);
@@ -3404,7 +3468,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = conductorIntercomState;
     state = choose(story, state, "hold_for_conductor_roll_call_before_release");
@@ -3426,7 +3490,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("conductor's clear signal");
     expect(observation.scene.text).toContain("not counting tickets anymore");
     expect(observation.scene.text).toContain("another worker's voice");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, answeredState, "return_from_passenger_answers");
     observation = observe(story, state);
@@ -3506,7 +3570,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("conductor's counted clear call");
     expect(observation.scene.text).toContain("the count has already become a crowd");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, conductorIntercomState, "hold_for_conductor_count_before_release");
     observation = observe(story, state);
@@ -3545,7 +3609,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
     expect(observation.scene.text).toContain("punched transfer");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = choose(story, countedConductorTransferState, "hold_for_transfer_conductor_count");
     observation = observe(story, state);
@@ -3616,7 +3680,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the answered passengers do not");
     expect(observation.scene.text).toContain("their own voices carry the last name");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets answered passengers release directly from their boarding beat", async () => {
@@ -3654,7 +3718,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("answered names can fade");
     expect(observation.scene.text).toContain("carry it into morning themselves");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets opened-manifest players board directly with answered passengers", async () => {
@@ -3708,7 +3772,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets answer listeners gather passengers directly into a broad boarding beat", async () => {
@@ -3759,7 +3823,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps the lunch-tin pacing route available as its own explicit branch", async () => {
@@ -3864,7 +3928,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara can finish the last name");
     expect(observation.scene.text).toContain("no longer carrying the manifest alone");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds an optional lost-mitten passenger beat without blocking boarding", async () => {
@@ -3935,7 +3999,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("clutching both mittens");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets players match manifest keepsakes before the helped passenger ending", async () => {
@@ -3996,7 +4060,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("matched keepsakes cross the");
     expect(observation.scene.text).toContain("lets the ordinary things answer back");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("surfaces the matched-keepsake roll call directly from boarding", async () => {
@@ -4044,7 +4108,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a keepsake-specific intercom beat before the keepsake ending", async () => {
@@ -4093,7 +4157,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps the final roll call specific to matched-keepsake passengers", async () => {
@@ -4142,7 +4206,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("carries the returned-mitten payoff through the final roll call", async () => {
@@ -4187,7 +4251,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a mitten-specific intercom before the returned-mitten ending", async () => {
@@ -4235,7 +4299,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a final gathered-passenger intercom beat before the helped ending", async () => {
@@ -4285,7 +4349,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("lets the lunch-tin boarding count release directly without losing full score", async () => {
@@ -4322,7 +4386,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps the broader gathered-passenger intercom reachable without the lunch-tin pace", async () => {
@@ -4415,10 +4479,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("passengers' own roll call");
     expect(observation.scene.text).toContain("the manifest has become a chorus");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
-  it("adds an optional thumbprint memory without blocking Mara's ledger clear", async () => {
+  it("adds an optional thumbprint memory without blocking Mara's ledger choices", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -4470,6 +4534,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("signal_ledger");
     expect(choiceIds).not.toContain("inspect_mara_thumbprint");
     expect(choiceIds).not.toContain("read_manifest_from_ledger");
+    expect(choiceIds).toContain("read_manifest_after_thumbprint");
     expect(choiceIds).toContain("mark_mara_clear_from_ledger");
 
     state = choose(story, state, "mark_mara_clear_from_ledger");
@@ -4535,7 +4600,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("blocks mapless manifest clears and resumes at the ledger after map recovery", async () => {
@@ -4623,7 +4688,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_manifest_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("opened manifest is still answering");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps the non-manifest Mara intercom focused on Mara alone", async () => {
@@ -4693,13 +4758,13 @@ describe("demo story critical paths", () => {
       "Learn how to survive the driverless train before boarding it."
     );
     expect(observation.objectives).toContain("Pull the emergency release in the third car.");
-    expect(observation.score.score).toBe(observation.score.maxScore - 10);
+    expect(observation.score.score).toBeGreaterThan(0);
     expect(choiceIds).toContain("pull_release");
 
     state = choose(story, state, "pull_release");
     const finalObservation = observe(story, state);
     expect(finalObservation.scene.id).toBe("true_ending");
-    expect(finalObservation.score.score).toBe(finalObservation.score.maxScore);
+    expectIdealScore(finalObservation.score);
   });
 
   it("warns players without the token before they board from the lit platform", async () => {
@@ -5484,7 +5549,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara is not only a voice");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a manifest-specific platform beat after clearing Mara's ledger entry", async () => {
@@ -5591,7 +5656,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
     expect(observation.scene.text).toContain("answered names can fade");
     expect(observation.scene.text).toContain("carry it into morning themselves");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
 
     state = initialState(story);
 
@@ -5701,7 +5766,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("adds a one-time passenger morning chorus after opening the manifest", async () => {
@@ -5765,7 +5830,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.score.score).toBe(observation.score.maxScore);
+    expectIdealScore(observation.score);
   });
 
   it("keeps badge-less ledger states recoverable", async () => {
