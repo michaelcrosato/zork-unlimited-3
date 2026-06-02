@@ -946,7 +946,7 @@ scenes:
             heard_newspaper_memory: true
       - id: gather_answered_passengers
         label: Help the answered passengers gather for the third car
-        to: passenger_farewell
+        to: passenger_gathered_boarding
         requires:
           notFlag: helped_passengers_gather
         effects:
@@ -954,7 +954,7 @@ scenes:
             helped_passengers_gather: true
       - id: let_lunch_tin_worker_keep_count
         label: Let the lunch-tin worker count the answered passengers aboard
-        to: passenger_lunch_tin_boarding
+        to: passenger_farewell
         requires:
           notFlag: helped_passengers_gather
         effects:
@@ -1054,7 +1054,7 @@ scenes:
             helped_passengers_gather: true
       - id: help_passengers_gather
         label: Help the kept passengers gather by the open doors
-        to: passenger_farewell
+        to: passenger_gathered_boarding
         requires:
           notFlag: helped_passengers_gather
         effects:
@@ -1233,6 +1233,25 @@ scenes:
       - id: lead_gathered_passengers_without_lunch_tin_pace
         label: Board the gathered passengers without waiting for his count
         to: train_car
+
+  passenger_gathered_boarding:
+    text: >
+      The gathered passengers board by looking after the person nearest them.
+      The newspaper woman folds her transfer column into the child's mittened
+      hand, the old conductor checks the doorway without asking for tickets,
+      and the lunch-tin worker keeps his latch quiet so no one has to be counted
+      by the line again. At the first seat, the emergency release waits under a
+      crowd that is ready because it became a crowd.
+    choices:
+      - id: listen_to_gathered_passengers_from_boarding
+        label: Listen to the gathered passengers before the release
+        to: passenger_gathered_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
+      - id: pull_release_after_gathered_boarding
+        label: Pull the release once every passenger is ready
+        to: passenger_helped_true_ending
 
   passenger_lunch_tin_boarding:
     text: >
