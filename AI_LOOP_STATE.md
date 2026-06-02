@@ -1,3 +1,55 @@
+# Cycle 24 Mara-Note HOME Sign Recovery
+
+- Date: 2026-06-02
+- Main objective: Give prepared-but-premature train riders a clearer recovery
+  path from the false HOME sign back to Mara's ledger route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 24 evidence showed healthy completion and full
+  coverage. The remaining suspicious random samples repeatedly reached
+  `lost_ending` after reading Mara's file, taking the map/token, boarding too
+  early, and following the HOME sign. That route had warnings, but no
+  file-specific recovery beat at the first sign warning.
+- Planned work:
+  - Add one gated `sign_warning` choice for players carrying the marked map
+    after reading Mara's personnel file.
+  - Route that choice back to the service room with objective flags for the
+    token, badge proof, platform, and Mara.
+  - Add regression coverage proving the recovery route can still finish at
+    `true_ending`.
+  - Validate, run health, and play the route through the CLI.
+- Risks:
+  - `sign_warning` gains a fourth choice only for players who read Mara's file
+    before boarding. Underprepared players still see the original three-choice
+    warning, preserving the trap's pressure.
+- Work completed:
+  - Added `follow_mara_note_from_sign` from `sign_warning` to `service_room`,
+    gated by `map` plus `read_mara_file`.
+  - The new branch sets `resisted_home_sign_with_mara_note`, `met_mara`,
+    `knows_platform`, `knows_token_location`, and `knows_badge_proof`.
+  - Added a story-path regression that follows the new branch, verifies the
+    recovered objectives, and completes `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 144 tests.
+  - CLI validation passed with 134 reachable scenes, 27 endings, and no
+    warnings.
+  - Actual CLI play followed `read_personnel_file` -> `keep_mara_file` ->
+    `board_train` -> `look_at_sign` -> `follow_mara_note_from_sign`, then
+    recovered the fuse and badge, cleared Mara's ledger row, and ended at
+    `true_ending` with score 291 and no objectives.
+  - `npm run health` passed: format check, TypeScript, 188 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 134 scenes with no unvisited scenes.
+- Playtest feedback:
+  - The new branch makes Mara's note feel actionable at the exact moment the
+    false HOME sign competes with the map.
+  - The route still allows the player to leave safely by map or lose by
+    surrendering to the sign, but gives evidence-oriented players a more
+    natural way back to the core rescue.
+- Next step:
+  - Watch future blind feedback for whether early train boarding still feels
+    like a fair mistake. If HOME-sign losses remain frequent, tune choice
+    labels before adding another recovery branch.
+
 # Cycle 24 Counted Chorus Ending Consistency
 
 - Date: 2026-06-02

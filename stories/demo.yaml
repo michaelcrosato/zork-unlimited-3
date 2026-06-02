@@ -3586,6 +3586,20 @@ scenes:
         to: morning_transfer
         requires:
           item: map
+      - id: follow_mara_note_from_sign
+        label: Follow Mara's note back to the service room
+        to: service_room
+        requires:
+          all:
+            - item: map
+            - flag: read_mara_file
+        effects:
+          set:
+            resisted_home_sign_with_mara_note: true
+            met_mara: true
+            knows_platform: true
+            knows_token_location: true
+            knows_badge_proof: true
       - id: stare_at_home
         label: Keep staring at HOME
         to: home_sign_echo

@@ -1909,6 +1909,71 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("morning_transfer");
   });
 
+  it("lets players use Mara's note to recover from the HOME sign before boarding too early", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "read_personnel_file",
+      "keep_mara_file",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("sign_warning");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "look_away_from_sign",
+      "follow_mara_note_from_sign",
+      "stare_at_home",
+      "step_toward_porch_light"
+    ]);
+
+    state = choose(story, state, "follow_mara_note_from_sign");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.resisted_home_sign_with_mara_note).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.objectives).toContain("Find a way to power the platform gate control.");
+    expect(observation.objectives).toContain(
+      "Find proof of Mara Vale's identity before clearing her name."
+    );
+
+    for (const choiceId of [
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("adds a final recoverable HOME sign warning before the lost ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
