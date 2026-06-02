@@ -1663,6 +1663,14 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: gather_after_mara_signoff
+        label: Let Mara's sign-off gather the passengers into the third car
+        to: passenger_gathered_boarding
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
       - id: return_from_passenger_mara_signoff
         label: Return to the opened manifest doors
         to: passengers_released

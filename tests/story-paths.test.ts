@@ -9671,6 +9671,61 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets Mara's passenger sign-off gather the platform into a shared boarding", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "ask_mara_to_sign_off_from_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mara_signoff");
+    expect(observation.scene.text).toContain("no one boards alone");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("gather_after_mara_signoff");
+
+    state = choose(story, state, "gather_after_mara_signoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.text).toContain("board by looking after the person nearest them");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_gathered_passengers_from_boarding",
+      "answer_final_roll_call_from_gathered_boarding",
+      "pull_release_after_gathered_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_gathered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("surfaces matched keepsakes directly from the opened manifest doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -10121,6 +10176,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "notice_manifest_thumbprint_after_mara_signoff",
       "listen_to_answers_after_mara_signoff",
+      "gather_after_mara_signoff",
       "return_from_passenger_mara_signoff",
       "cross_after_passenger_mara_signoff",
       "board_after_passenger_mara_signoff"

@@ -1,3 +1,55 @@
+# Cycle 71 Mara Sign-Off Gathered Boarding
+
+- Date: 2026-06-02
+- Main objective: Let Mara's passenger sign-off directly become a shared
+  boarding route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows healthy completion, full scene coverage, and
+  strong ideal-ending rates, so this cycle focused on story-depth polish in a
+  normal late passenger route. Cycle 70 surfaced Mara's sign-off from the
+  passenger platform, but after the line "no one boards alone" the player still
+  had to choose a separate existing hub route to make the passengers gather.
+  This cycle makes that cue actionable.
+- Planned work:
+  - Add a one-time `passenger_mara_signoff` choice that gathers the passengers
+    into the third car.
+  - Reuse `passenger_gathered_boarding` and its existing intercom/ending
+    payoffs instead of adding duplicate branch content.
+  - Add focused route coverage for the new sign-off-to-gathered-boarding path.
+  - Run focused tests, full health, and an actual CLI playthrough of the
+    changed route.
+- Risks:
+  - `passenger_mara_signoff` gains one more visible option. It is guarded by
+    `helped_passengers_gather`, matches the sign-off text directly, and routes
+    to existing passenger-core payoff content, so it should clarify rather than
+    sprawl.
+- Status:
+  - Completed.
+  - Added `gather_after_mara_signoff`, routing from `passenger_mara_signoff` to
+    `passenger_gathered_boarding` and setting `helped_passengers_gather`.
+  - Updated the existing sign-off choice-list expectation.
+  - Added focused path coverage for platform sign-off -> gathered boarding ->
+    `passenger_helped_true_ending`.
+  - Focused story-path suite passed: 179 tests.
+  - `npm run health` passed: format check, TypeScript, 224 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+- Playtest feedback:
+  - Actual CLI play followed `board_after_releasing_passengers` ->
+    `ask_mara_to_sign_off_from_platform` -> `gather_after_mara_signoff` ->
+    `pull_release_after_gathered_boarding`, ending at
+    `passenger_helped_true_ending` with score 306 and no objectives.
+  - The sequence now reads as a clean cause-and-effect beat: Mara says no one
+    boards alone, the player lets that gather the crowd, and the gathered
+    passengers hold the doors together before the release.
+  - No invalid choices, dead ends, dangling objectives, or coverage regressions
+    appeared.
+- Next step:
+  - Watch blind sessions for whether players use the new direct gathered
+    boarding continuation from the sign-off. If it is skipped, tune the label
+    before adding more late-game passenger branches.
+
 # Cycle 70 Passenger Platform Sign-Off Bridge
 
 - Date: 2026-06-02
