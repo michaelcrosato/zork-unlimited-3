@@ -1,3 +1,49 @@
+# Cycle 21 Early Escape Platform Glance
+
+- Date: 2026-06-02
+- Main objective: Add a small optional consequence beat to the lit-platform
+  early escape route without blocking escape or weakening recovery.
+- Why this matters: Current evidence shows healthy core guidance, complete
+  coverage, and no consolidated blind-play blockers. The remaining useful
+  pressure is story depth on non-ideal routes, especially choices where players
+  leave Mara behind before the signal token is recovered.
+- Planned work:
+  - Add a one-time glance-back scene from the lit-platform escape warning.
+  - Preserve the existing immediate escape, stairwell-listen, and return paths.
+  - Add regression coverage for returning from the new scene and for leaving
+    through it.
+- Work completed:
+  - Added `escape_platform_glance`, where the player sees Mara's badge number
+    on the platform posters and the still-tapping token slot before deciding.
+  - Added `look_back_from_escape_warning` from `escape_warning` with a
+    one-time flag and badge-proof clue.
+  - Added regression coverage for the new scene's three exits and updated
+    exact lit-escape warning choice assertions.
+- Evidence so far:
+  - Focused story-path suite passed: 127 tests.
+  - `npm run health` passed: format check, TypeScript, 171 tests, validation,
+    and coverage playtest.
+  - Health validation reported 122 reachable scenes and 26 endings.
+  - Health coverage visited all 122 scenes, including
+    `escape_platform_glance`, with zero unfinished runs.
+  - Actual CLI play used `look_back_from_escape_warning` and
+    `leave_after_escape_glance`, reaching `escape_ending` at score 88 with no
+    active objectives.
+- Playtest feedback:
+  - The new glance reads as a consequence beat rather than a hard warning:
+    the player sees Mara's badge number and the token slot one more time, but
+    the leave option remains direct and terminal.
+  - The branch preserves agency. Returning to the lit platform remains
+    available, while leaving through the new scene still produces the same
+    early escape ending cleanly.
+- Risks:
+  - Adds one more optional choice to a route that already has a warning beat.
+    The choice is one-time and only appears on the lit-platform flee branch.
+- Next step:
+  - Watch random and blind playtest transcripts for whether early escape
+    players use the glance as a meaningful reconsideration point or ignore it
+    as extra friction.
+
 # Cycle 20 Personnel File Score Audit
 
 - Date: 2026-06-02

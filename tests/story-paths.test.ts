@@ -5299,6 +5299,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_warning");
     expect(choiceIds).toContain("listen_at_stairwell");
+    expect(choiceIds).toContain("look_back_from_escape_warning");
     expect(choiceIds).toContain("confirm_flee_platform");
 
     state = choose(story, state, "listen_at_stairwell");
@@ -5355,6 +5356,68 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("hearing Mara name the signal key");
     expect(observation.scene.text).toContain("stopped clock");
     expect(observation.scene.text).toContain("unfinished route");
+  });
+
+  it("adds a one-time platform glance before early escape", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform",
+      "look_back_from_escape_warning"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_platform_glance");
+    expect(observation.scene.text).toContain("Mara Vale's penciled badge number");
+    expect(observation.scene.text).toContain("token slot");
+    expect(observation.state.flags.looked_back_from_escape_warning).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_escape_glance",
+      "return_after_escape_glance",
+      "leave_after_escape_glance"
+    ]);
+
+    state = choose(story, state, "return_after_escape_glance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("flee_platform");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform",
+      "look_back_from_escape_warning",
+      "leave_after_escape_glance"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_ending");
+    expect(observation.scene.ending).toBe(true);
   });
 
   it("lets unlit-platform explorers retreat to the early escape warning", async () => {
@@ -5816,6 +5879,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("unfinished work");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_at_stairwell",
+      "look_back_from_escape_warning",
       "return_to_lit_platform_from_escape_warning",
       "confirm_flee_platform"
     ]);
