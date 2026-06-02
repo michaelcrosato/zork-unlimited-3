@@ -4882,6 +4882,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(choiceIds).toEqual([
       "review_open_manifest_count",
+      "listen_to_passenger_morning_chorus",
       "watch_mara_open_manifest",
       "listen_to_passenger_answers",
       "board_after_releasing_passengers"
@@ -5050,6 +5051,70 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
+  it("adds a one-time passenger morning chorus after opening the manifest", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_chorus");
+    expect(observation.scene.text).toContain("a kettle left on a stove");
+    expect(observation.scene.text).toContain("somewhere to arrive");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_morning_chorus",
+      "cross_after_passenger_morning_chorus",
+      "board_after_passenger_morning_chorus"
+    ]);
+
+    const returnedState = choose(story, state, "return_from_passenger_morning_chorus");
+    observation = observe(story, returnedState);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "listen_to_passenger_morning_chorus"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_after_releasing_passengers"
+    );
+
+    state = choose(story, state, "board_after_passenger_morning_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+
+    state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 

@@ -873,6 +873,14 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: listen_to_passenger_morning_chorus
+        label: Listen for what the opened passengers remember about morning
+        to: passenger_morning_chorus
+        requires:
+          notFlag: heard_passenger_morning_chorus
+        effects:
+          set:
+            heard_passenger_morning_chorus: true
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
         to: mara_manifest_handoff
@@ -892,6 +900,25 @@ scenes:
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
+
+  passenger_morning_chorus:
+    text: >
+      The opened passengers do not remember morning as sunrise. They remember
+      it as practical things waiting past the transfer: a kettle left on a
+      stove, a time clock that should have punched them out, a child's other
+      mitten warming on a radiator. Mara lets the speaker stay open until the
+      memories overlap into one steady sound. "That is enough," she says. "The
+      line knows they have somewhere to arrive."
+    choices:
+      - id: return_from_passenger_morning_chorus
+        label: Return to the opened manifest doors
+        to: passengers_released
+      - id: cross_after_passenger_morning_chorus
+        label: Cross the platform while the morning chorus holds
+        to: passenger_platform
+      - id: board_after_passenger_morning_chorus
+        label: Board the third car with the morning chorus behind you
+        to: train_car
 
   passenger_manifest_count:
     text: >

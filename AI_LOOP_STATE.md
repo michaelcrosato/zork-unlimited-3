@@ -12,59 +12,74 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Add a small last-dispatch beat after clearing Mara's ledger
-  row on the core non-manifest route.
+- Main objective: Add an optional passenger morning-chorus beat after opening
+  the manifest.
 - Why this matters: Current evidence shows route completion and true-ending
-  discoverability are healthy, so this cycle should deepen character payoff
-  without adding scoring pressure or another ending. The core Mara route
-  previously moved from clearing her name straight into boarding; a final
-  dispatch gives Mara one active, procedural sign-off before the player pulls
-  the release.
+  discoverability are healthy, so this cycle should deepen late-game passenger
+  payoff without adding scoring pressure or another ending. The standard opened
+  manifest path previously moved from clearance straight into gathering or
+  boarding; the new beat gives the released passengers concrete memories of
+  where they are trying to arrive.
 - Tasks:
-  - Add an optional one-time last-dispatch scene after `mara_released`. Done.
-  - Route the scene cleanly into the existing third-car release path. Done.
-  - Preserve direct boarding and Mara handoff routes from `mara_released`. Done.
+  - Add an optional one-time passenger-memory scene after
+    `passengers_released`. Done.
+  - Route the scene back to the opened manifest, across the passenger platform,
+    and directly into the existing third-car release path. Done.
+  - Preserve existing manifest count, Mara handoff, passenger answer, and direct
+    boarding routes. Done.
   - Update focused story-path regression coverage. Done.
   - Run validation, full health, an actual CLI playthrough, and evidence cycle.
     Done.
 - Evidence:
-  - Added `mara_last_dispatch`, reachable once from `mara_released` through
-    `ask_mara_for_last_dispatch`.
-  - The new scene sets `heard_mara_last_dispatch` and routes through
-    `board_after_last_dispatch` to the existing `train_car` scene.
+  - Added `passenger_morning_chorus`, reachable once from
+    `passengers_released` through `listen_to_passenger_morning_chorus`.
+  - The new scene sets `heard_passenger_morning_chorus` and can return to the
+    opened manifest doors, cross to `passenger_platform`, or board to
+    `train_car`.
   - Updated `tests/story-paths.test.ts` to assert the optional beat, its flag,
-    objectives, direct-release availability, and max-score true ending.
-  - Updated the existing `mara_released` exact-choice regression to include the
-    new optional branch while preserving direct boarding and handoff options.
-  - Focused `npm test -- tests/story-paths.test.ts` passed with 109 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 111 scenes,
-    24 endings, all 111 reachable, and no warnings.
-  - `npm run health` passed with formatting, TypeScript, 130 tests, validation,
+    objectives, one-time return behavior, direct-release availability, and a
+    max-score `passenger_true_ending`.
+  - Updated the existing `passengers_released` exact-choice regression to
+    include the new optional branch while preserving count, handoff, answer,
+    and boarding options.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 110 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 112 scenes,
+    24 endings, all 112 reachable, and no warnings.
+  - Manual CLI play followed `listen_to_passenger_morning_chorus` ->
+    `board_after_passenger_morning_chorus` -> `pull_release_with_manifest`,
+    reaching `passenger_true_ending` at 100/100 with no objectives and
+    `heard_passenger_morning_chorus` set.
+  - `npm run health` passed with formatting, TypeScript, 131 tests, validation,
     and coverage playtest.
-  - Health coverage visited all 111 scenes including `mara_last_dispatch`, had
-    zero unfinished runs, best score 100/100, and average score 94.63.
-  - Manual CLI play followed `ask_mara_for_last_dispatch` ->
-    `board_after_last_dispatch` -> `pull_release`, reaching `true_ending` at
-    100/100 with no objectives and `heard_mara_last_dispatch` set.
+  - Health coverage visited all 112 scenes including
+    `passenger_morning_chorus`, had zero unfinished runs, best score 100/100,
+    average score 94.62, and 923 max-score runs.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T01-44-06-621Z.md`.
+    report `ai-runs/cycle-2026-06-02T01-52-49-747Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play visited `mara_last_dispatch`, ended all 100
-    runs, and had zero unfinished runs.
-  - Evidence-cycle coverage visited all 111 scenes with zero unfinished runs.
-  - Evidence-cycle MCP validation passed with 111 reachable scenes and no
+  - Evidence-cycle random play visited `passenger_morning_chorus`, ended all
+    100 runs, and had zero unfinished runs.
+  - Evidence-cycle coverage visited all 112 scenes with zero unfinished runs.
+  - Evidence-cycle MCP validation passed with 112 reachable scenes and no
     warnings.
   - Evidence-cycle MCP random play ended all 250 runs with zero unfinished
-    runs and visited `mara_last_dispatch`.
-  - Evidence-cycle required MCP route reached `true_ending` at 100/100, and the
-    adaptive MCP route reached `passenger_lunch_tin_true_ending` at 100/100.
+    runs and visited `passenger_morning_chorus`.
+  - Evidence-cycle required MCP route reached `true_ending` at 100/100, and
+    the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
+    100/100.
+  - Evidence-cycle long-run signals remained stable: random ideal-ending rate
+    74%, random max-score rate 74%, average score 82.1, and non-ideal pressure
+    at bad 7%, lost 3%, escape 2%.
 - Playtest notes:
-  - The last-dispatch beat gives Mara agency after the ledger clears: she names
-    the route as authorization by proof rather than permission, then gives the
-    player the release instruction in her own working language.
-  - The branch reads as optional color and goal reinforcement, not a required
-    clue; direct boarding and the stronger handoff variant remain available.
+  - The morning-chorus beat makes the opened manifest feel less abstract by
+    naming practical things waiting outside the line: a kettle, a time clock,
+    and the child's other mitten.
+  - The branch reads as optional emotional payoff and does not become a
+    required clue; direct count, Mara handoff, passenger answer, and boarding
+    routes remain available.
+  - The manual transcript flows cleanly from opened doors to the chorus, then
+    into the third-car release without adding objectives or score noise.
   - No objective, scoring, reachability, MCP-tool, or unfinished-run regressions
     were found in focused tests, validation, full health, manual CLI play, or
     evidence-cycle MCP routes.
@@ -74,10 +89,11 @@ payoffs and agent evidence quality where the core guidance is already healthy.
   - Consider a focused pass on non-ideal endings only if random bad/lost/escape
     pressure rises above the current evidence-cycle baseline.
 - Risks:
-  - Extra optional beats after `mara_released` can slow the final approach if
-    they accumulate without distinct purpose.
-  - The new last-dispatch beat should remain a concise character sign-off, not
-    another required mechanical clue.
+  - Extra optional beats after `passengers_released` can slow the final
+    approach if they accumulate without distinct purpose.
+  - The new morning-chorus beat should remain concise emotional context, not a
+    second passenger-routing hub that competes with existing handoff and
+    keepsake branches.
 
 ## Last Completed Cycle
 
