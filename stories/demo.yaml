@@ -1076,6 +1076,17 @@ scenes:
         effects:
           set:
             saw_mara_handoff: true
+      - id: answer_badge_proof_before_boarding
+        label: Answer Mara with the badge proof before boarding
+        to: mara_badge_proof_intercom
+        requires:
+          all:
+            - flag: knows_badge_proof
+            - notFlag: read_passenger_manifest
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: ask_mara_about_thumbprint_before_boarding
         label: Ask Mara about the torn thumbprint before boarding
         to: mara_thumbprint_intercom
@@ -1096,6 +1107,7 @@ scenes:
             - notFlag: heard_mara_goodbye
             - notFlag: heard_mara_last_dispatch
             - notFlag: saw_mara_handoff
+            - notFlag: knows_badge_proof
         effects:
           set:
             heard_mara_goodbye: true

@@ -1,3 +1,57 @@
+# Cycle 14 Badge-Proof Pre-Boarding Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `mara_badge_proof_intercom` more naturally discoverable
+  during normal Mara-only rescue play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 14 evidence. Coverage could
+  reach every scene, but the 100-run random sample missed
+  `mara_badge_proof_intercom`, leaving the badge-proof payoff dependent on
+  boarding first and then choosing the right optional train-car listen.
+- Planned work:
+  - Add one contextual badge-proof response immediately after clearing Mara's
+    ledger row.
+  - Keep the existing train-car badge-proof routes intact for players who board
+    first or ask for Mara's last dispatch first.
+  - Gate the generic Mara response away from badge-proof states so the more
+    specific payoff gets priority.
+  - Add regression coverage for the new pre-boarding route through
+    `true_ending`.
+- Work completed:
+  - Added `answer_badge_proof_before_boarding` from `mara_released` to
+    `mara_badge_proof_intercom` when the player knows the badge-proof clue.
+  - Gated the generic `answer_mara_before_boarding` prompt away from
+    `knows_badge_proof` so the specific proof payoff appears instead.
+  - Preserved existing train-car badge-proof routes, including the route after
+    Mara's last dispatch.
+  - Added regression coverage for the new pre-boarding route through
+    `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 134 tests.
+  - `npm run health` passed: format check, TypeScript, 178 tests, story
+    validation, and coverage playtest.
+  - Health validation reported 125 reachable scenes and 26 endings.
+  - Health coverage visited all 125 scenes, including
+    `mara_badge_proof_intercom`, with zero unfinished runs.
+  - Actual CLI play used `answer_badge_proof_before_boarding`, reached
+    `mara_badge_proof_intercom`, then reached `true_ending` at score 285 with
+    no active objectives.
+- Playtest feedback:
+  - The new choice reads naturally immediately after Mara says she can hold the
+    line, because the player has just learned that the line wanted badge proof.
+  - The scene now pays off the notice-back clue before the player commits to
+    boarding, reducing reliance on a hidden train-car optional listen.
+  - Direct boarding remains available, and the train-car badge-proof route
+    still works for players who move quickly.
+- Risks:
+  - Adds one more optional choice to `mara_released` when the player knows the
+    badge-proof clue. Future blind sessions should confirm it reads as a
+    focused payoff rather than late-game choice clutter.
+- Next step:
+  - Watch random and blind runs for whether `mara_badge_proof_intercom` appears
+    more often, then shift to richer story depth or another normal-play miss if
+    the badge-proof gap closes.
+
 # Cycle 10 Mara Intercom Discovery
 
 - Date: 2026-06-02
