@@ -1258,6 +1258,14 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: let_last_dispatch_become_handoff
+        label: Let Mara carry the last dispatch out of the booth
+        to: mara_handoff_boarding
+        requires:
+          notFlag: saw_mara_handoff
+        effects:
+          set:
+            saw_mara_handoff: true
       - id: board_with_last_dispatch_in_speaker
         label: Board with Mara's last dispatch in the speaker
         to: mara_last_dispatch_intercom
@@ -3878,13 +3886,14 @@ scenes:
           set:
             read_lunch_tin_roster: true
       - id: hear_final_lunch_tin_roll_call
-        label: Hear the lunch-tin worker set the final roll call
-        to: passenger_roll_call_epilogue
+        label: Let the lunch-tin worker read the roster as the final roll call
+        to: passenger_lunch_tin_roll_call
         requires:
           notFlag: heard_final_roll_call
         effects:
           set:
             heard_final_roll_call: true
+            read_lunch_tin_roster: true
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
         to: passenger_lunch_tin_true_ending

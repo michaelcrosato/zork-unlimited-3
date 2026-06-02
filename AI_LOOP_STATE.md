@@ -1,3 +1,109 @@
+# Cycle 65 Last-Dispatch Handoff Bridge
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of Mara's physical handoff
+  after players choose the prominent last-dispatch beat.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied loop evidence shows healthy core guidance and suggests
+  investing in richer story depth. Prior lunch-tin discoverability work is
+  already present in this checkout, while `mara_handoff_true_ending` remains a
+  lower-frequency normal-play payoff. The first option after freeing Mara asks
+  for her last dispatch, but that route previously narrowed to a speaker-only
+  goodbye instead of preserving the handoff discovery.
+- Planned work:
+  - Preserve direct last-dispatch intercom and release paths.
+  - Add an optional route from `mara_last_dispatch` into
+    `mara_handoff_boarding`.
+  - Keep the route as a handoff continuation, not a forced detour.
+  - Add regression coverage for the new bridge and old direct release choice.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - `mara_last_dispatch` gains a third choice. The direct intercom and direct
+    board-with-dispatch options remain available, so pacing stays under player
+    control.
+- Status:
+  - Completed.
+  - Added `let_last_dispatch_become_handoff` from `mara_last_dispatch` to
+    `mara_handoff_boarding`.
+  - Preserved the direct last-dispatch intercom and direct board-with-dispatch
+    paths.
+  - Added regression coverage for the new handoff bridge; focused story-path
+    coverage now has 176 tests.
+  - `npm run health` passed: format check, TypeScript, 220 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths;
+    `mara_handoff_true_ending` coverage count rose from the prior 21 baseline
+    to 41 in the exhaustive sample.
+  - Actual CLI play followed `ask_mara_for_last_dispatch` ->
+    `let_last_dispatch_become_handoff` -> `board_after_mara_handoff` ->
+    `listen_to_mara_after_handoff` -> `pull_release_after_handoff_goodbye`,
+    ending at `mara_handoff_true_ending` with score 294 and no objectives.
+- Playtest feedback:
+  - The new route reads naturally: Mara's spoken dispatch can now become an
+    embodied departure from the booth instead of only a speaker goodbye.
+  - Direct release pacing remains intact through the existing last-dispatch
+    intercom path.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch the next random sample for whether `mara_handoff_true_ending` appears
+    more often in normal play; if late Mara choices feel crowded, tune ordering
+    before adding another branch.
+
+# Cycle 65 Lunch-Tin Intercom Roll-Call Target
+
+- Date: 2026-06-02
+- Main objective: Make the `hear_final_lunch_tin_roll_call` intercom choice
+  land on the specific `passenger_lunch_tin_roll_call` payoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 65 evidence still names
+  `passenger_lunch_tin_roll_call` as the remaining normal-play discovery gap.
+  Cycle 64 already made the roster recovery path available, but the intercom
+  choice named like a lunch-tin roll call still routed to the generic
+  `passenger_roll_call_epilogue`, so a normal player could choose the apparent
+  lunch-tin payoff and miss the exact scene.
+- Planned work:
+  - Preserve the direct lunch-tin release and the broader boarding-to-roll-call
+    bridge.
+  - Route `hear_final_lunch_tin_roll_call` from `passenger_lunch_tin_intercom`
+    to `passenger_lunch_tin_roll_call`.
+  - Set `read_lunch_tin_roster` when the worker reads the roster aloud during
+    that route.
+  - Extend regression coverage for the intercom-to-roster-roll-call path.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The intercom choice now produces the specific lunch-tin ending branch
+    instead of the generic roll-call ending. The generic route remains available
+    from `passenger_lunch_tin_boarding` through
+    `let_lunch_tin_count_become_roll_call`, so route variety is preserved.
+- Status:
+  - Completed.
+  - Routed `hear_final_lunch_tin_roll_call` from
+    `passenger_lunch_tin_intercom` to `passenger_lunch_tin_roll_call`.
+  - Updated the choice label so it names the roster-read action.
+  - Set `read_lunch_tin_roster` on that path because the worker reads the
+    roster aloud.
+  - Extended regression coverage through `passenger_lunch_tin_true_ending`.
+  - Focused story-path suite passed: 176 tests.
+  - `npm run health` passed: format check, TypeScript, 220 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `listen_to_lunch_tin_worker_from_boarding` ->
+    `hear_final_lunch_tin_roll_call` -> `pull_release_after_lunch_tin_roll_call`,
+    ending at `passenger_lunch_tin_true_ending` with score 315 and no
+    objectives.
+- Playtest feedback:
+  - The intercom label now delivers the exact lunch-tin roll-call scene it
+    advertises.
+  - The route reads cleanly: boarding rhythm, intercom timing, roster roll call,
+    release.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch random-play samples for whether `passenger_lunch_tin_roll_call`
+    appears without relying on coverage strategy; if it still stays rare, tune
+    ordering before adding more late passenger branches.
+
 # Cycle 64 Roster-to-Intercom Recovery
 
 - Date: 2026-06-02
