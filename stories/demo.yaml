@@ -1975,6 +1975,14 @@ scenes:
       the line. "He remembers the way out," she says. "Pull the release on his
       clear."
     choices:
+      - id: ask_conductor_to_punch_transfer
+        label: Ask the conductor to punch one last transfer for morning
+        to: passenger_conductor_transfer
+        requires:
+          notFlag: punched_conductor_transfer
+        effects:
+          set:
+            punched_conductor_transfer: true
       - id: hear_final_conductor_roll_call
         label: Hear the conductor call the final platform clear
         to: passenger_conductor_roll_call
@@ -1997,6 +2005,27 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_conductor_clearance
         label: Pull the release on the conductor's clear signal
+        to: passenger_conductor_true_ending
+
+  passenger_conductor_transfer:
+    text: >
+      The old conductor takes the blank transfer from the newspaper woman's
+      hand and slides it into his punch. The tool bites once, leaving a clean
+      star-shaped hole where the destination should have been. "Valid for
+      morning," he says, and passes it down the aisle until the child, the
+      lunch-tin worker, and Mara all touch the same small proof that the line
+      has to let them change trains.
+    choices:
+      - id: hear_transfer_conductor_roll_call
+        label: Let the punched transfer become the final clear call
+        to: passenger_conductor_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_transfer_punch
+        label: Pull the release while the punched transfer passes hand to hand
         to: passenger_conductor_true_ending
 
   passenger_conductor_roll_call:

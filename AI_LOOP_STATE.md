@@ -12,6 +12,91 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add an optional conductor-transfer beat to the passenger
+  conductor route.
+- Why this matters: The conductor path is common in normal passenger play and
+  already has a clear role in helping the crowd leave. A small tactile beat
+  gives his route a stronger object-level payoff without adding another ending
+  or weakening the direct release path. The added scene also exposed excessive
+  coverage-state expansion, so this cycle tightened coverage playtest memory
+  and runtime behavior.
+- Tasks:
+  - Add an optional punched-transfer scene from the conductor intercom. Done.
+  - Preserve direct conductor release and final roll-call choices. Done.
+  - Update focused story-path regression coverage. Done.
+  - Reduce coverage playtest state explosion after the 107-scene graph exposed
+    a Vitest heap/timeout failure. Done.
+  - Run validation, full health, an actual CLI playthrough, and the evidence
+    cycle. Done.
+- Evidence:
+  - Added `passenger_conductor_transfer`, where the conductor punches a blank
+    transfer valid for morning and passes it through the third car.
+  - Wired the new beat from `passenger_conductor_intercom` with a
+    `punched_conductor_transfer` flag.
+  - Preserved direct release to `passenger_conductor_true_ending` and the
+    existing final/count roll-call branches.
+  - Updated `tests/story-paths.test.ts` to cover the new transfer beat, the
+    transfer-to-roll-call branch, and the direct transfer release branch.
+  - Optimized coverage playtests in `src/playtest.ts` by recording newly
+    discovered destination scenes when enqueued, avoiding duplicate queued
+    state signatures, using stack-style frontier operations, and pruning
+    coverage signatures to flags that positively gate future choices.
+  - Focused `npm test -- tests/playtest.test.ts` passed with 6 tests after the
+    coverage-state fix.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 107
+    scenes, 24 endings, all 107 reachable, and no warnings.
+  - Focused coverage playtest passed with 1043 runs, zero unfinished runs, all
+    107 scenes visited including `passenger_conductor_transfer`, best score
+    100/100, average score 94.65, and 923 max-score runs.
+  - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
+    and coverage playtest.
+  - Manual CLI play followed `ask_conductor_to_punch_transfer` ->
+    `hear_transfer_conductor_roll_call` ->
+    `pull_release_after_conductor_roll_call`, reaching
+    `passenger_conductor_true_ending` at 100/100 with no objectives and
+    `punched_conductor_transfer` set.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-02T00-55-27-421Z.md`.
+  - Evidence-cycle health checks passed, including random and coverage
+    playtests.
+  - Evidence-cycle random play reached `passenger_conductor_transfer`, ended
+    all 100 runs, and had zero unfinished runs.
+  - Evidence-cycle coverage visited all 107 scenes with zero unfinished runs.
+  - Evidence-cycle MCP validation passed, the required MCP route reached
+    `true_ending` at 100/100, and the adaptive MCP route reached
+    `passenger_lunch_tin_true_ending` at 100/100.
+  - A normal `npm run ai:cycle` was also attempted first; it produced evidence
+    but spawned the configured nested agent command and refused post-agent
+    auto-commit because the repo was already dirty. The nested process was
+    stopped, then the evidence-only cycle completed cleanly.
+- Playtest notes:
+  - The new transfer-punch scene gives the conductor route a concrete object
+    beat: the punch turns the newspaper woman's blank transfer into proof that
+    the passengers can change trains into morning.
+  - The branch still feels optional because players can pull the conductor
+    ending directly from the intercom or take the established final roll call.
+  - No objective, scoring, or ending regressions were found in focused tests,
+    full health, the manual CLI playthrough, or the evidence-cycle MCP routes.
+  - Coverage playtests are much faster and no longer try to preserve every
+    flavor-flag permutation as a distinct pending state.
+- Follow-up:
+  - Watch whether the faster coverage summary remains sufficiently explanatory
+    for future route critique now that it samples 1043 runs instead of
+    hundreds of thousands.
+  - Consider adding report metadata that distinguishes discovery-frontier
+    samples from full terminal route samples more clearly.
+- Risks:
+  - Extra optional beats can make late passenger routes feel over-segmented if
+    labels are too similar or if random routes linger before ending.
+  - Pruning coverage signatures to positive-gated flags is appropriate for
+    scene discovery but may hide differences in purely repeat-suppression
+    flags; focused route tests should continue covering deep optional beats.
+
+## Last Completed Cycle
+
+- Date: 2026-06-02
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a final warning-mark beat to the safe morning-transfer
   route.
 - Why this matters: Core true-ending and passenger-route metrics are healthy.

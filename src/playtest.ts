@@ -1,5 +1,5 @@
 import { choose, initialState, observe } from "./engine.js";
-import { GameState, Story } from "./schema.js";
+import { Condition, GameState, Story } from "./schema.js";
 import { scoreState } from "./score.js";
 
 export type PlaytestStrategy = "random" | "coverage" | "goal";
@@ -67,20 +67,22 @@ export function runRandomPlaytests(
 }
 
 function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): PlaytestRun[] {
+  const initial = initialState(story);
   const queue: Array<{ state: GameState; path: string[]; steps: number }> = [
-    { state: initialState(story), path: [story.start], steps: 0 }
+    { state: initial, path: [story.start], steps: 0 }
   ];
   const seen = new Set<string>();
+  const relevantFlags = collectRequiredFlags(story);
+  const queued = new Set<string>([stateSignature(initial, relevantFlags)]);
   const expandedScenes = new Set<string>();
   const reportedScenes = new Set<string>();
   const runs: PlaytestRun[] = [];
+  const sceneCount = Object.keys(story.scenes).length;
 
-  while (
-    queue.length > 0 &&
-    (runs.length < maxRuns || expandedScenes.size < Object.keys(story.scenes).length)
-  ) {
-    const current = queue.shift()!;
-    const signature = stateSignature(current.state);
+  while (queue.length > 0 && (runs.length < maxRuns || reportedScenes.size < sceneCount)) {
+    const current = queue.pop()!;
+    const signature = stateSignature(current.state, relevantFlags);
+    queued.delete(signature);
     if (seen.has(signature)) continue;
     seen.add(signature);
 
@@ -118,6 +120,28 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
     const nextEntries = observation.choices.map((choice) => {
       const next = choose(story, current.state, choice.id);
       const destination = story.scenes[next.currentScene];
+      const path = [...current.path, choice.id, next.currentScene];
+      const steps = current.steps + 1;
+
+      if (!reportedScenes.has(next.currentScene)) {
+        const nextObservation = observe(story, next);
+        reportedScenes.add(next.currentScene);
+        runs.push({
+          run: runs.length + 1,
+          status: classifyStoppedRun(
+            nextObservation.scene.ending,
+            nextObservation.choices.length,
+            false
+          ),
+          ended: nextObservation.scene.ending,
+          finalScene: nextObservation.scene.id,
+          steps,
+          path,
+          readablePath: describePath(story, path),
+          ...scoreOnly(next)
+        });
+      }
+
       let score = 0;
       if (!destination.ending) score += 20;
       if (!expandedScenes.has(next.currentScene)) score += 40;
@@ -131,29 +155,51 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
       return {
         score,
         state: next,
-        path: [...current.path, choice.id, next.currentScene],
-        steps: current.steps + 1
+        path,
+        steps
       };
     });
 
-    nextEntries.sort((left, right) => right.score - left.score);
+    nextEntries.sort((left, right) => left.score - right.score);
 
-    for (const entry of nextEntries.reverse()) {
-      queue.unshift(entry);
+    for (const entry of nextEntries) {
+      const nextSignature = stateSignature(entry.state, relevantFlags);
+      if (seen.has(nextSignature) || queued.has(nextSignature)) continue;
+      queued.add(nextSignature);
+      queue.push(entry);
     }
   }
 
   return runs;
 }
 
-function stateSignature(state: GameState): string {
+function stateSignature(state: GameState, relevantFlags?: Set<string>): string {
   return JSON.stringify({
     scene: state.currentScene,
     flags: Object.keys(state.flags)
-      .filter((key) => state.flags[key])
+      .filter((key) => state.flags[key] && (!relevantFlags || relevantFlags.has(key)))
       .sort(),
     inventory: [...state.inventory].sort()
   });
+}
+
+function collectRequiredFlags(story: Story): Set<string> {
+  const flags = new Set<string>();
+
+  for (const scene of Object.values(story.scenes)) {
+    for (const choice of scene.choices) {
+      collectConditionFlags(choice.requires, flags);
+    }
+  }
+
+  return flags;
+}
+
+function collectConditionFlags(condition: Condition | undefined, flags: Set<string>): void {
+  if (!condition) return;
+  if ("flag" in condition) flags.add(condition.flag);
+  if ("all" in condition) condition.all.forEach((nested) => collectConditionFlags(nested, flags));
+  if ("any" in condition) condition.any.forEach((nested) => collectConditionFlags(nested, flags));
 }
 
 export function summarizePlaytests(story: Story, runs: PlaytestRun[]): PlaytestReport["summary"] {
