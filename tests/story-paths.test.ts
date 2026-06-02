@@ -2694,9 +2694,35 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "inspect_conductor_punch_memory",
       "follow_conductor_signal_to_third_car"
     ]);
 
+    const conductorSignalState = state;
+
+    state = choose(story, conductorSignalState, "inspect_conductor_punch_memory");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_punch_memory");
+    expect(observation.scene.text).toContain("each star-shaped bite");
+    expect(observation.scene.text).toContain("Tonight I can punch clear instead");
+    expect(observation.state.flags.heard_conductor_punch_memory).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_punch_memory_to_third_car"
+    ]);
+
+    state = choose(story, state, "follow_punch_memory_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_intercom");
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_conductor_roll_call",
+      "ask_conductor_to_punch_transfer",
+      "pull_release_after_conductor_clearance"
+    ]);
+
+    state = conductorSignalState;
     state = choose(story, state, "follow_conductor_signal_to_third_car");
     observation = observe(story, state);
 

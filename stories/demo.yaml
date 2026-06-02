@@ -1181,8 +1181,32 @@ scenes:
       umbrellas lifted away from the wheels, Mara's speaker quiet enough to
       let another worker hold the line.
     choices:
+      - id: inspect_conductor_punch_memory
+        label: Ask what the conductor's punch remembers
+        to: passenger_conductor_punch_memory
+        requires:
+          notFlag: heard_conductor_punch_memory
+        effects:
+          set:
+            heard_conductor_punch_memory: true
       - id: follow_conductor_signal_to_third_car
         label: Follow the conductor's clear signal into the third car
+        to: passenger_conductor_intercom
+        effects:
+          set:
+            heard_conductor_clearance: true
+
+  passenger_conductor_punch_memory:
+    text: >
+      The conductor turns the punch over in both hands. Its brass mouth is
+      nicked with old transfers, each star-shaped bite a passenger who was
+      supposed to change trains before the line learned to keep them. "I kept
+      punching tickets after the doors stopped opening," he says. "Tonight I
+      can punch clear instead." When he raises the tool again, the passengers
+      answer the sound like a bell that finally rings outward.
+    choices:
+      - id: follow_punch_memory_to_third_car
+        label: Follow the conductor's remembered clear signal into the third car
         to: passenger_conductor_intercom
         effects:
           set:

@@ -12,69 +12,63 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
-- Main objective: Preserve the reviewed-manifest count payoff through the
-  conductor transfer route.
-- Why this matters: Current evidence showed core guidance and true-ending
-  discovery are healthy, while `passenger_conductor_count_roll_call` was the
-  next specific normal-play discovery target. The newer conductor-transfer beat
-  could be chosen after reviewing Mara's opened count, but it then routed only
-  to the generic conductor roll call. Keeping the count-specific payoff through
-  that tactile detour makes the passenger route more coherent without adding
-  another ending.
+- Main objective: Add a small conductor-punch memory beat to deepen the
+  passenger conductor route.
+- Why this matters: Current evidence shows true-ending guidance and route
+  completion are healthy, so the next improvement should strengthen story depth
+  on a normal high-value passenger route without adding another ending or
+  changing scoring. The conductor is already a strong support character; giving
+  his punch a brief memory makes his later clear signal feel earned.
 - Tasks:
-  - Reorder conductor intercom choices so the context-specific clear call is
-    offered before the optional transfer detour. Done.
-  - Let the conductor-transfer scene route to the counted clear call when
-    `reviewed_open_manifest_count` is set. Done.
-  - Keep the regular transfer-to-final-clear branch available for non-counted
-    conductor routes. Done.
+  - Add an optional one-time conductor-punch memory after the conductor raises
+    his clear signal. Done.
+  - Route the memory cleanly back into the existing third-car conductor branch.
+    Done.
+  - Preserve the direct conductor route and all existing endings. Done.
   - Update focused story-path regression coverage. Done.
-  - Run validation, full health, an actual CLI playthrough, and the evidence
-    cycle. Done.
+  - Run validation, full health, an actual CLI/MCP playthrough, and the
+    evidence cycle. Done.
 - Evidence:
-  - Moved `ask_conductor_to_punch_transfer` after the final/count roll-call
-    choices in `passenger_conductor_intercom`, so the specific payoff is easier
-    to notice when present.
-  - Added `hear_counted_transfer_conductor_roll_call` from
-    `passenger_conductor_transfer` to `passenger_conductor_count_roll_call`,
-    gated on `reviewed_open_manifest_count`.
-  - Tightened the generic transfer roll-call choice so it appears only when the
-    reviewed count is not active.
-  - Updated `tests/story-paths.test.ts` to assert the new choice ordering and
-    the reviewed-count transfer detour.
+  - Added `passenger_conductor_punch_memory`, reachable once from
+    `passenger_conductor_signal`.
+  - The new scene sets `heard_conductor_punch_memory` and returns through
+    `follow_punch_memory_to_third_car` to `passenger_conductor_intercom`.
+  - Kept the original `follow_conductor_signal_to_third_car` direct choice
+    available from the conductor signal scene.
+  - Updated `tests/story-paths.test.ts` to assert the optional memory beat, its
+    flag, and both routes into the same conductor intercom payoff.
   - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
-  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 107
-    scenes, 24 endings, all 107 reachable, and no warnings.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 108
+    scenes, 24 endings, all 108 reachable, and no warnings.
   - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
     and coverage playtest.
-  - Manual CLI play followed `review_open_manifest_count` ->
-    `ask_conductor_after_manifest_count` ->
-    `ask_conductor_to_punch_transfer` ->
-    `hear_counted_transfer_conductor_roll_call` ->
-    `pull_release_after_conductor_count`, reaching
+  - Health coverage visited all 108 scenes including
+    `passenger_conductor_punch_memory`, with zero unfinished runs and best score
+    100/100.
+  - Manual CLI play followed `listen_to_passenger_answers` ->
+    `ask_conductor_from_answers` -> `inspect_conductor_punch_memory` ->
+    `follow_punch_memory_to_third_car` -> `hear_final_conductor_roll_call` ->
+    `pull_release_after_conductor_roll_call`, reaching
     `passenger_conductor_true_ending` at 100/100 with no objectives.
   - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
-    report `ai-runs/cycle-2026-06-02T01-04-11-150Z.md`.
+    report `ai-runs/cycle-2026-06-02T01-13-50-881Z.md`.
   - Evidence-cycle health checks passed, including random and coverage
     playtests.
-  - Evidence-cycle random play visited both `passenger_conductor_transfer` and
-    `passenger_conductor_count_roll_call`, ended all 100 runs, and had zero
-    unfinished runs.
-  - Evidence-cycle coverage visited all 107 scenes with zero unfinished runs.
+  - Evidence-cycle random play visited `passenger_conductor_punch_memory`, ended
+    all 100 runs, and had zero unfinished runs.
+  - Evidence-cycle coverage visited all 108 scenes with zero unfinished runs.
   - Evidence-cycle MCP validation passed, the required MCP route reached
     `true_ending` at 100/100, and the adaptive MCP route reached
     `passenger_lunch_tin_true_ending` at 100/100.
 - Playtest notes:
-  - The counted conductor route now survives the optional transfer beat instead
-    of losing the reviewed-manifest context.
-  - The transfer still feels optional because players can pull the conductor
-    ending directly, take the counted clear call immediately, or add the punch
-    beat first.
-  - The manual route reads coherently: Mara reviews the count, the conductor
-    punches proof of transfer, then carries the counted clear call to the
-    release.
-  - No objective, scoring, or ending regressions were found in focused tests,
-    full health, the manual CLI playthrough, or the evidence-cycle MCP routes.
+  - The new punch memory reads as a character beat, not a mechanical detour:
+    the conductor's old ticket punch becomes a reason his clear signal can help
+    the passengers leave.
+  - The direct conductor route remains available for players who want to board
+    immediately.
+  - No objective, scoring, reachability, or unfinished-run regressions were
+    found in focused tests, full health, manual CLI play, or evidence-cycle MCP
+    routes.
 - Follow-up:
   - Core route metrics remain healthy; favor meaningful new scenes, stronger
     character beats, or pacing improvements over another clue-only polish pass.
@@ -83,9 +77,8 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 - Risks:
   - Extra optional beats can make late passenger routes feel over-segmented if
     labels are too similar or if random routes linger before ending.
-  - Choice ordering now favors the context-specific clear call over the newer
-    transfer beat; this is intentional for discoverability but should be watched
-    if the transfer scene becomes under-visited again.
+  - The new conductor memory should remain a character beat, not a required
+    mechanical clue.
 
 ## Last Completed Cycle
 
