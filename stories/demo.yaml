@@ -1269,8 +1269,9 @@ scenes:
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
       a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
-      shaking rain from their ribs. Mara breathes through the speaker and says,
-      "Third car. I can hold the line steady while they find the morning."
+      shaking rain from their ribs, a crowd pausing until someone holds the
+      third-car threshold. Mara breathes through the speaker and says, "Third
+      car. I can hold the line steady while they find the morning."
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1343,6 +1344,14 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
+      - id: hold_opened_manifest_threshold
+        label: Hold the third-car threshold for the opened passengers
+        to: passenger_threshold_boarding
+        requires:
+          notFlag: held_passenger_threshold
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
@@ -1372,6 +1381,19 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: ask_mara_to_handoff_opened_roll_call
+        label: Ask Mara to hand the roll call to the opened passengers
+        to: passenger_answered_handoff_roll_call
+        requires:
+          all:
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
+            heard_passenger_answers: true
+            heard_answered_passengers: true
       - id: let_opened_manifest_names_answer_once
         label: Let the opened manifest names answer once
         to: passenger_manifest_answers

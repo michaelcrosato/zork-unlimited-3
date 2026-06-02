@@ -1,3 +1,123 @@
+# Cycle 39 Opened Manifest Threshold Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_threshold_intercom` more naturally
+  discoverable from the opened-manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 39 random/coverage
+  evidence. Coverage reaches all threshold scenes, but random samples missed
+  `passenger_threshold_boarding` and `passenger_threshold_intercom`. The
+  opened manifest already frames the passengers as a crowd moving toward the
+  third car, so letting the player hold the threshold directly is a clear
+  altruistic action.
+- Planned work:
+  - Add a direct opened-manifest choice into the existing threshold route.
+  - Surface the threshold pressure in `passengers_released` prose so the new
+    choice is motivated by visible story detail.
+  - Preserve existing handoff, room-making, count, answer, keepsake, mitten,
+    lunch-tin, and boarding routes.
+  - Add regression coverage proving the direct opened-manifest threshold route
+    reaches `passenger_threshold_intercom` and an ideal passenger ending.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because the route reuses existing scenes and gives normal players a more
+    direct way to act on the crowd/boarding pressure already present in the
+    late game.
+- Work completed:
+  - Added `hold_opened_manifest_threshold` from `passengers_released` directly
+    to `passenger_threshold_boarding`, setting `held_passenger_threshold`.
+  - Revised `passengers_released` so the opened doors include a visible crowd
+    pause at the third-car threshold.
+  - Updated exact hub choice-order coverage and added regression coverage for
+    the direct opened-manifest threshold route through
+    `passenger_threshold_intercom` and `passenger_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 161 tests.
+  - Validation passed with 138 reachable scenes, 27 endings, and no warnings.
+  - `npm run health` passed: format check, TypeScript, 205 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all scenes, including
+    `passenger_threshold_boarding` and `passenger_threshold_intercom`, with
+    zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `hold_opened_manifest_threshold` -> `listen_to_threshold_from_boarding` ->
+    `pull_release_after_threshold_manifest`, ending at
+    `passenger_true_ending` with score 271 and no objectives.
+- Playtest feedback:
+  - The new hub prose makes the threshold choice feel motivated: the ordinary
+    sounds now include the crowd waiting for someone to hold the third-car
+    threshold.
+  - The route reads cleanly as an altruistic boarding action before the release,
+    and the intercom payoff explains why the held threshold is enough proof.
+  - No bugs, invalid choices, or dangling objectives appeared in the played
+    route.
+- Next step:
+  - Watch future random/blind samples for whether
+    `passenger_threshold_intercom` appears more often in normal play. If hard
+    issues stay absent, continue promoting remaining low-random intercom beats
+    such as `mara_manifest_handoff_intercom` or
+    `passenger_answered_handoff_intercom`.
+
+# Cycle 43 Direct Opened Manifest Handoff
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answered_handoff_true_ending` easier to
+  discover from the opened-manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so Cycle 43 follows the current random/coverage evidence. Coverage
+  reaches all answered-handoff scenes, but normal random samples can still miss
+  `passenger_answered_handoff_intercom`,
+  `passenger_answered_handoff_roll_call`, and
+  `passenger_answered_handoff_true_ending`. The opened-manifest hub already
+  foregrounds passengers answering for themselves, so a direct handoff prompt
+  gives normal players a readable path into the existing payoff.
+- Planned work:
+  - Add one direct opened-manifest choice into the existing answered-handoff
+    roll-call branch.
+  - Reuse the established `saw_mara_manifest_handoff`,
+    `heard_passenger_answers`, and `heard_answered_passengers` flags so ending
+    behavior stays consistent with the longer handoff route.
+  - Add regression coverage proving the direct hub path reaches
+    `passenger_answered_handoff_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new branch.
+- Risks:
+  - The opened-manifest hub gains one more optional action. This is acceptable
+    because it reuses existing downstream scenes and clarifies a payoff that
+    random normal play can miss.
+- Work completed:
+  - Added `ask_mara_to_handoff_opened_roll_call` from `passengers_released` to
+    `passenger_answered_handoff_roll_call`.
+  - Updated exact opened-manifest hub ordering coverage.
+  - Added a direct opened-manifest answered-handoff regression path.
+- Evidence:
+  - Focused story-path suite passed: 162 tests.
+  - `npm run health` passed: format check, TypeScript, 205 tests,
+    validation, and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `ask_mara_to_handoff_opened_roll_call` ->
+    `listen_to_answered_handoff_after_roll_call` ->
+    `pull_release_after_answered_handoff_intercom`, ending at
+    `passenger_answered_handoff_true_ending` with score 304 and no objectives.
+- Playtest feedback:
+  - The new hub action makes the answered-handoff payoff readable from the
+    opened-manifest scene without requiring the player to detour into Mara's
+    handoff and return.
+  - The branch cleanly stages from hub prompt to roll call, intercom, and ideal
+    ending. No dangling choices, objectives, or state issues appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether the answered-handoff scenes
+    appear more often in normal play. If hard issues stay absent, continue
+    improving remaining low-random intercom payoffs such as
+    `passenger_room_intercom`.
+- Commit/push status:
+  - Included with the current green worktree.
+
 # Cycle 38 Opened Manifest Mitten Route
 
 - Date: 2026-06-02
