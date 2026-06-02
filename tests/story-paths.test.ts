@@ -3475,6 +3475,10 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("signal_ledger");
+    expect(observation.objectives).toContain(
+      "Open the kept-passenger manifest doors with Mara's badge proof."
+    );
+    expect(observation.objectives).not.toContain("Clear Mara's ledger entry with her badge proof.");
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "clear_manifest_and_mara_from_ledger"
     );
@@ -8295,6 +8299,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("unfinished work");
     expect(choiceIds).toEqual([
       "listen_at_unlit_stairwell",
+      "look_back_from_unlit_escape_warning",
       "return_to_platform_from_escape_warning",
       "confirm_unlit_flee_platform"
     ]);
@@ -8317,6 +8322,61 @@ describe("demo story critical paths", () => {
       "go_to_platform",
       "retreat_to_stairs_from_platform",
       "confirm_unlit_flee_platform"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_ending");
+    expect(observation.scene.ending).toBe(true);
+  });
+
+  it("adds a one-time dark platform glance before early unlit escape", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform",
+      "look_back_from_unlit_escape_warning"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("unlit_escape_platform_glance");
+    expect(observation.scene.text).toContain("stopped clock");
+    expect(observation.scene.text).toContain("empty token slot");
+    expect(observation.state.flags.looked_back_from_unlit_escape_warning).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_unlit_escape_glance",
+      "return_after_unlit_escape_glance",
+      "leave_after_unlit_escape_glance"
+    ]);
+
+    state = choose(story, state, "return_after_unlit_escape_glance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("inspect_gate_control");
+    expect(observation.choices.map((choice) => choice.id)).toContain("return_to_service_room");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform",
+      "look_back_from_unlit_escape_warning",
+      "leave_after_unlit_escape_glance"
     ]) {
       state = choose(story, state, choiceId);
     }

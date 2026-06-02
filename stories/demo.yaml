@@ -76,7 +76,7 @@ objectives:
         - item: map
         - item: badge
         - notFlag: read_passenger_manifest
-  - text: Clear Mara's ledger entry with her badge proof.
+  - text: Open the kept-passenger manifest doors with Mara's badge proof.
     requires:
       all:
         - flag: platform_lit
@@ -691,11 +691,46 @@ scenes:
             heard_escape_call: true
             met_mara: true
             knows_token_location: true
+      - id: look_back_from_unlit_escape_warning
+        label: Look back at the dark platform before you run
+        to: unlit_escape_platform_glance
+        requires:
+          notFlag: looked_back_from_unlit_escape_warning
+        effects:
+          set:
+            looked_back_from_unlit_escape_warning: true
+            knows_token_location: true
       - id: return_to_platform_from_escape_warning
         label: Return to the dark platform and keep searching
         to: platform
       - id: confirm_unlit_flee_platform
         label: Leave the unfinished platform and run back to the street
+        to: escape_ending
+
+  unlit_escape_platform_glance:
+    routeImportance: optional
+    text: >
+      From the stairwell, Platform 13 is only a lantern-shaped island in the
+      dark. The blank train sign blinks once, then the stopped clock down the
+      tunnel answers with a tiny brass flash behind its hands. The gate control
+      keeps tapping its empty token slot, patient as a metronome. Leaving is
+      still possible, but now the next piece has a place.
+    choices:
+      - id: listen_after_unlit_escape_glance
+        label: Listen for Mara before deciding
+        to: mara_stairwell_call
+        requires:
+          notFlag: heard_escape_call
+        effects:
+          set:
+            heard_escape_call: true
+            met_mara: true
+            knows_token_location: true
+      - id: return_after_unlit_escape_glance
+        label: Return to Platform 13 with the clock token in mind
+        to: platform
+      - id: leave_after_unlit_escape_glance
+        label: Leave after one last look at the dark platform
         to: escape_ending
 
   gate_control:

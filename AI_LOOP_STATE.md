@@ -1,3 +1,55 @@
+# Cycle 56 Dark Platform Glance
+
+- Date: 2026-06-02
+- Main objective: Make the unlit platform escape warning more recoverable
+  without removing early escape.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 56 MCP route abandoned the game at
+  `warned_escape_ending` after hearing Mara name the signal key. That ending is
+  valid, but the unlit branch had less reflective guidance than the lit
+  platform escape branch. A one-time glance gives normal players a clearer
+  "next piece has a place" moment before they decide whether to leave or return.
+- Planned work:
+  - Add an optional dark-platform glance from `platform_escape_warning`.
+  - Preserve the existing listen, return, and direct flee choices.
+  - Set token-location clue state from the glance.
+  - Add regression coverage for return and escape from the new scene.
+  - Run health and play the changed route through the CLI.
+- Risks:
+  - The early escape warning gains a fourth choice. This is acceptable because
+    it mirrors the existing lit-platform glance and remains optional.
+- Status:
+  - Added `look_back_from_unlit_escape_warning` from
+    `platform_escape_warning`.
+  - Added `unlit_escape_platform_glance`, which points players toward the
+    stopped clock/token relationship while still allowing escape.
+  - Added tests proving the new scene is one-time, sets
+    `knows_token_location`, returns cleanly to `platform`, and still permits
+    `escape_ending`.
+  - The final workspace also includes a manifest-objective alignment now
+    asserted by tests: after reading the kept-passenger manifest, the active
+    objective names opening the manifest doors instead of clearing only Mara.
+  - Focused story-path suite passed: 175 tests.
+  - `npm run health` passed: format check, TypeScript, 219 tests, validation,
+    and coverage playtest.
+  - Validation reports 140 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished complete paths.
+  - Actual CLI play followed `retreat_to_stairs_from_platform` ->
+    `look_back_from_unlit_escape_warning` ->
+    `listen_after_unlit_escape_glance` -> `return_from_stairwell_call` ->
+    `take_token_return_to_dark_platform`, then completed the core route at
+    `true_ending` with score 281 and no objectives.
+- Playtest feedback:
+  - The new beat makes the unlit stairwell retreat feel less like a binary
+    quit/continue prompt and more like a last chance to understand the token.
+  - Returning from the glance to Platform 13 keeps the player in familiar space,
+    while listening to Mara still routes directly to the stopped clock.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch blind sessions for whether early escape choices feel too crowded. If
+    so, tune labels or ordering around `platform_escape_warning` before adding
+    more early-route guidance.
+
 # Cycle 60 Lunch-Tin Roster Roll Call
 
 - Date: 2026-06-02
