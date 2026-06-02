@@ -3463,6 +3463,12 @@ scenes:
         effects:
           set:
             heard_home_sign_echo: true
+      - id: step_toward_porch_light
+        label: Step closer to the impossible porch light
+        to: home_sign_grip
+        effects:
+          set:
+            felt_home_sign_grip: true
 
   home_sign_echo:
     routeImportance: optional

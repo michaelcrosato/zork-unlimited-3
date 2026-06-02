@@ -1874,6 +1874,11 @@ describe("demo story critical paths", () => {
     }
 
     expect(observe(story, state).scene.id).toBe("sign_warning");
+    expect(observe(story, state).choices.map((choice) => choice.id)).toEqual([
+      "look_away_from_sign",
+      "stare_at_home",
+      "step_toward_porch_light"
+    ]);
 
     state = choose(story, state, "look_away_from_sign");
     expect(observe(story, state).scene.id).toBe("morning_transfer");
@@ -2125,6 +2130,31 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("lost_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");
+
+    state = initialState(story);
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "step_toward_porch_light"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("home_sign_grip");
+    expect(observation.scene.text).toContain("both places pulling at your name");
+    expect(observation.state.flags.felt_home_sign_grip).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain("jam_map_in_home_sign_doors");
+
+    state = choose(story, state, "jam_map_in_home_sign_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.escaped_home_sign_grip).toBe(true);
   });
 
   it("focuses train-car choices on the release after Mara is cleared", async () => {

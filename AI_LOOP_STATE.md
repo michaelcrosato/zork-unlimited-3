@@ -1,3 +1,55 @@
+# Cycle 20 HOME Sign Porch-Light Branch
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `lost_ending` without
+  adding another ending split or weakening the existing recovery route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 20 evidence showed `lost_ending` remained the only random
+  miss in the 100-run sample while long-run signals said core guidance was
+  healthy. The best next move was to make the existing HOME-sign trap easier
+  for normal exploration to sample while keeping it fair.
+- Planned work:
+  - Add one additional tempting branch at `sign_warning`.
+  - Route it to the existing recoverable `home_sign_grip` warning scene.
+  - Preserve `look_away_from_sign` and the map-based recovery options.
+  - Update regression coverage and verify through actual CLI play.
+- Work completed:
+  - Added `step_toward_porch_light` from `sign_warning` to `home_sign_grip`.
+  - Set `felt_home_sign_grip` on that route so transcript evidence matches the
+    existing final HOME-sign pressure.
+  - Updated story-path tests to assert the new sign-warning choice and prove
+    recovery via `jam_map_in_home_sign_doors`.
+- Evidence:
+  - Focused story-path suite passed: 141 tests.
+  - CLI validation passed with 131 reachable scenes and 27 endings.
+  - Actual CLI play followed `step_toward_porch_light` then
+    `jam_map_in_home_sign_doors`, returning to `service_room` with objectives
+    for the token, fuse, badge, and safe map route.
+  - Actual CLI play followed `step_toward_porch_light` then
+    `reach_for_false_home_door`, reaching `lost_ending` with
+    `reached_false_home_door` recorded.
+  - `npm run health` passed: format check, TypeScript, 185 tests, validation,
+    and coverage playtest.
+  - A 250-run random playtest reached `lost_ending` 5 times with zero
+    unfinished runs, compared with the supplied Cycle 20 MCP random sample's
+    single `lost_ending` hit.
+- Playtest feedback:
+  - The new label is concrete and tempting, but "impossible porch light" keeps
+    it visibly dangerous.
+  - The first consequence remains recoverable, so the added branch increases
+    discoverability without making `lost_ending` feel like an arbitrary
+    one-click punishment.
+  - The existing ending text still fits because this route requires the map
+    before boarding the train.
+- Risks:
+  - Random play may show a modest increase in HOME-sign failures. This is
+    acceptable because the route enters the same final warning scene with two
+    recovery choices before the terminal loss.
+- Next step:
+  - Watch random and blind-play samples for whether `lost_ending` now appears
+    often enough to critique. If it does, prioritize feedback quality over
+    adding more loss branches.
+
 # Cycle 16 HOME Sign Lost-Ending Discoverability
 
 - Date: 2026-06-02
