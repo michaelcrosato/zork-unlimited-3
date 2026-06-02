@@ -1666,6 +1666,60 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("adds an optional last-dispatch beat after clearing Mara's ledger row", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "ask_mara_for_last_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_last_dispatch");
+    expect(observation.scene.text).toContain("Passenger release authorized by proof");
+    expect(observation.scene.text).toContain("Third car. First seat. Pull once.");
+    expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(["board_after_last_dispatch"]);
+
+    state = choose(story, state, "board_after_last_dispatch");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("train_car");
+    expect(observation.state.flags.saw_mara_handoff).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_intercom",
+      "pull_release"
+    ]);
+
+    state = choose(story, state, "pull_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("keeps the direct release available after Mara's handoff beat", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -4669,6 +4723,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_mara_for_last_dispatch",
       "watch_mara_leave_booth",
       "board_after_clearing_mara"
     ]);

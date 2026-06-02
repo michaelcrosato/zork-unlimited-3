@@ -801,6 +801,14 @@ scenes:
       full breath in forty-three years. "Third car," Mara says. "I can hold
       the line steady long enough for you to pull the release."
     choices:
+      - id: ask_mara_for_last_dispatch
+        label: Ask Mara what her last dispatch should say
+        to: mara_last_dispatch
+        requires:
+          notFlag: heard_mara_last_dispatch
+        effects:
+          set:
+            heard_mara_last_dispatch: true
       - id: watch_mara_leave_booth
         label: Watch the signal booth go dark behind her
         to: mara_handoff
@@ -811,6 +819,19 @@ scenes:
             saw_mara_handoff: true
       - id: board_after_clearing_mara
         label: Board the third car while Mara holds the line
+        to: train_car
+
+  mara_last_dispatch:
+    text: >
+      Mara is quiet long enough that the booth relays the rain outside. Then
+      she keys the speaker with the care of someone signing off after a double
+      shift. "Warden Street dispatcher to last train," she says. "Route held.
+      Doors ready. Passenger release authorized by proof, not by permission."
+      The line hisses, trying to turn the words into another order, but Mara
+      finishes first: "Third car. First seat. Pull once."
+    choices:
+      - id: board_after_last_dispatch
+        label: Board after Mara gives the last dispatch
         to: train_car
 
   mara_handoff:
