@@ -1549,7 +1549,10 @@ scenes:
         to: passenger_platform
       - id: board_after_passenger_morning_chorus
         label: Board the third car with the morning chorus behind you
-        to: train_car
+        to: passenger_morning_intercom
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
 
   passenger_mara_signoff:
     routeImportance: optional

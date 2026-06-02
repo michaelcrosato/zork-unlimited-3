@@ -4133,7 +4133,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("recovers echoed passenger boarding after a morning-chorus train-car detour", async () => {
+  it("recovers echoed passenger boarding after a Mara sign-off train-car detour", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -4155,8 +4155,8 @@ describe("demo story critical paths", () => {
       "listen_to_manifest_doors_from_manifest",
       "return_from_passenger_echoes",
       "clear_manifest_and_mara_from_ledger",
-      "listen_to_passenger_morning_chorus",
-      "board_after_passenger_morning_chorus"
+      "ask_mara_to_sign_off_opened_manifest",
+      "board_after_passenger_mara_signoff"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -4223,8 +4223,8 @@ describe("demo story critical paths", () => {
       "listen_to_manifest_doors_from_manifest",
       "return_from_passenger_echoes",
       "clear_manifest_and_mara_from_ledger",
-      "listen_to_passenger_morning_chorus",
-      "board_after_passenger_morning_chorus",
+      "ask_mara_to_sign_off_opened_manifest",
+      "board_after_passenger_mara_signoff",
       "listen_to_echoed_manifest_intercom"
     ]) {
       state = choose(story, state, choiceId);
@@ -9249,13 +9249,14 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "board_after_passenger_morning_chorus");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_morning_chorus_from_boarding"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_morning_chorus_boarding"
+    ]);
 
-    state = choose(story, state, "pull_release_with_manifest");
+    state = choose(story, state, "pull_release_after_morning_chorus_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
@@ -9331,8 +9332,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "listen_to_passenger_morning_chorus",
-      "board_after_passenger_morning_chorus",
-      "listen_to_morning_chorus_from_boarding"
+      "board_after_passenger_morning_chorus"
     ]) {
       state = choose(story, state, choiceId);
     }

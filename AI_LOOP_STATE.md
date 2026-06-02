@@ -1,3 +1,119 @@
+# Cycle 52 Direct Morning Chorus Boarding Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_morning_intercom` more naturally
+  discoverable when players explicitly board with the opened passengers'
+  morning chorus.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 48 evidence plus a fresh
+  200-run random sample on the current checkout. The current sample reached
+  `passenger_morning_chorus` but missed `passenger_morning_intercom`, which
+  showed that the old "Board the third car with the morning chorus behind you"
+  choice was losing its authored payoff inside the generic train-car hub.
+- Planned work:
+  - Route `board_after_passenger_morning_chorus` directly to the existing
+    `passenger_morning_intercom` scene.
+  - Set the existing `heard_passenger_morning_boarding` flag on that direct
+    route so state stays consistent with the older hub and train-car routes.
+  - Preserve generic train-car echo recovery coverage through a different
+    generic boarding detour.
+  - Run focused tests, full health, and an actual playthrough through the
+    changed branch.
+- Risks:
+  - The explicit morning-chorus boarding choice no longer offers a generic
+    release skip. This is acceptable because the choice text commits to
+    carrying the morning chorus, while returning to the manifest hub and the
+    generic train-car routes remain available elsewhere.
+- Status:
+  - Routed `board_after_passenger_morning_chorus` directly to
+    `passenger_morning_intercom`.
+  - Updated morning-chorus regression coverage so the direct board route pays
+    off the intercom before `passenger_true_ending`.
+  - Moved echo-recovery train-car detour tests to Mara's sign-off boarding
+    route, preserving coverage for generic hub recovery behavior.
+  - Focused story-path suite passed: 170 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_morning_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `listen_to_passenger_morning_chorus` ->
+    `board_after_passenger_morning_chorus` ->
+    `pull_release_after_morning_chorus_boarding`, ending at
+    `passenger_true_ending` with score 274 and no objectives.
+  - A post-change 200-run random sample visited
+    `passenger_morning_intercom`, reached zero unfinished runs, and kept all
+    scenes visited.
+- Playtest feedback:
+  - The explicit morning boarding choice now reads as one continuous authored
+    beat: hear ordinary morning memories, board with them still present, then
+    hear the third-car speaker carry those memories before release.
+  - The route preserved `heard_passenger_morning_boarding` and awarded
+    `visit_passenger_morning_intercom`, so scoring and state feedback are
+    visible to the player.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_morning_intercom`
+    appears more often. If it remains low, consider surfacing the morning
+    chorus before the opened-manifest hub has many competing optional branches.
+
+# Cycle 52 Morning Chorus Boarding Payoff
+
+- Date: 2026-06-02
+- Main objective: Make the opened-passenger morning chorus pay off immediately
+  when the player boards with it.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 52 evidence. Core route
+  health is strong, coverage reaches all scenes, and the best next improvement
+  is story depth/discoverability. The morning-chorus scene already invites the
+  player to board with the passengers' remembered ordinary mornings; routing
+  that choice through the generic train car made the authored intercom payoff
+  easier to miss than the choice text implied.
+- Planned work:
+  - Route `board_after_passenger_morning_chorus` directly to
+    `passenger_morning_intercom`.
+  - Set the existing `heard_passenger_morning_boarding` flag on that direct
+    route so later hub behavior remains consistent.
+  - Keep the return-to-manifest and cross-platform alternatives intact.
+  - Update regression coverage for direct morning-chorus boarding and existing
+    train-car detour recovery paths.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - Direct routing removes one generic train-car pause from this optional
+    passenger branch. This is acceptable because the player has already chosen
+    to board with the chorus, and the direct intercom scene provides the
+    intended release prompt.
+- Status:
+  - Routed `board_after_passenger_morning_chorus` to
+    `passenger_morning_intercom` and set `heard_passenger_morning_boarding`.
+  - Updated story-path tests so the direct boarding choice lands on the
+    morning intercom and resolves via
+    `pull_release_after_morning_chorus_boarding`.
+  - Preserved train-car detour recovery coverage through Mara signoff routes.
+  - `npm test` passed: 214 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_morning_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `listen_to_passenger_morning_chorus` ->
+    `board_after_passenger_morning_chorus` ->
+    `pull_release_after_morning_chorus_boarding`, ending at
+    `passenger_true_ending` with score 274 and no objectives.
+- Playtest feedback:
+  - The branch now reads as a continuous authored beat: the passengers remember
+    morning, the player boards with that sound behind them, and the intercom
+    turns those ordinary details into a clear release prompt.
+  - The route ended cleanly as an ideal passenger ending. No invalid choices,
+    dead ends, or dangling objectives appeared.
+- Next step:
+  - Watch future random samples for whether other optional passenger payoffs
+    remain lower-traffic than expected. If no hard failures appear, continue
+    investing in direct payoffs for explicit late-game story choices rather
+    than adding new branch breadth.
+
 # Cycle 51 Direct Conductor Clear Payoff
 
 - Date: 2026-06-02
