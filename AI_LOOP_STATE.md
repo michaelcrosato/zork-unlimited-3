@@ -1,3 +1,118 @@
+# Cycle 46 Direct Manifest-Handoff Intercom Boarding
+
+- Date: 2026-06-02
+- Main objective: Make `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending` more naturally discoverable from the
+  explicit Mara manifest-handoff branch.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 46 random/coverage evidence.
+  Coverage reaches `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending`, but random samples miss both. The
+  player-facing choice "Board the third car while Mara keeps calling names"
+  previously landed in the generic train car and made the handoff payoff an
+  optional listen step.
+- Planned work:
+  - Route the explicit Mara manifest-handoff boarding choice directly to the
+    existing handoff intercom payoff.
+  - Keep alternate room, threshold, count, answered-passenger, thumbprint, hub,
+    and generic train-car routes intact.
+  - Update regression coverage for the direct branch to prove it reaches
+    `passenger_manifest_handoff_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - This slightly increases ideal-ending pressure for a branch that already
+    strongly signals Mara is still calling names. That is acceptable because
+    the choice text explicitly commits to carrying that call into the car.
+- Status:
+  - Routed `board_after_mara_manifest_handoff` directly to
+    `mara_manifest_handoff_intercom` and set `heard_mara_goodbye` on entry.
+  - Preserved alternate manifest-handoff branches for room, threshold, count,
+    passenger answers, thumbprint, returning to the hub, and generic
+    train-car boarding from other routes.
+  - Updated regression coverage so the direct handoff branch reaches
+    `passenger_manifest_handoff_true_ending`.
+  - Focused manifest-handoff tests passed: 7 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `mara_manifest_handoff_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `watch_mara_open_manifest` -> `board_after_mara_manifest_handoff` ->
+    `pull_release_after_manifest_handoff_goodbye`, ending at
+    `passenger_manifest_handoff_true_ending` with score 284 and no objectives.
+- Playtest feedback:
+  - The explicit "Mara keeps calling names" boarding choice now reads as a
+    continuous authored beat instead of asking the player to notice another
+    optional listen choice in the generic train car.
+  - The handoff intercom cleanly frames the release: Mara's pauses keep the
+    passengers sounding like people, then the ending resolves the manifest as a
+    shared movement rather than one dispatcher's duty.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random samples for whether `mara_manifest_handoff_intercom`
+    and `passenger_manifest_handoff_true_ending` appear more often. If hard
+    issues remain absent, continue with remaining low-random payoff branches
+    such as `passenger_answers` or `passenger_conductor_true_ending`.
+
+# Cycle 50 Passenger Answer Signoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answers` easier to discover during normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 50 random/coverage evidence.
+  Coverage reaches all scenes, but the 100-run random sample missed
+  `passenger_answers` even though it is a strong passenger-humanizing branch.
+  The Mara signoff scene is already reached in normal play and explicitly says
+  the passengers answer her, so it is a natural place to surface the existing
+  answered-roll-call beat.
+- Planned work:
+  - Add a contextual `passenger_mara_signoff` choice into the existing
+    `passenger_answers` scene.
+  - Preserve the direct return, platform-crossing, thumbprint, and generic
+    boarding routes from Mara's signoff.
+  - Update regression coverage proving the new signoff route reaches
+    `passenger_answers`, then resolves through `passenger_answered_intercom`
+    to `passenger_answered_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - The signoff scene gains one additional contextual choice. This is contained
+    because it appears only after the player explicitly asks Mara to sign off
+    to the opened passengers and reuses an existing branch.
+- Status:
+  - Added `listen_to_answers_after_mara_signoff` from
+    `passenger_mara_signoff` to `passenger_answers`, setting the existing
+    `heard_passenger_answers` flag.
+  - Updated regression coverage for the new signoff-to-answers route.
+  - Focused story-path suite passed: 170 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_answers`, with
+    zero unfinished runs.
+  - Actual CLI play followed `ask_mara_to_sign_off_opened_manifest` ->
+    `listen_to_answers_after_mara_signoff` ->
+    `carry_answered_names_to_intercom` ->
+    `pull_release_after_answered_intercom`, ending at
+    `passenger_answered_true_ending` with score 305 and no objectives.
+- Playtest feedback:
+  - Mara's signoff now leads naturally into the passenger-answer beat: she
+    tells the opened passengers they were held, then the new choice lets the
+    player hear them answer before boarding.
+  - The branch cleanly reaches the answered intercom and resolves as an ideal
+    passenger roll-call ending.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random samples for whether `passenger_answers` appears more
+    often in normal opened-manifest play. If hard issues remain absent,
+    continue with remaining low-random payoff branches such as
+    `passenger_conductor_true_ending`.
+
 # Cycle 49 Last-Dispatch Intercom Payoff
 
 - Date: 2026-06-02

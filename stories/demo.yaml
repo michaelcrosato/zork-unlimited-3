@@ -1573,6 +1573,16 @@ scenes:
           set:
             read_manifest_thumbprint: true
             saw_mara_manifest_handoff: true
+      - id: listen_to_answers_after_mara_signoff
+        label: Listen as the passengers answer Mara back
+        to: passenger_answers
+        requires:
+          all:
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
       - id: return_from_passenger_mara_signoff
         label: Return to the opened manifest doors
         to: passengers_released
@@ -1690,7 +1700,10 @@ scenes:
     choices:
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
-        to: train_car
+        to: mara_manifest_handoff_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: make_room_after_mara_manifest_handoff
         label: Make room in the third car while Mara calls the opened doors
         to: passenger_room_boarding

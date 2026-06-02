@@ -4952,20 +4952,23 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_manifest_handoff_intercom",
-      "pull_release_with_manifest"
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
-    state = choose(story, state, "listen_to_mara_manifest_handoff_intercom");
+    state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
-    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("pays off Mara's manifest handoff before a direct passenger release", async () => {
@@ -9347,10 +9350,38 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "notice_manifest_thumbprint_after_mara_signoff",
+      "listen_to_answers_after_mara_signoff",
       "return_from_passenger_mara_signoff",
       "cross_after_passenger_mara_signoff",
       "board_after_passenger_mara_signoff"
     ]);
+
+    const answeredState = choose(story, state, "listen_to_answers_after_mara_signoff");
+    observation = observe(story, answeredState);
+
+    expect(observation.scene.id).toBe("passenger_answers");
+    expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_answered_names_to_intercom"
+    );
+
+    let answeredReleaseState = choose(story, answeredState, "carry_answered_names_to_intercom");
+    observation = observe(story, answeredReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_answered_intercom");
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+
+    answeredReleaseState = choose(
+      story,
+      answeredReleaseState,
+      "pull_release_after_answered_intercom"
+    );
+    observation = observe(story, answeredReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_answered_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     const returnedState = choose(story, state, "return_from_passenger_mara_signoff");
     observation = observe(story, returnedState);
