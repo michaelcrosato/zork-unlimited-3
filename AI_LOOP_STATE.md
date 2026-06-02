@@ -1,3 +1,113 @@
+# Cycle 36 Opened-Count Handoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Make the reviewed passenger-count chorus easier to discover
+  from Mara's opened-manifest handoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current automated evidence is healthy enough to invest in richer
+  late-game story depth. Earlier Cycle 31 evidence showed
+  `passenger_counted_chorus` as a normal-random miss even though coverage could
+  reach it. The chorus is a strong payoff because it turns the manifest count
+  from bookkeeping into passengers answering for one another.
+- Planned work:
+  - Add a direct handoff choice from `mara_manifest_handoff` to
+    `passenger_counted_chorus`.
+  - Preserve direct boarding plus the recently promoted room and threshold
+    routes ahead of the new count branch.
+  - Set the reviewed-count flags on the new route so downstream state matches
+    the established manifest-count path.
+  - Add regression coverage for the new handoff-to-count route and ending.
+  - Run focused tests, full health, and an actual MCP route through the new
+    branch.
+- Risks:
+  - The handoff menu gains another optional late-game route. This is scoped to
+    an already optional passenger payoff and keeps direct boarding first.
+- Work completed:
+  - Added `finish_count_after_mara_manifest_handoff` from
+    `mara_manifest_handoff` to `passenger_counted_chorus`.
+  - Preserved direct boarding, room-making, and threshold routes ahead of the
+    new count branch.
+  - Set `reviewed_open_manifest_count` and
+    `passengers_finished_reviewed_count` on the direct handoff route.
+  - Added regression coverage for the handoff-to-count route and
+    `passenger_counted_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 151 tests.
+  - `npm run health` passed: format check, TypeScript, 195 tests,
+    validation, and coverage playtest.
+  - Validation reports 137 reachable scenes and 27 endings.
+  - Coverage playtest still visited all scenes with zero unfinished runs.
+  - Actual MCP play followed `watch_mara_open_manifest` ->
+    `finish_count_after_mara_manifest_handoff` ->
+    `pull_release_after_counted_chorus`, ending at
+    `passenger_counted_true_ending` with score 281 and no objectives.
+- Playtest feedback:
+  - The count branch reads naturally after Mara calls opened doors: the
+    passengers finish the old blank space together, which makes the final
+    ending feel less like accounting and more like mutual care.
+- Next step:
+  - Watch future random and blind samples for whether this improves ordinary
+    discovery of `passenger_counted_chorus`; if no hard issues appear, keep
+    investing in late-game passenger payoffs that make the final release feel
+    shared.
+
+# Cycle 35 Dark HOME Lost-Ending Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of `lost_ending` through an
+  early, recoverable dark-tunnel warning route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 35 evidence shows full coverage, no unfinished
+  random runs, and healthy ideal-ending pressure, but random play rarely reaches
+  `lost_ending`. The lost outcome is a useful cautionary beat for players who
+  ignore the lantern and chase the false HOME signal, so it should be visible
+  without being an unfair instant failure.
+- Planned work:
+  - Add a false-HOME flicker from `dark_tunnel` that points toward a new warning
+    scene.
+  - Give the warning scene two recovery routes and one explicit commitment to
+    `lost_ending`.
+  - Revise `lost_ending` text so it works whether the player carried the marked
+    map or left it behind.
+  - Add regression coverage for both the lost branch and recovery from the new
+    warning into the true ending.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new route.
+- Risks:
+  - The dark-tunnel menu gains one more risky option before the existing chain,
+    speaker, and retreat routes. This is intentional pressure toward a rarely
+    seen failure ending, and the warning still gives clear recovery choices.
+- Work completed:
+  - Added `dark_home_warning`, reached from `dark_tunnel` by following the false
+    HOME flicker.
+  - Added recovery choices from that warning back to `service_room` or Mara's
+    dispatcher introduction, plus a deliberate `lost_ending` commitment.
+  - Revised `lost_ending` so the marked-map line works whether the player
+    carried the map or left it behind.
+  - Added regression coverage for the dark-HOME warning, the new lost route,
+    and recovery from the warning into `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 151 tests.
+  - `npm run health` passed: format check, TypeScript, 195 tests, validation,
+    and coverage playtest.
+  - Validation now reports 137 reachable scenes and 27 endings.
+  - Coverage playtest visited all 137 scenes, including `dark_home_warning`.
+  - Actual CLI play followed `enter_dark` -> `follow_false_home_light` ->
+    `pull_chain_before_home_takes_you`, recovered through the core route, and
+    ended at `true_ending` with score 278 and no objectives.
+  - A 250-run random sample ended all 250 runs, had no unfinished runs, visited
+    `dark_home_warning`, and reached `lost_ending` 15 times.
+- Playtest feedback:
+  - The new warning reads as fair: the player sees why HOME is dangerous before
+    committing to it, and the two recovery choices are concrete.
+  - Recovery from the warning into the core route felt clean, though entering
+    through the chain means the player can finish without the lantern because
+    the lights are on.
+- Next step:
+  - Watch blind feedback for whether the early HOME warning is too tempting for
+    cautious personas. If not, shift back to richer late-passenger depth or any
+    recurring blind-play S0-S2 issue once the digest has a window.
+
 # Cycle 34 Passenger Room Handoff Discovery
 
 - Date: 2026-06-02

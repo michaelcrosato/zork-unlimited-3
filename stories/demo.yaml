@@ -297,8 +297,15 @@ scenes:
     text: >
       The tunnel swallows the last streetlight. Your hand finds cold concrete,
       then a chain hanging from the ceiling. Far ahead, a woman speaks through
-      a dead public-address speaker.
+      a dead public-address speaker, and deeper still a blank train sign
+      flickers once with the first letter of HOME.
     choices:
+      - id: follow_false_home_light
+        label: Follow the HOME flicker deeper into the dark
+        to: dark_home_warning
+        effects:
+          set:
+            saw_dark_home_flicker: true
       - id: pull_chain
         label: Pull the chain
         to: service_room
@@ -311,6 +318,34 @@ scenes:
       - id: retreat
         label: Retreat to the entrance
         to: entrance
+
+  dark_home_warning:
+    routeImportance: optional
+    text: >
+      Without the lantern, HOME looks less like a word than a porch light
+      remembering you. The woman in the speaker is still trying to speak over
+      it, but the chain brushes your shoulder, close enough to pull the service
+      lights on before the train learns the shape of your name.
+    choices:
+      - id: pull_chain_before_home_takes_you
+        label: Pull the chain before HOME finishes spelling itself
+        to: service_room
+        effects:
+          set:
+            lights_on: true
+            escaped_dark_home_flicker: true
+      - id: answer_mara_under_home_flicker
+        label: Answer the woman beneath the HOME flicker
+        to: dispatcher
+        effects:
+          set:
+            escaped_dark_home_flicker: true
+      - id: keep_following_false_home
+        label: Keep following the HOME light
+        to: lost_ending
+        effects:
+          set:
+            surrendered_dark_home_flicker: true
 
   dispatcher:
     routeImportance: supporting
@@ -1471,6 +1506,15 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: finish_count_after_mara_manifest_handoff
+        label: Let the opened passengers finish Mara's count together
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
         to: mara_manifest_thumbprint_intercom
@@ -4160,8 +4204,9 @@ scenes:
     text: >
       The sign finishes spelling HOME. For one impossible second it shows your
       childhood street, your kitchen window, your own silhouette waving you in.
-      The marked map falls unread beside your shoe. The doors close before you
-      remember your real name.
+      The marked map falls unread in every version of this choice: beside your
+      shoe if you carried it, on Mara's desk if you left it behind. The doors
+      close before you remember your real name.
     choices: []
 
   lost_after_dispatch_ending:

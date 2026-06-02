@@ -410,6 +410,72 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual(["take_token"]);
   });
 
+  it("warns dark-tunnel explorers before the false HOME lost ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["enter_dark", "follow_false_home_light"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("dark_home_warning");
+    expect(observation.scene.text).toContain("Without the lantern, HOME looks less like a word");
+    expect(observation.scene.text).toContain("close enough to pull the service lights on");
+    expect(observation.state.flags.saw_dark_home_flicker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_chain_before_home_takes_you",
+      "answer_mara_under_home_flicker",
+      "keep_following_false_home"
+    ]);
+
+    state = choose(story, state, "keep_following_false_home");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.surrendered_dark_home_flicker).toBe(true);
+    expect(observation.scene.text).toContain("The marked map falls unread in every version");
+  });
+
+  it("lets dark-HOME warning players recover into the true ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "enter_dark",
+      "follow_false_home_light",
+      "pull_chain_before_home_takes_you",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "return_to_tunnel",
+      "inspect_clock",
+      "take_token",
+      "follow_arrows",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "pull_release"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.escaped_dark_home_flicker).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("keeps Mara-promising players in the service room until they recover the map", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3453,6 +3519,9 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "hold_threshold_after_mara_manifest_handoff"
     );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "finish_count_after_mara_manifest_handoff"
+    );
 
     state = choose(story, state, "make_room_after_mara_manifest_handoff");
     observation = observe(story, state);
@@ -3792,6 +3861,7 @@ describe("demo story critical paths", () => {
       "board_after_mara_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
       "hold_threshold_after_mara_manifest_handoff",
+      "finish_count_after_mara_manifest_handoff",
       "touch_mara_manifest_thumbprint",
       "continue_manifest_handoff_roll_call",
       "board_with_mara_answered_handoff",
@@ -4488,6 +4558,49 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets Mara's opened-door handoff become a completed passenger count", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "finish_count_after_mara_manifest_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
