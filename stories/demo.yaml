@@ -3752,11 +3752,6 @@ scenes:
       still printed on the map's damp reverse, smeared but readable: badge,
       fuse, clock token, ledger.
     choices:
-      - id: wrench_map_free_from_home_sign
-        label: Follow the map's morning line before the doors close
-        to: good_ending
-        requires:
-          item: map
       - id: jam_map_in_home_sign_doors
         label: Jam the map in the doors and tumble back to the service room
         to: service_room
@@ -3767,12 +3762,11 @@ scenes:
             escaped_home_sign_grip: true
             knows_token_location: true
             knows_badge_proof: true
-      - id: reach_for_false_home_door
-        label: Reach for the porch door inside the HOME sign
-        to: lost_ending
-        effects:
-          set:
-            reached_false_home_door: true
+      - id: wrench_map_free_from_home_sign
+        label: Follow the map's morning line before the doors close
+        to: good_ending
+        requires:
+          item: map
       - id: surrender_to_home_sign
         label: Let HOME take your name
         to: lost_ending

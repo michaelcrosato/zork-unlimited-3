@@ -1,3 +1,57 @@
+# Cycle 23 HOME-Sign Grip Recovery
+
+- Date: 2026-06-02
+- Main objective: Reduce late HOME-sign lost-ending pressure after players board
+  too early with Mara's map.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 23 suspicious samples repeatedly reached
+  `lost_ending` by stepping toward the HOME sign and then choosing the duplicate
+  false-door fail action. Core guidance is otherwise healthy, so the focused
+  improvement is to make the final warning more recoverable without removing the
+  trap entirely.
+- Planned work:
+  - Reorder `home_sign_grip` so the service-room recovery is the first visible
+    choice.
+  - Remove the redundant `reach_for_false_home_door` fail choice from the
+    map-held grip state while preserving `surrender_to_home_sign` as the
+    intentional lost ending.
+  - Add regression coverage for the suspicious direct porch-light route,
+    verifying recovery objectives and completion to `true_ending`.
+  - Run focused tests, full health, a random sample, and an actual CLI route.
+- Risks:
+  - `lost_ending` becomes rarer in random play. This is acceptable because the
+    route remains reachable through explicit surrender, while ordinary players
+    get a clearer late recovery opportunity after multiple warnings.
+- Work completed:
+  - Changed `home_sign_grip` choice order to prioritize
+    `jam_map_in_home_sign_doors`, then the morning-transfer escape, then
+    explicit surrender.
+  - Removed the duplicate false-door loss choice from the final map-grip scene.
+  - Updated the HOME-sign regression test for the new choice order and for the
+    direct `step_toward_porch_light` recovery route through to `true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 145 tests.
+  - CLI validation passed with 136 reachable scenes, 27 endings, and no
+    warnings.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes with no unvisited scenes.
+  - Actual CLI play followed `step_toward_porch_light` ->
+    `jam_map_in_home_sign_doors`, recovered to the service room, collected the
+    badge/fuse/token, cleared Mara, and ended at `true_ending` with score 256
+    and no objectives.
+  - A 100-run random sample ended all 100 runs; `lost_ending` was not hit in
+    that sample, while `lost_after_dispatch_ending` remained reachable once.
+- Playtest feedback:
+  - The grip scene now reads like a final pressure moment with one clear
+    back-to-work option, one safe-exit option, and one explicit surrender.
+  - Recovering from the trap feels coherent because the map text already names
+    the service-room checklist: badge, fuse, clock token, ledger.
+- Next step:
+  - Watch blind feedback for whether the HOME sign now feels too forgiving. If
+    so, keep the recovery first but strengthen the cost or aftertaste instead of
+    restoring duplicate fail choices.
+
 # Cycle 26 Returned-Mitten Pair Memory
 
 - Date: 2026-06-02
