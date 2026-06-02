@@ -8861,7 +8861,6 @@ describe("demo story critical paths", () => {
     for (const choiceId of [
       "take_lantern",
       "open_service_door",
-      "take_map",
       "go_to_platform",
       "retreat_to_stairs_from_platform"
     ]) {
@@ -8872,13 +8871,17 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("platform_escape_warning");
-    expect(observation.scene.text).toContain("unfinished work");
+    expect(observation.scene.text).toContain("the locker parts");
+    expect(observation.scene.text).toContain("the stopped clock");
     expect(choiceIds).toEqual([
+      "return_to_platform_from_escape_warning",
       "listen_at_unlit_stairwell",
       "look_back_from_unlit_escape_warning",
-      "return_to_platform_from_escape_warning",
       "confirm_unlit_flee_platform"
     ]);
+    expect(observation.choices[0]?.label).toBe(
+      "Return through the service-room door for the map, fuse, badge, and clock token"
+    );
 
     state = choose(story, state, "return_to_platform_from_escape_warning");
     observation = observe(story, state);
@@ -8886,9 +8889,13 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("service_room");
     expect(observation.state.flags.left_unprepared_platform).toBe(true);
+    expect(observation.state.flags.returned_from_unlit_escape_warning).toBe(true);
+    expect(observation.state.flags.knows_token_location).toBe(true);
     expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).toContain("take_map");
+    expect(choiceIds).toContain("go_to_stopped_clock");
     expect(choiceIds).toContain("read_personnel_file");
-    expect(choiceIds).toContain("return_to_tunnel");
+    expect(choiceIds).not.toContain("return_to_tunnel");
     expect(choiceIds).not.toContain("go_to_platform");
 
     state = initialState(story);

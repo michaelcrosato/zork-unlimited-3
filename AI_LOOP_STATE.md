@@ -1,3 +1,61 @@
+# Cycle 87 Unlit Platform Recovery Signpost
+
+- Date: 2026-06-02
+- Main objective: Make the adaptive unlit-platform escape route point back to
+  concrete recovery before players choose the street.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence includes an adaptive route that reached
+  `escape_ending` after retreating from Platform 13 with no map, fuse, badge,
+  or token. The escape ending should remain available, but the warning should
+  make the productive recovery path more obvious.
+- Planned work:
+  - Move the service-room recovery choice to the top of
+    `platform_escape_warning`.
+  - Make the warning text and choice label name the map, fuse, badge, and clock
+    token instead of generic unfinished work.
+  - Set `knows_token_location` when players return from that warning so the
+    service room can immediately offer the stopped-clock route.
+  - Update focused story-path expectations, run health, and actually play the
+    revised route.
+- Risks:
+  - Choice ordering can shift random escape distribution, but the explicit
+    escape choice remains available and this only strengthens recovery
+    signposting on a known exploratory route.
+- Status:
+  - Completed.
+  - Rewrote `platform_escape_warning` to name the desk map, locker parts, and
+    stopped clock before the player chooses whether to escape.
+  - Moved the service-room recovery choice to the first position and renamed it
+    to explicitly ask for the map, fuse, badge, and clock token.
+  - Returning from the unlit escape warning now sets `knows_token_location`, so
+    the service room offers `go_to_stopped_clock` instead of a vague tunnel
+    backtrack.
+  - Updated the focused story-path regression for the revised warning text,
+    choice order, recovery label, and post-return choice set.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lets unlit-platform explorers retreat to the early escape warning"`.
+  - Actual CLI play followed the adaptive unlit-platform route through
+    `return_to_platform_from_escape_warning`, recovered the clock token, map,
+    fuse, and badge, and reached `true_ending` with score 256 and no
+    objectives.
+  - `npm run health` passed: format check, TypeScript, 233 tests, validation,
+    and coverage playtest.
+  - Validation reports 147 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths.
+- Playtest feedback:
+  - The revised warning makes the recovery path materially clearer: the first
+    option now names every missing tool the exploratory player needs.
+  - The service room no longer offers the unhelpful `return_to_tunnel` after
+    the player accepts the warning; it points directly at the stopped clock,
+    which matches the warning text.
+  - The escape ending remains available as an explicit final choice, preserving
+    player agency without letting it masquerade as the recommended next step.
+- Next step:
+  - Watch future adaptive routes for whether unprepared platform visitors still
+    escape at a high rate; if so, tune the optional stairwell/listen beats
+    before changing the core platform requirements.
+
 # Cycle 86 Direct Thumbprint Handoff Release
 
 - Date: 2026-06-02

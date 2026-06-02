@@ -712,9 +712,18 @@ scenes:
       The stairwell back to Warden Street is still open, but the dark platform
       does not let the train feel harmless. Its blank sign waits without a
       destination, the gate control keeps tapping its empty token slot, and the
-      service-room door is close enough that leaving now would mean choosing
-      the street over unfinished work.
+      service-room door is close enough to still matter. Leaving now would mean
+      choosing the street before checking the desk map, the locker parts, and
+      the stopped clock that can answer the slot.
     choices:
+      - id: return_to_platform_from_escape_warning
+        label: Return through the service-room door for the map, fuse, badge, and clock token
+        to: service_room
+        effects:
+          set:
+            left_unprepared_platform: true
+            returned_from_unlit_escape_warning: true
+            knows_token_location: true
       - id: listen_at_unlit_stairwell
         label: Listen before you leave Mara behind
         to: mara_stairwell_call
@@ -734,13 +743,6 @@ scenes:
           set:
             looked_back_from_unlit_escape_warning: true
             knows_token_location: true
-      - id: return_to_platform_from_escape_warning
-        label: Return through the service-room door for the missing parts
-        to: service_room
-        effects:
-          set:
-            left_unprepared_platform: true
-            returned_from_unlit_escape_warning: true
       - id: confirm_unlit_flee_platform
         label: Leave the unfinished platform and run back to the street
         to: escape_ending
