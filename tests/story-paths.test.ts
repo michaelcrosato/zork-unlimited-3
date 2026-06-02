@@ -3113,20 +3113,10 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_last_dispatch_into_car",
-      "board_after_last_dispatch"
+      "board_with_last_dispatch_in_speaker"
     ]);
 
-    state = choose(story, state, "board_after_last_dispatch");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.state.flags.saw_mara_handoff).toBeUndefined();
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_last_dispatch_intercom",
-      "pull_release"
-    ]);
-
-    state = choose(story, state, "listen_to_last_dispatch_intercom");
+    state = choose(story, state, "board_with_last_dispatch_in_speaker");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_last_dispatch_intercom");
@@ -9206,6 +9196,9 @@ describe("demo story critical paths", () => {
       "listen_to_passenger_morning_chorus"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_morning_chorus_from_opened_manifest"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
       "board_after_releasing_passengers"
     );
 
@@ -9219,6 +9212,52 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
 
     state = choose(story, state, "pull_release_with_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("carries the passenger morning chorus from the opened manifest hub", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "return_from_passenger_morning_chorus",
+      "carry_morning_chorus_from_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("stops with real streets again");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_morning_chorus_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_morning_chorus_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");

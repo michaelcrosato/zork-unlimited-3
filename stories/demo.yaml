@@ -1223,9 +1223,19 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: board_with_last_dispatch_in_speaker
+        label: Board with Mara's last dispatch in the speaker
+        to: mara_last_dispatch_intercom
+        requires:
+          notFlag: knows_badge_proof
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_last_dispatch
         label: Board after Mara gives the last dispatch
         to: train_car
+        requires:
+          flag: knows_badge_proof
 
   mara_handoff:
     routeImportance: optional
@@ -1277,7 +1287,8 @@ scenes:
       the names are people. Mara breathes through the speaker and says, "Third
       car. I can hold the line steady while they find the morning." When she
       has already called the opened doors once, the third car speaker keeps a
-      small waiting hiss for her handoff.
+      small waiting hiss for her handoff. Once the opened passengers remember
+      morning aloud, the same speaker can carry those ordinary streets aboard.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1365,6 +1376,21 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: carry_morning_chorus_from_opened_manifest
+        label: Carry the remembered mornings into the third car
+        to: passenger_morning_intercom
+        requires:
+          all:
+            - flag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_morning_boarding
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
       - id: ask_conductor_to_punch_opened_transfer
         label: Ask the conductor to punch the opened manifest transfer
         to: passenger_conductor_transfer
@@ -3112,6 +3138,14 @@ scenes:
       permission from the ledger she kept alive. "That is the whole message,"
       she says. "Pull once, and let it finally arrive."
     choices:
+      - id: listen_to_badge_proof_after_last_dispatch
+        label: Listen as Mara ties the last dispatch to her badge proof
+        to: mara_badge_proof_intercom
+        requires:
+          flag: knows_badge_proof
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: pull_release_after_last_dispatch_goodbye
         label: Pull the release after Mara's last dispatch
         to: true_ending

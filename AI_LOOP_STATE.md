@@ -1,3 +1,116 @@
+# Cycle 49 Last-Dispatch Intercom Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `mara_last_dispatch_intercom` harder to miss after the
+  player explicitly asks Mara for her final dispatch.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 49 random/coverage evidence.
+  Random play reached the core true ending often but missed
+  `mara_last_dispatch_intercom` in the 100-run sample while coverage proved it
+  reachable. The branch already exists and is narratively important; the weak
+  spot was a follow-up choice that boarded straight to the generic train car
+  after Mara delivered the dispatch.
+- Planned work:
+  - Add a non-badge-proof follow-up from Mara's last dispatch to the existing
+    `mara_last_dispatch_intercom` payoff.
+  - Keep the explicit `carry_last_dispatch_into_car` route and direct
+    train-car release routes intact.
+  - Update regression coverage for the revised last-dispatch route.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - The last-dispatch scene gains a contextual choice split. This is acceptable
+    because badge-proof readers keep their proof-specific route while ordinary
+    dispatch routes pay off the dispatch immediately.
+- Status:
+  - Added `board_with_last_dispatch_in_speaker` from `mara_last_dispatch`
+    directly to `mara_last_dispatch_intercom` when the badge-proof variant is
+    not active.
+  - Preserved the badge-proof optional payoff by keeping
+    `board_after_last_dispatch` routed through `train_car` when
+    `knows_badge_proof` is set.
+  - Updated last-dispatch regression coverage for direct intercom routing and
+    the preserved badge-proof continuation.
+  - Focused story-path suite passed: 170 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `mara_last_dispatch_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `mark_mara_clear_from_ledger` ->
+    `ask_mara_for_last_dispatch` ->
+    `board_with_last_dispatch_in_speaker` ->
+    `pull_release_after_last_dispatch_goodbye`, ending at `true_ending` with
+    score 287 and no objectives.
+- Playtest feedback:
+  - The last-dispatch choice now reads as a continuous authored beat: Mara gives
+    the dispatch, the player boards with it still in the speaker, and the
+    intercom scene confirms the train cannot flatten it into another order.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random samples for whether `mara_last_dispatch_intercom`
+    appears more often in normal play.
+
+# Cycle 45 Direct Morning Chorus Intercom Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_morning_intercom` easier to discover after
+  players hear the opened passengers remember morning.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 45 random/coverage evidence.
+  Coverage reaches every scene, but random samples missed
+  `passenger_morning_intercom`. The existing morning chorus is a strong
+  passenger-humanizing beat, but returning to the opened-manifest hub currently
+  hides its intercom payoff behind generic boarding.
+- Planned work:
+  - Add one gated `passengers_released` choice from the heard morning chorus
+    into the existing `passenger_morning_intercom`.
+  - Keep the older board-from-chorus route intact.
+  - Revise the opened-manifest hub prose so the speaker cue points toward the
+    carried morning chorus.
+  - Add regression coverage proving the returned-hub route reaches
+    `passenger_morning_intercom` and `passenger_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more contextual choice after the player
+    has already listened to the morning chorus. This is acceptable because it
+    only appears after that setup and reuses an existing payoff.
+- Status:
+  - Added `carry_morning_chorus_from_opened_manifest` from
+    `passengers_released` directly to the existing
+    `passenger_morning_intercom` after the player hears
+    `passenger_morning_chorus`.
+  - Revised the opened-manifest hub prose so the third-car speaker visibly
+    carries the remembered morning chorus after it is heard.
+  - Added regression coverage for the returned-hub route through
+    `passenger_morning_intercom` to `passenger_true_ending`.
+  - Focused story-path suite passed: 170 tests.
+  - `npm run health` passed: format check, TypeScript, 214 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_morning_intercom`, with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `listen_to_passenger_morning_chorus` ->
+    `return_from_passenger_morning_chorus` ->
+    `carry_morning_chorus_from_opened_manifest` ->
+    `pull_release_after_morning_chorus_boarding`, ending at
+    `passenger_true_ending` with score 281 and no objectives.
+- Playtest feedback:
+  - Returning from the morning chorus now keeps a specific, readable follow-up
+    in the opened-manifest hub instead of forcing the player to infer the
+    payoff from generic boarding.
+  - The intercom scene lands cleanly after the hub choice and the ending keeps
+    the passenger-focused release intact.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_morning_intercom`
+    appears more often in normal play. If hard issues remain absent, continue
+    with the remaining low-random answered-passenger or conductor variants.
+
 # Cycle 48 Direct Conductor Transfer Proof Discovery
 
 - Date: 2026-06-02
