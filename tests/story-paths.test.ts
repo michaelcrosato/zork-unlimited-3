@@ -56,7 +56,7 @@ describe("demo story critical paths", () => {
 
     let warning = observe(story, state);
     expect(warning.choices.map((choice) => choice.label)).toContain(
-      "Force the rusted gate without the fuse"
+      "Force the gate despite the empty fuse socket"
     );
 
     state = choose(story, state, "force_gate");
@@ -67,6 +67,11 @@ describe("demo story critical paths", () => {
     expect(warning.scene.text).toContain("empty fuse socket");
     expect(warning.scene.text).toContain("CLOCK = TOKEN");
     expect(warning.state.flags.knows_token_location).toBe(true);
+    expect(warning.choices.map((choice) => choice.id)).toEqual([
+      "back_away_from_gate",
+      "listen_below_gate",
+      "force_gate_anyway"
+    ]);
     expect(warning.choices.map((choice) => choice.label)).toContain(
       "Ignore the final warning and force the gate anyway"
     );
@@ -238,14 +243,28 @@ describe("demo story critical paths", () => {
       "read_notice",
       "take_lantern_after_notice",
       "open_service_door",
-      "go_to_platform",
-      "force_gate",
-      "back_away_from_gate"
+      "go_to_platform"
     ]) {
       state = choose(story, state, choiceId);
     }
 
-    const observation = observe(story, state);
+    let observation = observe(story, state);
+
+    expect(observation.choices.find((choice) => choice.id === "force_gate")?.label).toBe(
+      "Force the gate despite the empty fuse socket"
+    );
+
+    state = choose(story, state, "force_gate");
+    observation = observe(story, state);
+
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "back_away_from_gate",
+      "listen_below_gate",
+      "force_gate_anyway"
+    ]);
+
+    state = choose(story, state, "back_away_from_gate");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("service_room");
     expect(observation.objectives).toContain("Recover the marked Platform 13 map before boarding.");
@@ -3689,7 +3708,7 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("passengers_released");
-    expect(choiceIds).toContain("watch_mara_open_manifest");
+    expect(choiceIds[0]).toBe("watch_mara_open_manifest");
 
     state = choose(story, state, "watch_mara_open_manifest");
     observation = observe(story, state);
@@ -3698,8 +3717,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("steadiness can be handed from name to name");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "touch_mara_manifest_thumbprint",
       "board_after_mara_manifest_handoff",
+      "touch_mara_manifest_thumbprint",
       "continue_manifest_handoff_roll_call",
       "board_with_mara_answered_handoff",
       "return_from_mara_manifest_handoff"
@@ -3852,7 +3871,7 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("passengers_released");
-    expect(choiceIds[0]).toBe("review_open_manifest_count");
+    expect(choiceIds[0]).toBe("watch_mara_open_manifest");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -7519,11 +7538,11 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(choiceIds).toEqual([
+      "watch_mara_open_manifest",
       "review_open_manifest_count",
       "listen_to_passenger_morning_chorus",
       "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
-      "watch_mara_open_manifest",
       "listen_to_passenger_answers",
       "board_with_answered_passengers",
       "board_after_releasing_passengers"

@@ -598,7 +598,7 @@ scenes:
           set:
             left_unprepared_platform: true
       - id: force_gate
-        label: Force the rusted gate without the fuse
+        label: Force the gate despite the empty fuse socket
         to: gate_warning
         requires:
           all:
@@ -1208,6 +1208,14 @@ scenes:
       ribs. Mara breathes through the speaker and says, "Third car. I can hold
       the line steady while they find the morning."
     choices:
+      - id: watch_mara_open_manifest
+        label: Watch Mara call the opened doors
+        to: mara_manifest_handoff
+        requires:
+          notFlag: saw_mara_manifest_handoff
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
       - id: review_open_manifest_count
         label: Review the opened manifest count with Mara
         to: passenger_manifest_count
@@ -1244,14 +1252,6 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
-      - id: watch_mara_open_manifest
-        label: Watch Mara call the opened doors
-        to: mara_manifest_handoff
-        requires:
-          notFlag: saw_mara_manifest_handoff
-        effects:
-          set:
-            saw_mara_manifest_handoff: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
@@ -1442,6 +1442,9 @@ scenes:
       handed from name to name. By the time she reaches her own row, the
       speaker is full of people breathing with her instead of waiting for her.
     choices:
+      - id: board_after_mara_manifest_handoff
+        label: Board the third car while Mara keeps calling names
+        to: train_car
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
         to: mara_manifest_thumbprint_intercom
@@ -1466,9 +1469,6 @@ scenes:
         effects:
           set:
             read_manifest_thumbprint: true
-      - id: board_after_mara_manifest_handoff
-        label: Board the third car while Mara keeps calling names
-        to: train_car
       - id: continue_manifest_handoff_roll_call
         label: Keep listening as the opened passengers answer Mara
         to: passenger_answers
@@ -3543,6 +3543,12 @@ scenes:
       CLOCK = TOKEN. The control panel clicks once, offering one last chance to
       stop making noise and gather the proper supplies.
     choices:
+      - id: back_away_from_gate
+        label: Back away for the fuse, badge, map, and clock token
+        to: service_room
+        effects:
+          set:
+            backed_away_from_gate: true
       - id: listen_below_gate
         label: Listen to what answered below the platform
         to: gate_echo
@@ -3551,12 +3557,6 @@ scenes:
         effects:
           set:
             heard_gate_echo: true
-      - id: back_away_from_gate
-        label: Back away for the fuse, badge, map, and clock token
-        to: service_room
-        effects:
-          set:
-            backed_away_from_gate: true
       - id: force_gate_anyway
         label: Ignore the final warning and force the gate anyway
         to: gate_collapse

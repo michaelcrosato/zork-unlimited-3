@@ -1,14 +1,120 @@
-# Cycle 24 Direct HOME-Reflection Loss Discovery
+# Cycle 29 Mara Manifest Handoff Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of Mara's opened-manifest
+  handoff route and its `passenger_manifest_handoff_true_ending`.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window.
+  The supplied Cycle 29 evidence shows full coverage and strong completion, but
+  random play still rarely reaches `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending`. The handoff is already written and
+  tested; the issue is scan order after the player opens every passenger door.
+- Planned work:
+  - Move `watch_mara_open_manifest` to the top of the opened-passenger scene.
+  - Move `board_after_mara_manifest_handoff` to the top of the Mara handoff
+    scene so the direct handoff intercom is the most natural follow-through.
+  - Preserve the optional thumbprint, roll-call, and return branches.
+  - Update regression coverage for the new choice order and direct handoff
+    payoff.
+  - Verify the carried-over forced-gate warning edits in the same health pass.
+  - Run focused tests, full health, playtest samples, and an actual CLI route.
+- Risks:
+  - The manifest count and morning chorus become one line lower in the opened
+    passenger menu. This is acceptable because they remain visible optional
+    enrichments, while Mara's handoff is the clearest narrative continuation
+    from opening every manifest door.
+- Work completed:
+  - Moved the manifest handoff entry point to the top of `passengers_released`.
+  - Moved direct boarding from `mara_manifest_handoff` to the first choice,
+    ahead of optional thumbprint and roll-call branches.
+  - Updated story-path regression expectations for the new order.
+  - Preserved carried-over forced-gate warning label and retreat-first order.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes and reached
+    `passenger_manifest_handoff_true_ending` 321 times.
+  - A 100-run random playtest ended all 100 runs and visited
+    `mara_manifest_handoff`, but did not reach
+    `mara_manifest_handoff_intercom` or
+    `passenger_manifest_handoff_true_ending` in that sample.
+  - Actual CLI play followed the direct opened-manifest handoff route through
+    `watch_mara_open_manifest` -> `board_after_mara_manifest_handoff` ->
+    `listen_to_mara_manifest_handoff_intercom` and ended at
+    `passenger_manifest_handoff_true_ending` with score 297 and no objectives.
+- Playtest feedback:
+  - Moving `watch_mara_open_manifest` first makes Mara's handoff read as the
+    natural continuation of opening every manifest door.
+  - Moving direct boarding first in `mara_manifest_handoff` makes the handoff
+    intercom easy to follow when the player accepts that beat.
+  - The 100-run random sample still missed the final handoff ending, so the
+    next iteration should watch whether this is just sample variance or whether
+    the intercom choice needs stronger surfacing from `train_car`.
+- Next step:
+  - Inspect random paths that reach `mara_manifest_handoff` but diverge before
+    `mara_manifest_handoff_intercom`, then decide whether the train-car
+    handoff prompt needs more priority.
+
+# Cycle 25 Forced-Gate Warning Priority
+
+- Date: 2026-06-02
+- Main objective: Reduce accidental pressure toward the forced-gate
+  `bad_ending` while preserving it as a deliberate ignore-the-warning branch.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window.
+  The supplied Cycle 25 evidence shows healthy completion and full coverage,
+  but the adaptive exploratory MCP route still ended at `bad_ending` after
+  forcing the platform gate without supplies. Since the route already has
+  recovery beats, this cycle improves the first warning's scan order and label
+  clarity instead of removing the failure.
+- Planned work:
+  - Rename the initial `force_gate` label so it explicitly calls out the empty
+    fuse socket.
+  - Put the safe `back_away_from_gate` option first in `gate_warning`, ahead of
+    optional listening and the final force action.
+  - Update regression coverage for the label and warning choice order.
+  - Run focused tests, full health, a playtest sample, and an actual CLI route.
+- Risks:
+  - The `gate_echo` sensory beat may become slightly less prominent because
+    retreat is now first. This is acceptable: the branch begins with an unsafe
+    forced action, and the clearest recovery should be most visible.
+- Work completed:
+  - Renamed the underprepared platform `force_gate` choice to
+    "Force the gate despite the empty fuse socket."
+  - Reordered `gate_warning` so the recovery option appears before optional
+    listening and the final force action.
+  - Updated story-path regression coverage for the revised label and warning
+    choice order.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes with no unvisited scenes.
+  - Actual CLI play followed `take_lantern` -> `follow_arrows` -> `force_gate`
+    -> `back_away_from_gate`, recovered through the service room checklist, and
+    ended at `true_ending` with score 259 and no objectives.
+- Playtest feedback:
+  - The platform now names the empty fuse socket in the risky force-gate label,
+    making the missing prerequisite visible before the player commits.
+  - After forcing the gate once, the warning screen now leads with a concrete
+    recovery action naming the four supplies. The optional echo and final bad
+    ending branch remain available for deliberate exploration.
+- Next step:
+  - Watch future adaptive and blind routes for whether `gate_echo` becomes too
+    easy to miss. If so, reinforce it as an optional flavor beat from the
+    recovery path instead of moving the unsafe action upward again.
+
+# Cycle 28 Direct HOME-Reflection Loss Discovery
 
 - Date: 2026-06-02
 - Main objective: Improve normal-play discovery of `lost_ending` without
   restoring accidental late HOME-sign failure pressure.
-- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
-  and the supplied Cycle 24 evidence showed healthy completion and full
-  coverage while the 100-run random sample missed `lost_ending`. The prior
-  HOME-sign recovery pass made the final grip state fairer, so this cycle
-  should make the bad ending easier to find only through an explicit exploratory
-  choice.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window.
+  The supplied Cycle 28 evidence shows healthy completion, full coverage, and
+  strong ideal-ending pressure, but the 100-run random sample still missed
+  `lost_ending` while coverage only finds it through exhaustive exploration.
+  The prior HOME-sign recovery pass made the final grip state fairer, so this
+  cycle makes the bad ending easier to find only through an explicit
+  exploratory choice.
 - Planned work:
   - Add a clear direct failure choice from `home_sign_echo` to `lost_ending`.
   - Keep safe escape, Mara-listening, and final recovery choices ahead of the
