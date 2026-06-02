@@ -2456,6 +2456,7 @@ describe("demo story critical paths", () => {
       "listen_after_manifest_count",
       "ask_conductor_after_manifest_count",
       "cross_after_manifest_count",
+      "board_with_reviewed_manifest_count",
       "board_after_manifest_count"
     ]);
 
@@ -2551,8 +2552,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "review_open_manifest_count",
-      "board_after_manifest_count",
-      "listen_to_counted_manifest_intercom"
+      "board_with_reviewed_manifest_count"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2710,13 +2710,24 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "watch_mara_open_manifest",
-      "touch_mara_manifest_thumbprint",
-      "board_after_manifest_thumbprint"
+      "touch_mara_manifest_thumbprint"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_manifest_thumbprint_to_third_car",
+      "board_after_manifest_thumbprint",
+      "return_from_manifest_thumbprint"
+    ]);
+
+    const genericBoardingState = choose(story, state, "board_after_manifest_thumbprint");
+    observation = observe(story, genericBoardingState);
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
@@ -2726,7 +2737,7 @@ describe("demo story critical paths", () => {
       "pull_release_with_manifest"
     ]);
 
-    state = choose(story, state, "listen_to_mara_manifest_thumbprint_intercom");
+    state = choose(story, state, "carry_manifest_thumbprint_to_third_car");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
@@ -3019,6 +3030,49 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("lets manifest explorers follow the lunch-tin latch before crossing the platform", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "follow_lunch_tin_latch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("packed for a double shift");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+
+    state = choose(story, state, "return_from_passenger_farewell");
+    state = choose(story, state, "pull_release_after_lunch_tin_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -3249,6 +3303,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(choiceIds).toEqual([
       "ask_newspaper_woman_about_stop",
+      "ask_lunch_tin_worker_to_set_pace",
       "ask_conductor_to_call_platform_clear",
       "return_lost_mitten",
       "match_manifest_keepsakes",
@@ -3657,6 +3712,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_newspaper_woman_about_stop",
+      "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",
@@ -5236,6 +5292,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "review_open_manifest_count",
       "listen_to_passenger_morning_chorus",
+      "follow_lunch_tin_latch",
       "watch_mara_open_manifest",
       "listen_to_passenger_answers",
       "board_after_releasing_passengers"
@@ -5371,6 +5428,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("a paper sack darkened by rain");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_newspaper_woman_about_stop",
+      "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "help_passengers_gather",

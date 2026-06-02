@@ -1019,6 +1019,15 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: follow_lunch_tin_latch
+        label: Follow the lunch-tin latch toward the third car
+        to: passenger_farewell
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
         to: mara_manifest_handoff
@@ -1089,6 +1098,12 @@ scenes:
       - id: cross_after_manifest_count
         label: Cross through the counted crowd as they gather
         to: passenger_platform
+      - id: board_with_reviewed_manifest_count
+        label: Board with Mara's reviewed count on the speaker
+        to: passenger_counted_manifest_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_manifest_count
         label: Board the third car while Mara holds the count
         to: train_car
@@ -1142,6 +1157,12 @@ scenes:
       every passenger can answer for themselves. Mara inhales when she hears
       the page tear no further. "Then I come through with them," she says.
     choices:
+      - id: carry_manifest_thumbprint_to_third_car
+        label: Carry Mara's thumbprint oath to the third car
+        to: mara_manifest_thumbprint_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: board_after_manifest_thumbprint
         label: Board while Mara carries the oath forward
         to: train_car

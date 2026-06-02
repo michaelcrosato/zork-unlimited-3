@@ -1,3 +1,97 @@
+# Cycle 4 Manifest Count And Thumbprint Carry-Forward
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for the under-sampled reviewed
+  manifest count and Mara manifest thumbprint passenger payoffs.
+- Why this matters: Current evidence shows full reachability but random play
+  still sparsely hits `passenger_counted_manifest_intercom`,
+  `passenger_counted_true_ending`, `mara_manifest_thumbprint_intercom`, and
+  `passenger_manifest_thumbprint_true_ending`. Those are earned clues that
+  should be easier to carry forward without knowing which tempting follow-up
+  branches hide their third-car intercom variants.
+- Work completed:
+  - Added `board_with_reviewed_manifest_count`, a direct choice from
+    `passenger_manifest_count` into `passenger_counted_manifest_intercom`.
+  - Added `carry_manifest_thumbprint_to_third_car`, a direct choice from
+    `mara_manifest_thumbprint` into `mara_manifest_thumbprint_intercom`.
+  - Preserved the existing generic `board_after_manifest_count` and
+    `board_after_manifest_thumbprint` routes so direct release and old
+    third-car intercom paths still work.
+  - Updated story-path regression coverage for the new direct routes and the
+    preserved generic thumbprint boarding route.
+- Evidence:
+  - Focused story-path suite passed: 114 tests.
+  - `npm run health` passed: format check, TypeScript, 158 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.34, and 1185 max-score runs.
+  - Random 250-run playtest ended 250/250 runs, had zero unfinished runs,
+    visited all scenes, reached `passenger_counted_true_ending` 7 times, and
+    reached `passenger_manifest_thumbprint_true_ending` once.
+  - Actual CLI play used `board_with_reviewed_manifest_count` and reached
+    `passenger_counted_true_ending` at 100/100 with no active objectives.
+- Playtest feedback:
+  - The reviewed-count route now reads cleanly: the player reviews the manifest
+    count, boards with that count explicitly on the speaker, hears the matching
+    intercom, and gets the counted passenger ending.
+  - The extra choices add some density to two optional clue scenes, but they
+    are specific, earned, and preserve the old direct release path.
+  - No route bugs, dangling objectives, score issues, or unfinished runs
+    appeared.
+- Next step:
+  - Watch blind-play feedback for whether optional passenger hubs are becoming
+    too choice-dense; if so, consolidate late-game passenger payoff choices by
+    clearer thematic grouping instead of adding more one-off branches.
+- Blocker:
+  - Commit/push is expected to be blocked in this sandbox because prior cycles
+    already observed `.git` is read-only and Git cannot create `.git/index.lock`.
+    The verified dirty tree is ready for the outer loop or a writable Git
+    session to commit.
+
+# Cycle 3 Lunch-Tin Latch Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for the lunch-tin passenger
+  payoff by exposing it immediately when the opened manifest releases ordinary
+  passenger sounds, not only after players cross to the passenger platform.
+- Why this matters: Current random evidence reaches all major routes but still
+  under-samples `passenger_lunch_tin_*` scenes in ordinary play; coverage finds
+  them, so this is a discoverability issue rather than a reachability bug.
+- Work completed:
+  - Added `follow_lunch_tin_latch` to `passengers_released`, gated by
+    `notFlag: helped_passengers_gather`.
+  - Routed the new choice into the existing `passenger_farewell` and
+    `passenger_lunch_tin_*` sequence, preserving the answered-passenger entry
+    and the platform lunch-tin route.
+  - Added a regression test for the early lunch-tin latch route through the
+    lunch-tin true ending.
+- Evidence:
+  - Focused story-path suite passed: 114 tests.
+  - `npm run health` passed: format check, TypeScript, 158 tests, validation,
+    and coverage playtest.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.28, and 1169 max-score runs.
+  - Random 250-run playtest visited all lunch-tin scenes and reached
+    `passenger_lunch_tin_true_ending` 18 times, up from 7 in the prior local
+    250-run sample and 1 in the prior MCP sample.
+  - Actual CLI play used `follow_lunch_tin_latch` from `passengers_released`,
+    read the lunch-tin roster, and reached
+    `passenger_lunch_tin_true_ending` at 100/100 with no active objectives.
+- Playtest feedback:
+  - The new latch choice reads naturally because `passengers_released` already
+    foregrounds the lunch tin latch; it gives explorers a clear character
+    payoff before they diffuse into the wider platform choice set.
+  - No route bugs, score issues, dangling objectives, or unfinished coverage
+    runs appeared.
+- Next step:
+  - Watch blind-play feedback for whether the now-richer passenger release hub
+    feels too busy; otherwise continue improving under-sampled optional
+    passenger payoffs one at a time.
+- Blocker:
+  - Commit/push is blocked in this sandbox because `.git` is read-only and Git
+    cannot create `.git/index.lock`. The verified dirty tree is ready for the
+    outer loop or a writable Git session to commit.
+
 # Cycle 2 Health Recovery And Conductor Discovery Addendum
 
 - Date: 2026-06-02
