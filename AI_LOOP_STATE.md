@@ -32,13 +32,16 @@
   - Coverage playtest visited all scenes with zero unvisited scenes and zero
     unfinished complete paths.
 - Playtest feedback:
+  - Focused MCP-result regression covers the stale `ignore_warning` from
+    `entrance` shape and verifies that the payload includes the rejected choice,
+    current scene, legal choices, and objectives.
   - Direct MCP invalid-choice smoke attempted `ignore_warning` from `entrance`
     and returned JSON with legal choices `read_notice`, `take_lantern`, and
     `enter_dark` plus active objectives.
-  - Actual MCP play followed the Mara handoff route through
+  - Actual MCP play followed the revised Mara handoff route through
     `mara_handoff_true_ending` with score 318 and no remaining objectives.
   - No save mutation, invalid legal-choice regression, dead end, or coverage
-    regression appeared.
+    regression appeared in focused tests, full health, or direct MCP smoke.
 - Next step:
   - Teach the AI loop route runner to use `ok: false` invalid-choice payloads
     as recovery hints when a scripted or model-chosen route goes stale.
