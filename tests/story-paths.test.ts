@@ -3525,6 +3525,60 @@ describe("demo story critical paths", () => {
     expect(observation.score.score).toBe(observation.score.maxScore);
   });
 
+  it("lets opened-manifest players board directly with answered passengers", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_with_answered_passengers"
+    );
+
+    state = choose(story, state, "board_with_answered_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding");
+    expect(observation.scene.text).toContain("carrying their own names now");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_passengers_from_boarding",
+      "pull_release_after_answered_boarding"
+    ]);
+
+    state = choose(story, state, "listen_to_answered_passengers_from_boarding");
+    state = choose(story, state, "pull_release_after_answered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.score.score).toBe(observation.score.maxScore);
+  });
+
   it("lets answer listeners gather passengers directly into a broad boarding beat", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -5344,6 +5398,7 @@ describe("demo story critical paths", () => {
       "follow_lunch_tin_latch",
       "watch_mara_open_manifest",
       "listen_to_passenger_answers",
+      "board_with_answered_passengers",
       "board_after_releasing_passengers"
     ]);
 

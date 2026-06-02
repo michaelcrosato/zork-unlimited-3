@@ -1044,6 +1044,16 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: board_with_answered_passengers
+        label: Board as the passengers carry their own names
+        to: passenger_answered_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform

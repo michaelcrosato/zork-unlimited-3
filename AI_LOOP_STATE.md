@@ -1,3 +1,55 @@
+# Cycle 6 Answered Passenger Boarding Discoverability
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery for the plain answered-passenger
+  payoff without adding another ending or widening early-game pressure.
+- Why this matters: Current health evidence is strong, but random runs still
+  hit `passenger_answered_true_ending` much less often than adjacent passenger
+  roll-call endings. The route existed, but players had to listen to the
+  opened manifest answers, avoid several character-specific branches, board,
+  then choose the intercom. The opened-manifest hub already says the passengers
+  answer in ordinary sounds, so boarding with those answered names is an earned
+  direct continuation.
+- Work completed:
+  - Added `board_with_answered_passengers`, a direct choice from
+    `passengers_released` to the existing `passenger_answered_boarding` scene.
+  - Set `heard_passenger_answers` on that choice so the later boarding and
+    intercom text remain coherent.
+  - Preserved the existing `listen_to_passenger_answers`, handoff, gathered,
+    lunch-tin, and broad platform routes.
+  - Added regression coverage for the new direct route through
+    `passenger_answered_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 116 tests.
+  - `npm run health` passed: format check, TypeScript, 160 tests, validation,
+    and coverage playtest.
+  - Validation stayed clean with 117 reachable scenes, 26 endings, and no
+    warnings.
+  - Coverage playtest visited all 117 scenes, had zero unfinished runs, best
+    score 100/100, average score 95.45, and 1217 max-score runs.
+  - Coverage-path hits for `passenger_answered_true_ending` rose to 33 and
+    `passenger_answered_boarding_true_ending` rose to 33 in the required health
+    playtest.
+  - Actual CLI play used `board_with_answered_passengers` and reached
+    `passenger_answered_true_ending` at 100/100 with no active objectives.
+- Playtest feedback:
+  - The route reads naturally: opening the manifest produces answered names,
+    the new boarding choice carries those names into the third car, and the
+    intercom payoff explains why they no longer need Mara to prove them twice.
+  - The opened-manifest hub now has one more option; it is specific and
+    thematic, but future blind-play feedback should watch whether this hub
+    starts to feel too dense.
+  - No route bugs, dangling objectives, score issues, or unfinished runs
+    appeared.
+- Next step:
+  - Watch blind-play feedback for passenger hub choice density; if it repeats,
+    consolidate late passenger payoff choices into clearer thematic groups
+    rather than adding more one-off routes.
+- Blocker:
+  - Commit/push may be blocked in this sandbox if Git cannot create lock files,
+    as prior cycles observed. The verified dirty tree is ready for the outer
+    loop or a writable Git session to commit if local commit fails.
+
 # Cycle 5 Keepsake Roll-Call Discoverability
 
 - Date: 2026-06-02
