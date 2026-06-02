@@ -1,3 +1,65 @@
+# Cycle 27 Counted Chorus Discovery
+
+- Date: 2026-06-02
+- Main objective: Improve normal-play discovery of the reviewed-count
+  passenger route, especially `passenger_counted_chorus`.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The supplied Cycle 27 evidence shows full coverage and strong
+  completion, but random play missed `passenger_counted_chorus` even though the
+  scene has a strong payoff for the opened-manifest count. This cycle makes the
+  counted route easier to follow without removing the answer, conductor,
+  platform, or direct-release alternatives.
+- Planned work:
+  - Make the opened-manifest count label explicitly frame the branch as a
+    before-boarding review.
+  - Add a direct `passenger_counted_chorus` follow-through after the optional
+    unanswered-row check in `passenger_manifest_count`.
+  - Move `board_with_reviewed_manifest_count` just behind that chorus option so
+    the intercom payoff also remains easier to find.
+  - Preserve optional answered-passenger, conductor, platform, and direct
+    train-car routes.
+  - Update regression coverage for the new scan order.
+  - Run focused tests, full health, a random sample, and an actual CLI route
+    through `passenger_counted_chorus`.
+- Risks:
+  - The answered-passenger and conductor choices become one line lower inside
+    the reviewed-count menu. They remain visible and tested; the promoted
+    branch is the clearest continuation for players who chose to review the
+    count before boarding.
+- Work completed:
+  - Renamed `review_open_manifest_count` to "Review Mara's opened manifest
+    count before boarding".
+  - Added `finish_reviewed_count_before_boarding` from
+    `passenger_manifest_count` to `passenger_counted_chorus`.
+  - Moved `board_with_reviewed_manifest_count` directly behind the new chorus
+    option in `passenger_manifest_count`.
+  - Updated story-path regression assertions for the upstream opened-manifest
+    menu, reviewed-count scan order, direct chorus route, and intercom route.
+- Evidence so far:
+  - Focused story-path suite passed: 145 tests.
+  - `npm run health` passed: format check, TypeScript, 189 tests, validation,
+    and coverage playtest.
+  - Coverage playtest still visited all 136 scenes, including
+    `passenger_counted_chorus`.
+  - A 250-run random playtest ended all 250 runs, had no unfinished runs, and
+    visited `passenger_counted_chorus`; only `passenger_threshold_intercom`
+    remained unvisited in that sample.
+  - Actual CLI play followed `review_open_manifest_count` ->
+    `finish_reviewed_count_before_boarding` ->
+    `pull_release_after_counted_chorus`, ending at
+    `passenger_counted_true_ending` with score 275 and no objectives.
+- Playtest feedback:
+  - A 250-run random sample after only the label/order change still missed
+    `passenger_counted_chorus`, which justified adding the direct chorus
+    follow-through instead of stopping at wording.
+  - The final manual route reads coherently: reviewing the count now naturally
+    offers a finish-the-count beat before the release, and the ending reinforces
+    the theme that the passengers keep track of one another rather than being
+    totaled by the ledger.
+- Next step:
+  - Improve discovery for `passenger_threshold_intercom`, the remaining
+    random-sample miss after this cycle.
+
 # Cycle 30 Passenger Room Boarding Discovery
 
 - Date: 2026-06-02

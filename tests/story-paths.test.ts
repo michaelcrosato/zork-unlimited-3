@@ -3877,6 +3877,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds[0]).toBe("watch_mara_open_manifest");
+    expect(choiceIds[1]).toBe("review_open_manifest_count");
+    expect(observation.choices[1]?.label).toBe(
+      "Review Mara's opened manifest count before boarding"
+    );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -3889,14 +3893,26 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_for_unanswered_manifest_row",
+      "finish_reviewed_count_before_boarding",
+      "board_with_reviewed_manifest_count",
       "listen_after_manifest_count",
       "ask_conductor_after_manifest_count",
       "cross_after_manifest_count",
-      "board_with_reviewed_manifest_count",
       "board_after_manifest_count"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "board_with_reviewed_manifest_count")
+        ?.label
+    ).toBe("Board with Mara's reviewed count already on the speaker");
 
     const countedState = state;
+
+    state = choose(story, countedState, "finish_reviewed_count_before_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
 
     state = choose(story, countedState, "listen_after_manifest_count");
     observation = observe(story, state);

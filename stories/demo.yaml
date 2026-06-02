@@ -1217,7 +1217,7 @@ scenes:
           set:
             saw_mara_manifest_handoff: true
       - id: review_open_manifest_count
-        label: Review the opened manifest count with Mara
+        label: Review Mara's opened manifest count before boarding
         to: passenger_manifest_count
         requires:
           notFlag: reviewed_open_manifest_count
@@ -1364,6 +1364,20 @@ scenes:
         effects:
           set:
             checked_missing_passenger_count: true
+      - id: finish_reviewed_count_before_boarding
+        label: Let the passengers finish Mara's reviewed count before boarding
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            passengers_finished_reviewed_count: true
+      - id: board_with_reviewed_manifest_count
+        label: Board with Mara's reviewed count already on the speaker
+        to: passenger_counted_manifest_intercom
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: listen_after_manifest_count
         label: Listen as the counted passengers answer their names
         to: passenger_answers
@@ -1385,12 +1399,6 @@ scenes:
       - id: cross_after_manifest_count
         label: Cross through the counted crowd as they gather
         to: passenger_platform
-      - id: board_with_reviewed_manifest_count
-        label: Board with Mara's reviewed count on the speaker
-        to: passenger_counted_manifest_intercom
-        effects:
-          set:
-            heard_mara_goodbye: true
       - id: board_after_manifest_count
         label: Board the third car while Mara holds the count
         to: train_car
