@@ -34,7 +34,7 @@
   - Actual CLI play followed the lunch-tin pace route through
     `let_lunch_tin_count_become_roll_call` and
     `pull_release_after_final_roll_call`, ending at
-    `passenger_roll_call_true_ending` with score 298 and no objectives.
+    `passenger_roll_call_true_ending` with score 293 and no objectives.
 - Playtest feedback:
   - The bridge reads naturally because the worker's latch-count is already
     framed as a practical rhythm for the crowd.
