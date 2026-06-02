@@ -4658,6 +4658,63 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("preserves the thumbprint payoff after players answer the badge proof first", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "inspect_notice_back",
+      "take_lantern_after_notice_back",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "listen_to_badge_proof_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_badge_proof_intercom");
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_about_thumbprint_after_badge_proof",
+      "pull_release_after_badge_proof_goodbye"
+    ]);
+
+    state = choose(story, state, "ask_about_thumbprint_after_badge_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_intercom");
+    expect(observation.scene.text).toContain("the torn thumbprint memory");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("blocks mapless manifest clears and resumes at the ledger after map recovery", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);

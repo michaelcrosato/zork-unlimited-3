@@ -2283,6 +2283,11 @@ scenes:
       number. "Pull now. Let the proof open something instead of holding me in
       place."
     choices:
+      - id: ask_about_thumbprint_after_badge_proof
+        label: Ask Mara why the thumbprint tore the ledger
+        to: mara_thumbprint_intercom
+        requires:
+          flag: read_mara_thumbprint
       - id: pull_release_after_badge_proof_goodbye
         label: Pull the release while the badge proof answers
         to: true_ending
