@@ -36,7 +36,7 @@ export interface PlaytestReport {
 export function runRandomPlaytests(
   story: Story,
   runs: number,
-  maxSteps = 50,
+  maxSteps = 60,
   strategy: PlaytestStrategy = "random"
 ): PlaytestReport {
   if (strategy === "coverage") {

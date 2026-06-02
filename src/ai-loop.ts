@@ -797,7 +797,7 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
           arguments: {
             storyPath: mainStory,
             runs: 100,
-            maxSteps: 50,
+            maxSteps: 60,
             strategy: "coverage",
             includeRuns: false
           }

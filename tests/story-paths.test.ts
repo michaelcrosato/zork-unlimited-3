@@ -755,10 +755,23 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.read_morning_map_note).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "leave_after_morning_map_note",
+      "mark_warning_for_next_rescuer",
       "turn_back_from_map_note_for_token"
     ]);
 
-    state = choose(story, state, "turn_back_from_map_note_for_token");
+    state = choose(story, state, "mark_warning_for_next_rescuer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_warning_mark");
+    expect(observation.scene.text).toContain("CLOCK TOKEN");
+    expect(observation.scene.text).toContain("CLEAR MARA VALE BEFORE THE RELEASE");
+    expect(observation.state.flags.left_morning_warning).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_marking_morning_warning",
+      "turn_back_from_warning_mark_for_token"
+    ]);
+
+    state = choose(story, state, "turn_back_from_warning_mark_for_token");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("tunnel");
@@ -793,10 +806,21 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_morning_doors).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "leave_after_morning_doors",
+      "mark_door_warning_for_next_rescuer",
       "turn_back_from_morning_doors_for_token"
     ]);
 
-    state = choose(story, state, "leave_after_morning_doors");
+    state = choose(story, state, "mark_door_warning_for_next_rescuer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("morning_warning_mark");
+    expect(observation.state.flags.left_morning_warning).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "leave_after_marking_morning_warning",
+      "turn_back_from_warning_mark_for_token"
+    ]);
+
+    state = choose(story, state, "leave_after_marking_morning_warning");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("good_ending");

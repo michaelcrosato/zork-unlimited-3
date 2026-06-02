@@ -93,7 +93,7 @@ async function transcript(args: string[]): Promise<void> {
 async function playtest(args: string[]): Promise<void> {
   const storyPath = required(args[0], "story path");
   const runs = Number(option(args, "--runs") ?? "20");
-  const maxSteps = Number(option(args, "--max-steps") ?? "50");
+  const maxSteps = Number(option(args, "--max-steps") ?? "60");
   const strategy = option(args, "--strategy") ?? "random";
   const story = await loadStory(storyPath);
   if (strategy !== "random" && strategy !== "coverage" && strategy !== "goal") {
@@ -134,7 +134,7 @@ function usage(): void {
   cyoa state --save <save.json> [--json]
   cyoa score --save <save.json> [--json]
   cyoa transcript --save <save.json> [--out <transcript.md>]
-  cyoa playtest <story.yaml> [--runs 20] [--max-steps 50] [--strategy random|coverage|goal] [--summary] [--json]`);
+  cyoa playtest <story.yaml> [--runs 20] [--max-steps 60] [--strategy random|coverage|goal] [--summary] [--json]`);
 }
 
 await main();

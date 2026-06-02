@@ -12,6 +12,82 @@ payoffs and agent evidence quality where the core guidance is already healthy.
 
 - Date: 2026-06-02
 - Status: Completed locally; ready for commit/push.
+- Main objective: Add a final warning-mark beat to the safe morning-transfer
+  route.
+- Why this matters: Core true-ending and passenger-route metrics are healthy.
+  The map-only survival route is intentionally lower-value, but it should still
+  feel like a considered player choice rather than an abrupt abandonment. A
+  small optional beat can make leaving, listening, and turning back more
+  emotionally legible without disturbing ideal-ending guidance.
+- Tasks:
+  - Add an optional morning warning mark after reading the safe-transfer note
+    or listening at the morning doors.
+  - Preserve the option to leave safely or turn back toward the true-ending
+    route from the new beat.
+  - Update focused story-path tests.
+  - Run validation, full health, and a real route through the new content.
+- Evidence:
+  - Added `morning_warning_mark`, an optional warning-writing beat reachable
+    after reading the morning map note or listening at the morning doors.
+  - The new beat lets players leave into `good_ending` with a clearer ethical
+    frame or turn back toward the token/ledger recovery path.
+  - Updated story-path tests for both map-note and door-listen approaches into
+    the new scene.
+  - Raised the playtest default step budget from 50 to 60 in CLI, MCP,
+    playtest helpers, AI-loop coverage evidence, and the coverage regression
+    test because the expanded 106-scene graph has two valid coverage paths that
+    exceed 50 steps.
+  - Focused `npm test -- tests/story-paths.test.ts` passed with 107 tests.
+  - `npm run cyoa -- validate stories/demo.yaml --json` passed with 106 scenes,
+    24 endings, all 106 reachable, and no warnings.
+  - `npm run health` passed with formatting, TypeScript, 128 tests, validation,
+    and coverage playtest.
+  - Health coverage visited all 106 scenes including `morning_warning_mark`,
+    had zero unfinished runs, best score 100/100, average score 99.7, and
+    724800 max-score runs.
+  - Targeted CLI play followed `study_morning_map_note` ->
+    `mark_warning_for_next_rescuer` ->
+    `leave_after_marking_morning_warning`, reaching `good_ending` at 15/100
+    with no objectives and `left_morning_warning` set.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    report `ai-runs/cycle-2026-06-02T00-36-03-521Z.md`.
+  - Evidence-cycle health checks passed, including random and coverage
+    playtests.
+  - Evidence-cycle random play ended all 100 runs, visited all 106 scenes,
+    reached `morning_warning_mark`, and had zero unfinished runs.
+  - Evidence-cycle coverage visited all 106 scenes, had zero unfinished runs,
+    best score 100/100, average score 99.7, and 724800 max-score runs.
+  - Evidence-cycle MCP validation passed with 106 reachable scenes and no
+    warnings.
+  - Evidence-cycle MCP random play ended all 250 runs with zero unfinished
+    runs, and MCP coverage also reached `morning_warning_mark`.
+  - Evidence-cycle required MCP route still reached `true_ending` at 100/100,
+    and the adaptive MCP route reached `passenger_lunch_tin_true_ending` at
+    100/100.
+- Playtest notes:
+  - The new beat makes the map-only escape feel more intentional by naming the
+    concrete rescue requirements: clock token, badge proof, fuse, and clearing
+    Mara before the release.
+  - The branch remains clearly non-ideal at 15/100 and does not grant true
+    ending credit.
+  - The warning-mark scene preserves recovery pressure because players can
+    still pocket the map and return for the token or ledger instead of leaving.
+  - No bugs or confusing objectives were found in the focused CLI route,
+    focused tests, validation, or full health coverage.
+- Follow-up:
+  - Re-check whether safe-transfer routes remain clearly non-ideal but not
+    punitive.
+  - Consider improving report memory use before running non-summary coverage
+    JSON on large graphs; one exploratory full-detail coverage command hit Node
+    heap limits while stringifying hundreds of thousands of runs.
+- Risks:
+  - Adding recovery choices to a low-value route can accidentally make the
+    branch feel like the preferred path if labels are too directive.
+
+## Last Completed Cycle
+
+- Date: 2026-06-02
+- Status: Completed locally; ready for commit/push.
 - Main objective: Add a Mara-oath variant to the opened-manifest handoff route.
 - Why this matters: Core route health and true-ending discoverability are
   strong, so the best next improvement is story depth. The player can inspect
