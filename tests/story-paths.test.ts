@@ -6259,6 +6259,64 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest players return the lost mitten directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.scene.text).toContain("child's laugh beside a damp mitten print");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "return_opened_manifest_mitten"
+    );
+
+    state = choose(story, state, "return_opened_manifest_mitten");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_memory");
+    expect(observation.state.flags.returned_lost_mitten).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+
+    state = choose(story, state, "lead_mitten_child_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "tap_paired_mittens_for_missing_name",
+      "hear_final_mitten_roll_call",
+      "pull_release_after_mitten_child_intercom"
+    ]);
+
+    state = choose(story, state, "pull_release_after_mitten_child_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("lets players match manifest keepsakes before the helped passenger ending", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -8256,6 +8314,7 @@ describe("demo story critical paths", () => {
       "watch_mara_open_manifest",
       "review_open_manifest_count",
       "check_opened_manifest_blank_row",
+      "return_opened_manifest_mitten",
       "match_opened_manifest_keepsakes",
       "listen_to_passenger_morning_chorus",
       "ask_mara_to_sign_off_opened_manifest",
@@ -8491,6 +8550,57 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces the returned-mitten route directly from the opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "return_opened_manifest_mitten"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_memory");
+    expect(observation.scene.text).toContain("Then we will find it in the morning");
+    expect(observation.state.flags.returned_lost_mitten).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "lead_mitten_child_to_third_car"
+    ]);
+
+    state = choose(story, state, "lead_mitten_child_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_intercom");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+
+    state = choose(story, state, "pull_release_after_mitten_child_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });

@@ -1268,9 +1268,9 @@ scenes:
     text: >
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
-      a lunch tin latch, a child's laugh, umbrellas shaking rain from their
-      ribs. Mara breathes through the speaker and says, "Third car. I can hold
-      the line steady while they find the morning."
+      a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
+      shaking rain from their ribs. Mara breathes through the speaker and says,
+      "Third car. I can hold the line steady while they find the morning."
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1297,6 +1297,15 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             checked_missing_passenger_count: true
+      - id: return_opened_manifest_mitten
+        label: Return the opened manifest's lost mitten to the child
+        to: passenger_mitten_memory
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
       - id: match_opened_manifest_keepsakes
         label: Match the opened manifest keepsakes to their owners
         to: passenger_keepsake_handoff

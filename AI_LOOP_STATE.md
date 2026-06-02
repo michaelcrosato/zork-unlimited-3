@@ -1,3 +1,122 @@
+# Cycle 38 Opened Manifest Mitten Route
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_mitten_*` more naturally discoverable from
+  the opened-manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window
+  yet, so this cycle follows the supplied Cycle 38 random/coverage evidence.
+  Coverage reaches the returned-mitten scenes, but the 100-run random sample
+  missed `passenger_mitten_intercom`, `passenger_mitten_memory`,
+  `passenger_mitten_pair_memory`, and `passenger_mitten_true_ending`. The
+  opened-manifest hub already mentions a child's laugh and ordinary passenger
+  burdens, so returning the mitten there is a clear, player-facing action.
+- Planned work:
+  - Add a direct opened-manifest choice into the existing returned-mitten path.
+  - Reuse `returned_lost_mitten` and `helped_passengers_gather` so scoring,
+    route metadata, and endings stay aligned with the platform route.
+  - Add regression coverage through `passenger_mitten_memory`,
+    `passenger_mitten_intercom`, and `passenger_mitten_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new branch.
+- Risks:
+  - The opened-manifest hub gains one more optional passenger-specific action.
+    This is acceptable because the route uses existing scenes and gives the
+    hub a direct payoff for the child detail already present in its text.
+- Work completed:
+  - Added `return_opened_manifest_mitten` from `passengers_released` to
+    `passenger_mitten_memory`.
+  - Updated exact hub choice-order coverage and added a direct opened-manifest
+    returned-mitten regression path.
+- Evidence:
+  - Focused story-path suite passed.
+  - `npm run health` passed: format check, TypeScript, 205 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `return_opened_manifest_mitten` -> `lead_mitten_child_to_third_car` ->
+    `tap_paired_mittens_for_missing_name` ->
+    `pull_release_after_paired_mittens`, ending at
+    `passenger_mitten_true_ending` with score 304 and no objectives.
+- Playtest feedback:
+  - The new choice reads naturally from the opened-manifest prose because the
+    hub already includes the child's laugh among the released passengers.
+  - The route now reaches the mitten memory before the generic platform hub,
+    which makes the child's beat feel intentional rather than buried under
+    broader passenger gathering options.
+  - No bugs, invalid choices, or dangling objectives appeared in the played
+    route.
+- Next step:
+  - Watch future random and blind-play samples for whether
+    `passenger_mitten_true_ending` appears more often in normal play. If hard
+    issues remain absent, promote another low-random-discovery payoff such as
+    `mara_last_dispatch_intercom` or `passenger_threshold_intercom`.
+- Commit/push status:
+  - Pending commit for Cycle 38 in this run.
+
+# Cycle 42 Opened Manifest Mitten Discovery
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_mitten_true_ending` easier to discover from
+  the opened-manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so Cycle 42 follows the current random/coverage evidence. Coverage
+  reaches every scene, but the supplied random sample missed
+  `passenger_mitten_true_ending` and its intercom/memory beats. The opened
+  manifest already foregrounds passenger keepsakes, so adding a direct mitten
+  route strengthens normal-player discovery without changing the core route.
+- Planned work:
+  - Add a direct opened-manifest choice into the existing lost-mitten memory.
+  - Make the `passengers_released` text explicitly surface the mitten clue so
+    the new choice is motivated by visible story detail.
+  - Preserve existing passenger gathering, keepsake, roll-call, answer, and
+    boarding routes.
+  - Add regression coverage proving the direct opened-manifest mitten route
+    reaches `passenger_mitten_true_ending`.
+  - Run focused tests, full health, and an actual playthrough through the new
+    branch.
+- Risks:
+  - The opened-manifest hub gains one more optional choice. This is acceptable
+    because the hub already lists several passenger-specific follow-ups, and
+    the new choice reuses existing downstream scenes instead of adding another
+    branch family.
+- Work completed:
+  - Added `return_opened_manifest_mitten` from `passengers_released` to
+    `passenger_mitten_memory`, setting `returned_lost_mitten` and
+    `helped_passengers_gather`.
+  - Revised `passengers_released` so the ordinary sounds include a damp mitten
+    print beside the child's laugh.
+  - Added story-path regression coverage for the direct opened-manifest mitten
+    route through `passenger_mitten_intercom` and
+    `passenger_mitten_true_ending`.
+- Evidence:
+  - Focused story-path suite passed: 161 tests.
+  - `npm run health` passed: format check, TypeScript, 205 tests,
+    validation, and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including `passenger_mitten_memory`,
+    `passenger_mitten_intercom`, and `passenger_mitten_true_ending`, with zero
+    unfinished runs.
+  - Actual CLI play followed `clear_manifest_and_mara_from_ledger` ->
+    `return_opened_manifest_mitten` -> `lead_mitten_child_to_third_car` ->
+    `pull_release_after_mitten_child_intercom`, ending at
+    `passenger_mitten_true_ending` with score 298 and no objectives.
+- Playtest feedback:
+  - The new hub clue makes the mitten action readable before the choice appears:
+    the opened manifest now surfaces the child, laugh, and mitten print in the
+    same beat.
+  - The route stages cleanly from opened-manifest hub to passenger memory,
+    third-car intercom, and ideal ending. No dangling choices, objectives, or
+    state issues appeared in the played route.
+- Next step:
+  - Watch future random/blind samples for whether `passenger_mitten_true_ending`
+    appears more often in normal play. If hard issues stay absent, continue
+    improving remaining passenger-specific intercom discoverability and report
+    critique quality.
+- Commit/push status:
+  - Blocked in this sandbox because `.git` is mounted read-only. The worktree is
+    left green for the outer loop to commit and push.
+
 # Cycle 41 HOME Sign Clarity Pass
 
 - Date: 2026-06-02
@@ -50,66 +169,10 @@
     appears more often in normal play. If hard issues remain absent, continue
     promoting remaining random misses such as `mara_last_dispatch_intercom` or
     passenger-specific intercom payoffs.
-
-# Cycle 41 Dark HOME Dispatcher Recovery
-
-- Date: 2026-06-02
-- Main objective: Make recovery from the dark HOME lure clearer after the
-  player answers Mara instead of following the false sign.
-- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
-  window. Fresh random evidence on the live tree reaches every scene, so this
-  cycle shifts from scene discoverability to reducing early bad-ending pressure
-  without removing the meaningful choice to surrender to HOME. The dark-HOME
-  branch is one of the first places players can learn that the HOME sign is an
-  active trap rather than just flavor.
-- Planned work:
-  - Add a dispatcher option that appears only after the player sees the dark
-    HOME flicker and answers Mara.
-  - Have Mara explicitly distinguish false HOME from the marked map's real
-    morning route.
-  - Route the player back into service-room play with lights on, map objective
-    active, and token-location knowledge.
-  - Add regression coverage for the warning, flags, and objective handoff.
-  - Run focused tests, full health, and an actual playthrough through the new
-    branch.
-- Risks:
-  - The dispatcher menu gains one gated option after a specific recovery path.
-    This is acceptable because it appears only for players who already touched
-    the HOME danger and need the extra explanation.
-- Work completed:
-  - Added `ask_mara_about_false_home` from `dispatcher` into the new
-    `mara_false_home_warning` scene.
-  - Added `follow_mara_from_false_home_warning` back to `service_room`, setting
-    `lights_on`, `promised_mara`, and `knows_token_location`.
-  - Added regression coverage for the new branch and service-room objective
-    handoff.
-- Evidence:
-  - Pre-change `npm run format:check` failed only on `AI_LOOP_STATE.md`;
-    formatting was normalized before story work.
-  - Fresh 250-run random sample ended all runs, had zero unfinished runs, and
-    visited all scenes before the new branch was added.
-  - Focused story-path suite passed: 159 tests.
-  - Validation reports 138 reachable scenes and 27 endings.
-  - `npm run health` passed: format check, TypeScript, 203 tests,
-    validation, and coverage playtest.
-  - Coverage playtest visited all 138 scenes, including
-    `mara_false_home_warning`, with zero unfinished runs.
-  - Actual CLI play followed `follow_false_home_light` ->
-    `answer_mara_under_home_flicker` -> `ask_mara_about_false_home` ->
-    `follow_mara_from_false_home_warning`, then completed the core Mara route
-    at `true_ending` with score 303 and no objectives.
-- Playtest feedback:
-  - The new warning clearly reframes HOME as a false claim, not a safe
-    destination, while preserving the player's ability to ignore the warning on
-    the earlier bad-ending branch.
-  - Returning to the service room with lights on, the map objective active, and
-    token-location knowledge kept the recovery route focused rather than
-    feeling like a reset.
-- Next step:
-  - Watch future blind/random samples for whether early dark-HOME failures
-    remain meaningful rather than accidental. If hard issues stay absent,
-    continue investing in optional HOME-sign recovery texture and late-game
-    critique/report quality.
+- Commit/push status:
+  - Blocked in this sandbox because `.git` is mounted read-only and `git
+commit` could not create `.git/index.lock`. The worktree is left green for
+    the outer loop to commit and push.
 
 # Cycle 40 Direct Opened Manifest Answers
 
