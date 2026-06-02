@@ -100,3 +100,20 @@ Write down what felt unclear, boring, unfair, or promising, then let that feedba
 - Reduce random unfinished playtest runs without removing meaningful backtracking.
 - Improve transcript/report quality so AI agents can critique pacing more easily.
 - Grow the story only when the validation and playtest tools can still explain coverage.
+
+## Blind Playtesting
+
+A parallel blind playtesting loop has been added. You can start it using:
+
+```bash
+./playtest_loop.sh
+```
+
+This runs `src/blind-playtester.ts` in the background, repeatedly blind-playing paths via MCP and dumping findings to `playtest-logs/`.
+To aggregate these findings into a daily summary for review, run:
+
+```bash
+npx tsx src/consolidate-feedback.ts
+```
+
+This produces `playtest-summary.md` with high-level themes, acting as human-like QA feedback without slowing down your main development loop.

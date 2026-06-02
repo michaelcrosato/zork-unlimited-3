@@ -1,6 +1,7 @@
 # Playtesting Subagent Plan
 
 ## Overview
+
 We need to design a subagent that blind-plays the game and provides feedback to the primary coding agent.
 
 ## Core Directives for the Subagent
@@ -28,15 +29,15 @@ We need to design a subagent that blind-plays the game and provides feedback to 
 
 ## Feedback Instructions
 
-*   **Be direct:** Focus on the mechanics and narrative flow.
-*   **Highlight confusion:** If you didn't know what to do or why a choice led to a specific outcome, note it.
-*   **Avoid fluff:** The coding agent doesn't need praise, it needs actionable data.
+- **Be direct:** Focus on the mechanics and narrative flow.
+- **Highlight confusion:** If you didn't know what to do or why a choice led to a specific outcome, note it.
+- **Avoid fluff:** The coding agent doesn't need praise, it needs actionable data.
 
 ## Integration Architecture (Loop Structure)
 
-*   **Parallel Loop (Recommended)**: The playtester runs in a parallel loop, continuously exploring paths.
-*   **Consolidation**: Every 24 hours (or configurable interval), a summarization script aggregates the feedback.
-*   **Review**: The primary coding agent reviews the consolidated feedback report at the start of its planning window.
+- **Parallel Loop (Recommended)**: The playtester runs in a parallel loop, continuously exploring paths.
+- **Consolidation**: Every 24 hours (or configurable interval), a summarization script aggregates the feedback.
+- **Review**: The primary coding agent reviews the consolidated feedback report at the start of its planning window.
 
 ## Rationale
 
