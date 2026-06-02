@@ -1,3 +1,123 @@
+# Cycle 54 Answered Boarding State Payoff
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answered_boarding_true_ending` cleaner and
+  more naturally supported from explicit answered-passenger boarding.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 54 evidence. Core route
+  health is strong and coverage reaches all scenes, but the 100-run random
+  sample still missed `passenger_answered_boarding_true_ending`. The explicit
+  choice "Board the third car while the roll call holds" already says the
+  answered names are being carried aboard, but the state flag for hearing those
+  passengers only set if the player took an extra optional intercom listen.
+- Planned work:
+  - Set `heard_answered_passengers` when players choose
+    `board_after_answered_passengers`.
+  - Route `board_with_answered_passengers` directly to the answered boarding
+    payoff because its label already promises that the opened passengers carry
+    their own names.
+  - Preserve the optional intercom listen from `passenger_answered_boarding`.
+  - Update regression coverage so direct answered boarding immediately carries
+    the answered-passenger state.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - This is a small state consistency change, not a topology change. It should
+    not increase scene count or remove any choice, but it makes the direct
+    branch semantically equivalent to the prose already shown to the player.
+- Status:
+  - `board_after_answered_passengers` now sets
+    `heard_answered_passengers: true` on entry to
+    `passenger_answered_boarding`.
+  - `board_with_answered_passengers` now goes directly to
+    `passenger_answered_boarding` and sets both `heard_passenger_answers` and
+    `heard_answered_passengers`.
+  - Updated story-path tests for both direct answered boarding and opened
+    manifest answered boarding to assert that the flag is set before the
+    optional listen.
+  - Focused story-path suite passed: 170 tests.
+  - Actual CLI play followed `listen_to_passenger_answers` ->
+    `board_after_answered_passengers` ->
+    `pull_release_after_answered_boarding`, ending at
+    `passenger_answered_boarding_true_ending` with score 292 and no objectives.
+  - The CLI final state included `heard_passenger_answers: true` and
+    `heard_answered_passengers: true`.
+  - `npm run health` passed: format check, TypeScript, 215 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes and ended all complete paths, including
+    `passenger_answered_boarding_true_ending`.
+- Playtest feedback:
+  - The route now reads more coherently: the player hears the passengers answer,
+    boards with those names holding, and can immediately release without the
+    engine treating the direct boarding as less informed than the optional
+    intercom branch.
+  - No invalid choices, dead ends, or dangling objectives appeared.
+- Next step:
+  - Continue watching normal-play random samples for low-traffic authored
+    payoffs. If `mara_manifest_handoff_intercom` or
+    `passenger_manifest_handoff_true_ending` remain absent, add an earlier
+    high-traffic prompt rather than another late optional detour.
+
+# Cycle 50 Direct Answered-Passenger Boarding
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_answered_boarding_true_ending` more
+  naturally discoverable from opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle follows the supplied Cycle 50 evidence. Core route
+  health is strong and coverage reaches all scenes, but random samples still
+  missed `passenger_answered_boarding_true_ending`. The player-facing opened
+  manifest choice "Let the opened passengers carry their own names" promised a
+  boarding payoff but first routed through the answer-listening scene, making
+  the direct answered-boarding ending easier to skip.
+- Planned work:
+  - Route `board_with_answered_passengers` directly to
+    `passenger_answered_boarding`.
+  - Set both `heard_passenger_answers` and `heard_answered_passengers` on
+    direct answered-passenger boarding routes.
+  - Preserve the separate `listen_to_passenger_answers` route for players who
+    want the full roll-call scene before boarding.
+  - Update regression coverage for the direct boarding route and direct release
+    ending.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    changed branch.
+- Risks:
+  - One opened-manifest choice now skips the `passenger_answers` hub. This is
+    acceptable because `listen_to_passenger_answers` remains adjacent on the
+    same scene, while the changed choice text explicitly promises that the
+    passengers carry their names aboard.
+- Status:
+  - Routed `board_with_answered_passengers` directly to
+    `passenger_answered_boarding`.
+  - Set `heard_answered_passengers` on both direct answered boarding entry
+    paths.
+  - Updated story-path tests for the direct opened-manifest boarding route and
+    direct `passenger_answered_boarding_true_ending` release.
+  - Focused story-path suite passed: 171 tests.
+  - `npm run health` passed: format check, TypeScript, 215 tests, validation,
+    and coverage playtest.
+  - Validation reports 138 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_answered_boarding_true_ending`, with zero unfinished runs.
+  - Actual CLI play followed `board_with_answered_passengers` ->
+    `pull_release_after_answered_boarding`, ending at
+    `passenger_answered_boarding_true_ending` with score 285 and no
+    objectives.
+- Playtest feedback:
+  - The changed branch now matches the choice promise: the opened passengers
+    carry their own names directly into the third car, then the release resolves
+    before the roll call can fade.
+  - The separate `listen_to_passenger_answers` branch still preserves the full
+    answer-listening hub for players who choose that beat first.
+  - No invalid choices, dead ends, or dangling objectives appeared in the
+    played route.
+- Next step:
+  - Watch the next random sample for whether
+    `passenger_answered_boarding_true_ending` appears more reliably. If core
+    route health stays strong, improve random discovery for
+    `mara_manifest_handoff_intercom` or `passenger_manifest_handoff_true_ending`.
+
 # Cycle 53 Direct Last-Dispatch Boarding Payoff
 
 - Date: 2026-06-02

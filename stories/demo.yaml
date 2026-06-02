@@ -1519,7 +1519,7 @@ scenes:
             heard_answered_passengers: true
       - id: board_with_answered_passengers
         label: Let the opened passengers carry their own names
-        to: passenger_answers
+        to: passenger_answered_boarding
         requires:
           all:
             - notFlag: heard_passenger_answers
@@ -1527,6 +1527,7 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+            heard_answered_passengers: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
@@ -1890,6 +1891,9 @@ scenes:
         to: passenger_answered_boarding
         requires:
           notFlag: saw_mara_manifest_handoff
+        effects:
+          set:
+            heard_answered_passengers: true
 
   passenger_answered_boarding:
     routeImportance: optional
