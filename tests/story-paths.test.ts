@@ -2410,8 +2410,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "cover_home_sign_after_dispatch",
       "turn_back_after_home_sign_dispatch",
+      "cover_home_sign_after_dispatch",
       "step_into_false_home_after_dispatch",
       "let_home_sign_drown_mara"
     ]);
@@ -2574,8 +2574,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "cover_home_sign_after_dispatch",
       "turn_back_after_home_sign_dispatch",
+      "cover_home_sign_after_dispatch",
       "step_into_false_home_after_dispatch",
       "let_home_sign_drown_mara"
     ]);

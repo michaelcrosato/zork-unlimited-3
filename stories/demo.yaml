@@ -5007,17 +5007,17 @@ scenes:
       ledger if you come back for us." The HOME sign brightens, but now it has
       to compete with a real voice.
     choices:
-      - id: cover_home_sign_after_dispatch
-        label: Cover the sign with the map and take the morning transfer
-        to: good_ending
-        requires:
-          item: map
       - id: turn_back_after_home_sign_dispatch
         label: Turn back for the clock token, fuse, badge, and ledger
         to: service_room
         effects:
           set:
             escaped_home_sign_dispatch: true
+      - id: cover_home_sign_after_dispatch
+        label: Cover the sign with the map and take the morning transfer
+        to: good_ending
+        requires:
+          item: map
       - id: step_into_false_home_after_dispatch
         label: Step toward the porch light instead of Mara's voice
         to: lost_after_dispatch_ending

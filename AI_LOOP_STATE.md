@@ -1,3 +1,52 @@
+# Cycle 44 HOME Dispatch Rescue Priority
+
+- Date: 2026-06-03
+- Main objective: Make Mara's HOME-sign dispatch more directly actionable by
+  surfacing the return-to-rescue choice before the morning-transfer escape.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  current evidence is green, and random play still shows non-ideal escape/lost
+  pressure. The HOME dispatch text already says "Clock token, fuse, badge,
+  ledger if you come back for us," so the first choice should match that rescue
+  instruction instead of foregrounding departure.
+- Planned work:
+  - Move `turn_back_after_home_sign_dispatch` ahead of
+    `cover_home_sign_after_dispatch`.
+  - Preserve the good ending and lost-after-dispatch endings.
+  - Update exact-order regressions for both direct and echo-triggered HOME
+    dispatch routes.
+  - Run focused tests, full health, and an actual playable route through the
+    reprioritized HOME dispatch recovery.
+- Risks:
+  - Choice-order regressions are intentionally strict for player-facing UX.
+  - The morning-transfer good ending must remain reachable after hearing Mara.
+- Status:
+  - Completed.
+  - Moved `turn_back_after_home_sign_dispatch` ahead of
+    `cover_home_sign_after_dispatch` in the HOME dispatch menu.
+  - Preserved the morning-transfer good ending and both lost-after-dispatch
+    choices.
+  - Updated exact-order regressions for direct HOME warning dispatch and the
+    echo-triggered dispatch route.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "HOME sign"`.
+  - `npm run health` passed: format check, TypeScript, 241 tests, validation,
+    and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed early train boarding -> HOME sign warning ->
+    listen for Mara -> first visible turn-back choice -> service-room recovery
+    -> stopped-clock token -> signal booth -> Mara ledger release -> emergency
+    release, ending at `true_ending` with score 267 and no objectives.
+  - The dispatch text now pays off immediately in the menu: Mara names the
+    rescue components, and the first action sends the player back to gather
+    them.
+  - The morning transfer remains available as an intentional good escape after
+    hearing Mara, so the branch still supports players who choose to leave.
+- Next step:
+  - Watch random/blind-play results for whether `good_ending`,
+    `lost_after_dispatch_ending`, or direct `escape_ending` remain elevated;
+    if so, continue small menu-priority and recovery-payoff passes instead of
+    adding more branches.
+
 # Cycle 42 Escape Warning Return Priority
 
 - Date: 2026-06-03
