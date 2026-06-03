@@ -1,3 +1,58 @@
+# Cycle 23 Direct Conductor Count
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_conductor_count_roll_call` and
+  `passenger_conductor_count_true_ending` more naturally discoverable from
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed the conductor-count scenes
+  while coverage proved them reachable. The route already existed one layer
+  below `passengers_released`; surfacing it directly should help players find
+  the strongest conductor/count payoff without adding new route logic.
+- Planned work:
+  - Add a direct opened-manifest choice that asks the conductor to read Mara's
+    opened count clear.
+  - Reuse the existing `passenger_conductor_count_roll_call` and
+    `passenger_conductor_count_true_ending` payoff.
+  - Update ordering and direct-route regressions.
+  - Run focused tests, full health, and an actual route through the promoted
+    conductor-count option.
+- Risks:
+  - The opened-manifest hub is dense, so promoting another route may compete
+    with the count, thumbprint, and echo options from recent cycles.
+  - The direct branch must set the same route flags as the existing
+    count-to-conductor path so the final roll call does not repeat.
+- Status:
+  - Completed.
+  - Added `ask_conductor_to_read_opened_count` directly to the early
+    `passengers_released` choice cluster, immediately after reviewing Mara's
+    opened manifest count.
+  - The new branch reuses `passenger_conductor_count_roll_call` and sets the
+    same reviewed-count, passenger-answer, gathered-passenger, conductor-clear,
+    and final-roll-call flags as the existing count-to-conductor path.
+  - Updated opened-manifest ordering regressions and added direct-route
+    assertions for the promoted branch.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|conductor route"`.
+  - `npm run health` passed: format check, TypeScript, 249 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> ask conductor to read Mara's
+    opened count clear -> pull release, ending at
+    `passenger_conductor_count_true_ending` with score 302 and no objectives.
+  - The new label reads as an explicit conductor/count payoff while staying
+    adjacent to the existing count choices, so it should be easier for normal
+    players to find without hiding the reviewed-count or completed-count
+    endings.
+  - The final text stayed coherent: the conductor carries Mara's opened
+    manifest, the count becomes a crowd, and no duplicate roll-call option
+    appeared.
+- Next step:
+  - Watch the next random/blind evidence for whether
+    `passenger_conductor_count_roll_call` still appears as a normal-play miss.
+    If it does, prefer revising the hub prose around the conductor's punch
+    rather than adding another branch.
+
 # Cycle 22 Manifest Thumbprint Prominence
 
 - Date: 2026-06-03

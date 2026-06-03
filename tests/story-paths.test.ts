@@ -5545,16 +5545,22 @@ describe("demo story critical paths", () => {
     expect(observation.choices[5]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[6]).toBe("let_opened_passengers_finish_count");
+    expect(choiceIds[6]).toBe("ask_conductor_to_read_opened_count");
     expect(observation.choices[6]?.label).toBe(
+      "Ask the conductor to read Mara's opened count clear"
+    );
+    expect(choiceIds[7]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[7]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
-    expect(choiceIds[7]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[7]?.label).toBe(
+    expect(choiceIds[8]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[8]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
+
+    const openedManifestState = state;
 
     state = choose(story, state, "review_open_manifest_count");
     observation = observe(story, state);
@@ -5640,6 +5646,28 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, openedManifestState, "ask_conductor_to_read_opened_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.scene.text).toContain("opened count folded against his punch");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_conductor_count"
     ]);
@@ -11031,6 +11059,7 @@ describe("demo story critical paths", () => {
       "follow_opened_manifest_echoes",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
+      "ask_conductor_to_read_opened_count",
       "let_opened_passengers_finish_count",
       "board_with_completed_opened_count",
       "check_opened_manifest_blank_row",

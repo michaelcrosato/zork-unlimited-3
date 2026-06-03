@@ -1586,6 +1586,21 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: ask_conductor_to_read_opened_count
+        label: Ask the conductor to read Mara's opened count clear
+        to: passenger_conductor_count_roll_call
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            heard_passenger_answers: true
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: carry_mara_manifest_handoff_from_opened_doors
         label: Carry Mara's opened-door handoff into the third car
         to: mara_manifest_handoff_intercom
