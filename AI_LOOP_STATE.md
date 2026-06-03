@@ -1,3 +1,73 @@
+# Cycle 19 Counted Conductor Bridges
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for
+  `passenger_conductor_count_true_ending` from reviewed opened-manifest count
+  play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 19 evidence. Health was green
+  and coverage reached every scene, but the 100-run random sample still missed
+  `passenger_conductor_count_true_ending`. The route already works, but it is
+  mostly found after reviewing the manifest count, asking the conductor for a
+  signal, then selecting the counted signal. A normal player who has already
+  centered the count should be able to hear the conductor read that count clear
+  directly.
+- Planned work:
+  - Add a direct conductor-count roll-call bridge from
+    `passenger_manifest_count`.
+  - Add a matching bridge from `passenger_missing_count` after checking the
+    blank row.
+  - Preserve the existing conductor-signal route and counted intercom exits.
+  - Extend regressions for both bridges through
+    `passenger_conductor_count_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new reviewed-count conductor route.
+- Risks:
+  - `passenger_manifest_count` is already choice-rich, so the new bridge must
+    be a clear payoff rather than another vague passenger-gathering option.
+  - The direct route sets final-roll-call flags immediately, so it must not
+    accidentally expose duplicate roll-call choices.
+  - The longer conductor-signal branch still needs to remain valid for players
+    who want the extra signal scene.
+- Status:
+  - Completed.
+  - Added `hear_conductor_count_after_manifest_count`, a direct optional bridge
+    from reviewed opened-manifest count to
+    `passenger_conductor_count_roll_call`.
+  - Added `hear_conductor_clear_unanswered_count`, a matching bridge from the
+    blank-row count beat to the counted conductor roll call.
+  - Both bridges set the same conductor/count payoff flags used by the
+    established route: passenger answers heard, passengers gathered, conductor
+    clearance, and final roll call.
+  - Preserved the existing `passenger_conductor_signal` route for players who
+    choose the longer signal beat.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"` and
+    `npm test -- tests/story-paths.test.ts -t "unanswered-row"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `passenger_conductor_count_roll_call` and
+    `passenger_conductor_count_true_ending`.
+  - Actual CLI play followed the new reviewed-count conductor bridge, ended at
+    `passenger_conductor_count_true_ending`, scored 301, and left no
+    objectives.
+- Playtest feedback:
+  - The route now reads with less mechanical friction: after reviewing Mara's
+    opened count, the player can let the conductor read that exact count clear
+    instead of routing through a separate signal scene first.
+  - The blank-row bridge also fits because the conductor is already named in
+    the row-resolution text, so asking him to clear the unanswered space feels
+    like a payoff rather than a detour.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind samples for whether
+    `passenger_conductor_count_true_ending` appears more often. If it remains
+    rare, tune the high-traffic opened-manifest hub ordering instead of adding
+    another ending.
+
 # Cycle 18 Newspaper Roll Call Bridges
 
 - Date: 2026-06-03

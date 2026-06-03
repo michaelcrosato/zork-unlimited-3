@@ -1857,6 +1857,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_unanswered_row_become_roll_call",
       "ask_conductor_to_clear_unanswered_row",
+      "hear_conductor_clear_unanswered_count",
       "board_with_unanswered_row_resolved",
       "return_from_unanswered_row"
     ]);
@@ -1913,6 +1914,46 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "review_open_manifest_count",
+      "check_for_unanswered_manifest_row",
+      "hear_conductor_clear_unanswered_count"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+
+    state = choose(story, state, "pull_release_after_conductor_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
+    expectIdealScore(observation.score);
 
     state = initialState(story);
 
@@ -5352,6 +5393,7 @@ describe("demo story critical paths", () => {
       "listen_after_manifest_count",
       "follow_newspaper_transfer_after_manifest_count",
       "ask_conductor_after_manifest_count",
+      "hear_conductor_count_after_manifest_count",
       "cross_after_manifest_count",
       "board_after_manifest_count"
     ]);
@@ -5400,6 +5442,26 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, countedState, "hear_conductor_count_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_roll_call");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_count"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_count_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 

@@ -1949,6 +1949,18 @@ scenes:
             heard_passenger_answers: true
             helped_passengers_gather: true
             conductor_cleared_platform: true
+      - id: hear_conductor_count_after_manifest_count
+        label: Let the conductor read Mara's opened count clear
+        to: passenger_conductor_count_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_passenger_answers: true
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: cross_after_manifest_count
         label: Cross through the counted crowd as they gather
         to: passenger_platform
@@ -1985,6 +1997,18 @@ scenes:
             heard_passenger_answers: true
             helped_passengers_gather: true
             conductor_cleared_platform: true
+      - id: hear_conductor_clear_unanswered_count
+        label: Let the conductor read the unanswered row clear
+        to: passenger_conductor_count_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_passenger_answers: true
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: board_with_unanswered_row_resolved
         label: Board once the unanswered row belongs to everyone
         to: passenger_counted_manifest_intercom
