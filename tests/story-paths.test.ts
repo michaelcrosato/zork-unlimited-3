@@ -5552,8 +5552,35 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_with_listened_manifest_echoes",
+      "follow_newspaper_fold_from_opened_echoes",
       "return_from_opened_manifest_echoes"
     ]);
+
+    const newspaperState = choose(story, state, "follow_newspaper_fold_from_opened_echoes");
+    observation = observe(story, newspaperState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_transfer");
+    expect(observation.scene.text).toContain("The blank transfer column is not blank anymore");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_conductor_to_punch_restored_transfer",
+      "read_restored_transfer_into_roll_call",
+      "carry_newspaper_transfer_to_third_car"
+    ]);
+
+    observation = observe(
+      story,
+      choose(
+        story,
+        choose(story, newspaperState, "read_restored_transfer_into_roll_call"),
+        "pull_release_after_newspaper_roll_call"
+      )
+    );
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "board_with_listened_manifest_echoes");
     observation = observe(story, state);

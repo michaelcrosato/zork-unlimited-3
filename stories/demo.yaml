@@ -1865,6 +1865,15 @@ scenes:
         effects:
           set:
             echoed_manifest_boarded: true
+      - id: follow_newspaper_fold_from_opened_echoes
+        label: Follow the newspaper fold into the restored transfer column
+        to: passenger_newspaper_transfer
+        requires:
+          notFlag: studied_newspaper_transfer
+        effects:
+          set:
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
       - id: return_from_opened_manifest_echoes
         label: Return to the opened manifest doors
         to: passengers_released

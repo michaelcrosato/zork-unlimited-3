@@ -1,3 +1,63 @@
+# Cycle 16 Opened Echo Newspaper Transfer Bridge
+
+- Date: 2026-06-03
+- Main objective: Add a richer payoff from the opened-manifest echo listening
+  beat into the existing newspaper transfer route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 16 evidence. Health is green,
+  all scenes are reachable in coverage, and random play now reaches the echo
+  route; the next highest-value improvement is story depth that makes the
+  passenger keepsake sounds feel interconnected instead of isolated branches.
+- Planned work:
+  - Complete the new `opened_manifest_echoes` choice that follows the newspaper
+    fold into `passenger_newspaper_transfer`.
+  - Reuse the existing newspaper transfer, roll-call, intercom, and ending
+    scenes rather than adding another ending.
+  - Verify the opened-manifest regression covers the bridge and still preserves
+    the echo boarding route.
+  - Run full health and an actual CLI playthrough through the new bridge.
+- Risks:
+  - `opened_manifest_echoes` should stay a concise listening beat, not become a
+    second crowded hub.
+  - The bridge sets newspaper flags directly, so it must not break the existing
+    conductor-punch or roll-call choices inside `passenger_newspaper_transfer`.
+- Status:
+  - Completed.
+  - Added `follow_newspaper_fold_from_opened_echoes` from
+    `opened_manifest_echoes` to `passenger_newspaper_transfer`, gated by
+    `studied_newspaper_transfer`.
+  - The bridge sets `heard_newspaper_memory` and
+    `studied_newspaper_transfer`, matching the established direct newspaper
+    route semantics.
+  - Extended the opened-manifest echo regression to assert the new choice,
+    restored transfer scene, flags, roll-call continuation, and
+    `passenger_newspaper_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest players listen"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `opened_manifest_echoes`, `passenger_newspaper_transfer`, and
+    `passenger_newspaper_roll_call`.
+  - Actual CLI play followed the new opened-echo newspaper route, ended at
+    `passenger_newspaper_true_ending`, scored 300, and left no objectives.
+- Playtest feedback:
+  - The bridge reads naturally because `opened_manifest_echoes` already names
+    the newspaper fold among the passenger sounds.
+  - The route now has a clear arc: listen to opened door-echoes, follow the
+    newspaper fold into the restored transfer, read the transfer into roll
+    call, then pull the release.
+  - The new option adds one concrete passenger follow-up without changing the
+    existing echo boarding payoff or adding another ending.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether
+    `passenger_newspaper_transfer` and `passenger_newspaper_roll_call` become
+    more common after opened-manifest echo play; if they remain rare, tune the
+    passenger-platform newspaper labels rather than adding more branches.
+
 # Cycle 15 Opened Manifest Echo Listening Bridge
 
 - Date: 2026-06-03
