@@ -1,3 +1,50 @@
+# Cycle 42 Escape Warning Return Priority
+
+- Date: 2026-06-03
+- Main objective: Reduce avoidable lit-platform escape endings by surfacing the
+  concrete return-to-rescue action earlier in the escape warning menu.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  current health evidence is green, and Cycle 2 random evidence still shows
+  escape pressure. The lit escape warning already tells players the stopped
+  clock is the named next step, so the useful improvement is menu priority:
+  show the actionable return before optional flavor and final fleeing.
+- Planned work:
+  - Move `return_to_lit_platform_from_escape_warning` ahead of the optional
+    platform glance while keeping Mara's stairwell call first.
+  - Preserve the optional glance and confirmed escape ending.
+  - Update exact choice-order regressions for the lit escape warning.
+  - Run focused tests, full health, and an actual playable route through the
+    reprioritized escape-warning recovery.
+- Risks:
+  - Choice-order changes can break tests that intentionally encode UX order.
+  - The escape ending must remain reachable for players who intentionally leave.
+- Status:
+  - Completed.
+  - Moved `return_to_lit_platform_from_escape_warning` ahead of the optional
+    `look_back_from_escape_warning` choice in the lit escape warning menu.
+  - Preserved Mara's stairwell call as the first reflective option and kept
+    both the optional platform glance and confirmed escape ending reachable.
+  - Added focused choice-order regression coverage so the concrete return path
+    stays ahead of the optional glance.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "escape"`.
+  - `npm run health` passed: format check, TypeScript, 241 tests, validation,
+    and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed lit-platform escape warning ->
+    `return_to_lit_platform_from_escape_warning` -> service-room recovery ->
+    stopped-clock token -> signal booth -> Mara ledger release -> emergency
+    release, ending at `true_ending` with score 260 and no objectives.
+  - The warning text already names the stopped clock clearly; placing the
+    return action before the optional glance makes the next step easier to act
+    on when a player is wavering.
+  - Escape remains available via `confirm_flee_platform`, so the branch still
+    supports intentional early leaving.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    narrow menu-priority or payoff passes where random evidence still shows
+    non-ideal pressure.
+
 # Cycle 41 Passenger Room Release Discoverability
 
 - Date: 2026-06-03

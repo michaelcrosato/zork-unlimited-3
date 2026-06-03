@@ -9474,6 +9474,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("escape_warning");
     expect(choiceIds).toContain("listen_at_stairwell");
     expect(choiceIds).toContain("look_back_from_escape_warning");
+    expect(choiceIds.indexOf("return_to_lit_platform_from_escape_warning")).toBeLessThan(
+      choiceIds.indexOf("look_back_from_escape_warning")
+    );
     expect(choiceIds).toContain("confirm_flee_platform");
 
     state = choose(story, state, "listen_at_stairwell");
@@ -10196,8 +10199,8 @@ describe("demo story critical paths", () => {
     );
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_at_stairwell",
-      "look_back_from_escape_warning",
       "return_to_lit_platform_from_escape_warning",
+      "look_back_from_escape_warning",
       "confirm_flee_platform"
     ]);
     expect(

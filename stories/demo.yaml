@@ -975,6 +975,9 @@ scenes:
             heard_escape_call: true
             met_mara: true
             knows_token_location: true
+      - id: return_to_lit_platform_from_escape_warning
+        label: Return through the service room toward the stopped clock
+        to: service_room
       - id: look_back_from_escape_warning
         label: Look back at Platform 13 before you run
         to: escape_platform_glance
@@ -984,9 +987,6 @@ scenes:
           set:
             looked_back_from_escape_warning: true
             knows_badge_proof: true
-      - id: return_to_lit_platform_from_escape_warning
-        label: Return through the service room toward the stopped clock
-        to: service_room
       - id: confirm_flee_platform
         label: Leave Mara calling and run back to the street
         to: escape_ending
