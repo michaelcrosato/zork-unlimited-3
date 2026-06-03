@@ -1,3 +1,119 @@
+# Cycle 26 Ledger Decision Clarity
+
+- Date: 2026-06-03
+- Main objective: Make the late-game signal ledger decision clearly distinguish
+  the direct Mara release route from the larger kept-passenger manifest rescue.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 26 evidence shows health and coverage are green but the
+  adaptive exploratory route can still stall around late-game hub returns. The
+  signal ledger is the key decision hub before the finish; its previous
+  objective pushed players toward checking the manifest without equally
+  validating the direct emergency-release route.
+- Planned work:
+  - Revise the signal-ledger objective to present both choices as intentional:
+    clear Mara now or open the manifest first.
+  - Add player-facing ledger prose that explains clearing only Mara leads
+    straight to the third-car release, while the manifest route is a larger
+    rescue.
+  - Rename the direct and manifest ledger choices to make their consequences
+    easier to compare.
+  - Preserve routing, flags, scoring, scene count, and ending count.
+  - Add focused regression assertions for the new signposting.
+  - Run focused tests, full health, and a playable route through the clarified
+    direct decision.
+- Risks:
+  - Overexplaining the ledger can flatten the moral tension; keep the wording
+    concise and framed as consequence rather than instruction.
+  - Because choice labels changed, exact-label tests need to be updated without
+    weakening route coverage.
+- Status:
+  - Completed.
+  - Revised the signal-ledger objective to frame the decision as either
+    clearing Mara now or opening the kept-passenger manifest first.
+  - Added ledger prose that states the direct Mara route leads to the third-car
+    release while the manifest route expands the rescue.
+  - Renamed the direct and manifest ledger choices so their consequences are
+    visible before the player commits.
+  - Added regression assertions for the new objective, ledger prose, and
+    choice labels.
+  - `npm run health` passed with these changes included: format check,
+    TypeScript, 238 tests, validation, and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play used the clarified direct ledger choice
+    `mark_mara_clear_from_ledger`, then reached the train car and
+    `true_ending` with score 267 and no objectives.
+  - The direct choice now reads as a valid finish route rather than a shortcut
+    that ignores the manifest.
+  - The manifest route remains visible as the larger-rescue option before the
+    player commits.
+- Next step:
+  - Watch blind sessions for whether goal-seeking players still feel pushed
+    into the manifest path when they intended to finish Mara's core route.
+
+# Cycle 26 Train-Car Release Focus
+
+- Date: 2026-06-03
+- Main objective: Make the late train-car objective resolve more directly after
+  Mara is cleared.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 26 evidence shows health and coverage are green while the
+  adaptive exploratory route stalled before a true ending. After `freed_mara`,
+  the objective correctly says to pull the emergency release, but the direct
+  train-car choice list presented several optional Mara beats before the
+  release. A small ordering and label change should reduce late-game hesitation
+  without removing story-rich optional routes.
+- Planned work:
+  - Revise `train_car` prose so the emergency release reads as the immediate
+    way out while preserving the optional final-dispatch contrast.
+  - Move the direct `pull_release` choice ahead of optional non-manifest
+    intercom and handoff beats.
+  - Rename the visible direct release label to "Pull the emergency release now"
+    while preserving the choice id and ending route.
+  - Add focused regression assertions for the new prose, label, and choice
+    ordering.
+  - Run focused tests, full health, and an actual playable route through the
+    changed beat.
+- Risks:
+  - Putting the release first may reduce discovery of optional Mara goodbye
+    variants; those choices remain visible immediately below the release.
+  - Text/order changes should not affect reachability, scene count, ending
+    count, or scoring, but exact choice-order tests need careful updates.
+- Status:
+  - Completed.
+  - Revised `train_car` prose so the release is explicitly "the way out now"
+    while preserving the optional final-dispatch and handoff choices.
+  - Moved the direct `pull_release` choice ahead of optional non-manifest
+    intercom and handoff beats whenever Mara has been cleared.
+  - Renamed the visible direct release label to "Pull the emergency release
+    now" while preserving the `pull_release` id and `true_ending` route.
+  - Updated focused regression assertions for the new prose, label, and choice
+    ordering across the direct, badge-proof, and handoff variants.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "train-car|emergency release after clearing Mara|Mara reaches the far door"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the clarified direct route through
+    `board_after_clearing_mara` to `train_car`; the first visible choice was
+    `pull_release` with label "Pull the emergency release now".
+  - The active objective still read "Pull the emergency release in the third
+    car.", so the objective and first choice now reinforce each other.
+  - Pulling the release ended at `true_ending` with score 267 and no
+    objectives.
+  - Optional Mara beats remain visible immediately below the release, so
+    story-depth routes are preserved for players who want them.
+- Next step:
+  - Watch adaptive and blind-play logs for whether late-game stalls decrease.
+    If players still loop at the train car, consider adding a transient
+    player-view hint after one optional goodbye rather than adding another
+    branch.
+
 # Cycle 25 Last Dispatch Prompt Clarity
 
 - Date: 2026-06-03

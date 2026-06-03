@@ -66,7 +66,7 @@ objectives:
         - item: token
         - item: fuse
         - notFlag: platform_lit
-  - text: Check the kept-passenger manifest before deciding whose names to clear.
+  - text: Choose whether to clear Mara now or open the kept-passenger manifest first.
     requires:
       all:
         - flag: platform_lit
@@ -1189,7 +1189,9 @@ scenes:
       someone has pressed a thumbprint into the ink so hard it tore the page.
       The earlier manifest pages rustle under your hand, still full of doors
       with passenger names stamped shut. The booth speaker clicks once, waiting
-      for proof that she is more than another name the line can keep.
+      for proof that she is more than another name the line can keep. Clearing
+      only Mara will send you straight to the third-car release; opening the
+      manifest first may free more doors, but it will make this rescue larger.
     choices:
       - id: inspect_mara_thumbprint
         label: Touch the torn thumbprint beside Mara's name
@@ -1203,7 +1205,7 @@ scenes:
           set:
             read_mara_thumbprint: true
       - id: read_manifest_from_ledger
-        label: Check the kept-passenger manifest before clearing only Mara
+        label: Open the kept-passenger manifest before choosing a larger rescue
         to: passenger_manifest
         requires:
           all:
@@ -1214,7 +1216,7 @@ scenes:
           set:
             read_passenger_manifest: true
       - id: read_manifest_after_thumbprint
-        label: Follow Mara's thumbprint back through the kept-passenger manifest
+        label: Follow Mara's thumbprint into the larger passenger rescue
         to: passenger_manifest
         requires:
           all:
@@ -1225,7 +1227,7 @@ scenes:
           set:
             read_passenger_manifest: true
       - id: mark_mara_clear_from_ledger
-        label: Enter Mara's badge number and clear only her name
+        label: Clear only Mara now and board for the emergency release
         to: mara_released
         requires:
           all:
@@ -1236,7 +1238,7 @@ scenes:
           set:
             freed_mara: true
       - id: clear_manifest_and_mara_from_ledger
-        label: Enter Mara's badge number and open every manifest door
+        label: Clear Mara and open every kept-passenger door
         to: passengers_released
         requires:
           all:
@@ -3005,10 +3007,17 @@ scenes:
       speaker while the platform line trembles around her, not an order now but
       a hand braced against the closing doors. Under the first seat, your
       fingers find an emergency release. The blank destination sign begins to
-      spell HOME one letter at a time. Mara can still make one last dispatch
-      from the speaker, or you can pull now and make the word belong to
-      everyone.
+      spell HOME one letter at a time. The release is the way out now. Mara can
+      still make one last dispatch from the speaker, or you can pull before the
+      sign finishes and make the word belong to everyone.
     choices:
+      - id: pull_release
+        label: Pull the emergency release now
+        to: true_ending
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: read_passenger_manifest
       - id: listen_to_badge_proof_after_last_dispatch
         label: Listen as Mara folds the badge proof into her last dispatch
         to: mara_badge_proof_intercom
@@ -3485,13 +3494,6 @@ scenes:
             - flag: read_passenger_manifest
             - flag: helped_passengers_gather
             - flag: returned_lost_mitten
-      - id: pull_release
-        label: Pull the emergency release
-        to: true_ending
-        requires:
-          all:
-            - flag: freed_mara
-            - notFlag: read_passenger_manifest
       - id: study_map_in_train
         label: Check the marked transfer map before the doors close
         to: train_map

@@ -2831,9 +2831,11 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    const choiceIds = observe(story, state).choices.map((choice) => choice.id);
+    const observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(choiceIds).toContain("pull_release");
+    expect(choiceIds[0]).toBe("pull_release");
+    expect(observation.choices[0]?.label).toBe("Pull the emergency release now");
     expect(choiceIds).toContain("ask_mara_for_train_car_dispatch");
     expect(choiceIds).toContain("listen_to_mara_intercom");
     expect(choiceIds).not.toContain("ride_with_map");
@@ -2964,15 +2966,17 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.scene.text).toContain("not an order now");
+    expect(observation.scene.text).toContain("The release is the way out now");
     expect(observation.scene.text).toContain("one last dispatch");
     expect(observation.scene.text).toContain("belong to everyone");
     expect(observation.state.flags.heard_mara_last_dispatch).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release",
       "ask_mara_for_train_car_dispatch",
       "listen_to_mara_intercom",
-      "wait_for_mara_at_far_door",
-      "pull_release"
+      "wait_for_mara_at_far_door"
     ]);
+    expect(observation.choices[0]?.label).toBe("Pull the emergency release now");
     expect(
       observation.choices.find((choice) => choice.id === "ask_mara_for_train_car_dispatch")?.label
     ).toBe("Ask Mara for her final dispatch before pulling");
@@ -3079,9 +3083,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release",
       "listen_to_badge_proof_intercom",
-      "wait_for_badge_proof_mara_at_far_door",
-      "pull_release"
+      "wait_for_badge_proof_mara_at_far_door"
     ]);
 
     state = choose(story, state, "listen_to_badge_proof_intercom");
@@ -3375,8 +3379,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_after_handoff",
-      "pull_release"
+      "pull_release",
+      "listen_to_mara_after_handoff"
     ]);
 
     state = choose(story, state, "listen_to_mara_after_handoff");
@@ -3523,7 +3527,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.saw_mara_handoff).toBe(true);
-    expect(choiceIds).toEqual(["listen_to_mara_after_handoff", "pull_release"]);
+    expect(choiceIds).toEqual(["pull_release", "listen_to_mara_after_handoff"]);
   });
 
   it("pays off Mara's handoff with a distinct ending after her final intercom", async () => {
@@ -8749,15 +8753,22 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("signal_ledger");
     expect(observation.scene.text).toContain("still full of doors");
+    expect(observation.scene.text).toContain(
+      "Clearing only Mara will send you straight to the third-car release"
+    );
+    expect(observation.scene.text).toContain("opening the manifest first may free more doors");
     expect(observation.objectives).toContain(
-      "Check the kept-passenger manifest before deciding whose names to clear."
+      "Choose whether to clear Mara now or open the kept-passenger manifest first."
     );
     expect(choiceIds).toContain("inspect_mara_thumbprint");
     expect(choiceIds).toContain("read_manifest_from_ledger");
     expect(choiceIds).toContain("mark_mara_clear_from_ledger");
     expect(
+      observation.choices.find((choice) => choice.id === "read_manifest_from_ledger")?.label
+    ).toBe("Open the kept-passenger manifest before choosing a larger rescue");
+    expect(
       observation.choices.find((choice) => choice.id === "mark_mara_clear_from_ledger")?.label
-    ).toBe("Enter Mara's badge number and clear only her name");
+    ).toBe("Clear only Mara now and board for the emergency release");
 
     state = choose(story, state, "inspect_mara_thumbprint");
     observation = observe(story, state);
@@ -8820,12 +8831,20 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.state.flags.read_mara_thumbprint).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_badge_proof_intercom",
-      "wait_for_thumbprint_mara_at_far_door",
-      "listen_to_mara_thumbprint_intercom",
-      "pull_release"
-    ]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual(
+      expect.arrayContaining([
+        "pull_release",
+        "listen_to_badge_proof_intercom",
+        "wait_for_thumbprint_mara_at_far_door",
+        "listen_to_mara_thumbprint_intercom"
+      ])
+    );
+    expect(observation.choices.map((choice) => choice.id)).toHaveLength(4);
+    expect(observation.choices[0]?.id).toBe("pull_release");
+    expect(
+      observation.choices.find((choice) => choice.id === "listen_to_mara_thumbprint_intercom")
+        ?.label
+    ).toBe("Listen as Mara remembers the torn thumbprint");
 
     state = choose(story, state, "listen_to_mara_thumbprint_intercom");
     observation = observe(story, state);
@@ -10121,9 +10140,12 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("signal_ledger");
     expect(observation.scene.text).toContain("more than another name");
+    expect(observation.scene.text).toContain(
+      "Clearing only Mara will send you straight to the third-car release"
+    );
     expect(observation.state.flags.inspected_signal_ledger).toBe(true);
     expect(observation.objectives).toEqual([
-      "Check the kept-passenger manifest before deciding whose names to clear."
+      "Choose whether to clear Mara now or open the kept-passenger manifest first."
     ]);
     expect(choiceIds).toEqual([
       "inspect_mara_thumbprint",
@@ -10246,8 +10268,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_after_handoff",
-      "pull_release"
+      "pull_release",
+      "listen_to_mara_after_handoff"
     ]);
   });
 
@@ -10393,8 +10415,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("train_car");
     expect(observation.state.flags.saw_mara_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_after_handoff",
-      "pull_release"
+      "pull_release",
+      "listen_to_mara_after_handoff"
     ]);
 
     state = choose(story, state, "listen_to_mara_after_handoff");
