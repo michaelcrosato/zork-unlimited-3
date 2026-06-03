@@ -9488,6 +9488,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_from_stairwell_call",
+      "look_back_after_stairwell_call",
       "leave_lit_platform_after_stairwell_call"
     ]);
 
@@ -9630,6 +9631,41 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform",
+      "listen_at_stairwell",
+      "look_back_after_stairwell_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("escape_platform_glance");
+    expect(observation.state.flags.heard_escape_call).toBe(true);
+    expect(observation.state.flags.looked_back_from_escape_warning).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_after_escape_glance",
+      "leave_after_escape_glance"
+    ]);
+
+    state = choose(story, state, "return_after_escape_glance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lit_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain("flee_platform");
   });
 
   it("lets unlit-platform explorers retreat to the early escape warning", async () => {
@@ -9696,6 +9732,9 @@ describe("demo story critical paths", () => {
       "return_from_stairwell_call",
       "leave_after_stairwell_call"
     ]);
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "look_back_after_stairwell_call"
+    );
 
     state = choose(story, state, "leave_after_stairwell_call");
     observation = observe(story, state);

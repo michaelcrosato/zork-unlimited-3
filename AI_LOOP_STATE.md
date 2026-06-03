@@ -45,6 +45,61 @@
     narrow menu-priority or payoff passes where random evidence still shows
     non-ideal pressure.
 
+# Cycle 43 Stairwell Glance Recovery
+
+- Date: 2026-06-03
+- Main objective: Make `escape_platform_glance` more naturally discoverable
+  after the player takes the intuitive "listen before leaving" escape-warning
+  option.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, and current Cycle 3 evidence shows healthy overall guidance but
+  a random miss for `escape_platform_glance`. Cycle 42 correctly prioritized
+  the concrete return action before optional flavor, so this pass should not
+  undo that; instead it should let the natural Mara-listen beat surface the
+  poster/token glance before players commit to recovery or escape.
+- Planned work:
+  - Add a one-time lit-platform glance choice from `mara_stairwell_call` when
+    the platform is lit and the glance has not already been seen.
+  - Keep the stopped-clock recovery action first and preserve both warned lit
+    escape and the existing direct glance route.
+  - Update focused exact-order and route regressions.
+  - Run focused tests, full health, and an actual playable route through the
+    new listen-then-glance recovery path.
+- Risks:
+  - `mara_stairwell_call` is shared by lit and unlit escape warning paths, so
+    the new option must be gated to lit-platform states only.
+  - Do not make optional flavor block players who already know they want the
+    stopped clock or the escape ending.
+- Status:
+  - Completed.
+  - Added `look_back_after_stairwell_call` as a one-time lit-platform-only
+    option from Mara's stairwell call into the existing
+    `escape_platform_glance` scene.
+  - Kept `return_from_stairwell_call` first so the stopped-clock recovery
+    remains the primary action, and preserved both warned lit escape and the
+    direct escape-warning glance.
+  - Added focused regressions for lit stairwell choice order, the
+    listen-then-glance recovery path, and unlit stairwell gating.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "escape"`.
+  - `npm run health` passed: format check, TypeScript, 241 tests, validation,
+    and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed lit platform -> flee -> listen to Mara ->
+    stairwell glance -> return to lit platform -> service-room clock recovery
+    -> signal booth -> Mara ledger release -> emergency release, ending at
+    `true_ending` with score 270 and no objectives.
+  - The branch now makes the optional poster/token glance available after the
+    natural "listen before leaving" choice without interrupting players who
+    already want the clock or the warned escape ending.
+  - The route briefly returns to the lit platform before the service room,
+    which is coherent because the glance is about Platform 13 but still adds
+    one extra click for players using it as a recovery route.
+- Next step:
+  - Watch the next random/blind-play window for whether `escape_platform_glance`
+    remains missed; if so, consider making the glance label more consequence
+    focused rather than adding more topology.
+
 # Cycle 41 Passenger Room Release Discoverability
 
 - Date: 2026-06-03
