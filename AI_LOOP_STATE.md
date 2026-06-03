@@ -1,3 +1,111 @@
+# Cycle 35 Mara Last-Dispatch Record
+
+- Date: 2026-06-03
+- Main objective: Strengthen Mara's optional last-dispatch route without
+  changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and Cycle 35 evidence shows the direct
+  Mara true-ending path is playable but the optional last-dispatch branch is a
+  low-frequency Mara-core variant. The branch should feel like a meaningful
+  final public record, not just an instruction repeat before pulling the same
+  release.
+- Planned work:
+  - Revise `mara_last_dispatch` so Mara makes a record the ledger cannot close
+    over and names the proof aloud.
+  - Revise `mara_last_dispatch_intercom` so the dispatch is heard by every car
+    and clearly authorizes one pull for every door.
+  - Revise `mara_last_dispatch_true_ending` so the payoff closes the record
+    because the doors are open, not because Mara remains on duty.
+  - Add focused regression assertions for the strengthened last-dispatch
+    language.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    last-dispatch ending.
+- Risks:
+  - Keep this distinct from the physical handoff branch: this pass is about a
+    public dispatch record over the speaker, not Mara walking the doors.
+  - Avoid route or flag changes because current validation and coverage are
+    healthy.
+- Status:
+  - Completed.
+  - Revised `mara_last_dispatch` so Mara creates a public record the ledger
+    cannot stamp shut and names the badge, platform, and open third car aloud.
+  - Revised `mara_last_dispatch_intercom` so every car hears that one pull will
+    answer every door Mara held.
+  - Revised `mara_last_dispatch_true_ending` so the record closes because the
+    doors are open, not because anyone remains on duty.
+  - Existing focused last-dispatch assertions are updated and covered by full
+    health.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `ask_mara_for_last_dispatch` ->
+    `board_with_last_dispatch_in_speaker` ->
+    `pull_release_after_last_dispatch_goodbye`, ending at
+    `mara_last_dispatch_true_ending` with score 287 and no objectives.
+  - The revised route reads as a public dispatch record that every car can hear
+    and that resolves only when the doors open.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    focused payoff passes on frequent passenger routes.
+
+# Cycle 35 Newspaper Transfer Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the high-frequency newspaper transfer ending
+  without changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, Cycle 35 health evidence is green, and random/coverage play show
+  `passenger_newspaper_true_ending` as a normal passenger route. The branch
+  should pay off the newspaper as a future route passengers carry together,
+  not just as proof that the schedule was once interrupted.
+- Planned work:
+  - Revise `passenger_newspaper_memory` so the blank column starts collecting
+    passenger destinations in more than one voice.
+  - Revise `passenger_newspaper_transfer` so the paper is passed hand to hand
+    as passengers check the next stop instead of the old failure.
+  - Revise `passenger_newspaper_intercom`, `passenger_newspaper_roll_call`,
+    and `passenger_newspaper_true_ending` so named streets visibly pull the
+    third car toward morning.
+  - Add focused regression assertions for the strengthened route imagery.
+  - Run focused tests, full health, and an actual playable route through the
+    newspaper ending.
+- Risks:
+  - Keep this branch distinct from conductor-transfer and generic roll-call
+    paths by centering newspaper destinations and future streets.
+  - Avoid route/flag changes because validation and coverage are already
+    healthy.
+- Status:
+  - Completed.
+  - Revised the newspaper memory, transfer, intercom, roll-call, and ending
+    prose.
+  - Added focused assertions for the transfer handoff, roll-call platform
+    image, memory scene, and ending payoff.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "newspaper|transfer column"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `listen_to_opened_manifest_echoes` ->
+    `follow_newspaper_fold_from_opened_echoes` ->
+    `read_restored_transfer_into_roll_call` ->
+    `pull_release_after_newspaper_roll_call`, ending at
+    `passenger_newspaper_true_ending` with score 300 and no objectives.
+  - The revised branch now reads as a future-route payoff: the paper is passed
+    hand to hand, named streets pull the car toward morning, and the woman keeps
+    the paper unfolded until every passenger has found a street beyond the line.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Commit and push the green milestone.
+
 # Cycle 34 Base Passenger Room Payoff
 
 - Date: 2026-06-03
