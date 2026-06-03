@@ -1,3 +1,65 @@
+# Cycle 37 Lunch-Tin Clock-Out Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the frequent lunch-tin passenger ending without
+  changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and random/coverage play show
+  `passenger_lunch_tin_true_ending` as a normal passenger route. The branch
+  already centers the worker's count; this pass should make the count feel like
+  clocking everyone out into morning rather than another manifest tally.
+- Planned work:
+  - Revise `passenger_lunch_tin_boarding` so the third car reads like a break
+    room after the whistle, with passengers checking each other's practical
+    proofs before release.
+  - Revise `passenger_lunch_tin_intercom`, `passenger_lunch_tin_roster`, and
+    `passenger_lunch_tin_roll_call` so the latch-count becomes a time-card
+    clock-out.
+  - Revise `passenger_lunch_tin_true_ending` so the payoff shows all names
+    clocked out and the worker finally receiving a break.
+  - Add focused regression assertions for the strengthened lunch-tin imagery.
+  - Run focused tests, full health, and an actual playable route through the
+    lunch-tin ending.
+- Risks:
+  - Keep the branch distinct from generic gathered-passenger and roll-call
+    routes by centering work-shift, time-card, latch, and lunch-tin images.
+  - Avoid route or flag changes because validation and coverage are healthy.
+- Status:
+  - Completed.
+  - Revised `passenger_lunch_tin_boarding` so the third car becomes a practical
+    break-room rhythm where passengers check each other's ordinary proofs.
+  - Revised `passenger_lunch_tin_intercom` so each latch-click confirms a
+    concrete passenger proof before Mara authorizes the release.
+  - Revised `passenger_lunch_tin_roster` and `passenger_lunch_tin_roll_call`
+    so the roster reads as a time card and the worker clocks out the overtime
+    that held them underground.
+  - Revised `passenger_lunch_tin_true_ending` so the payoff shows clocked-out
+    names and the worker finally receiving a break.
+  - Added focused story-path assertions for the strengthened lunch-tin imagery.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `let_lunch_tin_worker_keep_count` ->
+    `return_from_passenger_farewell` ->
+    `listen_to_lunch_tin_worker_from_boarding` -> `read_lunch_tin_roster` ->
+    `hear_roster_clock_out_roll_call` ->
+    `pull_release_after_lunch_tin_roll_call`, ending at
+    `passenger_lunch_tin_true_ending` with score 321 and no objectives.
+  - The revised branch now reads as a clear work-shift payoff: the lunch tin
+    sets boarding rhythm, the roster becomes a time card, and the ending
+    releases everyone as clocked-out names instead of another kept count.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    focused payoff passes on frequent passenger routes or improve transcript
+    critique quality.
+
 # Cycle 36 Returned-Mitten Payoff
 
 - Date: 2026-06-03

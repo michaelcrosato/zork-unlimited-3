@@ -6497,6 +6497,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.scene.text).toContain("clicks the latch");
+    expect(observation.scene.text).toContain("break room after the whistle");
     expect(observation.scene.text).toContain("count people without keeping them");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
@@ -6516,7 +6517,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.text).toContain("lunch-tin worker's count");
     expect(observation.scene.text).toContain("no longer a counter and no longer counted");
-    expect(observation.scene.text).toContain("nothing left to keep");
+    expect(observation.scene.text).toContain("row of clocked-out names");
+    expect(observation.scene.text).toContain("everyone got a break at last");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 
@@ -6526,6 +6528,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roster");
     expect(observation.scene.text).toContain("CLOCK OUT AFTER EVERYONE ELSE");
+    expect(observation.scene.text).toContain("time card waiting for morning");
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_after_reading_lunch_tin_roster",
@@ -6538,6 +6541,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
     expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+    expect(observation.scene.text).toContain("Mara's badge is visible at the release");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_lunch_tin_roll_call",
       "check_lunch_tin_passengers_from_intercom",
@@ -6568,6 +6572,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
     expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+    expect(observation.scene.text).toContain("the conductor has room to raise his punch");
 
     state = choose(story, state, "pull_release_after_lunch_tin_intercom");
     observation = observe(story, state);
@@ -6614,6 +6619,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("draw one slow line through the overtime");
     expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
@@ -6657,6 +6663,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("time clock nobody has to punch again");
     expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);

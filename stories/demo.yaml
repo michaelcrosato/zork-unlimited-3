@@ -2983,10 +2983,11 @@ scenes:
       each time another passenger finds the third car without looking at the
       HOME sign. The child, the newspaper woman, and the old conductor fall
       into that practical rhythm until the aisle feels less like a ledger and
-      more like a shift change. Each click leaves a place open behind it, as if
-      the tin is teaching the line how to count people without keeping them.
-      Under the first seat, the emergency release waits for the count to become
-      movement.
+      more like a break room after the whistle, everyone checking that the next
+      person has coat, paper, badge, and breath before the door can close. Each
+      click leaves a place open behind it, as if the tin is teaching the line
+      how to count people without keeping them. Under the first seat, the
+      emergency release waits for the count to become movement.
     choices:
       - id: read_lunch_tin_roster_from_boarding
         label: Read the shift roster tucked inside the lunch tin before the release
@@ -4514,9 +4515,12 @@ scenes:
       The lunch-tin worker reaches the third car last, because he keeps stopping
       to count the people who fall into step behind him. His tin latch clicks
       once for each open door, plain and steady enough that Mara stops reading
-      names and lets the sound mark time. "He carried lunch for a shift that
-      never ended," she says through the speaker. "Let that be the last thing
-      the line counts. Pull the release while they are moving together."
+      names and lets the sound mark time. Each click comes with a practical
+      check: the child has both mittens, the newspaper woman has the transfer,
+      the conductor has room to raise his punch, and Mara's badge is visible at
+      the release. "He carried lunch for a shift that never ended," she says
+      through the speaker. "Let that be the last thing the line counts. Pull
+      the release while they are moving together."
     choices:
       - id: read_lunch_tin_roster
         label: Read the shift roster tucked inside the lunch tin
@@ -4582,7 +4586,10 @@ scenes:
       worker has written the passenger names in the margin whenever the line
       tried to make him count tickets instead of people. Child with red
       mitten. Newspaper woman. Old conductor. Dispatcher Vale. At the bottom,
-      his own name waits beside the words CLOCK OUT AFTER EVERYONE ELSE.
+      his own name waits beside the words CLOCK OUT AFTER EVERYONE ELSE. Beside
+      each passenger he has added one ordinary proof of return: mittens paired,
+      transfer unfolded, punch raised clear, badge carried to the handle. The
+      roster is not a manifest anymore. It is a time card waiting for morning.
     choices:
       - id: listen_after_reading_lunch_tin_roster
         label: Listen as the roster count reaches the third car
@@ -4605,9 +4612,11 @@ scenes:
       The worker reads the roster like the end of a shift, not a claim. The
       child answers first, the newspaper woman calls her transfer stop, and the
       old conductor gives one clear punch in the air when Mara's name comes
-      next. Only then does the worker read his own name. The tin latch shuts
-      once, final and ordinary, and for the first time the line has counted him
-      without keeping him. Every open door waits for the release.
+      next. Only then does the worker read his own name and draw one slow line
+      through the overtime that held them underground. The tin latch shuts once,
+      final and ordinary, and for the first time the line has counted him
+      without keeping him. Every open door waits for the release like a time
+      clock nobody has to punch again.
     choices:
       - id: pull_release_after_lunch_tin_roll_call
         label: Pull the release after the roster clocks everyone out
@@ -5262,8 +5271,10 @@ scenes:
       latch clicks each passenger into the rain-bright morning: child, newspaper
       woman, conductor, Mara, then himself last because someone still has to
       make sure the shift is over. He steps down after the others with the tin
-      open in both hands, no longer a counter and no longer counted. It holds
-      only steam and daylight, and the line has nothing left to keep.
+      open in both hands, no longer a counter and no longer counted. The roster
+      inside has become a row of clocked-out names, and the tin holds only
+      steam, daylight, and the quiet proof that everyone got a break at last.
+      The line has nothing left to keep.
     choices: []
 
   passenger_conductor_true_ending:
