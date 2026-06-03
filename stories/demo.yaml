@@ -1526,7 +1526,7 @@ scenes:
             heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
         label: Follow the newspaper fold in the opened door-echoes
-        to: passenger_newspaper_transfer
+        to: opened_manifest_echoes
         requires:
           all:
             - notFlag: heard_passenger_echoes
@@ -1536,8 +1536,7 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
-            heard_newspaper_memory: true
-            studied_newspaper_transfer: true
+            followed_opened_newspaper_fold: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding
@@ -1875,6 +1874,8 @@ scenes:
       - id: board_with_listened_manifest_echoes
         label: Board with the familiar echoes leading the way
         to: passenger_echoed_boarding
+        requires:
+          notFlag: followed_opened_newspaper_fold
         effects:
           set:
             echoed_manifest_boarded: true
@@ -1890,6 +1891,8 @@ scenes:
       - id: return_from_opened_manifest_echoes
         label: Return to the opened manifest doors
         to: passengers_released
+        requires:
+          notFlag: followed_opened_newspaper_fold
 
   passenger_manifest_count:
     routeImportance: optional

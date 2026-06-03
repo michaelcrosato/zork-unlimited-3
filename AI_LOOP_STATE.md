@@ -1,3 +1,67 @@
+# Cycle 22 Opened Manifest Echo Visibility
+
+- Date: 2026-06-03
+- Main objective: Restore normal-play discovery for `opened_manifest_echoes`
+  without undoing Cycle 21's opened-manifest newspaper shortcut payoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 22 evidence. Health, MCP
+  validation, and coverage were green, but the 100-run random sample missed
+  `opened_manifest_echoes` while still finding the newspaper and
+  reviewed-count payoffs. Coverage proves the scene remains reachable; normal
+  random play is simply more likely to take the direct payoff choices around
+  it.
+- Planned work:
+  - Retarget the hub-level `follow_opened_manifest_echoes` choice through the
+    `opened_manifest_echoes` scene instead of skipping directly to
+    `passenger_newspaper_transfer`.
+  - Preserve the existing local newspaper-fold choice from
+    `opened_manifest_echoes` to the restored transfer column.
+  - Preserve the direct explicit listening route and echoed-passenger boarding
+    payoff.
+  - Update focused story-path regressions.
+  - Run focused tests, full health, and an actual playthrough through the
+    retargeted route.
+- Risks:
+  - Adding one beat back into the newspaper shortcut may slightly reduce random
+    completion of `passenger_newspaper_transfer`, but the payoff remains a
+    visible first-level choice inside `opened_manifest_echoes`.
+  - Hub choice ordering is unchanged, so this improves scene exposure without
+    increasing branch count.
+- Status:
+  - Completed.
+  - Retargeted `follow_opened_manifest_echoes` so the opened-manifest
+    newspaper-fold shortcut now visits `opened_manifest_echoes` before moving
+    into `passenger_newspaper_transfer`.
+  - Added the `followed_opened_newspaper_fold` state marker so that this
+    specific shortcut presents the transfer as the only next step, while the
+    separate `listen_to_opened_manifest_echoes` route still preserves the
+    flexible echo boarding, newspaper, and return choices.
+  - Updated focused story-path regressions for the retargeted shortcut and the
+    preserved explicit listen/echo payoff route.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest players|manifest margin notes|manifest-specific platform beat"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes.
+  - Deterministic 100-run random playtest now visits both
+    `opened_manifest_echoes` and `passenger_newspaper_transfer`, with zero
+    unvisited scenes and three `passenger_newspaper_true_ending` outcomes.
+- Playtest feedback:
+  - Actual CLI play followed the retargeted opened-manifest newspaper-fold
+    route, stopped at `opened_manifest_echoes`, continued through
+    `passenger_newspaper_transfer`, and ended at
+    `passenger_newspaper_true_ending` with score 299 and no objectives.
+  - The route now reads as a better paced sensory beat: the player hears the
+    opened passengers first, then follows the newspaper fold into the restored
+    transfer payoff.
+  - No invalid choices, dangling objectives, unreachable scenes, or health
+    regressions appeared.
+- Next step:
+  - Watch the next random/blind samples for whether the one-step newspaper
+    funnel reduces echoed-passenger route variety. If it does, tune local
+    labels or route weighting before adding new branches.
+
 # Cycle 21 Opened Manifest Shortcut Payoffs
 
 - Date: 2026-06-03

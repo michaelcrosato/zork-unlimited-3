@@ -3739,6 +3739,19 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "follow_opened_manifest_echoes");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.text).toContain("newspaper fold");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.followed_opened_newspaper_fold).toBe(true);
+    expect(observation.state.flags.heard_newspaper_memory).toBeUndefined();
+    expect(observation.state.flags.studied_newspaper_transfer).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_newspaper_fold_from_opened_echoes"
+    ]);
+
+    state = choose(story, state, "follow_newspaper_fold_from_opened_echoes");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_newspaper_transfer");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
