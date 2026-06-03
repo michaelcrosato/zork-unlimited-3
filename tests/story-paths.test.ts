@@ -4158,14 +4158,25 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.scene.text).toContain("emergency release waits under the first seat");
-    expect(observation.scene.text).toContain("get them aboard and pull");
+    expect(observation.scene.text).toContain("The direct path is already plain");
+    expect(observation.scene.text).toContain(
+      "get them aboard, reach under the first seat, and pull"
+    );
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "make_room_for_passengers_in_third_car"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain("hold_third_car_threshold");
-    expect(observation.choices.at(-1)?.id).toBe("board_third_car_with_passengers");
-    expect(observation.choices.at(-1)?.label).toBe(
+    const directReleaseIndex = observation.choices.findIndex(
+      (choice) => choice.id === "board_third_car_with_passengers"
+    );
+    const makeRoomIndex = observation.choices.findIndex(
+      (choice) => choice.id === "make_room_for_passengers_in_third_car"
+    );
+
+    expect(directReleaseIndex).toBeGreaterThan(-1);
+    expect(directReleaseIndex).toBeLessThan(makeRoomIndex);
+    expect(observation.choices[directReleaseIndex]?.label).toBe(
       "Board the third car and pull the emergency release"
     );
     expect(
@@ -4729,10 +4740,16 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_platform");
-    expect(observation.choices.map((choice) => choice.id)).toContain("board_with_echoed_manifest");
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "board_third_car_with_passengers"
+    const passengerPlatformChoiceIds = observation.choices.map((choice) => choice.id);
+    const echoedBoardingIndex = passengerPlatformChoiceIds.indexOf("board_with_echoed_manifest");
+    expect(echoedBoardingIndex).toBeGreaterThan(-1);
+    expect(echoedBoardingIndex).toBeLessThan(
+      passengerPlatformChoiceIds.indexOf("ask_mara_to_sign_off_from_platform")
     );
+    expect(observation.choices[echoedBoardingIndex]?.label).toBe(
+      "Board with the door echoes and reach the emergency release"
+    );
+    expect(passengerPlatformChoiceIds).not.toContain("board_third_car_with_passengers");
 
     state = choose(story, state, "board_with_echoed_manifest");
     observation = observe(story, state);
@@ -8039,14 +8056,17 @@ describe("demo story critical paths", () => {
 
     expect(passengerPlatformChoiceIds).toContain("make_room_for_passengers_in_third_car");
     expect(passengerPlatformChoiceIds).toContain("hold_third_car_threshold");
-    expect(passengerPlatformChoiceIds.at(-1)).toBe("board_third_car_with_passengers");
-    expect(passengerPlatformChoiceIds.slice(0, 6)).toEqual([
+    expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
+      passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
+    );
+    expect(passengerPlatformChoiceIds.slice(0, 7)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "help_passengers_gather"
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
     ]);
 
     state = choose(story, state, "return_lost_mitten");
@@ -10867,14 +10887,17 @@ describe("demo story critical paths", () => {
 
     expect(manifestPlatformChoiceIds).toContain("make_room_for_passengers_in_third_car");
     expect(manifestPlatformChoiceIds).toContain("hold_third_car_threshold");
-    expect(manifestPlatformChoiceIds.at(-1)).toBe("board_third_car_with_passengers");
-    expect(manifestPlatformChoiceIds.slice(0, 6)).toEqual([
+    expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
+      manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
+    );
+    expect(manifestPlatformChoiceIds.slice(0, 7)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "help_passengers_gather"
+      "help_passengers_gather",
+      "board_third_car_with_passengers"
     ]);
 
     state = choose(story, state, "help_passengers_gather");

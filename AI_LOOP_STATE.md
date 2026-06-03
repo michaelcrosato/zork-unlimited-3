@@ -1,3 +1,66 @@
+# Cycle 40 Passenger Platform Action Order
+
+- Date: 2026-06-03
+- Main objective: Reduce late passenger-platform hub scanning by surfacing the
+  direct emergency-release action earlier in the menu.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and Cycle 40 loop evidence says the
+  adaptive exploratory route stopped before the true ending with likely
+  repeated hub-return pressure. The passenger platform has many optional
+  branches, so normal players need the main release action to stay visible
+  while they decide how much passenger polish to pursue.
+- Planned work:
+  - Revise `passenger_platform` prose to explicitly call the direct path plain.
+  - Move `board_third_car_with_passengers` above lower-priority observation and
+    sign-off branches while keeping newspaper, lunch-tin, keepsake, and gather
+    choices available first.
+  - Update focused regression assertions for the new action order and direct
+    path wording.
+  - Run focused tests, full health, and an actual playable route through the
+    direct passenger release.
+- Risks:
+  - Avoid removing optional passenger branches; this is a menu-priority change,
+    not a topology change.
+  - Choice-order changes can break tests that intentionally encode UX order.
+- Status:
+  - Completed.
+  - Revised `passenger_platform` prose so the emergency release path is named
+    plainly in the scene text.
+  - Moved `board_third_car_with_passengers` above lower-priority observation
+    and sign-off choices while preserving optional passenger branches.
+  - Revised the echoed-manifest platform boarding label so players who already
+    listened to passenger door echoes still see a release-directed boarding
+    action.
+  - Added regression assertions for direct release wording, direct action
+    order, echoed boarding order, and echoed boarding label clarity.
+  - Added CLI argument-validation regressions for invalid playtest counts and
+    missing option values.
+  - Updated README setup/current-story notes to match Node 22 CI and current
+    validation stats.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "passenger echoes before opening"`,
+    `npm test -- tests/story-paths.test.ts -t "direct passenger manifest release"`,
+    and `npm test -- tests/cli.test.ts`.
+  - Final `npm run health` passed: format check, TypeScript, 241 tests,
+    validation, and coverage playtest.
+  - `npm run ai:cycle` passed and wrote ignored reports under `ai-runs/`.
+- Playtest feedback:
+  - Actual MCP play followed lantern -> platform preparation -> map/fuse/badge
+    -> lit platform -> clock token -> signal booth -> passenger manifest ->
+    passenger echoes -> clear manifest and Mara -> passenger platform -> echoed
+    boarding -> echoed manifest intercom -> release.
+  - The first MCP pass exposed a useful edge case: after hearing passenger
+    echoes, the plain `board_third_car_with_passengers` action is gated off, so
+    the echoed boarding action needed the same release-forward clarity.
+  - After the label fix, the route reached `passenger_echoed_true_ending` with
+    score 286, no objectives, and no dead ends.
+  - Remaining friction: the locker briefly funnels players through taking
+    Mara's badge before backing out after taking the fuse. It is not blocking,
+    but a future cycle could add an earlier close/return choice if blind
+    playtests show repeated frustration there.
+- Next step:
+  - Commit and push the verified milestone.
+
 # Cycle 39 Newspaper Route Payoff
 
 - Date: 2026-06-03
@@ -28,36 +91,39 @@
     healthy.
 - Status:
   - Completed.
-  - Revised `passenger_newspaper_memory` so the newspaper becomes a shared
-    timetable passengers can read to one another.
-  - Revised `passenger_newspaper_transfer`, `passenger_newspaper_intercom`, and
-    `passenger_newspaper_roll_call` so the restored transfer column gives
-    passengers a direction toward boarding and a shared platform to leave from.
+  - Revised `passenger_newspaper_memory` so the newspaper stops being only
+    proof of delay and becomes a shared timetable passengers can read to one
+    another.
+  - Revised `passenger_newspaper_transfer` so each spoken street gives nearby
+    passengers a destination and makes boarding the third car feel like making
+    a connection.
+  - Revised `passenger_newspaper_intercom` and
+    `passenger_newspaper_roll_call` so transfer names move down the aisle like
+    platform calls and turn the column into a shared platform.
   - Revised `passenger_newspaper_true_ending` so the child, lunch-tin worker,
-    and conductor all help keep the restored route.
-  - Added focused story-path assertions for the strengthened newspaper route
+    conductor, and newspaper woman all use the restored schedule together.
+  - Added focused story-path assertions for the strengthened newspaper
     imagery.
-  - Raised the slow coverage-strategy test timeout from 90s to 120s after an
-    isolated run passed in about 79s but full health exceeded the old timeout.
-  - Focused regressions passed:
-    `npm test -- tests/story-paths.test.ts -t "newspaper memory"` and
-    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"`.
-  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
-    and coverage playtest.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "newspaper"`.
+  - `npm run health` passed on rerun: format check, TypeScript, 238 tests,
+    validation, and coverage playtest. The first health attempt hit the
+    existing 90s Vitest timeout on the coverage discovery test; the isolated
+    coverage test passed in 69s, and the full rerun passed.
   - Validation still reports 151 reachable scenes and 29 endings.
   - Coverage playtest still visits all scenes with zero unvisited scenes and
     zero unfinished runs.
 - Playtest feedback:
   - Actual CLI play followed `ask_newspaper_woman_about_stop` ->
     `study_newspaper_transfer_column` ->
-    `carry_newspaper_transfer_to_third_car` ->
-    `hear_final_newspaper_roll_call` ->
+    `read_restored_transfer_into_roll_call` ->
     `pull_release_after_newspaper_roll_call`, ending at
-    `passenger_newspaper_true_ending` with score 310 and no objectives.
-  - The revised route now reads as a shared schedule: the newspaper gives
-    passengers destinations beyond the tunnel, the intercom carries those names
-    as platform calls, and the ending shows multiple passengers keeping the
-    route together.
+    `passenger_newspaper_true_ending` with score 305 and no objectives.
+  - The revised route now reads as a coherent group-release beat: the newspaper
+    restores future destinations, gives passengers reasons to board together,
+    and pays off with several passengers keeping the schedule in morning.
+  - The branch stayed distinct from conductor and lunch-tin routes by centering
+    transfer columns, stops, platform calls, and shared reading.
   - No route friction, missing objectives, or dead ends appeared on the played
     path.
 - Next step:

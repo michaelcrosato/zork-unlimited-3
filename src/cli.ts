@@ -93,8 +93,8 @@ async function transcript(args: string[]): Promise<void> {
 
 async function playtest(args: string[]): Promise<void> {
   const storyPath = required(args[0], "story path");
-  const runs = Number(option(args, "--runs") ?? "20");
-  const maxSteps = Number(option(args, "--max-steps") ?? "60");
+  const runs = positiveIntegerOption(args, "--runs", 20);
+  const maxSteps = positiveIntegerOption(args, "--max-steps", 60);
   const strategy = option(args, "--strategy") ?? "random";
   const story = await loadStory(storyPath);
   if (strategy !== "random" && strategy !== "coverage" && strategy !== "goal") {
@@ -119,11 +119,28 @@ function required(value: string | undefined, name: string): string {
 
 function option(args: string[], name: string): string | undefined {
   const index = args.indexOf(name);
-  return index >= 0 ? args[index + 1] : undefined;
+  if (index < 0) return undefined;
+
+  const value = args[index + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error(`Missing value for ${name}`);
+  }
+  return value;
 }
 
 function hasFlag(args: string[], name: string): boolean {
   return args.includes(name);
+}
+
+function positiveIntegerOption(args: string[], name: string, defaultValue: number): number {
+  const raw = option(args, name);
+  if (raw === undefined) return defaultValue;
+
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    throw new Error(`${name} must be a positive integer`);
+  }
+  return parsed;
 }
 
 function usage(): void {

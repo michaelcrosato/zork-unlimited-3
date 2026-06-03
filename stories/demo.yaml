@@ -2350,8 +2350,9 @@ scenes:
       destination sign. They look to Mara's speaker, then to the third-car
       threshold where the emergency release waits under the first seat.
       Questions, keepsakes, and careful counts can steady them, but every
-      answer is leaning toward the same next act: get them aboard and pull
-      before the tunnel teaches the sign to say HOME again.
+      answer is leaning toward the same next act. The direct path is already
+      plain: get them aboard, reach under the first seat, and pull before the
+      tunnel teaches the sign to say HOME again.
     choices:
       - id: ask_newspaper_woman_about_stop
         label: Ask the newspaper woman which stop she was trying to reach
@@ -2419,8 +2420,16 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: board_third_car_with_passengers
+        label: Board the third car and pull the emergency release
+        to: train_car
+        requires:
+          any:
+            - notFlag: heard_passenger_echoes
+            - flag: heard_passenger_answers
+            - flag: helped_passengers_gather
       - id: board_with_echoed_manifest
-        label: Board as the door echoes follow you
+        label: Board with the door echoes and reach the emergency release
         to: passenger_echoed_boarding
         requires:
           all:
@@ -2521,14 +2530,6 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
-      - id: board_third_car_with_passengers
-        label: Board the third car and pull the emergency release
-        to: train_car
-        requires:
-          any:
-            - notFlag: heard_passenger_echoes
-            - flag: heard_passenger_answers
-            - flag: helped_passengers_gather
 
   passenger_echoed_boarding:
     routeImportance: optional

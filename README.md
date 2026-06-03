@@ -6,7 +6,7 @@ A minimal choose-your-own-adventure engine built so an LLM can inspect, play, va
 
 - MCP-first autonomous maintenance loop with report, prompt, verification,
   commit, and push automation.
-- Haunted transit interactive-fiction story with 117 reachable scenes and 26
+- Haunted transit interactive-fiction story with 151 reachable scenes and 29
   endings.
 - Open-ended point-award score model exposed through observations, CLI, MCP,
   and playtest summaries; the UI shows points earned without a fixed maximum.
@@ -34,6 +34,9 @@ npm run cyoa -- transcript --save saves/run.json
 npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json
 npm run cyoa -- playtest stories/demo.yaml --runs 10 --strategy goal --summary --json
 ```
+
+Requires Node.js 22 or newer. CI installs dependencies with `npm ci`; local
+development can use `npm install`.
 
 ## AI Automation
 
@@ -171,6 +174,10 @@ Available tools:
 5. Use `choose <choice_id>` to advance.
 6. Read `transcript` output for playtest feedback.
 7. Run `playtest` to sample paths automatically and inspect ending/scene coverage.
+
+`playtest` accepts positive integers for `--runs` and `--max-steps`; invalid or
+missing option values fail fast so automation does not silently run with bad
+inputs.
 
 Raw observations include a derived `objectives` array for trusted tools.
 Player-facing observations use `observePlayer(story, state, { includeObjectives })`
