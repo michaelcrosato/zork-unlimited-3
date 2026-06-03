@@ -2658,14 +2658,15 @@ scenes:
     routeImportance: optional
     text: >
       The woman smooths the wet newspaper against her sleeve until the ink
-      remembers a date. "Warden Street, then morning transfer," she says,
-      pointing to a column where every arrival after 1:13 has been left blank.
-      "I kept reading it because the paper was the only thing that still
-      believed trains went anywhere." A child traces one empty row with a
+      remembers a date, then a route. "Warden Street, then morning transfer,"
+      she says, pointing to a column where every arrival after 1:13 has been
+      left blank. "I kept reading it because the paper was the only thing that
+      still believed trains went anywhere." A child traces one empty row with a
       mittened finger, then another passenger speaks the street he meant to
       reach after Warden. Behind her, the old conductor leans close enough to
       see the schedule and nods once, as if the route has started existing
-      again in more than one voice.
+      again in more than one voice. The paper stops being yesterday's proof of
+      delay and becomes a timetable the passengers can read to one another.
     choices:
       - id: ask_conductor_after_newspaper_memory
         label: Let the old conductor call the final platform clear
@@ -2734,9 +2735,11 @@ scenes:
       smaller streets no one has spoken aloud since the signal fire. The old
       conductor rests two fingers beside the column and says, "That is enough
       route for a clear signal." The passengers pass the paper hand to hand,
-      checking the next stop instead of the last mistake. For the first time,
-      the paper is not proof they were delayed. It is proof they still get to
-      arrive.
+      checking the next stop instead of the last mistake. Each spoken street
+      gives the person beside them a place to aim for, so boarding the third
+      car starts to feel less like surrender and more like making a connection.
+      For the first time, the paper is not proof they were delayed. It is proof
+      they still get to arrive.
     choices:
       - id: ask_conductor_to_punch_restored_transfer
         label: Ask the conductor to punch the restored transfer for morning
@@ -4690,8 +4693,10 @@ scenes:
       time beside her. Mara lets the schedule carry through the speaker.
       "Good," she says. "Let the line hear them naming where they are going."
       The passengers do not answer with the station they lost. They answer
-      with the streets waiting after it, and every named street pulls the third
-      car one stop closer to morning.
+      with the streets waiting after it. The names travel down the aisle like
+      platform calls, giving the child, the worker, and the conductor a reason
+      to move in the same direction. Every named street pulls the third car one
+      stop closer to morning.
     choices:
       - id: hear_final_newspaper_roll_call
         label: Hear the transfer column become the final roll call
@@ -4713,9 +4718,9 @@ scenes:
       old conductor calls clear after each stop, passengers repeat the names
       of streets they thought the line had erased, and the paper no longer
       sounds like yesterday's news. It sounds like directions. By the time
-      the last stop answers, the transfer column has become a platform they can
-      leave from: Warden Street is only the first line on the route, not the
-      place where the route ends.
+      the last stop answers, the transfer column has become a shared platform
+      they can leave from: Warden Street is only the first line on the route,
+      not the place where the route ends.
     choices:
       - id: pull_release_after_newspaper_roll_call
         label: Pull the release after every transfer is named
@@ -5353,10 +5358,12 @@ scenes:
       rain-bright morning. Warden Street becomes a place behind them, not a
       trap beneath their feet. The old conductor reads the final stop aloud,
       Mara lets the speaker go quiet, and the woman keeps the paper unfolded
-      until the last passenger has found a street beyond the line. Only then
-      does she fold tomorrow's route into her coat and step through. The ink
-      does not fade when the tunnel lets go. It dries in the open air like a
-      schedule that can finally be kept.
+      until the last passenger has found a street beyond the line. The child
+      points to one new address, the lunch-tin worker marks another with a wet
+      thumb, and the old conductor calls both stops clear. Only then does she
+      fold tomorrow's route into her coat and step through. The ink does not
+      fade when the tunnel lets go. It dries in the open air like a schedule
+      that can finally be kept by everyone who read it together.
     choices: []
 
   passenger_mitten_true_ending:

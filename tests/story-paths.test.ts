@@ -1667,6 +1667,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_memory");
     expect(observation.scene.text).toContain("Warden Street, then morning transfer");
     expect(observation.scene.text).toContain("the route has started existing again");
+    expect(observation.scene.text).toContain("a timetable the passengers can read to one another");
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_lost_mitten_after_newspaper_memory",
@@ -1689,6 +1690,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_transfer");
     expect(observation.scene.text).toContain("The blank transfer column is not blank anymore");
     expect(observation.scene.text).toContain("enough route for a clear signal");
+    expect(observation.scene.text).toContain("making a connection");
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_conductor_to_punch_restored_transfer",
@@ -1755,6 +1757,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_intercom");
     expect(observation.scene.text).toContain("becomes the crowd's timetable");
     expect(observation.scene.text).toContain("Warden Street, then morning transfer");
+    expect(observation.scene.text).toContain("The names travel down the aisle like platform calls");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -1775,6 +1778,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
     expect(observation.scene.text).toContain("turned the blank transfer column into a route");
     expect(observation.scene.text).toContain("It sounds like directions");
+    expect(observation.scene.text).toContain("shared platform");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_newspaper_roll_call"
     ]);
@@ -1796,6 +1800,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain(
       "keeps the paper unfolded until the last passenger has found a street beyond the line"
     );
+    expect(observation.scene.text).toContain("finally be kept by everyone who read it together");
     expectIdealScore(observation.score);
 
     state = initialState(story);
@@ -5561,7 +5566,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
-    expect(observation.scene.text).toContain("a platform they can leave from");
+    expect(observation.scene.text).toContain("a shared platform they can leave from");
     expect(observation.scene.text).toContain("not the place where the route ends");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
 

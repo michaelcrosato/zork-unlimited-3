@@ -1,3 +1,70 @@
+# Cycle 39 Newspaper Route Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the frequent newspaper passenger ending without
+  changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and Cycle 39 random/coverage evidence
+  shows `passenger_newspaper_true_ending` as a normal passenger route. After
+  Cycle 38 clarified the late passenger-platform release signpost, the next
+  useful improvement is making a frequent optional route's emotional payoff
+  more explicit.
+- Planned work:
+  - Revise `passenger_newspaper_memory` so the newspaper becomes a shared
+    timetable, not only a personal clue.
+  - Revise `passenger_newspaper_transfer`, `passenger_newspaper_intercom`, and
+    `passenger_newspaper_roll_call` so the transfer column actively gathers
+    passengers toward the release.
+  - Revise `passenger_newspaper_true_ending` so the payoff shows multiple
+    passengers using the restored schedule together.
+  - Add focused regression assertions for the strengthened newspaper imagery.
+  - Run focused tests, full health, and an actual playable route through the
+    newspaper ending.
+- Risks:
+  - Keep the branch distinct from generic gathered-passenger, conductor, and
+    keepsake routes by centering transfer columns, stops, schedules, and shared
+    reading.
+  - Avoid route/flag changes because current validation and coverage are
+    healthy.
+- Status:
+  - Completed.
+  - Revised `passenger_newspaper_memory` so the newspaper becomes a shared
+    timetable passengers can read to one another.
+  - Revised `passenger_newspaper_transfer`, `passenger_newspaper_intercom`, and
+    `passenger_newspaper_roll_call` so the restored transfer column gives
+    passengers a direction toward boarding and a shared platform to leave from.
+  - Revised `passenger_newspaper_true_ending` so the child, lunch-tin worker,
+    and conductor all help keep the restored route.
+  - Added focused story-path assertions for the strengthened newspaper route
+    imagery.
+  - Raised the slow coverage-strategy test timeout from 90s to 120s after an
+    isolated run passed in about 79s but full health exceeded the old timeout.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "newspaper memory"` and
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `ask_newspaper_woman_about_stop` ->
+    `study_newspaper_transfer_column` ->
+    `carry_newspaper_transfer_to_third_car` ->
+    `hear_final_newspaper_roll_call` ->
+    `pull_release_after_newspaper_roll_call`, ending at
+    `passenger_newspaper_true_ending` with score 310 and no objectives.
+  - The revised route now reads as a shared schedule: the newspaper gives
+    passengers destinations beyond the tunnel, the intercom carries those names
+    as platform calls, and the ending shows multiple passengers keeping the
+    route together.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    focused payoff passes on frequent passenger routes or improve transcript
+    critique quality.
+
 # Cycle 38 Passenger Platform Release Signpost
 
 - Date: 2026-06-03
