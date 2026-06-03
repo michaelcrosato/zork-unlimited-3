@@ -9658,8 +9658,34 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_after_escape_glance",
-      "leave_after_escape_glance"
+      "leave_warned_after_escape_glance"
     ]);
+
+    state = choose(story, state, "leave_warned_after_escape_glance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("warned_lit_escape_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("restoring light to Platform 13");
+    expect(observation.scene.text).toContain("a route you almost finished");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "flee_platform",
+      "listen_at_stairwell",
+      "look_back_after_stairwell_call"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
 
     state = choose(story, state, "return_after_escape_glance");
     observation = observe(story, state);

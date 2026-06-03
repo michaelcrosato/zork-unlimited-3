@@ -1013,9 +1013,16 @@ scenes:
       - id: return_after_escape_glance
         label: Return to the lit platform with the badge proof in mind
         to: lit_platform
+      - id: leave_warned_after_escape_glance
+        label: Leave after hearing Mara and seeing the route you almost finished
+        to: warned_lit_escape_ending
+        requires:
+          flag: heard_escape_call
       - id: leave_after_escape_glance
         label: Leave after one last look at Platform 13
         to: escape_ending
+        requires:
+          notFlag: heard_escape_call
 
   mara_stairwell_call:
     routeImportance: optional

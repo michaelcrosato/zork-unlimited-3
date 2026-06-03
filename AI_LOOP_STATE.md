@@ -1,3 +1,54 @@
+# Cycle 45 Warned Lit Glance Escape
+
+- Date: 2026-06-03
+- Main objective: Make `warned_lit_escape_ending` more discoverable and more
+  narratively consistent after players hear Mara, look back at Platform 13, and
+  still choose to leave.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  current health evidence is green, and Cycle 5 random evidence still missed
+  `warned_lit_escape_ending` in the 100-run sample. The recent stairwell glance
+  route let players hear Mara and inspect the lit platform, but leaving from
+  that informed glance still fell through to the generic escape ending.
+- Planned work:
+  - Split the lit platform glance escape choice by `heard_escape_call`.
+  - Preserve generic `escape_ending` when players look back before hearing
+    Mara.
+  - Route players who heard Mara and then leave after the glance to
+    `warned_lit_escape_ending`.
+  - Update focused escape regressions.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new warned lit glance route.
+- Risks:
+  - The optional glance scene is shared by direct and stairwell routes, so the
+    generic escape ending must remain reachable for players who have not heard
+    Mara.
+  - Choice-order assertions intentionally encode player-facing UX.
+- Status:
+  - Completed.
+  - Added `leave_warned_after_escape_glance`, gated by `heard_escape_call`, from
+    `escape_platform_glance` to `warned_lit_escape_ending`.
+  - Gated the existing `leave_after_escape_glance` choice to players who have
+    not heard Mara, preserving the generic escape route.
+  - Updated focused escape regressions for the direct generic escape and the
+    listen-then-look-back warned lit escape.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "escape"`.
+  - `npm run health` passed: format check, TypeScript, 241 tests, validation,
+    and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed platform lighting -> flee -> listen to Mara ->
+    look back at Platform 13 -> leave after hearing Mara and seeing the route,
+    ending at `warned_lit_escape_ending` with score 100 and no objectives.
+  - The branch now respects player knowledge: once Mara has named the stopped
+    clock and the player has seen the lit route, leaving pays off in the
+    specific warned lit ending instead of the generic escape.
+  - Direct look-back escape before hearing Mara still reaches `escape_ending`,
+    so the harsher informed ending is not over-applied.
+- Next step:
+  - Watch the next random/blind-play window for whether warned lit escape still
+    misses normal play; if it does, consider choice-label clarity around
+    `look_back_after_stairwell_call` instead of adding more routes.
+
 # Cycle 44 HOME Dispatch Rescue Priority
 
 - Date: 2026-06-03
