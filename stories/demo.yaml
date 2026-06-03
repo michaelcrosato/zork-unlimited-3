@@ -1574,6 +1574,17 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: listen_to_opened_threshold_from_manifest
+        label: Listen as Mara holds the opened threshold steady
+        to: passenger_threshold_intercom
+        requires:
+          all:
+            - notFlag: held_passenger_threshold
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            held_passenger_threshold: true
+            heard_mara_goodbye: true
       - id: follow_lunch_tin_latch
         label: Follow the lunch-tin latch toward the third car
         to: passenger_farewell

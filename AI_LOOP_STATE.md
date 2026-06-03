@@ -1,3 +1,51 @@
+# Cycle 35 Promoted Opened-Threshold Intercom
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest threshold intercom easier to
+  discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence reached `passenger_threshold_boarding`
+  but missed `passenger_threshold_intercom`, while coverage proved the intercom
+  reachable. The opened-manifest hub already foregrounds the third-car
+  threshold, so directly offering Mara's threshold listen beat should reduce
+  normal-player skips without removing the older boarding route.
+- Planned work:
+  - Add a direct opened-manifest choice that listens to Mara hold the threshold
+    steady.
+  - Route it to the existing `passenger_threshold_intercom` scene and preserve
+    the existing `passenger_threshold_boarding` route.
+  - Set the same threshold/goodbye state expected by the older path.
+  - Update focused regressions, run health, and actually play the promoted
+    threshold route.
+- Risks:
+  - The opened-manifest hub remains dense; this promotes one missed payoff
+    without reducing branch volume.
+  - Directly entering the intercom skips the physical threshold boarding text,
+    so watch blind feedback for whether players still understand why the
+    threshold matters.
+- Status:
+  - Completed.
+  - Added `listen_to_opened_threshold_from_manifest`, a direct hub choice that
+    routes opened-manifest players into `passenger_threshold_intercom`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "threshold beat|opened manifest"`.
+  - `npm run health` passed: format check, TypeScript, 263 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> listened as Mara held the
+    opened threshold steady -> pulled the release while the threshold stayed
+    open.
+  - The route ended at `passenger_true_ending` with score 270 and no
+    objectives.
+  - The promoted choice reads coherently because `passengers_released` already
+    names the threshold and Mara's steady line; the intercom turns that image
+    into proof that the passengers can leave as a moving crowd.
+- Next step:
+  - Watch the next random/blind evidence for whether remaining normal-play
+    misses concentrate on `lost_after_dispatch_ending`,
+    `mara_manifest_handoff`, `mara_manifest_handoff_intercom`, or
+    `passenger_manifest_handoff_true_ending`.
+
 # Cycle 34 Promoted Opened-Manifest Lunch-Tin Roll Call
 
 - Date: 2026-06-03
