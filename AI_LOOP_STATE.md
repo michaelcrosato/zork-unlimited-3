@@ -1,3 +1,51 @@
+# Cycle 32 Promoted Completed Opened-Count Chorus
+
+- Date: 2026-06-03
+- Main objective: Make the completed opened-manifest count chorus easier to
+  discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed `passenger_counted_chorus` and
+  `passenger_counted_true_ending` while coverage proved both reachable. The
+  opened-manifest hub already foregrounds Mara's count, but the passenger-finished
+  chorus action sat several branches after the count review.
+- Planned work:
+  - Move `board_with_completed_opened_count` immediately after
+    `review_open_manifest_count` in the opened-manifest hub.
+  - Preserve the direct reviewed-count intercom, conductor proof, transfer,
+    blank-row, and release routes.
+  - Update focused ordering/path regressions, run health, and actually play the
+    promoted completed-count route.
+- Risks:
+  - The opened-manifest hub remains dense; this improves adjacency for count
+    players but does not remove broader branch competition.
+  - Promoting the chorus may slightly shift random endings from
+    `passenger_reviewed_count_true_ending` toward
+    `passenger_counted_true_ending`.
+- Status:
+  - Completed.
+  - Moved `board_with_completed_opened_count` directly after
+    `review_open_manifest_count`, keeping the passenger-finished count adjacent
+    to the hub's explicit count review.
+  - Preserved the existing reviewed-count intercom, conductor proof, transfer,
+    blank-row, and direct-release branches.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "completed opened count|completed count|reviewed manifest count|manifest-specific platform beat"`.
+  - `npm run health` passed: format check, TypeScript, 263 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> board with passengers finishing
+    Mara's opened count together -> pull release after the counted chorus.
+  - The route ended at `passenger_counted_true_ending` with score 273 and no
+    objectives.
+  - The sequence reads coherently because `passengers_released` already names
+    passengers answering Mara's count; the promoted choice now immediately pays
+    that image off before the player has to scan through conductor and transfer
+    branches.
+- Next step:
+  - Watch the next random/blind evidence for remaining normal-play misses,
+    especially `lost_after_dispatch_ending`, `opened_manifest_echoes`,
+    `passenger_lunch_tin_roll_call`, and `passenger_newspaper_transfer`.
+
 # Cycle 31 Promoted Opened-Manifest Door-Echo Check
 
 - Date: 2026-06-03

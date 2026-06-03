@@ -5623,33 +5623,33 @@ describe("demo story critical paths", () => {
     expect(observation.choices[13]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[14]).toBe("board_with_opened_manifest_reviewed_count");
+    expect(choiceIds[14]).toBe("board_with_completed_opened_count");
     expect(observation.choices[14]?.label).toBe(
+      "Board with the passengers finishing Mara's opened count together"
+    );
+    expect(choiceIds[15]).toBe("board_with_opened_manifest_reviewed_count");
+    expect(observation.choices[15]?.label).toBe(
       "Board with Mara's reviewed count already on the speaker"
     );
-    expect(choiceIds[15]).toBe("ask_conductor_to_read_opened_count");
-    expect(observation.choices[15]?.label).toBe(
+    expect(choiceIds[16]).toBe("ask_conductor_to_read_opened_count");
+    expect(observation.choices[16]?.label).toBe(
       "Ask the conductor to read Mara's opened count clear"
     );
-    expect(choiceIds[16]).toBe("ask_conductor_to_punch_opened_transfer");
-    expect(observation.choices[16]?.label).toBe(
+    expect(choiceIds[17]).toBe("ask_conductor_to_punch_opened_transfer");
+    expect(observation.choices[17]?.label).toBe(
       "Ask the conductor to punch the opened manifest transfer"
     );
-    expect(choiceIds[17]).toBe("pass_opened_transfer_to_mara");
-    expect(observation.choices[17]?.label).toBe(
+    expect(choiceIds[18]).toBe("pass_opened_transfer_to_mara");
+    expect(observation.choices[18]?.label).toBe(
       "Let the child carry the punched transfer to Mara's speaker"
     );
-    expect(choiceIds[18]).toBe("press_opened_transfer_to_speaker");
-    expect(observation.choices[18]?.label).toBe(
+    expect(choiceIds[19]).toBe("press_opened_transfer_to_speaker");
+    expect(observation.choices[19]?.label).toBe(
       "Press the opened manifest transfer to Mara's speaker grille"
     );
-    expect(choiceIds[19]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[19]?.label).toBe(
-      "Board as Mara's opened count finishes, then pull the release"
-    );
-    expect(choiceIds[20]).toBe("board_with_completed_opened_count");
+    expect(choiceIds[20]).toBe("let_opened_passengers_finish_count");
     expect(observation.choices[20]?.label).toBe(
-      "Board with the passengers finishing Mara's opened count together"
+      "Board as Mara's opened count finishes, then pull the release"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
@@ -11426,13 +11426,13 @@ describe("demo story critical paths", () => {
       "board_with_opened_manifest_echoes",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
+      "board_with_completed_opened_count",
       "board_with_opened_manifest_reviewed_count",
       "ask_conductor_to_read_opened_count",
       "ask_conductor_to_punch_opened_transfer",
       "pass_opened_transfer_to_mara",
       "press_opened_transfer_to_speaker",
       "let_opened_passengers_finish_count",
-      "board_with_completed_opened_count",
       "check_opened_manifest_blank_row",
       "match_opened_manifest_keepsakes",
       "check_opened_manifest_keepsakes",
