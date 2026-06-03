@@ -1,3 +1,50 @@
+# Cycle 41 Promoted Opened Manifest Mitten Memory
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_mitten_memory` easier to notice during
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed `passenger_mitten_memory` while
+  coverage proved it reachable. The opened-manifest hub already names the
+  child's damp mitten print in its first image, but the direct return beat was
+  buried behind multiple manifest-count and echo branches.
+- Planned work:
+  - Move `return_opened_manifest_mitten` into the early opened-manifest choice
+    cluster, directly after the morning-memory listening beat.
+  - Preserve the existing `passenger_mitten_memory`,
+    `passenger_mitten_intercom`, and `passenger_mitten_true_ending` route.
+  - Update the opened-manifest hub-order regression, run health, and actually
+    play the promoted mitten route.
+- Risks:
+  - This is a visibility/order improvement; random choice metrics may only
+    show the benefit over larger samples.
+  - The opened-manifest hub is still dense, so future blind feedback may call
+    for pruning or grouping rather than more promotion.
+- Status:
+  - Completed.
+  - Moved `return_opened_manifest_mitten` from the back half of the
+    `passengers_released` hub to the early opened-manifest cluster after
+    `listen_to_passenger_morning_chorus`.
+  - Updated opened-manifest order regressions and the direct returned-mitten
+    route tests.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|opened-manifest players return the lost mitten|returned-mitten route|opened manifest players"`.
+  - `npm run health` passed: format check, TypeScript, 266 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> returned the opened manifest's
+    lost mitten -> led the child and passengers to the third car -> pulled the
+    release.
+  - The route ended at `passenger_mitten_true_ending` with score 303 and no
+    objectives.
+  - The promoted choice now appears close to the hub's first mention of the
+    child's damp mitten print, so the keepsake beat reads like an immediate
+    follow-up rather than a buried optional variant.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`, `mara_manifest_handoff`, or
+    `passenger_counted_chorus`.
+
 # Cycle 40 Promoted Opened Manifest Count
 
 - Date: 2026-06-03
