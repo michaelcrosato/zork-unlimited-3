@@ -1637,6 +1637,18 @@ scenes:
           set:
             matched_manifest_keepsakes: true
             helped_passengers_gather: true
+      - id: check_opened_manifest_keepsakes
+        label: Check the opened manifest keepsakes before boarding
+        to: passenger_keepsake_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_matched_keepsakes
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            checked_matched_keepsakes: true
+            helped_passengers_gather: true
       - id: listen_to_passenger_morning_chorus
         label: Listen for what the opened passengers remember about morning
         to: passenger_morning_chorus

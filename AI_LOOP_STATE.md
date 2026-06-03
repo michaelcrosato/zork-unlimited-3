@@ -1,3 +1,51 @@
+# Cycle 19 Direct Keepsake Check
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_keepsake_check` easier to find from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed `passenger_keepsake_check`
+  while coverage proved it reachable. Normal opened-manifest players could
+  match keepsakes directly, but the verification beat required entering the
+  handoff subscene first.
+- Planned work:
+  - Add a direct opened-manifest hub choice into `passenger_keepsake_check`.
+  - Reuse the existing checked-keepsake speaker, boarding, roll-call, and true
+    ending routes.
+  - Update the opened-manifest hub order regression and add a focused
+    direct-route regression.
+  - Run focused tests, full health, and an actual route through the new bridge.
+- Risks:
+  - The opened-manifest hub is dense; the new label must read as the deliberate
+    verification route and not duplicate the broader keepsake matching option.
+  - The direct branch must set both matched and checked keepsake flags so
+    downstream text and requirements stay coherent.
+- Status:
+  - Completed.
+  - Added `check_opened_manifest_keepsakes` from `passengers_released` to
+    `passenger_keepsake_check`, setting `matched_manifest_keepsakes`,
+    `checked_matched_keepsakes`, and `helped_passengers_gather`.
+  - Updated the opened-manifest exact-order regression and added a focused
+    direct-route regression through checked keepsakes to
+    `passenger_keepsake_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "matched-keepsake check|manifest-specific platform"`.
+  - `npm run health` passed: format check, TypeScript, 248 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct keepsake check ->
+    checked keepsake boarding -> release, ending at
+    `passenger_keepsake_true_ending` with score 304 and no objectives.
+  - The new option reads as a deliberate audit beat before boarding, while the
+    existing broader keepsake matching option remains available beside it.
+  - The payoff stayed coherent because the checked route sets the same matched
+    and gathered-passenger state before rejoining the established boarding and
+    release path.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_keepsake_check` appears
+    in normal play. If it remains rare, prefer route-label/order tuning around
+    the keepsake cluster before adding another branch.
+
 # Cycle 18 Direct Completed Count Chorus
 
 - Date: 2026-06-03
