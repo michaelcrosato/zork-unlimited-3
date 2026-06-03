@@ -1,3 +1,56 @@
+# Cycle 16 Promoted Opened Manifest Conductor Punch
+
+- Date: 2026-06-03
+- Main objective: Make the conductor punch-memory route easier to discover
+  during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `passenger_conductor_intercom`,
+  `passenger_conductor_punch_memory`, and
+  `passenger_conductor_transfer_handoff`, while coverage proved each scene
+  reachable. Opened-manifest players could jump straight to transfer payoffs,
+  but the explanatory conductor-punch beat was not visible from that dense hub.
+- Planned work:
+  - Add a direct opened-manifest choice into
+    `passenger_conductor_punch_memory` near the newspaper-transfer cue.
+  - Preserve the existing direct transfer/proof shortcuts for players who want
+    the faster payoff.
+  - Update opened-manifest hub-order and route regressions, run health, and
+    actually play the promoted conductor-punch route.
+- Risks:
+  - The opened-manifest hub remains dense, so this improves one missed route
+    without solving the broader scanning burden.
+  - Random choice metrics may not reflect ordering/label improvements in a
+    small sample.
+- Status:
+  - Completed.
+  - Added `ask_conductor_punch_from_opened_manifest`, a direct
+    opened-manifest hub choice into `passenger_conductor_punch_memory`.
+  - Kept the existing direct conductor transfer, transfer handoff, and speaker
+    proof shortcuts intact.
+  - Updated the opened-manifest choice-order regressions and added a promoted
+    route test covering `passenger_conductor_punch_memory`,
+    `passenger_conductor_intercom`, `passenger_conductor_transfer_handoff`,
+    and `passenger_conductor_transfer_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|conductor punch memory from opened manifest|conductor transfer proof directly|opened manifest play"`.
+  - `npm run health` passed: format check, TypeScript, 267 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> asked what the conductor's
+    punch remembers -> followed the remembered clear signal into the third car
+    -> punched a transfer -> let the child carry it to Mara -> pulled the
+    release.
+  - The route ended at `passenger_conductor_transfer_true_ending` with score
+    304 and no objectives.
+  - The promoted choice reads naturally because the opened-manifest hub already
+    mentions a newspaper transfer unfolding beside the old conductor's punch.
+    The route now explains the conductor's role before offering the transfer
+    handoff payoff.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`, `mara_manifest_handoff`, or
+    lunch-tin intercom variants.
+
 # Cycle 15 Promoted Manifest Thumbprint Oath
 
 - Date: 2026-06-03
