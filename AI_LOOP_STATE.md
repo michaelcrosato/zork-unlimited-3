@@ -1,3 +1,57 @@
+# Cycle 13 Echoed Check Bridge
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_echoed_check` more naturally discoverable
+  from the opened-manifest echo beat.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play
+  window, and the current random evidence missed `passenger_echoed_check`
+  while coverage proved it reachable. The `opened_manifest_echoes` scene tells
+  players the old door sounds now have footsteps under them, so checking those
+  echoes against the boarded passengers should be an immediate payoff, not only
+  a later detour after boarding.
+- Planned work:
+  - Add a direct `opened_manifest_echoes` choice into `passenger_echoed_check`.
+  - Preserve the existing echoed boarding, newspaper-transfer, and return
+    routes.
+  - Update exact-order regressions for the opened-manifest echo menu.
+  - Run focused tests, full health, and an actual route through the new check
+    bridge.
+- Risks:
+  - The new bridge sets `echoed_manifest_boarded` and
+    `checked_echoed_passengers`, so train-car recovery choices must continue to
+    treat the route as already boarded and checked.
+  - The newspaper-transfer route should remain visible and playable after the
+    new first-choice payoff.
+- Status:
+  - Completed.
+  - Added `check_listened_manifest_echoes` as the first payoff from
+    `opened_manifest_echoes`, setting `heard_passenger_echoes`,
+    `echoed_manifest_boarded`, and `checked_echoed_passengers` before entering
+    `passenger_echoed_check`.
+  - Preserved the existing echoed boarding, newspaper-transfer, and return
+    routes from the opened echo scene.
+  - Updated exact-order regressions for the opened echo menu and the
+    margin-notes/newspaper bridge.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes|opened manifest|door-echoes|echoed passengers|passenger echo"`.
+  - `npm run health` passed: format check, TypeScript, 243 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> opened door-echoes -> first
+    visible checked-echoes payoff -> Mara hears the checked echoes -> emergency
+    release, ending at `passenger_echoed_true_ending` with score 286 and no
+    objectives.
+  - The route now pays off its own prose more directly: after the scene says
+    the echoes have footsteps under them, the first action lets the player
+    verify those sounds against people before release.
+  - The newspaper fold route and normal echoed boarding route remain visible,
+    so discoverability improves without removing the branch's existing variety.
+- Next step:
+  - Watch the next random/blind-play evidence for whether
+    `passenger_echoed_check` appears in normal play. If it remains rare, prefer
+    a label or choice-order pass at the earlier passenger-platform echo entry
+    rather than adding another branch.
+
 # Cycle 12 Opened Manifest Echo Priority
 
 - Date: 2026-06-03

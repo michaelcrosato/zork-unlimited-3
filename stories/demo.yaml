@@ -1926,6 +1926,16 @@ scenes:
       followed. Mara leaves the speaker open, waiting to hear whether you trust
       the passengers' own signal.
     choices:
+      - id: check_listened_manifest_echoes
+        label: Check the familiar echoes against the boarding passengers
+        to: passenger_echoed_check
+        requires:
+          notFlag: checked_echoed_passengers
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
+            checked_echoed_passengers: true
       - id: board_with_listened_manifest_echoes
         label: Board with the familiar echoes leading the way
         to: passenger_echoed_boarding

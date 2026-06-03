@@ -3813,6 +3813,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_newspaper_memory).toBeUndefined();
     expect(observation.state.flags.studied_newspaper_transfer).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_listened_manifest_echoes",
       "follow_newspaper_fold_from_opened_echoes"
     ]);
 
@@ -5726,9 +5727,23 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_listened_manifest_echoes",
       "board_with_listened_manifest_echoes",
       "follow_newspaper_fold_from_opened_echoes",
       "return_from_opened_manifest_echoes"
+    ]);
+
+    let checkedState = choose(story, state, "check_listened_manifest_echoes");
+    observation = observe(story, checkedState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.scene.text).toContain("echoes are no longer clues");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_echoes_to_speaker",
+      "reach_release_after_checked_echoes"
     ]);
 
     state = choose(story, state, "board_with_listened_manifest_echoes");
@@ -5789,6 +5804,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
     expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_listened_manifest_echoes",
       "board_with_listened_manifest_echoes",
       "follow_newspaper_fold_from_opened_echoes",
       "return_from_opened_manifest_echoes"
