@@ -1632,6 +1632,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_conductor_to_punch_restored_transfer",
+      "read_restored_transfer_into_roll_call",
       "carry_newspaper_transfer_to_third_car"
     ]);
 
@@ -1678,7 +1679,24 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_conductor_to_punch_restored_transfer",
+      "read_restored_transfer_into_roll_call",
       "carry_newspaper_transfer_to_third_car"
+    ]);
+
+    const directRollCallState = choose(
+      story,
+      transferState,
+      "read_restored_transfer_into_roll_call"
+    );
+    observation = observe(story, directRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.scene.text).toContain("turned the blank transfer column into a route");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_newspaper_roll_call"
     ]);
 
     const conductorTransferState = choose(
@@ -10158,6 +10176,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
+      "board_and_check_answered_passengers",
       "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
     ]);
@@ -10181,6 +10200,7 @@ describe("demo story critical paths", () => {
       "board_after_answered_passengers"
     ]);
 
+    const answeredPassengersState = state;
     const newspaperState = choose(story, state, "follow_newspaper_answer");
     observation = observe(story, newspaperState);
 
@@ -10205,6 +10225,50 @@ describe("demo story critical paths", () => {
       "pull_release_after_conductor_roll_call"
     ]);
 
+    state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_and_check_answered_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_check");
+    expect(observation.scene.text).toContain("Every answer has a body behind it");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.checked_answered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_checked_answers_to_speaker",
+      "pull_release_after_checked_answers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_checked_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = answeredPassengersState;
     state = choose(story, state, "board_after_answered_passengers");
     observation = observe(story, state);
 

@@ -1,3 +1,71 @@
+# Cycle 12 Passenger Payoff Discovery Bridges
+
+- Date: 2026-06-02
+- Main objective: Make low-discovery passenger payoff scenes easier to reach
+  from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 12 evidence. Health and core
+  guidance are strong, but the 100-run random sample still missed
+  `passenger_newspaper_transfer`, `passenger_newspaper_roll_call`, and
+  `passenger_answered_check`. These are not blockers, but they are authored
+  payoffs for branches normal players are now encouraged to inspect.
+- Planned work:
+  - Add a direct choice from the restored newspaper transfer column to the
+    existing final newspaper roll-call scene.
+  - Add a direct opened-manifest choice that boards and checks each answered
+    name against a face.
+  - Preserve the conductor transfer and intercom newspaper routes.
+  - Extend the existing passenger route regressions to cover both bridges.
+  - Run focused tests, full health, and a CLI playthrough of the changed route.
+- Risks:
+  - `passenger_newspaper_transfer` now has three choices instead of two, so the
+    new option must read as a story-forward payoff rather than extra clutter.
+  - The opened-manifest hub is already choice-rich; the answered-check shortcut
+    must stay tightly gated before other passenger commitments.
+- Status:
+  - Completed.
+  - Added `read_restored_transfer_into_roll_call` from
+    `passenger_newspaper_transfer` to existing `passenger_newspaper_roll_call`.
+  - Added `board_and_check_answered_passengers` from `passengers_released` to
+    existing `passenger_answered_check`, gated away after Mara handoff,
+    passenger answer, and passenger gathering commitments.
+  - Preserved the conductor-punched transfer route and the newspaper intercom
+    route.
+  - Extended the newspaper regression to verify the restored transfer can flow
+    directly into the final roll call and then to
+    `passenger_newspaper_true_ending`.
+  - Extended the answered-passenger regression to verify the opened-manifest
+    bridge reaches `passenger_answered_check` and then finishes at
+    `passenger_answered_boarding_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "answered passenger"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `passenger_answered_check`, `passenger_newspaper_transfer`, and
+    `passenger_newspaper_roll_call`.
+  - Actual CLI play followed the new answered-check bridge, ended at
+    `passenger_answered_boarding_true_ending`, scored 277, and left no
+    objectives.
+  - Actual CLI play followed the new newspaper transfer roll-call bridge, ended
+    at `passenger_newspaper_true_ending`, scored 313, and left no objectives.
+- Playtest feedback:
+  - The answered-check shortcut makes the roll call feel accountable before
+    release instead of requiring players to discover the check only after a
+    separate answer-listen scene.
+  - The revised newspaper route now has a clean sequence: manifest note names
+    Lenora, newspaper memory restores the blank transfer, transfer reading
+    becomes roll call, release pays it off.
+  - The new transfer choice reads as a direct story-forward option rather than
+    a detour, and it leaves the more specific conductor-punch payoff intact.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch random/blind sessions for whether the answered-check bridge improves
+    normal discovery; if it still remains rare, tune the
+    `passenger_answered_boarding` choice labels before adding more branches.
+
 # Cycle 11 Opened Manifest Ready Bridge
 
 - Date: 2026-06-02

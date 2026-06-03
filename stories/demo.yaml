@@ -1712,6 +1712,21 @@ scenes:
           set:
             heard_passenger_answers: true
             heard_answered_passengers: true
+      - id: board_and_check_answered_passengers
+        label: Board and check each answered name against a face
+        to: passenger_answered_check
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_answered_passengers
+            - notFlag: saw_mara_manifest_handoff
+        effects:
+          set:
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+            checked_answered_passengers: true
       - id: board_and_confirm_opened_manifest_ready
         label: Board and confirm every manifest passenger is aboard
         to: passenger_manifest_ready_intercom
@@ -2593,6 +2608,16 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             punched_conductor_transfer: true
+      - id: read_restored_transfer_into_roll_call
+        label: Read the restored transfer into the final roll call
+        to: passenger_newspaper_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: carry_newspaper_transfer_to_third_car
         label: Carry the restored transfer column into the third car
         to: passenger_newspaper_intercom
