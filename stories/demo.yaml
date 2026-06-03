@@ -1930,6 +1930,15 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: follow_newspaper_transfer_after_manifest_count
+        label: Follow the newspaper stop from Mara's opened count
+        to: passenger_newspaper_transfer
+        requires:
+          notFlag: studied_newspaper_transfer
+        effects:
+          set:
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
       - id: ask_conductor_after_manifest_count
         label: Ask the conductor to carry Mara's opened count clear
         to: passenger_conductor_signal
@@ -2255,6 +2264,18 @@ scenes:
       behind it now, and none of them are waiting for Mara to say the names
       again.
     choices:
+      - id: read_checked_answers_into_newspaper_roll_call
+        label: Read the checked answers into the newspaper woman's transfer roll call
+        to: passenger_newspaper_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: carry_checked_answers_to_speaker
         label: Let Mara hear the checked answers settle
         to: passenger_answered_intercom

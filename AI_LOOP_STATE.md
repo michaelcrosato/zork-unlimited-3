@@ -1,3 +1,73 @@
+# Cycle 18 Newspaper Roll Call Bridges
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for the
+  `passenger_newspaper_roll_call` payoff from high-traffic opened-manifest
+  passenger routes.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 18 evidence. Health was green
+  and coverage reached every scene, but the 100-run random sample still missed
+  `opened_manifest_echoes` and `passenger_newspaper_roll_call`. The newspaper
+  roll call is a strong accountability beat and should be reachable from
+  natural answered-passenger checking and reviewed manifest counting, not only
+  from the narrower newspaper branch.
+- Planned work:
+  - Add a direct optional bridge from `passenger_answered_check` to
+    `passenger_newspaper_roll_call`.
+  - Add a direct optional bridge from `passenger_manifest_count` to the
+    existing newspaper transfer route.
+  - Preserve the existing checked-answer intercom and direct release endings.
+  - Verify both bridges set the same route-state flags as the established
+    newspaper routes.
+  - Run focused regressions, full health, and actual CLI playthroughs through
+    the new routes.
+- Risks:
+  - The checked-answer scene already has two clear exits, so the new choice
+    must remain optional and avoid duplicating after a final roll call.
+  - The reviewed-count scene is already choice-rich, so the new newspaper
+    follow-up must stay concrete and not bury the core count/conductor exits.
+  - The bridge must not make the newspaper path feel disconnected from its
+    transfer-column fiction.
+- Status:
+  - Completed.
+  - Added `follow_newspaper_transfer_after_manifest_count`, allowing players
+    who review Mara's opened count to follow the newspaper stop into the
+    established transfer and final roll-call path.
+  - Added `read_checked_answers_into_newspaper_roll_call`, gated by
+    `notFlag: heard_final_roll_call`.
+  - Extended manifest-count and answered-passenger regressions to prove the
+    new choices reach `passenger_newspaper_roll_call`, set newspaper/roll-call
+    flags, and still allow the existing non-newspaper endings.
+  - Focused answered-passenger regression passed:
+    `npm test -- tests/story-paths.test.ts -t "answered passengers"`.
+  - Focused opened-manifest count regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `opened_manifest_echoes` and `passenger_newspaper_roll_call`.
+  - Actual CLI play followed the reviewed-count newspaper transfer route,
+    ended at `passenger_newspaper_true_ending`, scored 299, and left no
+    objectives.
+  - Actual CLI play followed the new checked-answer roll-call route, ended at
+    `passenger_newspaper_true_ending`, scored 313, and left no objectives.
+- Playtest feedback:
+  - The route reads coherently because `passenger_answered_check` already
+    names the child, newspaper woman, and old conductor before offering the
+    newspaper transfer roll call.
+  - The reviewed-count bridge feels natural because the count text already
+    names the newspaper, lunch tin, mitten, and conductor's punch.
+  - The new choice gives players who check answered names a richer passenger
+    accountability payoff without removing the shorter checked-answer release.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random samples for whether `passenger_newspaper_roll_call`
+    appears more often. If `opened_manifest_echoes` remains a random miss,
+    tune high-traffic opened-manifest choice order rather than adding another
+    branch.
+
 # Cycle 17 Opened Echo Check Continuity
 
 - Date: 2026-06-03

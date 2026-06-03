@@ -5350,6 +5350,7 @@ describe("demo story critical paths", () => {
       "finish_reviewed_count_before_boarding",
       "board_with_reviewed_manifest_count",
       "listen_after_manifest_count",
+      "follow_newspaper_transfer_after_manifest_count",
       "ask_conductor_after_manifest_count",
       "cross_after_manifest_count",
       "board_after_manifest_count"
@@ -5375,6 +5376,32 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toContain("follow_newspaper_answer");
     expect(observation.choices.map((choice) => choice.id)).toContain("ask_conductor_from_answers");
+
+    state = choose(story, countedState, "follow_newspaper_transfer_after_manifest_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_transfer");
+    expect(observation.scene.text).toContain("The blank transfer column is not blank anymore");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "ask_conductor_to_punch_restored_transfer",
+      "read_restored_transfer_into_roll_call",
+      "carry_newspaper_transfer_to_third_car"
+    ]);
+
+    state = choose(story, state, "read_restored_transfer_into_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+
+    state = choose(story, state, "pull_release_after_newspaper_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, countedState, "cross_after_manifest_count");
     observation = observe(story, state);
@@ -7361,9 +7388,39 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_answered_passengers).toBe(true);
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_checked_answers_into_newspaper_roll_call",
       "carry_checked_answers_to_speaker",
       "pull_release_after_checked_answers"
     ]);
+
+    let newspaperRollCallState = choose(
+      story,
+      checkedState,
+      "read_checked_answers_into_newspaper_roll_call"
+    );
+    observation = observe(story, newspaperRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.scene.text).toContain("transfer column into a route everyone can answer");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_newspaper_roll_call"
+    ]);
+
+    newspaperRollCallState = choose(
+      story,
+      newspaperRollCallState,
+      "pull_release_after_newspaper_roll_call"
+    );
+    observation = observe(story, newspaperRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     let checkedRelease = choose(story, checkedState, "pull_release_after_checked_answers");
     observation = observe(story, checkedRelease);
@@ -10411,6 +10468,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.checked_answered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_checked_answers_into_newspaper_roll_call",
       "carry_checked_answers_to_speaker",
       "pull_release_after_checked_answers"
     ]);
