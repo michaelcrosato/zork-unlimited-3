@@ -1725,6 +1725,18 @@ scenes:
         effects:
           set:
             heard_passenger_mara_signoff: true
+      - id: ask_mara_to_read_opened_manifest
+        label: Ask Mara to read the opened manifest over the third-car speaker
+        to: mara_manifest_intercom
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: read_manifest_thumbprint
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: follow_lunch_tin_latch
         label: Follow the lunch-tin latch toward the third car
         to: passenger_farewell

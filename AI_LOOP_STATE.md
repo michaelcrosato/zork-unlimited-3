@@ -1,3 +1,54 @@
+# Cycle 20 Direct Manifest Readout
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_true_ending` more naturally
+  discoverable from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed `passenger_manifest_true_ending`
+  while coverage proved it reachable. The existing route required boarding
+  through later platform/train-car choices or choosing the lower-priority
+  manifest-ready bridge from a dense hub.
+- Planned work:
+  - Add an earlier opened-manifest hub choice that asks Mara to read the opened
+    manifest over the third-car speaker.
+  - Reuse the existing `mara_manifest_intercom` and
+    `passenger_manifest_true_ending` payoff.
+  - Update the opened-manifest hub order regression and add a focused direct
+    route regression.
+  - Run focused tests, full health, and an actual playthrough through the new
+    bridge.
+- Risks:
+  - The opened-manifest hub is already dense; the new label must read as the
+    plain manifest readout route, not duplicate Mara's sign-off or the
+    thumbprint oath.
+  - The bridge sets `heard_mara_goodbye` directly, so it must keep downstream
+    route flags coherent and avoid implying passenger answers were already
+    heard.
+- Status:
+  - Completed.
+  - Added `ask_mara_to_read_opened_manifest` from `passengers_released` to
+    `mara_manifest_intercom`, setting `heard_mara_goodbye` without setting
+    passenger-answer or gathered-passenger flags.
+  - Updated the opened-manifest exact-order regression and added a focused
+    direct-route regression through `passenger_manifest_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "direct third-car readout|manifest-specific platform"`.
+  - `npm run health` passed: format check, TypeScript, 249 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct Mara manifest readout ->
+    release, ending at `passenger_manifest_true_ending` with score 271 and no
+    objectives.
+  - The new label reads as the plain manifest route, while adjacent sign-off,
+    thumbprint, answer, count, and keepsake routes remain distinct.
+  - The payoff stayed coherent because the existing intercom scene already
+    frames Mara reading the opened manifest and the final release resolves the
+    count in morning air.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_manifest_true_ending`
+    appears in normal play. If it remains rare, prefer choice-order and hub
+    density tuning before adding more manifest branches.
+
 # Cycle 19 Direct Keepsake Check
 
 - Date: 2026-06-03

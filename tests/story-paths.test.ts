@@ -11027,6 +11027,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_to_punch_opened_transfer",
       "pass_opened_transfer_to_mara",
       "ask_mara_to_sign_off_opened_manifest",
+      "ask_mara_to_read_opened_manifest",
       "follow_lunch_tin_latch",
       "help_opened_passengers_gather",
       "listen_as_opened_passengers_gather",
@@ -11782,6 +11783,52 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened-manifest players ask Mara for a direct third-car readout", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "ask_mara_to_read_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_intercom");
+    expect(observation.scene.text).toContain("each name answers with a small ordinary sound");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_manifest_names_answer_once",
+      "pull_release_after_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest is still answering");
     expectIdealScore(observation.score);
   });
 
