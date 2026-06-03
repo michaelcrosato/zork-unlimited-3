@@ -1,3 +1,49 @@
+# Cycle 18 Promoted Opened Manifest Lunch-Tin Speaker
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_lunch_tin_intercom` easier to discover
+  during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `passenger_lunch_tin_intercom` while
+  coverage proved it reachable. The opened-manifest hub mentions the lunch-tin
+  latch early, but the speaker payoff required entering a nested boarding scene
+  first, so normal players could select adjacent lunch-tin payoffs without ever
+  hearing Mara contextualize the latch-count.
+- Planned work:
+  - Add a direct opened-manifest choice from the lunch-tin latch cluster into
+    `passenger_lunch_tin_intercom`.
+  - Preserve the existing lunch-tin boarding, check, roster, roll-call, and
+    ending routes.
+  - Update opened-manifest hub-order and direct-route regressions, run health,
+    and actually play the promoted speaker route.
+- Risks:
+  - The opened-manifest hub remains dense, so this improves one missed route
+    without solving every scanning problem.
+  - Random-choice samples may still miss the scene in small runs because the
+    hub has many valid payoff branches.
+- Status:
+  - Completed.
+  - Added `listen_to_lunch_tin_latch_from_opened_manifest`, a direct
+    opened-manifest hub choice into `passenger_lunch_tin_intercom`.
+  - Updated the opened-manifest choice-order regression and added a direct
+    speaker-route test ending at `passenger_lunch_tin_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest choices|lunch-tin count"`.
+  - `npm run health` passed: format check, TypeScript, 268 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> listened as the lunch-tin latch
+    kept time on the speaker -> pulled the release.
+  - The route ended at `passenger_lunch_tin_true_ending` with score 284 and no
+    objectives.
+  - The direct choice makes the hub's lunch-tin image pay off immediately in
+    Mara's speaker voice while preserving the longer farewell, boarding,
+    check, roster, and roll-call variants.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`, `mara_manifest_handoff`, or
+    threshold intercom variants.
+
 # Cycle 17 Promoted Opened Manifest Echo Check
 
 - Date: 2026-06-03

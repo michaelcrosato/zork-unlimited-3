@@ -1665,6 +1665,18 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
+      - id: listen_to_lunch_tin_latch_from_opened_manifest
+        label: Listen as the lunch-tin latch keeps time on the speaker
+        to: passenger_lunch_tin_intercom
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            heard_gathered_passengers: true
       - id: check_lunch_tin_count_from_opened_manifest
         label: Check the lunch-tin count before the opened passengers release
         to: passenger_lunch_tin_check
