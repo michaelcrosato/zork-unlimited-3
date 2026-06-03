@@ -1,3 +1,55 @@
+# Cycle 28 Promoted Opened-Manifest Threshold
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest threshold route easier to discover
+  during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed both `passenger_threshold_boarding`
+  and `passenger_threshold_intercom`, while coverage proved them reachable.
+  The `passengers_released` text already spotlights a crowd waiting at the
+  third-car threshold, but the matching choice sat late in the dense hub after
+  several other passenger proof branches.
+- Planned work:
+  - Promote `hold_opened_manifest_threshold` into the first visible
+    opened-manifest response cluster.
+  - Preserve the existing threshold boarding/intercom payoff and alternate
+    passenger-platform route.
+  - Update focused ordering expectations, run health, and actually play the
+    promoted threshold route.
+- Risks:
+  - The opened-manifest hub remains dense; ordering should improve scanning but
+    does not remove branch competition.
+  - Promoting threshold earlier may make the general passenger ending slightly
+    more common than narrower proof endings.
+- Status:
+  - Completed.
+  - Moved `hold_opened_manifest_threshold` immediately after Mara's
+    opened-manifest sign-off option, aligning the choice with the hub text's
+    crowd-at-the-threshold image.
+  - Preserved the existing `passenger_threshold_boarding` ->
+    `passenger_threshold_intercom` -> `passenger_true_ending` payoff and the
+    alternate passenger-platform threshold route.
+  - Updated focused ordering regressions for the promoted threshold position.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|threshold"`.
+  - `npm run health` passed: format check, TypeScript, 260 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> held the third-car threshold ->
+    listened to Mara hold the threshold open -> pulled the release, ending at
+    `passenger_true_ending` with score 276 and no objectives.
+  - The promoted branch read coherently because the hub text now immediately
+    offers the action it foreshadows: a crowd pausing until someone holds the
+    third-car threshold.
+  - A follow-up 100-run random summary visited both
+    `passenger_threshold_boarding` and `passenger_threshold_intercom`; the new
+    random misses shifted to other optional passenger proof branches.
+- Next step:
+  - Watch whether blind/random evidence continues to miss
+    `passenger_morning_chorus` and the keepsake boarding/handoff route. If so,
+    prefer grouping late opened-manifest passenger proof choices rather than
+    adding more isolated direct routes.
+
 # Cycle 27 Promoted Conductor Transfer Proof
 
 - Date: 2026-06-03

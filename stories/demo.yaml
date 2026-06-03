@@ -1542,6 +1542,14 @@ scenes:
         effects:
           set:
             heard_passenger_mara_signoff: true
+      - id: hold_opened_manifest_threshold
+        label: Hold the third-car threshold for the opened passengers
+        to: passenger_threshold_boarding
+        requires:
+          notFlag: held_passenger_threshold
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint
@@ -1837,14 +1845,6 @@ scenes:
           set:
             helped_passengers_gather: true
             heard_gathered_passengers: true
-      - id: hold_opened_manifest_threshold
-        label: Hold the third-car threshold for the opened passengers
-        to: passenger_threshold_boarding
-        requires:
-          notFlag: held_passenger_threshold
-        effects:
-          set:
-            held_passenger_threshold: true
       - id: make_room_from_opened_manifest
         label: Make room in the third car as the opened passengers board
         to: passenger_room_boarding
