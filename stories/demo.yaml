@@ -1509,7 +1509,7 @@ scenes:
     text: >
       When Mara's badge number touches the ledger, every tiny stamped door in
       the manifest clicks open at once. The booth fills with ordinary sounds:
-      a lunch tin latch, a child's laugh beside a damp mitten print, umbrellas
+      a child's laugh beside a damp mitten print, a lunch tin latch, umbrellas
       shaking rain from their ribs, a newspaper transfer unfolding beside the
       old conductor's punch, passengers answering Mara's count before it can
       make anyone last, shoulders shifting to make room, a crowd pausing until
@@ -1554,6 +1554,15 @@ scenes:
           set:
             heard_passenger_echoes: true
             followed_opened_newspaper_fold: true
+      - id: return_opened_manifest_mitten
+        label: Return the opened manifest's lost mitten to the child
+        to: passenger_mitten_memory
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
       - id: review_open_manifest_count
         label: Review Mara's opened manifest count before boarding
         to: passenger_manifest_count
@@ -1619,15 +1628,6 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             checked_missing_passenger_count: true
-      - id: return_opened_manifest_mitten
-        label: Return the opened manifest's lost mitten to the child
-        to: passenger_mitten_memory
-        requires:
-          notFlag: returned_lost_mitten
-        effects:
-          set:
-            returned_lost_mitten: true
-            helped_passengers_gather: true
       - id: match_opened_manifest_keepsakes
         label: Match the opened manifest keepsakes to their owners
         to: passenger_keepsake_handoff

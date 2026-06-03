@@ -1,3 +1,52 @@
+# Cycle 21 Opened Mitten Prominence
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_mitten_memory` easier to notice during
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence still listed `passenger_mitten_memory`
+  among normal-play misses while coverage proved it reachable. A direct route
+  already existed, so the best small improvement is to make the existing route
+  more visible instead of adding another branch.
+- Planned work:
+  - Foreground the child/mitten clue in the opened-manifest hub prose.
+  - Move `return_opened_manifest_mitten` into the first visible cluster before
+    count and keepsake branches.
+  - Update focused ordering regressions so the route stays prominent.
+  - Run focused tests, full health, and an actual route through the moved
+    option.
+- Risks:
+  - The opened-manifest hub is dense; moving one option could accidentally bury
+    another route.
+  - The mitten branch sets `helped_passengers_gather`, so the route must still
+    read as a passenger-gathering payoff and not a generic keepsake branch.
+- Status:
+  - Completed.
+  - Moved `return_opened_manifest_mitten` into the first visible
+    opened-manifest choice cluster, directly after the two door-echo options
+    and before count/keepsake branches.
+  - Revised `passengers_released` prose so the child/mitten clue appears first
+    in the opened-door sound list.
+  - Updated the opened-manifest ordering regression and direct mitten route
+    regression to preserve the new prominence.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|opened-manifest players return the lost mitten|manifest-specific platform"`.
+  - `npm run health` passed: format check, TypeScript, 249 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct mitten return -> mitten
+    intercom -> release, ending at `passenger_mitten_true_ending` with score
+    298 and no objectives.
+  - The moved option is now visible before the count cluster and keepsake
+    matching, so the child-specific memory reads as an early passenger beat
+    rather than a buried keepsake variant.
+  - The payoff remained coherent because the route still sets
+    `returned_lost_mitten` and `helped_passengers_gather` before boarding.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_mitten_memory` still
+    appears as a normal-play miss. If it does, consider a label rewrite or a
+    player-view objective hint rather than adding another route.
+
 # Cycle 20 Direct Manifest Readout
 
 - Date: 2026-06-03

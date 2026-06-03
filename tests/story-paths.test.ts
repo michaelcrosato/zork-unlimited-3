@@ -5533,16 +5533,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices[2]?.label).toBe(
       "Follow the newspaper fold in the opened door-echoes"
     );
-    expect(choiceIds[3]).toBe("review_open_manifest_count");
+    expect(choiceIds[3]).toBe("return_opened_manifest_mitten");
     expect(observation.choices[3]?.label).toBe(
+      "Return the opened manifest's lost mitten to the child"
+    );
+    expect(choiceIds[4]).toBe("review_open_manifest_count");
+    expect(observation.choices[4]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[4]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[4]?.label).toBe(
+    expect(choiceIds[5]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[5]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
-    expect(choiceIds[5]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[5]?.label).toBe(
+    expect(choiceIds[6]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[6]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
@@ -8349,8 +8353,13 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.scene.text).toContain("child's laugh beside a damp mitten print");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "return_opened_manifest_mitten"
+    const openedManifestChoiceIds = observation.choices.map((choice) => choice.id);
+    expect(openedManifestChoiceIds).toContain("return_opened_manifest_mitten");
+    expect(openedManifestChoiceIds.indexOf("return_opened_manifest_mitten")).toBeLessThan(
+      openedManifestChoiceIds.indexOf("review_open_manifest_count")
+    );
+    expect(openedManifestChoiceIds.indexOf("return_opened_manifest_mitten")).toBeLessThan(
+      openedManifestChoiceIds.indexOf("match_opened_manifest_keepsakes")
     );
 
     state = choose(story, state, "return_opened_manifest_mitten");
@@ -11015,11 +11024,11 @@ describe("demo story critical paths", () => {
       "watch_mara_open_manifest",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
+      "return_opened_manifest_mitten",
       "review_open_manifest_count",
       "let_opened_passengers_finish_count",
       "board_with_completed_opened_count",
       "check_opened_manifest_blank_row",
-      "return_opened_manifest_mitten",
       "match_opened_manifest_keepsakes",
       "check_opened_manifest_keepsakes",
       "listen_to_passenger_morning_chorus",
