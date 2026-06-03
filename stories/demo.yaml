@@ -1632,6 +1632,22 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: board_with_passenger_morning_chorus
+        label: Board with the passengers' remembered mornings in the speaker
+        to: passenger_morning_intercom
+        requires:
+          all:
+            - notFlag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_morning_boarding
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_passenger_morning_chorus: true
+            heard_passenger_morning_boarding: true
       - id: carry_morning_chorus_from_opened_manifest
         label: Carry the remembered mornings into the third car
         to: passenger_morning_intercom

@@ -1,3 +1,52 @@
+# Cycle 15 Direct Morning Chorus Boarding
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_morning_intercom` more naturally
+  discoverable from the opened-manifest release hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed `passenger_morning_intercom`
+  while coverage proved it reachable. The opened-manifest hub already tells
+  players that remembered mornings can ride the third-car speaker, but the
+  direct boarding payoff only appeared after first listening to the chorus and
+  returning.
+- Planned work:
+  - Add a direct opened-manifest hub choice into `passenger_morning_intercom`.
+  - Preserve the slower `passenger_morning_chorus` scene and its answer,
+    gather, cross-platform, and return routes.
+  - Update exact-order and direct-route regressions.
+  - Run focused tests, full health, and an actual route through the new direct
+    morning boarding payoff.
+- Risks:
+  - The new choice skips the standalone chorus setup scene, so it must set both
+    morning flags and keep the final intercom text coherent on its own.
+  - The direct option should not appear after Mara handoff, answer, count
+    review, or passenger-gather routes have claimed the boarding beat.
+- Status:
+  - Completed.
+  - Added `board_with_passenger_morning_chorus` from `passengers_released` to
+    `passenger_morning_intercom`, setting `heard_passenger_morning_chorus` and
+    `heard_passenger_morning_boarding`.
+  - Updated the opened-manifest hub exact-order regression and added a focused
+    direct-route regression.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "passenger morning chorus|opened-manifest players board directly"`.
+  - `npm run health` passed: format check, TypeScript, 244 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed the opened manifest release hub directly through
+    `board_with_passenger_morning_chorus`, then pulled the release from
+    `passenger_morning_intercom`, ending at `passenger_true_ending` with score
+    268 and no objectives.
+  - The hub now offers both the reflective chorus scene and an immediate
+    third-car speaker payoff, matching the scene text that says the speaker can
+    carry those ordinary streets aboard.
+  - The direct branch felt coherent without the setup scene because the
+    intercom text restates the practical morning memories before the release.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_morning_intercom` appears
+    in normal play. If it remains rare, prefer a choice-order pass near
+    `passenger_platform` or train-car boarding before adding more content.
+
 # Cycle 14 Lit Escape Glance Confirmation
 
 - Date: 2026-06-03
