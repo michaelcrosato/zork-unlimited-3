@@ -8036,6 +8036,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_memory");
     expect(observation.scene.text).toContain("Then we will find it in the morning");
+    expect(observation.scene.text).toContain("the returned cuff");
     expect(observation.scene.text).toContain("beginning to look after one another");
     expect(observation.state.flags.returned_lost_mitten).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
@@ -8048,6 +8049,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_intercom");
     expect(observation.scene.text).toContain("both mittens pressed against the frame");
+    expect(observation.scene.text).toContain("one soft punch");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "tap_paired_mittens_for_missing_name",
       "hear_final_mitten_roll_call",
@@ -8060,6 +8062,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("clutching both mittens");
+    expect(observation.scene.text).toContain("keep the doors open for everyone");
     expectIdealScore(observation.score);
   });
 
@@ -8557,6 +8560,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_mitten_intercom");
     expect(observation.scene.text).toContain("both mittens pressed against the frame");
     expect(observation.scene.text).toContain("his own way of saying the door is still open");
+    expect(observation.scene.text).toContain("the lunch-tin worker answers with his latch");
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "tap_paired_mittens_for_missing_name",
@@ -8606,6 +8610,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_pair_memory");
     expect(observation.scene.text).toContain("somebody kept it warm");
+    expect(observation.scene.text).toContain("another answers from the far door");
     expect(observation.scene.text).toContain("learned a second language");
     expect(observation.state.flags.heard_mitten_pair_memory).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([

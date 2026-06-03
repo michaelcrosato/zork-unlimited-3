@@ -2831,8 +2831,10 @@ scenes:
       show a transit stamp older than anyone on the platform should remember.
       "My mother told me not to lose the other one," he says, and the woman
       with the newspaper kneels before Mara can answer. "Then we will find it
-      in the morning," she tells him. The crowd shifts closer, not as passengers
-      waiting to be counted, but as people beginning to look after one another.
+      in the morning," she tells him. The child wipes rain from the bench with
+      the returned cuff so the next passenger can sit long enough to remember
+      her stop. The crowd shifts closer, not as passengers waiting to be
+      counted, but as people beginning to look after one another.
     choices:
       - id: lead_mitten_child_to_third_car
         label: Lead the child and gathered passengers to the third car
@@ -4619,8 +4621,9 @@ scenes:
       in the roll call, he answers before anyone can prompt him, then turns and
       calls for the newspaper woman to step in out of the rain. The small
       mittened knock that follows is not a signal the line taught him. It is
-      his own way of saying the door is still open, while the emergency release
-      waits under the first seat.
+      his own way of saying the door is still open. The conductor repeats it
+      with one soft punch, the lunch-tin worker answers with his latch, and the
+      emergency release waits under the first seat.
     choices:
       - id: tap_paired_mittens_for_missing_name
         label: Let the child tap both mittens for the name still missing
@@ -4649,8 +4652,10 @@ scenes:
       sound different: one wool-soft and one stiff with station dust. "This one
       was mine," he says, lifting the returned mitten, "but somebody kept it
       warm." Mara checks the manifest without asking him to wait. The next
-      name answers from the crowd before she can finish reading it, and the
-      child grins like the door has learned a second language.
+      name answers from the crowd before she can finish reading it, then
+      another answers from the far door because the paired knocks have told
+      them where to go. The child grins like the door has learned a second
+      language.
     choices:
       - id: hear_roll_call_after_paired_mittens
         label: Hear the roll call answer the child's paired knocks
@@ -5349,10 +5354,13 @@ scenes:
     text: >
       The release opens every door at once, and the first person through is
       the child clutching both mittens in one hand. He waits at the morning
-      doors until the woman with the newspaper catches up, then points out the
-      far bench where the other glove should have been all along. The
-      passengers laugh because the line has lost its claim on small things, and
-      Mara lets that be the final sound before the speaker goes quiet.
+      doors and knocks twice on the open frame until the woman with the
+      newspaper, the lunch-tin worker, and the old conductor answer from
+      daylight. Then he points out the far bench where the other glove should
+      have been all along. The passengers laugh because the line has lost its
+      claim on small things and because the smallest signal was enough to keep
+      the doors open for everyone. Mara lets that be the final sound before
+      the speaker goes quiet.
     choices: []
 
   good_ending:

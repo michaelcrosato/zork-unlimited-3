@@ -1,3 +1,61 @@
+# Cycle 36 Returned-Mitten Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the frequent returned-mitten passenger ending
+  without changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play
+  priorities yet, health evidence is green, and random play shows
+  `passenger_mitten_true_ending` as a normal passenger route. The branch should
+  pay off the child keeping the door open for others, not only the recovery of
+  his own mitten.
+- Planned work:
+  - Revise `passenger_mitten_memory` so the returned mitten starts a small
+    passenger-care chain.
+  - Revise `passenger_mitten_intercom` and `passenger_mitten_pair_memory` so
+    the paired knocks become a clear open-door signal other passengers can use.
+  - Revise `passenger_mitten_true_ending` so the ending shows the child
+    holding morning open for the crowd.
+  - Add focused regression assertions for the strengthened mitten imagery.
+  - Run focused tests, full health, and an actual playable route through the
+    returned-mitten ending.
+- Risks:
+  - Keep the route distinct from the generic gathered-passenger ending by
+    centering the paired mittens and the child's own door signal.
+  - Avoid route or flag changes because validation and coverage are currently
+    healthy.
+- Status:
+  - Completed.
+  - Revised `passenger_mitten_memory` so returning the mitten starts a
+    passenger-care chain around the bench and the next remembered stop.
+  - Revised `passenger_mitten_intercom` so the child's paired knocks become an
+    open-door signal repeated by the conductor and lunch-tin worker.
+  - Revised `passenger_mitten_pair_memory` so the signal reaches another
+    passenger at the far door before release.
+  - Revised `passenger_mitten_true_ending` so the child keeps morning open for
+    the wider group, not only himself.
+  - Added focused story-path assertions for the strengthened imagery.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "mitten"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `return_lost_mitten` ->
+    `lead_mitten_child_to_third_car` ->
+    `tap_paired_mittens_for_missing_name` ->
+    `pull_release_after_paired_mittens`, ending at
+    `passenger_mitten_true_ending` with score 316 and no objectives.
+  - The revised route now reads as a clear keepsake-to-group payoff: the child
+    receives proof, turns it into a door signal, and the passengers answer that
+    signal into morning.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    focused payoff passes on frequent passenger routes.
+
 # Cycle 35 Mara Last-Dispatch Record
 
 - Date: 2026-06-03
