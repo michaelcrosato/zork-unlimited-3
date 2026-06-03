@@ -1,3 +1,56 @@
+# Cycle 18 Direct Completed Count Chorus
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_counted_chorus` and
+  `passenger_counted_true_ending` easier to find from normal opened-manifest
+  play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed `passenger_counted_chorus` and
+  found `passenger_counted_true_ending` only once while coverage proved both
+  reachable. The opened-manifest hub had a quick reviewed-count release, but
+  the richer passenger-finished count required entering a subscene first.
+- Planned work:
+  - Add a direct opened-manifest hub choice into the completed passenger count
+    chorus.
+  - Reuse the existing counted chorus and counted true ending rather than adding
+    parallel payoff text.
+  - Update the opened-manifest hub order regression and add a focused direct
+    route regression.
+  - Run focused tests, full health, and an actual route through the new bridge.
+- Risks:
+  - The opened-manifest hub is already dense; the new label must clearly signal
+    the fuller count route and not obscure the existing quick reviewed-count
+    release.
+  - The new bridge must set the same count flags as the slower reviewed-count
+    path so downstream requirements stay coherent.
+- Status:
+  - Completed.
+  - Added `board_with_completed_opened_count` from `passengers_released` to
+    `passenger_counted_chorus`, setting `reviewed_open_manifest_count` and
+    `passengers_finished_reviewed_count`.
+  - Preserved the existing quick `let_opened_passengers_finish_count` route to
+    `passenger_reviewed_count_true_ending` beside the fuller chorus route.
+  - Added a focused direct-route regression covering opened manifest ->
+    completed count chorus -> `passenger_counted_true_ending`.
+  - Updated both opened-manifest hub order regressions for the new option.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "completed count|opened-manifest count"`.
+  - `npm run health` passed: format check, TypeScript, 247 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct completed-count chorus
+    -> release, ending at `passenger_counted_true_ending` with score 273 and no
+    objectives.
+  - The new option reads as a more reflective alternative to the immediate
+    reviewed-count release and gives normal players a clearer path into the
+    passengers checking one another home.
+  - The payoff stayed coherent because the existing chorus text restates the old
+    blank row and the final release text resolves it as room for everyone.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_counted_chorus` appears
+    in normal play. If it remains rare, prefer route-label/order tuning around
+    the reviewed-count cluster before adding more manifest endings.
+
 # Cycle 17 Direct Manifest Thumbprint Oath
 
 - Date: 2026-06-03

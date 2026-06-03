@@ -1584,6 +1584,19 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+      - id: board_with_completed_opened_count
+        label: Board with the passengers finishing Mara's opened count together
+        to: passenger_counted_chorus
+        requires:
+          all:
+            - notFlag: passengers_finished_reviewed_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding
