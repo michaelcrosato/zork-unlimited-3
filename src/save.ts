@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { GameState, SaveFile } from "./schema.js";
+import { z } from "zod";
+import { GameState, SaveFile, SaveFileSchema } from "./schema.js";
 
 export async function writeSave(path: string, storyPath: string, state: GameState): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
@@ -9,5 +10,12 @@ export async function writeSave(path: string, storyPath: string, state: GameStat
 }
 
 export async function readSave(path: string): Promise<SaveFile> {
-  return JSON.parse(await readFile(path, "utf8")) as SaveFile;
+  try {
+    return SaveFileSchema.parse(JSON.parse(await readFile(path, "utf8")));
+  } catch (error) {
+    if (error instanceof SyntaxError || error instanceof z.ZodError) {
+      throw new Error(`Invalid save file '${path}': ${error.message}`);
+    }
+    throw error;
+  }
 }

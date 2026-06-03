@@ -83,13 +83,32 @@ export interface GameState {
   history: HistoryEntry[];
 }
 
+export const HistoryEntrySchema = z.object({
+  scene: z.string().min(1),
+  choice: z.string().min(1).optional(),
+  label: z.string().min(1).optional()
+});
+
 export interface HistoryEntry {
   scene: string;
   choice?: string;
   label?: string;
 }
 
+export const GameStateSchema = z.object({
+  storyId: z.string().min(1),
+  currentScene: z.string().min(1),
+  flags: z.record(z.boolean()),
+  inventory: z.array(z.string().min(1)),
+  history: z.array(HistoryEntrySchema).min(1)
+});
+
 export interface SaveFile {
   storyPath: string;
   state: GameState;
 }
+
+export const SaveFileSchema = z.object({
+  storyPath: z.string().min(1),
+  state: GameStateSchema
+});

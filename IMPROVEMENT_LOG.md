@@ -2261,3 +2261,46 @@ tests/ai-loop.test.ts`
   - Compare it against random and goal.
   - Use the resulting transcripts to decide whether to revise clues or expand
     the map.
+
+## 2026-06-03 - Save Validation Hardening
+
+### Changes
+
+- Added Zod validation for save-file structure before returning persisted game state.
+- Added regression tests for valid save round trips, malformed JSON, and invalid state shape.
+- Updated Vitest from 4.1.7 to 4.1.8 within the existing major line.
+- Documented npm's `esbuild` install-script approval warning in the README setup notes.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - `npm run ai:cycle`
+  - Manual CLI route from `entrance` to `true_ending`
+- Quantitative metrics:
+  - Tests: 14 files, 244 tests passing
+  - Validation: 151 scenes, 29 endings, 151 reachable scenes
+  - Coverage self-play: 78,343 effective runs, 0 unfinished, all scenes visited
+  - Manual route: reached `true_ending` with score 306
+- What worked:
+  - Objective prompts narrowed cleanly as route requirements were satisfied.
+  - The badge, personnel-file, clock, gate-control, and ledger clues strongly
+    signposted the true-ending path.
+  - Invalid CLI choice ids failed without corrupting the save.
+- What felt bad/confusing:
+  - CLI-only play remains easy to mistype because similar nearby actions use
+    precise internal ids. This does not affect player-view choice indices, but
+    it is developer-tool friction during manual smoke tests.
+- Bugs found:
+  - Save loading trusted raw JSON shape before this pass; malformed or invalid
+    saves now fail with explicit save-file context.
+
+### Evaluation
+
+- The iteration is a narrow robustness win with no gameplay contract changes.
+- Health, autonomous evidence generation, and a real playthrough are green.
+
+### Next Iteration
+
+- Consider a CLI convenience mode for choosing by visible numeric index when
+  manually smoke-testing routes outside MCP/player-view tooling.

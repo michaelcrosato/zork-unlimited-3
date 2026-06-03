@@ -36,7 +36,9 @@ npm run cyoa -- playtest stories/demo.yaml --runs 10 --strategy goal --summary -
 ```
 
 Requires Node.js 22 or newer. CI installs dependencies with `npm ci`; local
-development can use `npm install`.
+development can use `npm install`. Recent npm versions may warn that `esbuild`
+has a pending install script; review it with `npm approve-scripts --allow-scripts-pending`
+when maintaining the dependency lockfile.
 
 ## AI Automation
 
