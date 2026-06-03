@@ -1051,10 +1051,14 @@ scenes:
         label: Return to the stopped clock for the signal key
         to: clock
       - id: leave_lit_platform_after_stairwell_call
-        label: Leave after lighting the platform and hearing Mara call
-        to: warned_lit_escape_ending
+        label: Start up the stairs after lighting the platform and hearing Mara
+        to: escape_platform_glance
         requires:
           flag: platform_lit
+        effects:
+          set:
+            looked_back_from_escape_warning: true
+            knows_badge_proof: true
       - id: leave_after_stairwell_call
         label: Leave Mara calling and run back to the street
         to: warned_escape_ending

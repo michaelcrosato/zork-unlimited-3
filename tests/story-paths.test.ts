@@ -9546,6 +9546,18 @@ describe("demo story critical paths", () => {
 
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("escape_platform_glance");
+    expect(observation.scene.ending).toBeFalsy();
+    expect(observation.state.flags.looked_back_from_escape_warning).toBe(true);
+    expect(observation.state.flags.knows_badge_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_after_escape_glance",
+      "leave_warned_after_escape_glance"
+    ]);
+
+    state = choose(story, state, "leave_warned_after_escape_glance");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("warned_lit_escape_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("restoring light to Platform 13");

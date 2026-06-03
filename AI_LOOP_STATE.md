@@ -1,3 +1,52 @@
+# Cycle 14 Lit Escape Glance Confirmation
+
+- Date: 2026-06-03
+- Main objective: Make `escape_platform_glance` harder to miss when lit-platform
+  players hear Mara and still try to leave.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  and the current random evidence still missed `escape_platform_glance` while
+  coverage proved it reachable. The adaptive exploratory route also showed that
+  players can hear Mara's stairwell warning and immediately abandon the route;
+  the lit version should give them the existing Platform 13 look-back beat
+  before final escape confirmation.
+- Planned work:
+  - Retarget the lit `leave_lit_platform_after_stairwell_call` choice into
+    `escape_platform_glance`.
+  - Preserve the warned lit escape ending as the final confirmation from the
+    glance.
+  - Keep recovery to the lit platform available from the glance.
+  - Update the focused escape regression.
+- Risks:
+  - The branch no longer ends immediately on the lit stairwell leave action, so
+    tests and player-facing labels must make the extra confirmation feel
+    intentional.
+  - The unlit stairwell escape route should remain unchanged.
+- Status:
+  - Completed.
+  - Retargeted `leave_lit_platform_after_stairwell_call` into
+    `escape_platform_glance`, setting `looked_back_from_escape_warning` and
+    `knows_badge_proof`.
+  - Preserved final escape through `leave_warned_after_escape_glance`, and kept
+    recovery through `return_after_escape_glance`.
+  - Updated the focused lit escape regression to require the intermediate
+    glance before `warned_lit_escape_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "fleeing players|platform glance|escape warning"`.
+  - `npm run health` passed: format check, TypeScript, 243 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed lantern -> service room -> locker fuse/badge ->
+    lit platform -> flee -> listen to Mara -> start up the stairs -> final
+    Platform 13 glance -> warned lit escape ending.
+  - The new beat gives the player a clear last look at the badge proof and
+    stopped-clock/token objective before they confirm abandonment.
+  - The branch still supports escape and does not affect the unlit stairwell
+    route.
+- Next step:
+  - Watch random/blind evidence for whether `escape_platform_glance` appears in
+    normal play. If it still remains rare, prefer tuning the first lit
+    `escape_warning` menu labels or order before adding another branch.
+
 # Cycle 13 Echoed Check Bridge
 
 - Date: 2026-06-03
