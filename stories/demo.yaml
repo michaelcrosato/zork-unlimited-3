@@ -1531,6 +1531,17 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+      - id: ask_mara_to_sign_off_opened_manifest
+        label: Ask Mara to sign off before the opened passengers board
+        to: passenger_mara_signoff
+        requires:
+          all:
+            - notFlag: heard_passenger_mara_signoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_mara_signoff: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint
@@ -1771,17 +1782,6 @@ scenes:
             conductor_cleared_platform: true
             punched_conductor_transfer: true
             punched_transfer_carried_forward: true
-      - id: ask_mara_to_sign_off_opened_manifest
-        label: Ask Mara to sign off to the opened passengers
-        to: passenger_mara_signoff
-        requires:
-          all:
-            - notFlag: heard_passenger_mara_signoff
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            heard_passenger_mara_signoff: true
       - id: ask_mara_to_read_opened_manifest
         label: Ask Mara to read the opened manifest over the third-car speaker
         to: mara_manifest_intercom
@@ -2242,6 +2242,17 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: ask_mara_signoff_after_manifest_handoff
+        label: Ask Mara to sign off before anyone boards alone
+        to: passenger_mara_signoff
+        requires:
+          all:
+            - notFlag: heard_passenger_mara_signoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_mara_signoff: true
       - id: make_room_after_mara_manifest_handoff
         label: Make room in the third car while Mara calls the opened doors
         to: passenger_room_boarding

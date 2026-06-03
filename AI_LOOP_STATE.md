@@ -1,3 +1,55 @@
+# Cycle 26 Promoted Mara Sign-Off
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_mara_signoff` easier to discover from the
+  normal opened-manifest path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 26 random evidence missed `passenger_mara_signoff` even though
+  coverage proved it reachable. The sign-off beat is emotionally central but
+  was late in the dense `passengers_released` choice list, and players who took
+  the first obvious Mara handoff route had no sign-off continuation there.
+- Planned work:
+  - Promote the opened-manifest Mara sign-off choice near the top of the hub.
+  - Add a continuation from `mara_manifest_handoff` into the same
+    `passenger_mara_signoff` scene.
+  - Keep existing sign-off payoffs and downstream passenger-gathering logic.
+  - Update focused route/order regressions, run full health, and actually play
+    the promoted handoff-to-signoff route.
+- Risks:
+  - The opened-manifest hub remains dense, so ordering helps human scanning but
+    does not fully solve branch competition.
+  - The handoff scene now has one more attractive Mara-focused branch, which
+    could compete with manifest-handoff and thumbprint endings.
+- Status:
+  - Completed.
+  - Moved `ask_mara_to_sign_off_opened_manifest` immediately after
+    `watch_mara_open_manifest` and retitled it to emphasize signing off before
+    passengers board.
+  - Added `ask_mara_signoff_after_manifest_handoff` to
+    `mara_manifest_handoff`, preserving `saw_mara_manifest_handoff` while
+    setting `heard_passenger_mara_signoff`.
+  - Added a focused regression for the path
+    `watch_mara_open_manifest` -> `ask_mara_signoff_after_manifest_handoff` ->
+    `gather_after_mara_signoff`.
+  - Updated opened-manifest hub ordering expectations and Mara handoff choice
+    expectations.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "Mara.*sign-off|Mara handoff beat|opened manifest handoff"`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> watch Mara call opened doors ->
+    ask Mara to sign off before anyone boards alone -> gather after sign-off ->
+    release.
+  - The route ended at `passenger_helped_true_ending` with score 317 and no
+    objectives.
+  - The new transition felt coherent: Mara's handoff already fills the speaker
+    with passengers breathing, and the sign-off naturally turns that into "no
+    one boards alone" before the gathered-passenger payoff.
+- Next step:
+  - Watch the next random/blind evidence for whether `passenger_mara_signoff`
+    still appears as a normal-play miss. If it does, consider reducing
+    opened-manifest hub density or grouping Mara/passenger/count branches
+    rather than adding more one-off choices.
+
 # Cycle 25 Direct Reviewed Count Boarding
 
 - Date: 2026-06-03
