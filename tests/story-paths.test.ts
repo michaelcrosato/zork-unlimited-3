@@ -2869,8 +2869,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's final dispatch");
+    expect(observation.scene.text).toContain("sent everyone home");
     expectIdealScore(observation.score);
   });
 
@@ -2948,6 +2950,8 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.text).toContain("not an order now");
+    expect(observation.scene.text).toContain("belong to everyone");
     expect(observation.state.flags.heard_mara_last_dispatch).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_mara_for_train_car_dispatch",
@@ -2971,8 +2975,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Passenger release authorized by proof");
+    expect(observation.scene.text).toContain("third car answers first");
     expectIdealScore(observation.score);
   });
 
@@ -3295,8 +3301,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's final dispatch");
+    expect(observation.scene.text).toContain("signs off as a dispatcher");
     expectIdealScore(observation.score);
   });
 
@@ -3407,8 +3415,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's final dispatch");
+    expect(observation.scene.text).toContain("rain-bright morning");
     expectIdealScore(observation.score);
   });
 

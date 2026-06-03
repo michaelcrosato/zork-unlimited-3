@@ -1,3 +1,62 @@
+# Cycle 23 Last Dispatch Ending Payoff
+
+- Date: 2026-06-03
+- Main objective: Give Mara's last-dispatch route its own ending payoff without
+  adding new hub choices or increasing route complexity.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 23 evidence shows all scenes visited, zero
+  unfinished random runs, healthy ideal-ending pressure, and a green actual
+  MCP true-ending route. With core guidance healthy, the next highest-value
+  improvement is richer story depth. The main-route last-dispatch beat asks
+  the player to carry Mara's final dispatch into the third car, but the direct
+  release previously ended on the generic `true_ending`, leaving that choice
+  under-acknowledged.
+- Planned work:
+  - Add a dedicated `mara_last_dispatch_true_ending` ideal ending in the Mara
+    Core family.
+  - Retarget only `pull_release_after_last_dispatch_goodbye` to the new ending.
+  - Preserve handoff and badge-proof variants so their distinct payoff focus
+    remains intact.
+  - Update focused story-path regressions for direct last-dispatch releases.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new ending.
+- Risks:
+  - Adding an ending changes validation stats and random ending distribution,
+    but it reuses an existing choice and does not add branch fan-out.
+  - Tests that expected the generic ending on direct last-dispatch routes need
+    to distinguish direct dispatch payoff from badge-proof and handoff payoffs.
+- Status:
+  - Completed.
+  - Added `mara_last_dispatch_true_ending` as a Mara/Core ideal ending that
+    pays off Mara's final dispatch language on the final screen.
+  - Retargeted the direct `pull_release_after_last_dispatch_goodbye` route to
+    the new ending.
+  - Preserved badge-proof follow-up routes to `true_ending` and physical
+    handoff routes to `mara_handoff_true_ending`.
+  - Updated focused last-dispatch story-path regressions.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "last dispatch"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 150 reachable scenes and 28 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and found
+    `mara_last_dispatch_true_ending` 31 times.
+- Playtest feedback:
+  - Actual CLI play followed the route
+    `ask_mara_for_last_dispatch -> carry_last_dispatch_into_car ->
+    pull_release_after_last_dispatch_goodbye` and ended at
+    `mara_last_dispatch_true_ending` with score 293 and no objectives.
+  - The ending now acknowledges the player's last-dispatch choice directly,
+    repeating the route's dispatch cadence before Mara signs off.
+  - The route felt clearer than the previous generic `true_ending` because the
+    final text now closes the promise made by the optional main beat.
+  - No invalid choices, dangling objectives, unreachable scenes, or health
+    regressions appeared.
+- Next step:
+  - Watch blind/random samples for whether the new ending meaningfully improves
+    perceived payoff on the Mara route; if core route feedback stays healthy,
+    continue adding similarly scoped route-specific ending payoffs.
+
 # Cycle 22 Opened Manifest Echo Visibility
 
 - Date: 2026-06-03
