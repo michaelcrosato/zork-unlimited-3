@@ -1564,6 +1564,19 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: notice_manifest_thumbprint_from_opened_doors
+        label: Notice Mara's torn thumbprint in the opened manifest
+        to: mara_manifest_thumbprint
+        requires:
+          all:
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
       - id: return_opened_manifest_mitten
         label: Return the opened manifest's lost mitten to the child
         to: passenger_mitten_memory
@@ -1688,19 +1701,6 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
-      - id: notice_manifest_thumbprint_from_opened_doors
-        label: Notice Mara's torn thumbprint in the opened manifest
-        to: mara_manifest_thumbprint
-        requires:
-          all:
-            - notFlag: read_manifest_thumbprint
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            read_manifest_thumbprint: true
-            saw_mara_manifest_handoff: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
         to: opened_manifest_echoes

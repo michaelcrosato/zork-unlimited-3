@@ -5727,47 +5727,47 @@ describe("demo story critical paths", () => {
     expect(observation.choices[3]?.label).toBe(
       "Listen for what the opened passengers remember about morning"
     );
-    expect(choiceIds[4]).toBe("return_opened_manifest_mitten");
+    expect(choiceIds[4]).toBe("notice_manifest_thumbprint_from_opened_doors");
     expect(observation.choices[4]?.label).toBe(
+      "Notice Mara's torn thumbprint in the opened manifest"
+    );
+    expect(choiceIds[5]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[5]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
-    expect(choiceIds[5]).toBe("review_open_manifest_count");
-    expect(observation.choices[5]?.label).toBe(
+    expect(choiceIds[6]).toBe("review_open_manifest_count");
+    expect(observation.choices[6]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[6]).toBe("pause_on_opened_door_echoes");
-    expect(observation.choices[6]?.label).toBe("Pause on the opened door-echoes before boarding");
-    expect(choiceIds[7]).toBe("board_with_passenger_morning_chorus");
-    expect(observation.choices[7]?.label).toBe(
+    expect(choiceIds[7]).toBe("pause_on_opened_door_echoes");
+    expect(observation.choices[7]?.label).toBe("Pause on the opened door-echoes before boarding");
+    expect(choiceIds[8]).toBe("board_with_passenger_morning_chorus");
+    expect(observation.choices[8]?.label).toBe(
       "Board with the passengers' remembered mornings in the speaker"
     );
-    expect(choiceIds[8]).toBe("hold_opened_manifest_threshold");
-    expect(observation.choices[8]?.label).toBe(
+    expect(choiceIds[9]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[9]?.label).toBe(
       "Hold the third-car threshold for the opened passengers"
     );
-    expect(choiceIds[9]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[9]?.label).toBe("Listen as Mara holds the opened threshold steady");
-    expect(choiceIds[10]).toBe("follow_lunch_tin_latch");
-    expect(observation.choices[10]?.label).toBe("Follow the lunch-tin latch toward the third car");
-    expect(choiceIds[11]).toBe("check_lunch_tin_count_from_opened_manifest");
-    expect(observation.choices[11]?.label).toBe(
+    expect(choiceIds[10]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[10]?.label).toBe("Listen as Mara holds the opened threshold steady");
+    expect(choiceIds[11]).toBe("follow_lunch_tin_latch");
+    expect(observation.choices[11]?.label).toBe("Follow the lunch-tin latch toward the third car");
+    expect(choiceIds[12]).toBe("check_lunch_tin_count_from_opened_manifest");
+    expect(observation.choices[12]?.label).toBe(
       "Check the lunch-tin count before the opened passengers release"
     );
-    expect(choiceIds[12]).toBe("call_lunch_tin_roster_from_opened_manifest");
-    expect(observation.choices[12]?.label).toBe(
+    expect(choiceIds[13]).toBe("call_lunch_tin_roster_from_opened_manifest");
+    expect(observation.choices[13]?.label).toBe(
       "Let the lunch-tin worker clock out the opened passengers"
     );
-    expect(choiceIds[13]).toBe("check_opened_manifest_echoes");
-    expect(observation.choices[13]?.label).toBe(
+    expect(choiceIds[14]).toBe("check_opened_manifest_echoes");
+    expect(observation.choices[14]?.label).toBe(
       "Check the familiar door-echoes against the opened passengers"
     );
-    expect(choiceIds[14]).toBe("study_opened_newspaper_transfer");
-    expect(observation.choices[14]?.label).toBe(
-      "Study the newspaper transfer column before the opened passengers board"
-    );
-    expect(choiceIds[15]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(choiceIds[15]).toBe("study_opened_newspaper_transfer");
     expect(observation.choices[15]?.label).toBe(
-      "Notice Mara's torn thumbprint in the opened manifest"
+      "Study the newspaper transfer column before the opened passengers board"
     );
     expect(choiceIds[16]).toBe("listen_to_opened_manifest_echoes");
     expect(observation.choices[16]?.label).toBe("Listen to the opened door-echoes before boarding");
@@ -11690,6 +11690,7 @@ describe("demo story critical paths", () => {
       "carry_mara_handoff_as_doors_open",
       "ask_mara_to_sign_off_opened_manifest",
       "listen_to_passenger_morning_chorus",
+      "notice_manifest_thumbprint_from_opened_doors",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
       "pause_on_opened_door_echoes",
@@ -11701,7 +11702,6 @@ describe("demo story critical paths", () => {
       "call_lunch_tin_roster_from_opened_manifest",
       "check_opened_manifest_echoes",
       "study_opened_newspaper_transfer",
-      "notice_manifest_thumbprint_from_opened_doors",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
       "board_with_opened_manifest_echoes",

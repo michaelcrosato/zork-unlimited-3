@@ -1,3 +1,51 @@
+# Cycle 15 Promoted Manifest Thumbprint Oath
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_thumbprint_true_ending` easier to
+  discover during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `mara_manifest_thumbprint`,
+  `mara_manifest_thumbprint_intercom`, and
+  `passenger_manifest_thumbprint_true_ending`, while coverage proved the route
+  reachable. The opened-manifest hub text already foregrounds Mara's torn
+  thumbprint, but the direct choice was buried after many passenger object and
+  echo variants.
+- Planned work:
+  - Move `notice_manifest_thumbprint_from_opened_doors` into the early
+    opened-manifest choice cluster, directly after the morning-memory listening
+    beat.
+  - Preserve the existing `mara_manifest_thumbprint`,
+    `mara_manifest_thumbprint_intercom`, and
+    `passenger_manifest_thumbprint_true_ending` route.
+  - Update the opened-manifest hub-order regression, run health, and actually
+    play the promoted thumbprint route.
+- Risks:
+  - This is a discoverability/order improvement, so random-choice metrics may
+    only show the benefit over larger samples.
+  - The opened-manifest hub remains dense; future blind feedback may still call
+    for grouping or pruning.
+- Status:
+  - Completed.
+  - Moved `notice_manifest_thumbprint_from_opened_doors` from the middle of the
+    dense opened-manifest hub to the early cluster immediately after
+    `listen_to_passenger_morning_chorus`.
+  - Updated the opened-manifest order regression while preserving the existing
+    direct thumbprint payoff test.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest choices|manifest thumbprint directly|manifest thumbprint"`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> noticed Mara's torn thumbprint
+    -> carried the thumbprint oath to the third car -> pulled the release.
+  - The route ended at `passenger_manifest_thumbprint_true_ending` with score
+    300 and no objectives.
+  - The promoted choice now appears immediately after the hub text says Mara's
+    thumbprint darkens on the opened page, so the branch reads like a natural
+    follow-up instead of a late optional detail.
+- Next step:
+  - Watch random/blind evidence for whether remaining misses concentrate on
+    `lost_after_dispatch_ending`, `mara_manifest_handoff`, or conductor
+    punch/transfer variants.
+
 # Cycle 41 Promoted Opened Manifest Mitten Memory
 
 - Date: 2026-06-03
