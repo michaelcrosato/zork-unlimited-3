@@ -1564,6 +1564,40 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: review_open_manifest_count
+        label: Review the opened count so every passenger checks in
+        to: passenger_manifest_count
+        requires:
+          notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+      - id: board_with_completed_opened_count
+        label: Board after the opened passengers finish the count together
+        to: passenger_counted_chorus
+        requires:
+          all:
+            - notFlag: passengers_finished_reviewed_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
+      - id: board_with_opened_manifest_reviewed_count
+        label: Carry Mara's reviewed count onto the third-car speaker
+        to: passenger_counted_manifest_intercom
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            heard_mara_goodbye: true
       - id: help_opened_passengers_gather
         label: Help the opened passengers gather by helping one another board
         to: passenger_gathered_boarding
@@ -1639,14 +1673,6 @@ scenes:
           set:
             returned_lost_mitten: true
             helped_passengers_gather: true
-      - id: review_open_manifest_count
-        label: Review Mara's opened manifest count before boarding
-        to: passenger_manifest_count
-        requires:
-          notFlag: reviewed_open_manifest_count
-        effects:
-          set:
-            reviewed_open_manifest_count: true
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
         to: opened_manifest_echoes
@@ -1798,32 +1824,6 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
-      - id: board_with_completed_opened_count
-        label: Board with the passengers finishing Mara's opened count together
-        to: passenger_counted_chorus
-        requires:
-          all:
-            - notFlag: passengers_finished_reviewed_count
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            reviewed_open_manifest_count: true
-            passengers_finished_reviewed_count: true
-      - id: board_with_opened_manifest_reviewed_count
-        label: Board with Mara's reviewed count already on the speaker
-        to: passenger_counted_manifest_intercom
-        requires:
-          all:
-            - notFlag: reviewed_open_manifest_count
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            reviewed_open_manifest_count: true
-            heard_mara_goodbye: true
       - id: ask_conductor_to_read_opened_count
         label: Ask the conductor to read Mara's opened count clear
         to: passenger_conductor_count_roll_call

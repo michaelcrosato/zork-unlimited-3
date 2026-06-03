@@ -1,3 +1,59 @@
+# Cycle 25 Promoted Opened-Manifest Reviewed Count
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_count` and
+  `passenger_reviewed_count_true_ending` easier to discover during normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 25 evidence shows coverage reaches every scene, but the
+  100-run random sample missed `passenger_manifest_count` and
+  `passenger_reviewed_count_true_ending` while larger MCP random only found the
+  reviewed-count ending a few times. The count route is a strong passenger
+  branch payoff because it turns Mara's ledger habit into the passengers
+  checking one another through, not one more proof Mara must carry alone.
+- Planned work:
+  - Promote the existing opened-manifest reviewed-count cluster beside the
+    first morning-memory choice.
+  - Rewrite the count labels so they scan as passenger check-in actions before
+    release.
+  - Preserve the existing count scene, third-car intercom, completed-count
+    chorus, and reviewed-count ending outcomes.
+  - Run focused regressions, full health, and an actual playthrough of the
+    promoted route.
+- Risks:
+  - The opened-manifest hub remains intentionally broad, so a small random
+    sample can still miss individual optional variants.
+  - This improves reviewed-count visibility without addressing remaining rare
+    misses such as `lost_after_dispatch_ending`.
+- Status:
+  - Completed.
+  - Moved `review_open_manifest_count`,
+    `board_with_completed_opened_count`, and
+    `board_with_opened_manifest_reviewed_count` immediately after
+    `listen_to_passenger_morning_chorus` in the opened-manifest hub.
+  - Updated labels so the promoted choices frame the route as every opened
+    passenger checking in before the release.
+  - Updated ordering regressions for the promoted count cluster and the
+    mitten route's new relative position.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest-specific platform beat|opened-manifest count|return the lost mitten|reviewed manifest count|reviewed count|completed count"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    270 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> reviewed the opened count so
+    every passenger checks in -> pulled the release while Mara's reviewed
+    count still held.
+  - The route ended at `passenger_reviewed_count_true_ending` with score 259
+    and no objectives.
+  - The promoted count choice now appears early enough to read as a core
+    opened-manifest response, and the count scene clearly explains why the
+    release can happen before another intercom detour.
+- Next step:
+  - Watch whether future random/blind evidence still misses
+    `passenger_manifest_count`; if it stabilizes, shift attention to
+    `lost_after_dispatch_ending` or remaining rare handoff variants.
+
 # Cycle 24 Promoted Opened-Manifest Conductor Clear
 
 - Date: 2026-06-03
