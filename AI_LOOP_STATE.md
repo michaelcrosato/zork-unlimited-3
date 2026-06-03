@@ -1,3 +1,51 @@
+# Cycle 47 Passenger Morning Chorus Payoff Priority
+
+- Date: 2026-06-03
+- Main objective: Make the passenger morning chorus payoff more discoverable in
+  normal play by putting its direct third-car boarding action first.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  current health evidence is green, and Cycle 7 random evidence still missed
+  `passenger_morning_intercom` even though coverage proves it is reachable. The
+  chorus scene had its most literal payoff last, behind return, platform
+  crossing, roll-call, and gather alternatives, so normal/random players could
+  hear the chorus without carrying it into the release speaker.
+- Planned work:
+  - Move `board_after_passenger_morning_chorus` to the top of the
+    `passenger_morning_chorus` choice list.
+  - Preserve roll-call, gather, platform-crossing, and return alternatives.
+  - Update the focused passenger morning chorus regression to lock the new
+    player-facing order.
+  - Run the focused regression, full health, and an actual CLI route through
+    the reprioritized chorus payoff.
+- Risks:
+  - Choice order is player-facing UX and covered by exact-order tests.
+  - The optional detours must remain reachable for coverage and story variety.
+- Status:
+  - Completed.
+  - Moved `board_after_passenger_morning_chorus` ahead of the optional
+    roll-call, gather, platform-crossing, and return choices.
+  - Preserved all existing alternate chorus routes and endings.
+  - Updated the focused passenger morning chorus regression to enforce the new
+    payoff-first choice order.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "passenger morning chorus"`.
+  - `npm run health` passed: format check, TypeScript, 242 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> passenger morning chorus ->
+    first visible boarding payoff -> morning intercom -> emergency release,
+    ending at `passenger_true_ending` with score 274 and no objectives.
+  - The branch now reads more cleanly: once the passengers remember morning,
+    the first action carries that sound into the third car instead of asking
+    players to sift through detours before the payoff.
+  - The roll-call, gather, platform-crossing, and return choices remain
+    available, so story variety and coverage are preserved.
+- Next step:
+  - Watch the next random/blind-play evidence for whether
+    `passenger_morning_intercom` appears more often in normal play; if it still
+    misses, consider adding a second direct bridge from `passenger_platform`
+    after the chorus rather than adding new content.
+
 # Cycle 46 Radio Repeat Pacing
 
 - Date: 2026-06-03

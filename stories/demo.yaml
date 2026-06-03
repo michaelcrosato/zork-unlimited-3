@@ -1825,12 +1825,12 @@ scenes:
       memories overlap into one steady sound. "That is enough," she says. "The
       line knows they have somewhere to arrive."
     choices:
-      - id: return_from_passenger_morning_chorus
-        label: Return to the opened manifest doors
-        to: passengers_released
-      - id: cross_after_passenger_morning_chorus
-        label: Cross the platform while the morning chorus holds
-        to: passenger_platform
+      - id: board_after_passenger_morning_chorus
+        label: Board the third car with the morning chorus behind you
+        to: passenger_morning_intercom
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
       - id: let_morning_chorus_answer_names
         label: Let the morning chorus answer Mara's roll call
         to: passenger_answers
@@ -1847,12 +1847,12 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
-      - id: board_after_passenger_morning_chorus
-        label: Board the third car with the morning chorus behind you
-        to: passenger_morning_intercom
-        effects:
-          set:
-            heard_passenger_morning_boarding: true
+      - id: cross_after_passenger_morning_chorus
+        label: Cross the platform while the morning chorus holds
+        to: passenger_platform
+      - id: return_from_passenger_morning_chorus
+        label: Return to the opened manifest doors
+        to: passengers_released
 
   passenger_mara_signoff:
     routeImportance: optional

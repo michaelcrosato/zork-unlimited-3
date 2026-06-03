@@ -11504,11 +11504,11 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "return_from_passenger_morning_chorus",
-      "cross_after_passenger_morning_chorus",
+      "board_after_passenger_morning_chorus",
       "let_morning_chorus_answer_names",
       "gather_after_passenger_morning_chorus",
-      "board_after_passenger_morning_chorus"
+      "cross_after_passenger_morning_chorus",
+      "return_from_passenger_morning_chorus"
     ]);
 
     const answeredMorningState = choose(story, state, "let_morning_chorus_answer_names");
