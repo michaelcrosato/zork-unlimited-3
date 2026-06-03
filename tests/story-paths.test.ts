@@ -9487,8 +9487,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_escape_call).toBe(true);
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "return_from_stairwell_call",
       "look_back_after_stairwell_call",
+      "return_from_stairwell_call",
       "leave_lit_platform_after_stairwell_call"
     ]);
 

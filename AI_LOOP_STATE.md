@@ -1,3 +1,51 @@
+# Cycle 48 Lit Stairwell Glance Priority
+
+- Date: 2026-06-03
+- Main objective: Make `escape_platform_glance` more naturally discoverable
+  after players light Platform 13 and hear Mara's stairwell warning.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  and Cycle 8 random evidence still listed `escape_platform_glance` among
+  normal-play misses while coverage proved it reachable. The stairwell call
+  already names the stopped-clock route; putting the platform glance first lets
+  players inspect what they are leaving before choosing recovery or escape.
+- Planned work:
+  - Move `look_back_after_stairwell_call` ahead of
+    `return_from_stairwell_call` when Platform 13 is lit.
+  - Preserve the stopped-clock recovery, warned lit escape, and unlit warning
+    alternatives.
+  - Update the focused escape regression to lock the new player-facing order.
+  - Run the focused regression, full health, and an actual route through the
+    reprioritized glance.
+- Risks:
+  - Choice order is player-facing UX and covered by exact-order tests.
+  - The immediate clock recovery path must remain available for players who
+    want to act on Mara's warning.
+- Status:
+  - Completed.
+  - Moved `look_back_after_stairwell_call` ahead of
+    `return_from_stairwell_call` for lit Platform 13 stairwell warnings.
+  - Preserved the stopped-clock recovery, warned lit escape, and unlit
+    stairwell alternatives.
+  - Updated the focused escape regression to enforce the new glance-first
+    choice order.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "escape|stairwell"`.
+  - `npm run health` passed: format check, TypeScript, 242 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed lit platform -> flee -> listen to Mara -> first
+    visible look-back glance -> return to finish the rescue, ending at
+    `true_ending` with score 270 and no objectives.
+  - The stairwell warning now reads more like a playable pause: players see the
+    platform they are about to abandon before deciding between the clock route
+    and escape.
+  - The recovery route still works immediately after the glance, so the change
+    improves inspection without adding a dead end.
+- Next step:
+  - Watch the next random/blind-play evidence for remaining normal-play misses,
+    especially `lost_after_dispatch_ending` and `home_sign_dispatch`; prefer
+    another small priority or label clarity pass if those stay rare.
+
 # Cycle 47 Passenger Morning Chorus Payoff Priority
 
 - Date: 2026-06-03

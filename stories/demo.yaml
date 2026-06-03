@@ -1036,9 +1036,6 @@ scenes:
       is still behind the stopped clock, and the line will keep asking someone
       else to finish what I could not."
     choices:
-      - id: return_from_stairwell_call
-        label: Return to the stopped clock for the signal key
-        to: clock
       - id: look_back_after_stairwell_call
         label: Look back at Platform 13 before choosing the clock or the street
         to: escape_platform_glance
@@ -1050,6 +1047,9 @@ scenes:
           set:
             looked_back_from_escape_warning: true
             knows_badge_proof: true
+      - id: return_from_stairwell_call
+        label: Return to the stopped clock for the signal key
+        to: clock
       - id: leave_lit_platform_after_stairwell_call
         label: Leave after lighting the platform and hearing Mara call
         to: warned_lit_escape_ending
