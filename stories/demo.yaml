@@ -1525,6 +1525,31 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+      - id: listen_to_opened_manifest_echoes
+        label: Listen to the opened door-echoes before boarding
+        to: opened_manifest_echoes
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+      - id: follow_opened_manifest_echoes
+        label: Follow the newspaper fold in the opened door-echoes
+        to: opened_manifest_echoes
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            followed_opened_newspaper_fold: true
       - id: review_open_manifest_count
         label: Review Mara's opened manifest count before boarding
         to: passenger_manifest_count
@@ -1555,31 +1580,6 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
-      - id: listen_to_opened_manifest_echoes
-        label: Listen to the opened door-echoes before boarding
-        to: opened_manifest_echoes
-        requires:
-          all:
-            - notFlag: heard_passenger_echoes
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            heard_passenger_echoes: true
-      - id: follow_opened_manifest_echoes
-        label: Follow the newspaper fold in the opened door-echoes
-        to: opened_manifest_echoes
-        requires:
-          all:
-            - notFlag: heard_passenger_echoes
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            heard_passenger_echoes: true
-            followed_opened_newspaper_fold: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding

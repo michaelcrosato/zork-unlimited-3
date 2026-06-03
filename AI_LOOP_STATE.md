@@ -1,3 +1,51 @@
+# Cycle 12 Opened Manifest Echo Priority
+
+- Date: 2026-06-03
+- Main objective: Make `opened_manifest_echoes` more naturally discoverable
+  from the opened-passenger release hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the current random evidence missed `opened_manifest_echoes` while
+  coverage proved it reachable. The `passengers_released` scene explicitly
+  calls out the door-echo rhythm, so the listen/follow payoff should appear
+  before count-review and direct-ending shortcuts.
+- Planned work:
+  - Move `listen_to_opened_manifest_echoes` and
+    `follow_opened_manifest_echoes` directly after Mara's opened-door handoff
+    choice.
+  - Preserve count review, Mara handoff, direct reviewed-count ending, and all
+    later passenger routes.
+  - Update exact-order regressions for the opened-passenger hub.
+  - Run focused tests, full health, and an actual CLI route through the
+    reprioritized echo payoff.
+- Risks:
+  - Choice order is player-facing UX and covered by exact-order tests.
+  - The direct reviewed-count ending should remain easy to reach, just no
+    longer ahead of the scene's echo clue.
+- Status:
+  - Completed.
+  - Moved the opened-manifest listen and newspaper-follow choices ahead of
+    count review and the direct reviewed-count release.
+  - Preserved all existing requirements/effects and downstream routes.
+  - Updated exact-order regressions for `passengers_released`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest|door-echoes|passenger echo"`.
+  - `npm run health` passed: format check, TypeScript, 243 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> first visible opened
+    door-echoes listen -> echoed boarding -> echoed intercom -> emergency
+    release, ending at `passenger_echoed_true_ending` with score 285 and no
+    objectives.
+  - The hub now reads more cleanly: after the text names the tiny door-echoes,
+    the next action lets the player stop and trust that signal before boarding.
+  - Count review and direct reviewed-count release remain available, so the
+    change improves discovery without narrowing route variety.
+- Next step:
+  - Watch random/blind-play evidence for whether `opened_manifest_echoes`
+    appears in normal play; if other current misses persist, prefer
+    `passenger_newspaper_transfer` or `passenger_echoed_check` choice-priority
+    passes before adding new content.
+
 # Cycle 50 Gathered Roll-Call Priority
 
 - Date: 2026-06-03

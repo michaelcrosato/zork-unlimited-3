@@ -5526,19 +5526,19 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds[0]).toBe("watch_mara_open_manifest");
-    expect(choiceIds[1]).toBe("review_open_manifest_count");
-    expect(observation.choices[1]?.label).toBe(
+    expect(choiceIds[1]).toBe("listen_to_opened_manifest_echoes");
+    expect(observation.choices[1]?.label).toBe("Listen to the opened door-echoes before boarding");
+    expect(choiceIds[2]).toBe("follow_opened_manifest_echoes");
+    expect(observation.choices[2]?.label).toBe(
+      "Follow the newspaper fold in the opened door-echoes"
+    );
+    expect(choiceIds[3]).toBe("review_open_manifest_count");
+    expect(observation.choices[3]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[2]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[2]?.label).toBe(
-      "Board as Mara's opened count finishes, then pull the release"
-    );
-    expect(choiceIds[3]).toBe("listen_to_opened_manifest_echoes");
-    expect(observation.choices[3]?.label).toBe("Listen to the opened door-echoes before boarding");
-    expect(choiceIds[4]).toBe("follow_opened_manifest_echoes");
+    expect(choiceIds[4]).toBe("let_opened_passengers_finish_count");
     expect(observation.choices[4]?.label).toBe(
-      "Follow the newspaper fold in the opened door-echoes"
+      "Board as Mara's opened count finishes, then pull the release"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
@@ -10806,10 +10806,10 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(choiceIds).toEqual([
       "watch_mara_open_manifest",
-      "review_open_manifest_count",
-      "let_opened_passengers_finish_count",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
+      "review_open_manifest_count",
+      "let_opened_passengers_finish_count",
       "check_opened_manifest_blank_row",
       "return_opened_manifest_mitten",
       "match_opened_manifest_keepsakes",
