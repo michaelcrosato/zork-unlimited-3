@@ -6431,6 +6431,65 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("surfaces Mara's manifest thumbprint directly from the opened doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "notice_manifest_thumbprint_from_opened_doors"
+    );
+
+    state = choose(story, state, "notice_manifest_thumbprint_from_opened_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint");
+    expect(observation.scene.text).toContain("witness keeping the door open");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_manifest_thumbprint_to_third_car"
+    );
+
+    state = choose(story, state, "carry_manifest_thumbprint_to_third_car");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("Let it mean I stayed long enough to leave");
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("lets passenger answer listeners still help the released crowd gather", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -10915,6 +10974,7 @@ describe("demo story critical paths", () => {
       "listen_as_opened_passengers_gather",
       "hold_opened_manifest_threshold",
       "make_room_from_opened_manifest",
+      "notice_manifest_thumbprint_from_opened_doors",
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",

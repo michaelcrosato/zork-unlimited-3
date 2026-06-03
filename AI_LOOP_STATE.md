@@ -1,3 +1,59 @@
+# Cycle 17 Direct Manifest Thumbprint Oath
+
+- Date: 2026-06-03
+- Main objective: Make `mara_manifest_thumbprint`,
+  `mara_manifest_thumbprint_intercom`, and
+  `passenger_manifest_thumbprint_true_ending` easier to find from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed the manifest thumbprint scenes
+  while coverage proved the route reachable. Normal players previously had to
+  watch Mara open the manifest, return or choose a second-stage thumbprint
+  prompt, then carry the oath forward.
+- Planned work:
+  - Add a direct opened-manifest hub choice into Mara's manifest thumbprint
+    oath.
+  - Reuse the existing thumbprint scene, intercom, and passenger manifest
+    thumbprint ending instead of adding a parallel payoff.
+  - Add a focused regression for the direct opened-door thumbprint route and
+    update the opened-manifest hub order regression.
+  - Run focused tests, full health, and an actual route through the new bridge.
+- Risks:
+  - The new branch sets `saw_mara_manifest_handoff` without visiting the
+    standalone handoff scene, so it must stay textually coherent and preserve
+    downstream route flags.
+  - The opened-manifest hub is already dense; the label must be specific enough
+    to read as a Mara/oath branch, not another generic boarding action.
+- Status:
+  - Completed.
+  - Added `notice_manifest_thumbprint_from_opened_doors` from
+    `passengers_released` to `mara_manifest_thumbprint`, setting
+    `read_manifest_thumbprint` and `saw_mara_manifest_handoff`.
+  - Preserved the existing slower handoff and return recovery path through
+    `touch_manifest_thumbprint_from_opened_doors`.
+  - Added a focused regression covering direct opened doors -> manifest
+    thumbprint -> intercom -> `passenger_manifest_thumbprint_true_ending`.
+  - Updated the opened-manifest exact-order regression for the new option.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest thumbprint|manifest-specific platform"`.
+  - `npm run health` passed: format check, TypeScript, 246 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct thumbprint notice ->
+    thumbprint intercom -> release, ending at
+    `passenger_manifest_thumbprint_true_ending` with score 300 and no
+    objectives.
+  - The new option made the torn thumbprint legible as an immediate
+    opened-manifest clue instead of requiring the player to discover Mara's
+    handoff submenu first.
+  - The payoff felt coherent because the existing scene already frames the
+    thumbprint as Mara changing from last dispatcher to witness for every
+    passenger.
+- Next step:
+  - Watch random/blind evidence for whether the manifest thumbprint route
+    appears in normal play. If it remains rare, prefer choice-order/label
+    tuning around the opened-manifest hub before adding more endings.
+
 # Cycle 16 Opened Transfer Handoff Bridge
 
 - Date: 2026-06-03
