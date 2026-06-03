@@ -1919,8 +1919,11 @@ scenes:
       Mara checks the opened manifest before anyone moves. The doors are no
       longer stamped shut, but the page still remembers what each person
       carried into the line: newspaper, lunch tin, child's mitten, conductor's
-      punch. "They need more than clearance," Mara says. "They need one another
-      to answer when the train tries to count them again."
+      punch. She does not point to the marks as proof that the passengers
+      belong to the train. She points from one kept thing to the next until
+      the people holding them begin to notice each other. "They need more than
+      clearance," Mara says. "They need a count that checks whether everyone
+      made it through."
     choices:
       - id: check_for_unanswered_manifest_row
         label: Check which opened row still has no answer
@@ -4100,9 +4103,11 @@ scenes:
       She names what each opened door carried back: newspaper, lunch tin,
       mitten, conductor's punch. The passengers answer in small practical
       sounds before she reaches the end, no longer just entries cleared from a
-      page but people checking that the others are still with them. "This is
-      the count the line cannot keep," Mara says. "Pull the release while they
-      are counting one another home."
+      page but people checking that the others are still with them. The
+      newspaper woman waits for the mitten child to answer. The lunch-tin
+      worker holds his clasp until the conductor taps twice. "This is the count
+      the line cannot keep," Mara says. "Pull the release while they are
+      counting one another home."
     choices:
       - id: let_passengers_finish_reviewed_count
         label: Let the passengers finish the reviewed count together
@@ -4133,8 +4138,10 @@ scenes:
       Mara stops at the old blank space, but the passengers do not. The
       newspaper woman reads the transfer aloud, the lunch-tin worker answers
       with the time she should have clocked out, the mitten child says present
-      twice so the old conductor can hear. By the time Mara breathes again, the
-      count has become a chorus with no last name left for the line to claim.
+      twice so the old conductor can hear. Then the old conductor calls back,
+      not to keep order, but to make sure the child's second answer was heard.
+      By the time Mara breathes again, the count has become a chorus with no
+      last name left for the line to claim.
     choices:
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
@@ -4276,10 +4283,12 @@ scenes:
     text: >
       The old conductor takes the blank transfer from the newspaper woman's
       hand and slides it into his punch. The tool bites once, leaving a clean
-      star-shaped hole where the destination should have been. "Valid for
+      star-shaped hole where the destination should have been. Rain-bright
+      platform light shows through the cut before the doors have opened, as if
+      the ticket already knows a stop beyond Warden Street. "Valid for
       morning," he says, and passes it down the aisle until the child, the
       lunch-tin worker, and Mara all touch the same small proof that the line
-      has to let them change trains.
+      has to let them change trains instead of circling back.
     choices:
       - id: pass_punched_transfer_to_child
         label: Let the child carry the punched transfer to Mara's speaker
@@ -4355,9 +4364,10 @@ scenes:
       ceiling speaker as if Mara can take hold from the other side. The
       conductor steadies the aisle pole. The newspaper woman reads the blank
       destination aloud as morning, and the lunch-tin worker answers with the
-      shift bell he never reached. When the paper reaches the speaker grille,
-      Mara laughs once, startled by proof light enough to pass hand to hand.
-      "That is enough," she says. "Pull it now."
+      shift bell he never reached, not as another count but as a connection
+      they are allowed to make. When the paper reaches the speaker grille, Mara
+      laughs once, startled by proof light enough to pass hand to hand. "That
+      is enough," she says. "Pull it now."
     choices:
       - id: press_transfer_to_speaker_grille
         label: Press the punched transfer flat against Mara's speaker grille
@@ -4379,8 +4389,9 @@ scenes:
       throwing one small morning-shaped mark across the ceiling. The child sees
       it first. Then the newspaper woman, the lunch-tin worker, and the old
       conductor look up together, all of them watching proof pass through paper
-      instead of being trapped inside it. Mara whispers, "Now it belongs to
-      them too."
+      instead of being trapped inside it. For one breath the aisle becomes a
+      transfer platform, not a held car. Mara whispers, "Now it belongs to them
+      too."
     choices:
       - id: pull_release_after_transfer_proof
         label: Pull the release while the punched transfer shines through
@@ -5101,8 +5112,10 @@ scenes:
       The release opens every door at once while Mara's reviewed count is still
       warm from the ledger. Newspaper, lunch tin, mitten, conductor's punch:
       each item becomes a person stepping through instead of a mark beside a
-      name. Mara starts to add them again, then stops when the passengers look
-      back for one another and prove the count can end.
+      name. Mara starts to add them again, then stops when the passengers do
+      the work the list never could: the newspaper woman looks for the child,
+      the child waits for the worker, the worker waves the conductor into rain.
+      The count ends because everyone has become someone else's proof.
     choices: []
 
   passenger_manifest_handoff_true_ending:
@@ -5248,8 +5261,10 @@ scenes:
       The release opens every door at once through the conductor's punched
       transfer. Its star-shaped hole catches the first rain-bright light as it
       passes from hand to hand: child, newspaper woman, lunch-tin worker, Mara,
-      then the old conductor last. No one asks where the ticket is valid
-      anymore. Morning has already accepted the change.
+      then the old conductor last. The paper does not point back to the tunnel;
+      it points through the open doors to whatever stop each passenger still
+      meant to reach. No one asks where the ticket is valid anymore. Morning
+      has already accepted the change.
     choices: []
 
   passenger_conductor_count_true_ending:

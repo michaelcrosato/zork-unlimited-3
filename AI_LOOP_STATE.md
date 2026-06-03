@@ -1,3 +1,71 @@
+# Cycle 32 Passenger Payoff Polish
+
+- Date: 2026-06-03
+- Main objective: Strengthen high-frequency passenger payoff branches without
+  changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health is green, all scenes are reachable, and Cycle 32 evidence
+  shows passenger ideal routes dominate normal play. The reviewed-count and
+  conductor-transfer routes are frequent in coverage and have clear motifs, so
+  focused prose passes can make common endings feel more distinct.
+- Planned work:
+  - Revise the reviewed-count beats so the manifest count pays off as
+    passengers checking that everyone made it through.
+  - Revise the punched-transfer beat so the transfer points beyond Warden
+    Street instead of only validating escape.
+  - Revise the handoff/proof beats so the transfer reads as a connection the
+    passengers are allowed to make, not another count or held ticket.
+  - Revise `passenger_conductor_transfer_true_ending` so the route pays off as
+    each passenger continuing to their intended stop.
+  - Add focused regression assertions for the strengthened text.
+  - Run focused tests, full health, and an actual playable route through the
+    conductor-transfer ending.
+- Risks:
+  - Text-only polish can overlap with the newspaper transfer branch; keep this
+    route centered on the conductor's punch and permission to change trains.
+  - Reviewed-count text can blur into other manifest branches; keep it centered
+    on mutual proof rather than another ledger recap.
+  - Existing high route coverage means any typo or brittle assertion would
+    surface quickly in health.
+- Status:
+  - Completed.
+  - Revised reviewed-count setup, intercom, chorus, and ending language so the
+    count resolves through passengers checking for one another.
+  - Revised `passenger_conductor_transfer` so the punched transfer shows
+    morning light before the doors open and points beyond Warden Street.
+  - Revised the handoff/proof beats so the transfer becomes a shared
+    connection the passengers are allowed to make.
+  - Revised `passenger_conductor_transfer_true_ending` so the paper points
+    through the open doors to each passenger's intended stop.
+  - Added focused regression assertions for the reviewed-count and
+    conductor-transfer payoff language.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "reviewed count|finish Mara's count"`.
+  - Focused regression also passed:
+    `npm test -- tests/story-paths.test.ts -t "conductor transfer"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the reviewed manifest count through
+    `passenger_manifest_count`, `passenger_counted_manifest_intercom`, and
+    `passenger_reviewed_count_true_ending`, ending with score 278.
+  - The reviewed-count branch now visibly pays off as mutual proof: the
+    newspaper woman, child, worker, and conductor check each other into rain.
+  - Actual CLI play followed the passenger manifest answer route through the
+    conductor punch memory, transfer handoff, transfer proof, and
+    `passenger_conductor_transfer_true_ending`, ending with score 330.
+  - The branch now reads less like a generic validated ticket and more like
+    permission to continue past the tunnel.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Continue branch-specific payoff passes only if blind sessions or future
+    digests still report passenger ending sameness; otherwise prioritize the
+    next top-ranked blind-play issue once consolidation starts.
+
 # Cycle 31 Echoed Passenger Payoff
 
 - Date: 2026-06-03

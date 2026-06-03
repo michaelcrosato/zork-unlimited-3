@@ -2031,6 +2031,8 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
+    expect(observation.scene.text).toContain("checking that the others are still with them");
+    expect(observation.scene.text).toContain("counting one another home");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_passengers_finish_reviewed_count",
       "ask_who_reviewed_count_left_blank",
@@ -2065,6 +2067,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_counted_chorus");
     expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.scene.text).toContain("make sure the child's second answer was heard");
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_counted_chorus"
@@ -5457,6 +5460,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_manifest_count");
     expect(observation.scene.text).toContain("newspaper, lunch tin, child's mitten");
     expect(observation.scene.text).toContain("They need more than clearance");
+    expect(observation.scene.text).toContain("checks whether everyone made it through");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_for_unanswered_manifest_row",
@@ -5585,7 +5589,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.text).toContain("Mara's reviewed count");
-    expect(observation.scene.text).toContain("prove the count can end");
+    expect(observation.scene.text).toContain("someone else's proof");
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
@@ -5817,7 +5821,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's reviewed count");
-    expect(observation.scene.text).toContain("prove the count can end");
+    expect(observation.scene.text).toContain("someone else's proof");
     expectIdealScore(observation.score);
   });
 
@@ -5908,7 +5912,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's reviewed count");
-    expect(observation.scene.text).toContain("prove the count can end");
+    expect(observation.scene.text).toContain("someone else's proof");
     expectIdealScore(observation.score);
   });
 
@@ -7059,6 +7063,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_transfer");
     expect(observation.scene.text).toContain("Valid for morning");
     expect(observation.scene.text).toContain("star-shaped hole");
+    expect(observation.scene.text).toContain("already knows a stop beyond Warden Street");
+    expect(observation.scene.text).toContain("instead of circling back");
     expect(observation.state.flags.punched_conductor_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_punched_transfer_to_child",
@@ -7082,6 +7088,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
     expect(observation.scene.text).toContain("The star hole lines up with Mara's voice");
+    expect(observation.scene.text).toContain("the aisle becomes a transfer platform");
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
 
@@ -7098,6 +7105,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_transfer_handoff");
     expect(observation.scene.text).toContain("walks it to the ceiling speaker");
     expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
+    expect(observation.scene.text).toContain("a connection they are allowed to make");
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "press_transfer_to_speaker_grille",
@@ -7154,6 +7162,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
     expect(observation.scene.text).toContain("star-shaped hole");
+    expect(observation.scene.text).toContain("whatever stop each passenger still meant to reach");
     expect(observation.scene.text).toContain("Morning has already accepted the change");
     expectIdealScore(observation.score);
 
