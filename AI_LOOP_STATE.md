@@ -1,3 +1,61 @@
+# Cycle 29 Promoted Morning Chorus
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest morning chorus easier to discover
+  during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `passenger_morning_chorus` even
+  though coverage proved it reachable, and the route was late in the dense
+  opened-manifest hub despite the hub text already promising that passengers
+  can remember morning aloud.
+- Planned work:
+  - Promote `listen_to_passenger_morning_chorus` and
+    `board_with_passenger_morning_chorus` into the first visible
+    opened-manifest response group.
+  - Add a continuation from Mara's opened-door handoff into the same morning
+    chorus for players who naturally choose Mara's first response.
+  - Preserve existing morning chorus boarding, gathering, platform, and release
+    payoffs.
+  - Update focused regressions, run health, and actually play the promoted
+    handoff-to-morning route.
+- Risks:
+  - The opened-manifest hub remains dense; ordering and one handoff
+    continuation improve scanning but do not remove branch competition.
+  - Promoting the broad morning payoff may compete with narrower keepsake and
+    lunch-tin optional branches that are also normal-play misses.
+- Status:
+  - Completed.
+  - Moved `listen_to_passenger_morning_chorus` and
+    `board_with_passenger_morning_chorus` immediately after Mara's
+    opened-manifest sign-off option, aligning the choice order with the hub
+    text's promise that Mara can hold the line while passengers find morning.
+  - Added `ask_mara_about_morning_after_manifest_handoff` to
+    `mara_manifest_handoff`, so players who choose Mara's first handoff can
+    continue into the existing morning chorus instead of returning to the dense
+    hub.
+  - Preserved the existing morning chorus boarding, gathering, platform, and
+    release payoffs.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "Mara handoff beat|morning chorus|opened passenger manifest"`.
+  - `npm run health` passed: format check, TypeScript, 261 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> Mara opened-door handoff -> ask
+    what morning means -> board with the morning chorus -> pull the release,
+    ending at `passenger_true_ending` with score 291 and no objectives.
+  - The new transition read coherently: Mara's handoff fills the speaker with
+    people breathing, and the morning chorus turns that into ordinary reasons
+    to arrive.
+  - A follow-up 100-run random summary visited `passenger_morning_chorus` and
+    `passenger_morning_intercom`; misses shifted to other optional proof/check
+    branches such as `passenger_lunch_tin_check`, `passenger_echoed_check`, and
+    the threshold scenes.
+- Next step:
+  - Continue watching normal-play misses in the opened-manifest hub. If
+    `passenger_lunch_tin_check` or `passenger_echoed_check` remain recurring,
+    prefer promoting check/payoff routes in small clusters rather than adding
+    more unrelated one-off choices.
+
 # Cycle 28 Promoted Opened-Manifest Threshold
 
 - Date: 2026-06-03
