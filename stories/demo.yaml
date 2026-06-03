@@ -1504,15 +1504,14 @@ scenes:
           set:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
-        label: Let the opened passengers finish Mara's count together
-        to: passenger_answers
+        label: Board as Mara's opened count finishes, then pull the release
+        to: passenger_reviewed_count_true_ending
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
-            heard_passenger_answers: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
         to: opened_manifest_echoes
@@ -1526,8 +1525,8 @@ scenes:
           set:
             heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
-        label: Follow the opened door-echoes before boarding
-        to: opened_manifest_echoes
+        label: Follow the newspaper fold in the opened door-echoes
+        to: passenger_newspaper_transfer
         requires:
           all:
             - notFlag: heard_passenger_echoes
@@ -1537,6 +1536,8 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding

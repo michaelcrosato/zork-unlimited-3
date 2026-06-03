@@ -1983,6 +1983,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
     expectIdealScore(observation.score);
@@ -3738,27 +3739,25 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "follow_opened_manifest_echoes");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.id).toBe("passenger_newspaper_transfer");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
 
-    state = choose(story, state, "board_with_listened_manifest_echoes");
+    state = choose(story, state, "carry_newspaper_transfer_to_third_car");
     observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.scene.id).toBe("passenger_newspaper_intercom");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
-    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
 
-    for (const choiceId of [
-      "listen_to_echoed_manifest_from_boarding",
-      "pull_release_after_echoed_manifest_goodbye"
-    ]) {
+    for (const choiceId of ["pull_release_after_gathered_intercom"]) {
       state = choose(story, state, choiceId);
     }
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.text).toContain("small sounds you heard");
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.text).toContain("blank transfer column fills with destinations");
     expectIdealScore(observation.score);
   });
 
@@ -5377,12 +5376,14 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[2]).toBe("let_opened_passengers_finish_count");
     expect(observation.choices[2]?.label).toBe(
-      "Let the opened passengers finish Mara's count together"
+      "Board as Mara's opened count finishes, then pull the release"
     );
     expect(choiceIds[3]).toBe("listen_to_opened_manifest_echoes");
     expect(observation.choices[3]?.label).toBe("Listen to the opened door-echoes before boarding");
     expect(choiceIds[4]).toBe("follow_opened_manifest_echoes");
-    expect(observation.choices[4]?.label).toBe("Follow the opened door-echoes before boarding");
+    expect(observation.choices[4]?.label).toBe(
+      "Follow the newspaper fold in the opened door-echoes"
+    );
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -5515,28 +5516,13 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answers");
-    expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
+    expect(observation.scene.text).toContain("Mara's reviewed count");
+    expect(observation.scene.text).toContain("prove the count can end");
+    expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
-    expect(observation.state.flags.heard_passenger_answers).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_count",
-      "follow_newspaper_answer",
-      "gather_answered_passengers",
-      "let_lunch_tin_worker_keep_count",
-      "ask_conductor_punch_from_answers",
-      "ask_conductor_from_answers",
-      "return_from_passenger_answers",
-      "carry_answered_names_to_intercom",
-      "board_after_answered_passengers"
-    ]);
-
-    state = choose(story, state, "pull_release_after_answered_count");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_counted_true_ending");
-    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
     expectIdealScore(observation.score);
   });
 
@@ -5562,7 +5548,7 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "follow_opened_manifest_echoes"
+      "listen_to_opened_manifest_echoes"
     ]) {
       state = choose(story, state, choiceId);
     }

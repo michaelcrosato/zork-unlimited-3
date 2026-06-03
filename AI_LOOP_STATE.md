@@ -1,3 +1,80 @@
+# Cycle 21 Opened Manifest Shortcut Payoffs
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for
+  `passenger_newspaper_transfer` and `passenger_reviewed_count_true_ending`
+  from the opened-manifest release hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 21 evidence. Health, MCP
+  validation, and coverage were green, but the 100-run random sample still
+  missed `passenger_newspaper_transfer` and
+  `passenger_reviewed_count_true_ending`. Coverage already proves those scenes
+  are reachable; the problem is that normal random play had to select a
+  high-traffic hub and then make another low-probability choice inside a
+  choice-rich passenger scene.
+- Planned work:
+  - Retarget the existing parent-hub `follow_opened_manifest_echoes` choice so
+    the newspaper fold in those echoes leads straight to the restored transfer
+    column.
+  - Retarget the existing parent-hub opened-count finish choice so it pays off
+    the reviewed-count ending immediately after the manifest doors open.
+  - Preserve the explicit listened-echo route and its echoed-passenger ending.
+  - Preserve the unanswered-row counted intercom route after random testing
+    showed that retargeting it shifted traffic away from counted-manifest
+    content.
+  - Update focused story-path regressions and run full health plus an actual
+    playthrough.
+- Risks:
+  - Retargeting high-traffic choices could accidentally remove the echo payoff
+    route if the local `opened_manifest_echoes` board choice is not preserved.
+  - Direct reviewed-count endings must still require the manifest to be opened
+    with Mara's badge proof; these choices remain downstream of that ledger
+    action.
+  - The change improves random discoverability by reusing choices, but it may
+    shift a small amount of traffic away from generic answered/count branches.
+- Status:
+  - Completed.
+  - Retargeted the parent-hub `follow_opened_manifest_echoes` choice to the
+    restored newspaper transfer column, while preserving the local
+    `opened_manifest_echoes` scene and its direct echoed-passenger boarding
+    route through `listen_to_opened_manifest_echoes`.
+  - Retargeted `let_opened_passengers_finish_count` so the opened-manifest hub
+    can pay off `passenger_reviewed_count_true_ending` immediately after the
+    manifest doors open.
+  - Kept `board_with_unanswered_row_resolved` on the counted intercom route
+    after random testing showed that retargeting it made counted-manifest
+    content rarer in the deterministic 100-run sample.
+  - Updated focused story-path regressions for the opened-manifest newspaper
+    shortcut, reviewed-count shortcut, and preserved echoed-passenger boarding
+    route.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes|opened manifest players|opened-manifest count|reviewed count"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Final deterministic 100-run random playtest visited both target payoffs:
+    `passenger_newspaper_transfer`, `passenger_newspaper_true_ending` x3, and
+    `passenger_reviewed_count_true_ending` x2. The sample missed
+    `opened_manifest_echoes`, but the explicit listen route remains intact and
+    coverage/focused tests still exercise it.
+  - Coverage playtest visited all scenes with zero unvisited scenes.
+- Playtest feedback:
+  - Actual CLI play followed the reviewed-count shortcut and ended at
+    `passenger_reviewed_count_true_ending` with score 251 and no objectives.
+  - Actual CLI play followed the new newspaper-fold shortcut and ended at
+    `passenger_newspaper_true_ending` with score 298 and no objectives.
+  - The route reads cleanly: the opened manifest now lets the player follow a
+    concrete sensory cue, the newspaper fold, directly into the restored
+    transfer-column payoff instead of requiring another low-probability
+    passenger-scene choice.
+  - The reviewed-count shortcut now appears in normal random play without
+    sacrificing the unanswered-row counted intercom route.
+- Next step:
+  - Watch the next blind/random samples for whether `opened_manifest_echoes`
+    becomes a repeated miss after the shortcut split, and for any newly rare
+    counted-manifest routes. If they regress, tune choice labels/order before
+    adding new branches.
+
 # Cycle 20 Reviewed Count Echo Bridge
 
 - Date: 2026-06-03
