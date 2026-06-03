@@ -45,7 +45,7 @@
   - Actual CLI play followed the opened-manifest route through
     `opened_manifest_echoes`, `passenger_echoed_boarding`,
     `passenger_echoed_manifest_intercom`, and
-    `passenger_echoed_true_ending`, ending with score 285.
+    `passenger_echoed_true_ending`, ending with score 272.
   - The revised branch now reads as sound becoming movement: the echoes stop
     being clues and resolve into passengers stepping into rain.
   - No route friction, missing objectives, or dead ends appeared on the played
