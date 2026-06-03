@@ -3,6 +3,7 @@ import type { Story } from "./schema.js";
 export const restartSensitivePaths = new Set([
   "package.json",
   "package-lock.json",
+  "src/ai-loop-observations.ts",
   "src/ai-loop-metrics.ts",
   "src/ai-loop.ts"
 ]);

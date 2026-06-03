@@ -13,6 +13,7 @@
     "health": "npm run format:check && npm run lint && npm test && npm run cyoa -- validate stories/demo.yaml --json && npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json",
     "ai:cycle": "node --import tsx src/ai-loop.ts --once",
     "ai:loop": "node --import tsx src/ai-loop.ts",
+    "ai:metrics": "node --import tsx src/ai-loop-observations.ts",
     "cyoa": "node --import tsx src/cli.ts",
     "mcp": "node --import tsx --input-type=module --eval \"await import('./src/mcp.ts')\"",
     "validate": "node --import tsx src/cli.ts validate stories/demo.yaml",

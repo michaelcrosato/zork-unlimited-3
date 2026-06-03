@@ -3,6 +3,7 @@ import {
   formatIdealEndingBreakdown,
   idealEndingRate,
   parsePathLines,
+  parsePorcelainPaths,
   requiresLoopRestart
 } from "../src/ai-loop-metrics.js";
 import type { Story } from "../src/schema.js";
@@ -66,5 +67,13 @@ describe("AI loop metrics helpers", () => {
 
     expect(paths).toEqual(["README.md", "src/ai-loop.ts"]);
     expect(requiresLoopRestart(paths)).toBe(true);
+  });
+
+  it("parses concrete paths from porcelain status output", () => {
+    expect(
+      parsePorcelainPaths(
+        " M README.md\n?? ai-loop-observations/cycles.jsonl\nR  old.ts -> src/ai-loop.ts\n"
+      )
+    ).toEqual(["README.md", "ai-loop-observations/cycles.jsonl", "old.ts", "src/ai-loop.ts"]);
   });
 });

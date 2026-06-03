@@ -51,6 +51,7 @@ coding agent.
 npm run health
 npm run ai:cycle
 npm run ai:loop
+npm run ai:metrics
 ```
 
 From bash, the simplest long-running command is:
@@ -93,6 +94,9 @@ Run without allowing an agent to edit the repo:
 - `ai:loop` repeats cycles indefinitely until interrupted. After the agent
   returns, it detects repo changes or unpushed commits, reruns `health`, plays
   the game through MCP, commits verified changes, and pushes to GitHub.
+- `ai:metrics` summarizes committed cycle observations from
+  `ai-loop-observations/cycles.jsonl`, including true-ending rate, unfinished
+  runs, best score, changed files, and a simple improved/regressed/mixed verdict.
 - If a cycle changes loop runtime files such as `src/ai-loop.ts` or
   `package*.json`, the Node loop exits with a restart-request code after
   verification. `./loop.sh` automatically starts a fresh process so unattended

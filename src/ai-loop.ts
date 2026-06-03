@@ -5,6 +5,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { appendCycleObservation } from "./ai-loop-observations.js";
+import type { CycleObservationInput } from "./ai-loop-observations.js";
 import {
   cycleSavePath,
   exploratoryMaxSteps,
@@ -83,6 +85,7 @@ interface McpPlaytestRun {
 interface CycleArtifacts {
   report: string;
   prompt: string;
+  observation: CycleObservationInput;
 }
 
 interface AgentResult {
@@ -156,6 +159,20 @@ async function main(): Promise<void> {
       await writeText(postAgentPath, renderPostAgentResult(postAgentResult));
       console.log(`Wrote ${postAgentPath}`);
       const changedPaths = await getChangedPathsSince(baselineHead.output.trim());
+      const committedHash =
+        postAgentResult.status === "committed" || postAgentResult.status === "pushed"
+          ? await currentGitCommit()
+          : undefined;
+      await appendCycleObservation({
+        ...artifacts.observation,
+        agentCommand,
+        changedFiles: changedPaths,
+        committedHash,
+        postAgentStatus: postAgentResult.status,
+        mcpRoute: postAgentResult.mcpPlay
+          ? mcpPlayObservation(postAgentResult.mcpPlay)
+          : artifacts.observation.mcpRoute
+      });
       const restartPaths = getRestartSensitiveChangedPaths(changedPaths);
       if (restartPaths.length > 0) {
         console.log(
@@ -167,6 +184,10 @@ async function main(): Promise<void> {
         process.exitCode = restartRequestedExitCode;
       }
     } else {
+      await appendCycleObservation({
+        ...artifacts.observation,
+        changedFiles: await getChangedPathsSince(artifacts.observation.gitCommit)
+      });
       console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
     }
 
@@ -182,7 +203,13 @@ async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
     const report = renderCycleFailureReport(cycle, error);
     return {
       report,
-      prompt: await renderAgentPrompt(cycle, report)
+      prompt: await renderAgentPrompt(cycle, report),
+      observation: {
+        cycle,
+        gitCommit: await currentGitCommit(),
+        mcpRoute: { ok: false },
+        metrics: { trueEndingRate: 0, unfinishedRuns: 0, bestScore: 0 }
+      }
     };
   }
 }
@@ -219,7 +246,13 @@ async function runCycle(cycle: number): Promise<CycleArtifacts> {
 
   return {
     report,
-    prompt: await renderAgentPrompt(cycle, report)
+    prompt: await renderAgentPrompt(cycle, report),
+    observation: {
+      cycle,
+      gitCommit: await currentGitCommit(),
+      mcpRoute: mcpPlayObservation(mcpPlay),
+      metrics: metricSnapshot(randomSummary, story)
+    }
   };
 }
 
@@ -461,11 +494,34 @@ function asSummary(value: unknown):
       unvisitedScenes?: string[];
       endings?: Record<string, number>;
       averageScore?: number;
+      bestScore?: number;
       bestScoreRuns?: number;
     }
   | undefined {
   if (!value || typeof value !== "object") return undefined;
   return value as { unfinished?: number; unvisitedScenes?: string[] };
+}
+
+function metricSnapshot(randomSummary: unknown, story?: Story): CycleObservationInput["metrics"] {
+  const random = asSummary(randomSummary);
+  return {
+    trueEndingRate: idealEndingRate(random, story),
+    unfinishedRuns: Number(random?.unfinished ?? 0),
+    bestScore: Number(random?.bestScore ?? 0)
+  };
+}
+
+function mcpPlayObservation(result: McpPlayResult): CycleObservationInput["mcpRoute"] {
+  return {
+    ok: result.ok,
+    finalScene: result.finalScene,
+    score: result.score === undefined ? undefined : Number(result.score)
+  };
+}
+
+async function currentGitCommit(): Promise<string> {
+  const result = await runCommand("git rev-parse HEAD");
+  return result.exitCode === 0 ? result.output.trim() : "unknown";
 }
 
 function renderEffectivenessSignals(
@@ -1027,7 +1083,7 @@ async function getChangedPathsSince(baselineHead: string): Promise<string[]> {
   const committed = baselineHead
     ? await runCommand(`git diff --name-only ${shellQuote(baselineHead)} HEAD`)
     : { output: "" };
-  const worktree = await runCommand("git status --porcelain");
+  const worktree = await runCommand("git status --porcelain --untracked-files=all");
   return [...parsePathLines(committed.output), ...parsePorcelainPaths(worktree.output)].sort();
 }
 
