@@ -1,3 +1,112 @@
+# Cycle 11 Opened Manifest Ready Bridge
+
+- Date: 2026-06-02
+- Main objective: Make `passenger_manifest_ready_intercom` easier to discover
+  from the opened-manifest platform hub.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window
+  yet, and current Cycle 11 evidence shows healthy core completion with random
+  play still missing `passenger_manifest_ready_intercom`. The scene already
+  pays off checking that every manifest passenger is aboard, but it was mostly
+  hidden behind the generic third-car boarding state.
+- Planned work:
+  - Add a direct opened-manifest choice that boards and confirms the manifest
+    passengers are aboard.
+  - Reuse the existing `passenger_manifest_ready_intercom` and manifest ending
+    flow instead of creating another ending branch.
+  - Preserve existing passenger help, handoff, answer, and generic boarding
+    options.
+  - Extend the manifest-platform regression, run health, and play the route.
+- Risks:
+  - The opened-manifest hub is already choice-rich; the new option must remain
+    tightly gated so it disappears after other passenger-specific commitments.
+- Status:
+  - Completed.
+  - Added `board_and_confirm_opened_manifest_ready` from `passengers_released`
+    to the existing `passenger_manifest_ready_intercom`, gated away after other
+    passenger-specific commitments.
+  - Reused the established ready-manifest intercom and
+    `passenger_manifest_true_ending` flow rather than adding another ending.
+  - Extended the manifest-platform regression to verify the opened-door ready
+    route reaches `passenger_manifest_ready_intercom`, then finishes cleanly at
+    `passenger_manifest_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `passenger_manifest_ready_intercom`, `passenger_newspaper_transfer`, and
+    `passenger_newspaper_roll_call`.
+  - Actual CLI play followed the new opened-manifest ready route, ended at
+    `passenger_manifest_true_ending`, scored 276, and left no objectives.
+- Playtest feedback:
+  - The new choice reads as a natural next step immediately after opening every
+    manifest door: board, check the visible passengers, let Mara finish the
+    ready count, then pull the release.
+  - The route makes `passenger_manifest_ready_intercom` a payoff for the common
+    manifest-clearing branch instead of a hidden train-car-only variant.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether
+    `mara_manifest_intercom` remains rare in normal play; if so, tune ordering
+    or labels around manifest-ready versus direct release rather than adding a
+    new branch.
+
+# Cycle 9 Manifest Note Newspaper Bridge
+
+- Date: 2026-06-02
+- Main objective: Make the rare newspaper transfer and final roll-call route
+  easier to discover from normal manifest reading.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window
+  yet, and Cycle 9 evidence shows the core route is healthy while random play
+  still missed `passenger_newspaper_transfer` and
+  `passenger_newspaper_roll_call`. The manifest margin notes already name
+  Lenora Pike and her folded newspaper, so letting players follow that note
+  gives the newspaper route a natural pre-opening hook.
+- Planned work:
+  - Add a direct Lenora newspaper choice from `passenger_manifest_notes`.
+  - Preserve the existing echoed-manifest and return-to-ledger options.
+  - Extend the manifest-notes regression to finish through the newspaper
+    transfer roll-call ending.
+  - Run focused tests, full health, and an actual CLI playthrough of the new
+    route.
+- Risks:
+  - The manifest notes now expose two optional clue routes before returning to
+    the objective, but both are player-chosen and the direct ledger return
+    remains available.
+- Status:
+  - Completed.
+  - Added `follow_lenora_newspaper_note` from `passenger_manifest_notes` to
+    `passenger_newspaper_memory`, gated by `heard_newspaper_memory`.
+  - Preserved `listen_after_manifest_notes` and `return_from_manifest_notes` so
+    players can still pursue the echoed route or return directly to Mara's
+    ledger objective.
+  - Extended the manifest-notes regression to verify the Lenora branch reaches
+    `passenger_newspaper_transfer`, `passenger_newspaper_roll_call`, and
+    `passenger_newspaper_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes, including
+    `passenger_newspaper_transfer` and `passenger_newspaper_roll_call`, with
+    zero unvisited scenes.
+  - Actual CLI play followed the new Lenora note route, ended at
+    `passenger_newspaper_true_ending`, scored 246, and left no objectives.
+- Playtest feedback:
+  - The new choice makes the newspaper route feel like a direct payoff for
+    reading the manifest notes instead of a later passenger-platform tangent.
+  - The route has a clear escalation: named passenger note, remembered stop,
+    restored transfer column, final roll call, ideal release.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch random and blind sessions for whether `passenger_manifest_ready_intercom`
+    remains under-discovered; if so, add a similarly small manifest-ready bridge
+    from an already common passenger-manifest choice.
+
 # Cycle 7 Manifest Margin Echo Foreshadowing
 
 - Date: 2026-06-02
@@ -21,7 +130,30 @@
     is optional and appears only after the player chooses to inspect the kept
     passenger manifest.
 - Status:
-  - In progress.
+  - Completed.
+  - Completed the existing manifest marginal-notes implementation and aligned
+    the regression name with the echoed-route discovery purpose.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes and zero
+    unfinished complete paths; `passenger_manifest_notes` was covered.
+  - Actual CLI play followed the new margin-note route through
+    `passenger_echoed_boarding` and `passenger_echoed_manifest_intercom`, ended
+    at `passenger_echoed_true_ending`, scored 281, and left no objectives.
+- Playtest feedback:
+  - The notes make the echoed route easier to read because the final ordinary
+    sounds now have earlier names and objects attached.
+  - Returning from the notes to the ledger keeps the objective clear: open the
+    kept-passenger manifest doors with Mara's badge proof.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether players reach the
+    echoed-manifest family more often; if this remains rare, add a recovery
+    prompt from the opened-doors scene instead of lengthening the manifest.
 
 # Cycle 92 Passenger Manifest Marginal Notes
 
@@ -54,7 +186,7 @@
   - Updated the focused manifest regression to cover the new scene and finish at
     `passenger_echoed_true_ending`.
   - Focused test passed:
-    `npm test -- tests/story-paths.test.ts -t "optional kept-passenger manifest"`.
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes"`.
   - `npm run health` passed: format check, TypeScript, 237 tests, validation,
     and coverage playtest.
   - Validation reports 148 reachable scenes and 27 endings.

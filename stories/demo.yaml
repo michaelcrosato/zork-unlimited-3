@@ -1133,6 +1133,14 @@ scenes:
       Beside each note, Mara added the same short instruction: answer before
       opening.
     choices:
+      - id: follow_lenora_newspaper_note
+        label: Follow Lenora Pike's folded newspaper note
+        to: passenger_newspaper_memory
+        requires:
+          notFlag: heard_newspaper_memory
+        effects:
+          set:
+            heard_newspaper_memory: true
       - id: listen_after_manifest_notes
         label: Listen for the names the margin notes remember
         to: passenger_echoes
@@ -1704,6 +1712,23 @@ scenes:
           set:
             heard_passenger_answers: true
             heard_answered_passengers: true
+      - id: board_and_confirm_opened_manifest_ready
+        label: Board and confirm every manifest passenger is aboard
+        to: passenger_manifest_ready_intercom
+        requires:
+          all:
+            - notFlag: heard_manifest_ready
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_echoes
+            - notFlag: held_passenger_threshold
+            - notFlag: made_room_for_passengers
+        effects:
+          set:
+            heard_manifest_ready: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform

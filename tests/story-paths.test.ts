@@ -3584,7 +3584,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("uses manifest margin notes to foreshadow the echoed passenger route", async () => {
+  it("uses manifest margin notes to bridge echoed and newspaper passenger routes", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -3632,11 +3632,39 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("answer before opening");
     expect(observation.state.flags.read_manifest_marginal_notes).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_lenora_newspaper_note",
       "listen_after_manifest_notes",
       "return_from_manifest_notes"
     ]);
 
-    state = choose(story, state, "return_from_manifest_notes");
+    const manifestNotesState = state;
+
+    let newspaperState = choose(story, manifestNotesState, "follow_lenora_newspaper_note");
+    observation = observe(story, newspaperState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_memory");
+    expect(observation.scene.text).toContain("Warden Street, then morning transfer");
+    expect(observation.state.flags.heard_newspaper_memory).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "study_newspaper_transfer_column"
+    );
+
+    for (const choiceId of [
+      "study_newspaper_transfer_column",
+      "carry_newspaper_transfer_to_third_car",
+      "hear_final_newspaper_roll_call",
+      "pull_release_after_newspaper_roll_call"
+    ]) {
+      newspaperState = choose(story, newspaperState, choiceId);
+    }
+
+    observation = observe(story, newspaperState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.text).toContain("blank transfer column fills with destinations");
+    expectIdealScore(observation.score);
+
+    state = choose(story, manifestNotesState, "return_from_manifest_notes");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("signal_ledger");
@@ -4315,13 +4343,44 @@ describe("demo story critical paths", () => {
       "inspect_signal_ledger",
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
-      "clear_manifest_and_mara_from_ledger",
-      "board_after_releasing_passengers"
+      "clear_manifest_and_mara_from_ledger"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_and_confirm_opened_manifest_ready"
+    );
+
+    let openedDoorReadyState = choose(story, state, "board_and_confirm_opened_manifest_ready");
+    observation = observe(story, openedDoorReadyState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_ready_intercom");
+    expect(observation.scene.text).toContain("Every kept name is aboard");
+    expect(observation.state.flags.heard_manifest_ready).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+
+    openedDoorReadyState = choose(
+      story,
+      openedDoorReadyState,
+      "listen_to_mara_finish_ready_manifest"
+    );
+    openedDoorReadyState = choose(
+      story,
+      openedDoorReadyState,
+      "pull_release_after_manifest_goodbye"
+    );
+    observation = observe(story, openedDoorReadyState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, state, "board_after_releasing_passengers");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toContain(
@@ -10099,6 +10158,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
+      "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
     ]);
 
