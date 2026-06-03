@@ -1,3 +1,52 @@
+# Cycle 21 Promoted Opened-Manifest Threshold
+
+- Date: 2026-06-03
+- Main objective: Make the `passenger_threshold_boarding` and
+  `passenger_threshold_intercom` beats easier to notice from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence showed coverage can reach every scene, but
+  the 100-run random sample missed both opened-manifest threshold variants.
+  The threshold beat is an important late-game readability cue because it
+  turns "board and pull" into a visible crowd-management action.
+- Planned work:
+  - Promote the opened-manifest threshold choices beside the early
+    opened-passenger memory/count cues.
+  - Make the threshold labels explicitly connect the physical doorway action
+    to Mara's speaker guidance.
+  - Preserve existing threshold boarding, intercom, and release outcomes.
+- Risks:
+  - This is primarily a menu-scanning and player-intent improvement; a small
+    random sample may still miss the route because the opened-manifest hub is
+    intentionally broad.
+  - Remaining normal-play misses such as `passenger_newspaper_transfer` and
+    `lost_after_dispatch_ending` are not solved by this pass.
+- Status:
+  - Completed.
+  - Moved `hold_opened_manifest_threshold` and
+    `listen_to_opened_threshold_from_manifest` immediately after
+    `listen_to_passenger_morning_chorus`.
+  - Updated the labels to frame Mara's speaker as part of the threshold action.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "threshold|manifest-specific platform beat"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    269 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> held the third-car threshold
+    while Mara kept the speaker open -> listened to Mara talk through the
+    threshold -> pulled the release.
+  - The route ended at `passenger_true_ending` with score 271 and no
+    objectives.
+  - The promoted placement reads better: after the passengers remember morning,
+    the player sees an immediate physical way to shepherd that crowd through
+    the third car instead of scanning past thumbprint, echoes, lunch-tin, and
+    conductor variants first.
+- Next step:
+  - Watch blind/random evidence for whether the remaining normal-play misses
+    now concentrate on `passenger_newspaper_transfer`,
+    `passenger_threshold_intercom`, or `lost_after_dispatch_ending`.
+
 # Cycle 20 Cross-Linked Keepsakes To Mitten Memory
 
 - Date: 2026-06-03

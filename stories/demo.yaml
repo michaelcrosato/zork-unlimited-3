@@ -1564,6 +1564,25 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: hold_opened_manifest_threshold
+        label: Hold the third-car threshold while Mara keeps the speaker open
+        to: passenger_threshold_boarding
+        requires:
+          notFlag: held_passenger_threshold
+        effects:
+          set:
+            held_passenger_threshold: true
+      - id: listen_to_opened_threshold_from_manifest
+        label: Let Mara talk you through holding the opened threshold
+        to: passenger_threshold_intercom
+        requires:
+          all:
+            - notFlag: held_passenger_threshold
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            held_passenger_threshold: true
+            heard_mara_goodbye: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint
@@ -1637,25 +1656,6 @@ scenes:
           set:
             heard_passenger_morning_chorus: true
             heard_passenger_morning_boarding: true
-      - id: hold_opened_manifest_threshold
-        label: Hold the third-car threshold for the opened passengers
-        to: passenger_threshold_boarding
-        requires:
-          notFlag: held_passenger_threshold
-        effects:
-          set:
-            held_passenger_threshold: true
-      - id: listen_to_opened_threshold_from_manifest
-        label: Listen as Mara holds the opened threshold steady
-        to: passenger_threshold_intercom
-        requires:
-          all:
-            - notFlag: held_passenger_threshold
-            - notFlag: heard_mara_goodbye
-        effects:
-          set:
-            held_passenger_threshold: true
-            heard_mara_goodbye: true
       - id: follow_lunch_tin_latch
         label: Follow the lunch-tin latch toward the third car
         to: passenger_farewell
@@ -2955,7 +2955,8 @@ scenes:
       the door, child's mitten tapping the rail before the next person moves.
       Each person leaves room for the next shoulder, the next bag, the next
       breath that the tunnel tried to file away. Mara does not count over them.
-      She lets the threshold prove they are becoming a crowd.
+      She leaves the speaker open so the threshold can prove they are becoming
+      a crowd.
     choices:
       - id: listen_to_threshold_from_boarding
         label: Listen as Mara holds the threshold open
