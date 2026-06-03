@@ -4501,8 +4501,36 @@ describe("demo story critical paths", () => {
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
       "let_manifest_answers_keep_door_rhythm",
+      "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
     ]);
+
+    let echoedCheckState = choose(story, state, "check_manifest_answers_against_echoes");
+    observation = observe(story, echoedCheckState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.scene.text).toContain("sounds you heard behind the stamped");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_echoed_passengers_before_release",
+      "pull_release_after_echoed_boarding"
+    ]);
+
+    echoedCheckState = choose(story, echoedCheckState, "check_echoed_passengers_before_release");
+    observation = observe(story, echoedCheckState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_checked_echoes"
+    ]);
+
+    echoedCheckState = choose(story, echoedCheckState, "pull_release_after_checked_echoes");
+    observation = observe(story, echoedCheckState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_manifest_answers");
     observation = observe(story, state);
@@ -8853,6 +8881,7 @@ describe("demo story critical paths", () => {
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
       "let_manifest_answers_keep_door_rhythm",
+      "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -10682,6 +10711,7 @@ describe("demo story critical paths", () => {
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
       "let_manifest_answers_keep_door_rhythm",
+      "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
     ]);
 

@@ -3880,6 +3880,15 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
+      - id: check_manifest_answers_against_echoes
+        label: Check the answered names against the familiar door sounds
+        to: passenger_echoed_boarding
+        requires:
+          notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
       - id: pull_release_after_manifest_answers
         label: Pull the release after the manifest answers
         to: passenger_manifest_true_ending

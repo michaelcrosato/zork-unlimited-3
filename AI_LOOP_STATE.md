@@ -1,3 +1,70 @@
+# Cycle 14 Manifest Echo Boarding Check Bridge
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for the echoed passenger
+  boarding/check payoff path from the common opened-manifest answer route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 14 evidence. Health is green,
+  coverage reaches every scene, and random play is finding the echoed ending
+  after Cycle 13, but the 100-run random sample still missed
+  `passenger_echoed_boarding`, `passenger_echoed_check`, and
+  `passenger_echoed_manifest_intercom`. Those scenes are a useful accountability
+  beat before release and should be easier to notice from normal manifest-answer
+  play.
+- Planned work:
+  - Add a direct manifest-answer choice that checks answered names against the
+    familiar door sounds aboard the third car.
+  - Reuse the existing `passenger_echoed_boarding`,
+    `passenger_echoed_check`, `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending` route rather than adding another ending.
+  - Extend the manifest-answer regression to prove the new bridge reaches the
+    echoed check and ending.
+  - Run focused tests, full health, and an actual CLI playthrough of the changed
+    route.
+- Risks:
+  - `passenger_manifest_answers` becomes a five-choice scene, so the new label
+    must read as a concrete check step rather than another abstract tonal
+    variation.
+  - The bridge sets `echoed_manifest_boarded` immediately; it must still allow
+    the check and intercom payoff without reopening boarding loops.
+- Status:
+  - Completed.
+  - Added `check_manifest_answers_against_echoes` from
+    `passenger_manifest_answers` to `passenger_echoed_boarding`, gated behind
+    `heard_passenger_echoes` so it appears before the player commits to the
+    existing echoed-manifest payoff.
+  - Reused `passenger_echoed_boarding`, `passenger_echoed_check`,
+    `passenger_echoed_manifest_intercom`, and `passenger_echoed_true_ending`
+    rather than adding a new branch or ending.
+  - Extended the opened-manifest answer regression to prove the new bridge
+    reaches `passenger_echoed_boarding`, checks familiar echo sounds against
+    boarded passengers, and finishes at `passenger_echoed_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest names answer"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `passenger_echoed_boarding`, `passenger_echoed_check`, and
+    `passenger_echoed_manifest_intercom`.
+  - Actual CLI play followed the new manifest-answer echo-check route, ended at
+    `passenger_echoed_true_ending`, scored 292, and left no objectives.
+- Playtest feedback:
+  - The new label reads as a concrete audit of the answered manifest rather
+    than another abstract "listen" option.
+  - The route is concise: open every manifest door, let names answer once, check
+    the familiar sounds against boarded passengers, then release.
+  - Because Mara has already signed off on this path, the echoed boarding/check
+    scenes correctly offer direct release choices instead of reopening the
+    intercom loop.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether
+    `passenger_echoed_boarding` and `passenger_echoed_check` now appear in
+    normal play; if still rare, tune the choice ordering around
+    `passenger_manifest_answers` before adding more branches.
+
 # Cycle 13 Manifest Answer Payoff Bridges
 
 - Date: 2026-06-03
