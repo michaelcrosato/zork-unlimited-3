@@ -465,6 +465,7 @@ scenes:
         requires:
           all:
             - notFlag: knows_release
+            - notFlag: radio_shut_off
             - any:
                 - notItem: map
                 - notItem: token
@@ -574,6 +575,9 @@ scenes:
       - id: shut_radio_off
         label: Shut the radio off
         to: service_room
+        effects:
+          set:
+            radio_shut_off: true
 
   personnel_file:
     routeImportance: main

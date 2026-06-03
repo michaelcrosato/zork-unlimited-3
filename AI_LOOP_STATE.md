@@ -1,3 +1,53 @@
+# Cycle 46 Radio Repeat Pacing
+
+- Date: 2026-06-03
+- Main objective: Reduce low-value service-room radio repetition after players
+  deliberately shut the radio off.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  current evidence is green, and the latest suspicious random path showed the
+  player repeatedly tuning and shutting off the radio instead of moving through
+  concrete rescue preparation. The radio is useful once as a route clue, but
+  repeating the same shutoff beat adds pacing drag without new information.
+- Planned work:
+  - Record a `radio_shut_off` flag when the player shuts off the radio.
+  - Hide `tune_radio` after that deliberate shutoff while supplies remain
+    incomplete.
+  - Preserve alternate release discovery through Mara's badge/back route and
+    normal rescue progression.
+  - Add a focused regression for the repeated-radio path.
+  - Run focused tests, full health, and an actual playable route that shuts off
+    the radio and still reaches an ending.
+- Risks:
+  - The radio is one way to learn the emergency release, so the test must
+    verify another available clue still teaches the route after shutdown.
+  - Random play may shift into other optional loops; this pass only removes one
+    repeated no-new-information choice.
+- Status:
+  - Completed.
+  - Added `radio_shut_off` when the player chooses to shut the cracked radio
+    off.
+  - Hid `tune_radio` after that deliberate shutoff while preserving map,
+    locker, personnel-file, tunnel, and platform routes from the service room.
+  - Added a focused regression proving the radio does not reappear after
+    shutdown and the badge-back route can still teach the emergency release.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "radio"`.
+  - `npm run health` passed: format check, TypeScript, 242 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play shut the radio off before taking supplies; the service room
+    no longer offered `tune_radio`, but still offered the map, locker, personnel
+    file, tunnel, and platform choices.
+  - Continuing from that save through the personnel file, badge-back release
+    clue, clock token, signal booth, Mara release, and emergency release reached
+    `true_ending` with score 303 and no objectives.
+  - The route felt cleaner because the radio became a one-time clue or declined
+    clue instead of a repeatable stall point.
+- Next step:
+  - Watch random and blind-play paths for any new repeated low-information
+    service-room loops; if repetition shifts elsewhere, prefer another narrow
+    hide-after-use or menu-priority pass.
+
 # Cycle 45 Warned Lit Glance Escape
 
 - Date: 2026-06-03

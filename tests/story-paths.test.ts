@@ -9934,6 +9934,41 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("lit_platform");
   });
 
+  it("does not keep offering the radio after players deliberately shut it off", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of ["take_lantern", "open_service_door", "tune_radio", "shut_radio_off"]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("service_room");
+    expect(observation.state.flags.radio_shut_off).toBe(true);
+    expect(choiceIds).not.toContain("tune_radio");
+    expect(choiceIds).toContain("search_locker");
+    expect(choiceIds).toContain("read_personnel_file");
+    expect(choiceIds).toContain("take_map");
+
+    for (const choiceId of [
+      "search_locker",
+      "take_badge",
+      "inspect_badge_back",
+      "return_from_badge_memory"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.state.flags.knows_release).toBe(true);
+    expect(choiceIds).not.toContain("tune_radio");
+    expect(choiceIds).toContain("take_fuse");
+  });
+
   it("focuses fully equipped service-room players on Platform 13", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
