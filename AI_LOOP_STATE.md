@@ -47,6 +47,9 @@
   - Actual CLI play followed the new opened-echo listen-return-board route,
     ended at `passenger_echoed_true_ending`, scored 291, and left no
     objectives.
+  - Actual CLI play also followed the direct answered-manifest check route,
+    ended at `passenger_echoed_true_ending`, scored 291, and left no
+    objectives.
 - Playtest feedback:
   - The listened-echo return route now preserves player intent: backing out of
     the listen beat no longer hides the echoed boarding/check payoff.
