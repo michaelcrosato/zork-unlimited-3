@@ -2964,6 +2964,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("train_car");
     expect(observation.scene.text).toContain("not an order now");
+    expect(observation.scene.text).toContain("one last dispatch");
     expect(observation.scene.text).toContain("belong to everyone");
     expect(observation.state.flags.heard_mara_last_dispatch).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -2972,6 +2973,9 @@ describe("demo story critical paths", () => {
       "wait_for_mara_at_far_door",
       "pull_release"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "ask_mara_for_train_car_dispatch")?.label
+    ).toBe("Ask Mara for her final dispatch before pulling");
 
     state = choose(story, state, "ask_mara_for_train_car_dispatch");
     observation = observe(story, state);
@@ -3176,6 +3180,7 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_released");
+    expect(observation.scene.text).toContain("one final dispatch");
     expect(observation.state.flags.knows_badge_proof).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "watch_mara_leave_booth",
@@ -3183,6 +3188,9 @@ describe("demo story critical paths", () => {
       "answer_badge_proof_before_boarding",
       "board_after_clearing_mara"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "ask_mara_for_last_dispatch")?.label
+    ).toBe("Ask Mara for her final dispatch before boarding");
 
     state = choose(story, state, "answer_badge_proof_before_boarding");
     observation = observe(story, state);
@@ -10152,6 +10160,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_released");
     expect(observation.scene.text).toContain("I can hold the line steady");
+    expect(observation.scene.text).toContain("one final dispatch");
     expect(observation.scene.text).toContain("walks the platform beside you");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
@@ -10164,6 +10173,9 @@ describe("demo story critical paths", () => {
     expect(observation.choices[0]?.label).toBe(
       "Walk with Mara to the third car before the release"
     );
+    expect(
+      observation.choices.find((choice) => choice.id === "ask_mara_for_last_dispatch")?.label
+    ).toBe("Ask Mara for her final dispatch before boarding");
 
     const intercomState = choose(story, state, "answer_mara_before_boarding");
     observation = observe(story, intercomState);
