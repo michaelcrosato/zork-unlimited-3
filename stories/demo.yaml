@@ -1596,6 +1596,20 @@ scenes:
             steadied_lunch_tin_worker: true
             checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
+      - id: call_lunch_tin_roster_from_opened_manifest
+        label: Let the lunch-tin worker clock out the opened passengers
+        to: passenger_lunch_tin_roll_call
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_final_roll_call
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
+            read_lunch_tin_roster: true
       - id: check_opened_manifest_echoes
         label: Check the familiar door-echoes against the opened passengers
         to: passenger_echoed_check

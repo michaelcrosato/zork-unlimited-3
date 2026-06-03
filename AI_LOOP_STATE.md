@@ -1,3 +1,52 @@
+# Cycle 34 Promoted Opened-Manifest Lunch-Tin Roll Call
+
+- Date: 2026-06-03
+- Main objective: Make the final lunch-tin roster call easier to discover from
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence reached lunch-tin endings but missed
+  `passenger_lunch_tin_roll_call`, while coverage proved it reachable. The
+  opened-manifest hub already foregrounds the lunch-tin latch, so the final
+  roster call is a natural payoff to promote.
+- Planned work:
+  - Add a direct opened-manifest choice that turns the lunch-tin latch into the
+    worker's final roster call.
+  - Place it beside the existing lunch-tin latch and checked-count choices.
+  - Reuse `passenger_lunch_tin_roll_call` and
+    `passenger_lunch_tin_true_ending` without changing the slower boarding,
+    check, roster, or intercom routes.
+  - Update focused regressions, run health, and actually play the promoted
+    roll-call route.
+- Risks:
+  - The opened-manifest hub remains dense; this improves visibility for one
+    missed payoff without reducing branch volume.
+  - Promoting the roll call may shift some random lunch-tin endings through the
+    stronger final-roll-call beat, which is intended but should be watched.
+- Status:
+  - Completed.
+  - Added `call_lunch_tin_roster_from_opened_manifest`, a direct hub choice
+    that routes opened-manifest players into `passenger_lunch_tin_roll_call`.
+  - Reused the existing lunch-tin roll-call and true-ending scenes while
+    setting the same gathered-passenger, steadied-worker, final-roll-call, and
+    roster flags expected by the older routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count before the passenger roll call|lunch-tin roll call"`.
+  - `npm run health` passed: format check, TypeScript, 263 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> let the lunch-tin worker clock
+    out the opened passengers -> pulled the release after the roster clocks
+    everyone out.
+  - The route ended at `passenger_lunch_tin_true_ending` with score 279 and no
+    objectives.
+  - The promoted choice reads coherently because `passengers_released` already
+    highlights the lunch-tin latch; the new action pays that image off as the
+    worker's own final release beat instead of just another count.
+- Next step:
+  - Watch random/blind evidence for whether remaining misses now concentrate on
+    `lost_after_dispatch_ending`, `passenger_threshold_boarding`,
+    `passenger_threshold_intercom`, or the keepsake handoff branches.
+
 # Cycle 33 Promoted Newspaper Transfer Column
 
 - Date: 2026-06-03
