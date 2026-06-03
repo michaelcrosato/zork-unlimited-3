@@ -1,3 +1,54 @@
+# Cycle 33 Promoted Newspaper Transfer Column
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest newspaper transfer route easier to
+  discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed `passenger_newspaper_transfer`
+  while coverage proved it reachable, and the opened-manifest hub text already
+  names the newspaper transfer as one of the ordinary passenger proofs.
+- Planned work:
+  - Add a direct opened-manifest choice that studies the newspaper transfer
+    column before boarding.
+  - Place it in the early passenger-proof group near the promoted door-echo and
+    lunch-tin checks.
+  - Reuse the existing `passenger_newspaper_transfer` scene, flags, conductor
+    transfer, roll-call, and boarding payoffs.
+  - Update focused ordering/path regressions, run health, and actually play the
+    promoted transfer route.
+- Risks:
+  - The opened-manifest hub remains dense; this promotes one missed proof route
+    without reducing broader branch competition.
+  - The direct route may make `passenger_newspaper_transfer` more common while
+    older echo-led access to the same scene remains lower-traffic.
+- Status:
+  - Completed.
+  - Added `study_opened_newspaper_transfer`, a direct hub choice that routes
+    opened-manifest players into `passenger_newspaper_transfer` and sets the
+    existing newspaper-transfer flags.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest|newspaper transfer"`.
+  - `npm run health` passed: format check, TypeScript, 263 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> studied the newspaper transfer
+    column -> read the restored transfer into the final roll call -> pulled the
+    release.
+  - The route ended at `passenger_newspaper_true_ending` with score 295 and no
+    objectives.
+  - The new choice reads coherently because `passengers_released` already
+    foregrounds the newspaper transfer; promoting it gives that image an
+    immediate payoff without replacing the older echo-led and count-led routes.
+  - During play, two stale local route-choice ids were rejected by the CLI after
+    reaching `passenger_newspaper_roll_call`; the game state remained valid and
+    the available `pull_release_after_newspaper_roll_call` choice completed the
+    route. No story bug found.
+- Next step:
+  - Watch the next random/blind evidence for whether remaining normal-play
+    misses concentrate on `lost_after_dispatch_ending`,
+    `opened_manifest_echoes`, `passenger_lunch_tin_roll_call`, or the threshold
+    intercom route.
+
 # Cycle 32 Promoted Completed Opened-Count Chorus
 
 - Date: 2026-06-03

@@ -1611,6 +1611,15 @@ scenes:
             heard_passenger_echoes: true
             echoed_manifest_boarded: true
             checked_echoed_passengers: true
+      - id: study_opened_newspaper_transfer
+        label: Study the newspaper transfer column before the opened passengers board
+        to: passenger_newspaper_transfer
+        requires:
+          notFlag: studied_newspaper_transfer
+        effects:
+          set:
+            heard_newspaper_memory: true
+            studied_newspaper_transfer: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint
