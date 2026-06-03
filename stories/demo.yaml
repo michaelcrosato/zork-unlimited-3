@@ -1596,6 +1596,21 @@ scenes:
             steadied_lunch_tin_worker: true
             checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
+      - id: check_opened_manifest_echoes
+        label: Check the familiar door-echoes against the opened passengers
+        to: passenger_echoed_check
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: checked_echoed_passengers
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
+            checked_echoed_passengers: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint

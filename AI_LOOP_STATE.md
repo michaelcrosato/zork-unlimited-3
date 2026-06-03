@@ -1,3 +1,53 @@
+# Cycle 31 Promoted Opened-Manifest Door-Echo Check
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest door-echo check easier to discover
+  during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed `opened_manifest_echoes` and
+  `passenger_echoed_check` even though coverage proved both reachable, while
+  the loop state called `passenger_echoed_check` the next branch to watch.
+- Planned work:
+  - Add a direct opened-manifest choice that checks the familiar door-echoes
+    against the now-opened passengers.
+  - Place it near the other early proof/check actions in the dense
+    `passengers_released` hub.
+  - Preserve the older listen, newspaper-fold, board, return, and release
+    routes.
+  - Update focused regressions, run health, and actually play the promoted
+    checked-echo route.
+- Risks:
+  - The opened-manifest hub remains dense; this improves scan order but does
+    not eliminate branch competition.
+  - The direct check skips the slower `opened_manifest_echoes` listening scene,
+    so that scene may still need separate promotion if blind play values it.
+- Status:
+  - Completed.
+  - Added `check_opened_manifest_echoes`, a direct hub choice that routes
+    opened-manifest players into `passenger_echoed_check`.
+  - Placed the check immediately after the promoted lunch-tin check, near the
+    other early passenger proof actions.
+  - Preserved the older opened-echo listening, newspaper-fold, boarding,
+    return, and release routes.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "door-echoes|opened manifest"`.
+  - `npm run health` passed: format check, TypeScript, 263 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> checked familiar door-echoes
+    against the opened passengers -> carried the checked echoes to Mara's
+    speaker -> pulled the release.
+  - The route ended at `passenger_echoed_true_ending` with score 280 and no
+    objectives.
+  - The new bridge reads coherently because `passengers_released` already
+    foregrounds the door-echo rhythm; the check turns those sounds into a
+    trusted passenger count without forcing the player through the slower
+    listening detour.
+- Next step:
+  - Watch the next random/blind evidence for whether `opened_manifest_echoes`
+    itself remains a normal-play miss. If so, improve that scene's direct value
+    or promote it separately from the checked-echo payoff.
+
 # Cycle 30 Promoted Opened-Manifest Lunch-Tin Check
 
 - Date: 2026-06-03
