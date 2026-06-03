@@ -1,3 +1,51 @@
+# Cycle 50 Gathered Roll-Call Priority
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_roll_call_true_ending` more naturally
+  discoverable from the gathered-passenger boarding route.
+- Why this matters: `PLAYTEST_DIGEST.md` has no consolidated blind-play window,
+  and the latest random evidence still missed `passenger_roll_call_true_ending`
+  while coverage proved it reachable. The gathered-passenger boarding scene
+  already frames the crowd as ready to answer together, so the final roll-call
+  action should be the first visible payoff before the intercom listen and
+  direct release alternatives.
+- Planned work:
+  - Move `answer_final_roll_call_from_gathered_boarding` ahead of
+    `listen_to_gathered_passengers_from_boarding`.
+  - Preserve the gathered intercom and direct helped-ending release choices.
+  - Update exact-order regressions for `passenger_gathered_boarding`.
+  - Run focused tests, full health, and an actual route through the
+    reprioritized roll-call payoff.
+- Risks:
+  - Choice order is player-facing UX and covered by exact-order tests.
+  - The intercom beat should remain reachable for players who want the broader
+    gathered-passenger narration before release.
+- Status:
+  - Completed.
+  - Moved `answer_final_roll_call_from_gathered_boarding` ahead of
+    `listen_to_gathered_passengers_from_boarding` in the gathered-passenger
+    boarding scene.
+  - Preserved the gathered intercom and direct helped-ending release choices.
+  - Updated exact-order regressions for gathered-passenger boarding routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "gather|roll call"`.
+  - `npm run health` passed: format check, TypeScript, 242 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> help opened passengers gather
+    -> first visible final roll-call payoff -> emergency release, ending at
+    `passenger_roll_call_true_ending` with score 305 and no objectives.
+  - The gathered boarding scene now pays off its own text more directly: after
+    "every passenger helped the next one move," the first action lets that
+    crowd answer together.
+  - The intercom listen and direct helped-ending release are still available,
+    so the change improves normal discoverability without removing story
+    variety.
+- Next step:
+  - Watch random/blind-play evidence for whether `passenger_roll_call_true_ending`
+    appears in normal play; if remaining misses persist, prefer a small
+    priority pass for another low-frequency but coverage-reachable route.
+
 # Cycle 48 Lit Stairwell Glance Priority
 
 - Date: 2026-06-03

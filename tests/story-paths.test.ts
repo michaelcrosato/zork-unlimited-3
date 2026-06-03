@@ -6452,8 +6452,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBeUndefined();
     expect(choiceIds).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -6489,8 +6489,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBeUndefined();
     expect(choiceIds).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
   });
@@ -7917,8 +7917,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
     expect(
@@ -11090,8 +11090,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("every passenger helped the next one move");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -11175,8 +11175,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("passing steadiness from hand to hand");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -11589,8 +11589,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_gathered_passengers_from_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
