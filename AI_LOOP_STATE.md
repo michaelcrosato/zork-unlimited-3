@@ -1,3 +1,61 @@
+# Cycle 28 Lunch-Tin Passenger Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the lunch-tin passenger rescue payoff without
+  adding new route complexity.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health is green, all scenes are reachable, and Cycle 28's adaptive
+  exploratory MCP route finished on `passenger_lunch_tin_true_ending`. With
+  core guidance healthy, the highest-value improvement is richer branch payoff
+  on a route normal and exploratory play already find.
+- Planned work:
+  - Revise the lunch-tin boarding beat so the latch-count frames people as
+    released rather than kept by the line.
+  - Revise the checked count and roster roll-call beats so the worker's own
+    release resolves the "CLOCK OUT AFTER EVERYONE ELSE" clue more clearly.
+  - Revise `passenger_lunch_tin_true_ending` so the ending pays off the worker
+    no longer being a counter or counted.
+  - Add focused regression assertions for the strengthened text.
+  - Run focused tests, full health, and an actual playable route through the
+    lunch-tin ending.
+- Risks:
+  - Text-only polish can accidentally overstate a theme; keep the route's
+    practical, ordinary tone.
+  - Exact text assertions need to verify payoff without making future prose
+    edits brittle beyond the key story beats.
+- Status:
+  - Completed.
+  - Revised `passenger_lunch_tin_boarding` so the worker's latch-count
+    explicitly models counting people without keeping them.
+  - Revised `passenger_lunch_tin_check` so the checked count makes sure nobody
+    is hidden behind the generic word "passenger."
+  - Revised `passenger_lunch_tin_roll_call` so the worker is counted without
+    being kept by the line.
+  - Revised `passenger_lunch_tin_true_ending` so the worker steps into morning
+    no longer a counter and no longer counted.
+  - Added focused regression assertions across the lunch-tin boarding,
+    checked-count, roster roll-call, and ending routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the passenger-answer route into the lunch-tin
+    branch, read the roster, heard the final roll call, and reached
+    `passenger_lunch_tin_true_ending` with score 315.
+  - The new ending text carries the roster clue through to payoff: the worker
+    is no longer a counter and no longer counted.
+  - The branch remains concise and playable; no new choices, scenes, or route
+    gates were added.
+- Next step:
+  - Watch blind sessions for whether passenger branches feel meaningfully
+    distinct. If the digest later flags sameness across passenger endings,
+    give each branch one similarly focused payoff pass rather than expanding
+    topology.
+
 # Cycle 27 Lit Escape Token Recovery
 
 - Date: 2026-06-03

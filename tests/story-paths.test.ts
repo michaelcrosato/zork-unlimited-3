@@ -6428,6 +6428,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.scene.text).toContain("clicks the latch");
+    expect(observation.scene.text).toContain("count people without keeping them");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -6445,6 +6446,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.text).toContain("lunch-tin worker's count");
+    expect(observation.scene.text).toContain("no longer a counter and no longer counted");
+    expect(observation.scene.text).toContain("nothing left to keep");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 
@@ -6510,6 +6513,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_check");
     expect(observation.scene.text).toContain("Nobody is only a number now");
+    expect(observation.scene.text).toContain("nobody is hidden behind the word passenger");
     expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -6541,6 +6545,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -6583,6 +6588,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -6646,6 +6652,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("like the end of a shift");
     expect(observation.scene.text).toContain("The tin latch shuts once");
+    expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_lunch_tin_roll_call"
@@ -6695,6 +6702,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
     expect(observation.scene.text).toContain("like the end of a shift");
     expect(observation.scene.text).toContain("old conductor gives one clear punch");
+    expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_lunch_tin_roll_call"
@@ -6705,6 +6713,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("no longer a counter and no longer counted");
     expectIdealScore(observation.score);
   });
 

@@ -2966,8 +2966,10 @@ scenes:
       each time another passenger finds the third car without looking at the
       HOME sign. The child, the newspaper woman, and the old conductor fall
       into that practical rhythm until the aisle feels less like a ledger and
-      more like a shift change. Under the first seat, the emergency release
-      waits for the count to become movement.
+      more like a shift change. Each click leaves a place open behind it, as if
+      the tin is teaching the line how to count people without keeping them.
+      Under the first seat, the emergency release waits for the count to become
+      movement.
     choices:
       - id: read_lunch_tin_roster_from_boarding
         label: Read the shift roster tucked inside the lunch tin before the release
@@ -4519,8 +4521,9 @@ scenes:
       the newspaper woman taps her transfer against the seat rail on the
       second, and the old conductor answers the third with a punch held in the
       air until Mara's name is safe inside it. The worker waits for the last
-      click to be his own. Nobody is only a number now, and the release under
-      the first seat feels less like an escape than the end of a shift.
+      click to be his own, then checks the aisle twice so nobody is hidden
+      behind the word passenger. Nobody is only a number now, and the release
+      under the first seat feels less like an escape than the end of a shift.
     choices:
       - id: carry_checked_lunch_tin_count_to_speaker
         label: Carry the checked lunch-tin count to Mara's speaker
@@ -4569,7 +4572,8 @@ scenes:
       child answers first, the newspaper woman calls her transfer stop, and the
       old conductor gives one clear punch in the air when Mara's name comes
       next. Only then does the worker read his own name. The tin latch shuts
-      once, final and ordinary, and every open door waits for the release.
+      once, final and ordinary, and for the first time the line has counted him
+      without keeping him. Every open door waits for the release.
     choices:
       - id: pull_release_after_lunch_tin_roll_call
         label: Pull the release after the roster clocks everyone out
@@ -5204,8 +5208,9 @@ scenes:
       The release opens every door at once on the lunch-tin worker's count. His
       latch clicks each passenger into the rain-bright morning: child, newspaper
       woman, conductor, Mara, then himself last because someone still has to
-      make sure the shift is over. When the tin finally opens, it holds only
-      steam and daylight, and the line has nothing left to count.
+      make sure the shift is over. He steps down after the others with the tin
+      open in both hands, no longer a counter and no longer counted. It holds
+      only steam and daylight, and the line has nothing left to keep.
     choices: []
 
   passenger_conductor_true_ending:
