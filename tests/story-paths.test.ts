@@ -58,6 +58,11 @@ describe("demo story critical paths", () => {
     }
 
     let warning = observe(story, state);
+    expect(warning.scene.text).toContain("access plate hangs loose");
+    expect(warning.scene.text).toContain("soot-scratched instructions");
+    expect(warning.choices.find((choice) => choice.id === "inspect_gate_control")?.label).toBe(
+      "Read the gate control before forcing anything"
+    );
     expect(warning.choices.map((choice) => choice.label)).toContain(
       "Force the gate despite the empty fuse socket"
     );
@@ -1465,6 +1470,11 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("platform");
     expect(observation.state.flags.knows_platform).toBe(true);
+    expect(observation.scene.text).toContain("access plate hangs loose");
+    expect(observation.scene.text).toContain("read before you make noise");
+    expect(observation.choices.find((choice) => choice.id === "inspect_gate_control")?.label).toBe(
+      "Read the gate control before forcing anything"
+    );
     expect(observation.objectives).not.toContain(
       "Find out where the chalk arrows and old line are leading."
     );

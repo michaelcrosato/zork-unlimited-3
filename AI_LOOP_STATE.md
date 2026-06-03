@@ -1,3 +1,62 @@
+# Cycle 25 Gate Control Readability
+
+- Date: 2026-06-03
+- Main objective: Make the safe gate-control inspection path more obvious
+  before players force the Platform 13 gate.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 25 supplied evidence shows health, coverage, and ideal
+  ending rates are strong. The adaptive exploratory MCP route reached
+  `bad_ending` after forcing the gate, even though it had seen the radio clue
+  and platform. That failure is valid, but the non-destructive gate inspection
+  currently reads too much like generic set dressing on the platform screen.
+  A small readability pass can steer curious players toward the CLOCK = TOKEN
+  clue before they choose the noisy forced-gate path.
+- Planned work:
+  - Revise the first Platform 13 text so the gate control's burned access
+    plate visibly promises instructions, not just a blocked socket.
+  - Rename the inspection choice to clearly contrast reading the control with
+    forcing the gate.
+  - Preserve all routing, flags, scoring, scene count, and ending count.
+  - Add focused regression assertions for the clarified affordance.
+  - Run focused tests, full health, and a playable route that uses the
+    clarified inspection path.
+- Risks:
+  - Over-signposting could make the bad-ending branch feel toothless; keep the
+    destructive force option visible and preserve its final warning sequence.
+  - Text-only clarity changes should not affect reachability, but choice-label
+    assertions need to be updated carefully.
+- Status:
+  - Completed.
+  - Revised the first Platform 13 scene so the gate control's loose burned
+    access plate advertises readable instructions before the player makes
+    noise.
+  - Renamed the safe inspection choice to "Read the gate control before
+    forcing anything" while preserving the destructive forced-gate option.
+  - Added regression assertions for the clarified platform prose and choice
+    label on both normal platform arrival and forced-gate warning setup.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "forced-gate|platform explorers"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `take_lantern -> follow_arrows ->
+inspect_gate_control`, and the gate-control scene immediately exposed
+    "CLOCK = TOKEN" with objectives for the map, stopped-clock token, and
+    platform power.
+  - Continued the same save through token recovery, map, radio, locker, fuse,
+    signal booth, ledger, and release; it ended at `true_ending` with score
+    281 and no objectives.
+  - The clarified wording made the non-destructive branch feel like an
+    intended read action rather than optional scenery. The bad-ending route
+    remains available for players who still choose to force the gate.
+- Next step:
+  - Watch blind-play sessions for whether players still force the gate before
+    reading the control. If they do, consider moving the clock clue into the
+    platform objective text rather than adding another scene.
+
 # Cycle 24 Core True Ending Payoff
 
 - Date: 2026-06-03

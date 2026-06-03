@@ -648,11 +648,13 @@ scenes:
     routeImportance: main
     text: >
       Platform 13 waits behind a rusted gate. A driverless train rests on the
-      track, doors open, destination sign blank. The gate control has an empty
-      fuse socket and a token slot stamped SIGNAL ACCESS.
+      track, doors open, destination sign blank. The gate control's burned
+      access plate hangs loose, showing an empty fuse socket, a token slot
+      stamped SIGNAL ACCESS, and enough soot-scratched instructions to read
+      before you make noise.
     choices:
       - id: inspect_gate_control
-        label: Inspect the gate control
+        label: Read the gate control before forcing anything
         to: gate_control
         requires:
           notFlag: inspected_gate_control
@@ -1279,8 +1281,9 @@ scenes:
       doors open with a softer sound, and the booth speaker carries her first
       full breath in forty-three years. "Third car," Mara says. "I can hold
       the line steady long enough for you to pull the release." The booth door
-      unlocks behind her, waiting to see whether she leaves as another voice in
-      the speaker or walks the platform beside you.
+      unlocks behind her, waiting to see whether she signs off with one final
+      dispatch, leaves as another voice in the speaker, or walks the platform
+      beside you.
     choices:
       - id: watch_mara_leave_booth
         label: Walk with Mara to the third car before the release
@@ -1291,7 +1294,7 @@ scenes:
           set:
             saw_mara_handoff: true
       - id: ask_mara_for_last_dispatch
-        label: Ask Mara what her last dispatch should say
+        label: Ask Mara for her final dispatch before boarding
         to: mara_last_dispatch
         requires:
           notFlag: heard_mara_last_dispatch
@@ -3002,8 +3005,9 @@ scenes:
       speaker while the platform line trembles around her, not an order now but
       a hand braced against the closing doors. Under the first seat, your
       fingers find an emergency release. The blank destination sign begins to
-      spell HOME one letter at a time, waiting for one pull to make the word
-      belong to everyone.
+      spell HOME one letter at a time. Mara can still make one last dispatch
+      from the speaker, or you can pull now and make the word belong to
+      everyone.
     choices:
       - id: listen_to_badge_proof_after_last_dispatch
         label: Listen as Mara folds the badge proof into her last dispatch
@@ -3090,7 +3094,7 @@ scenes:
           set:
             heard_mara_goodbye: true
       - id: ask_mara_for_train_car_dispatch
-        label: Ask Mara for one last dispatch before the release
+        label: Ask Mara for her final dispatch before pulling
         to: mara_last_dispatch_intercom
         requires:
           all:
