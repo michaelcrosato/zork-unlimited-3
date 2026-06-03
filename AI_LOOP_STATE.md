@@ -1,3 +1,52 @@
+# Cycle 23 Promoted Shared Passenger Boarding
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_helped_true_ending` easier to discover from
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence shows coverage reaches
+  `passenger_helped_true_ending` frequently, but the 100-run random sample
+  missed it entirely. The route is one of the clearest thematic payoffs for
+  the passenger branch because it makes "no one boards alone" a concrete
+  action before the release.
+- Planned work:
+  - Promote the existing `help_opened_passengers_gather` choice into the early
+    opened-manifest decision cluster.
+  - Make the choice label state that the passengers help one another board.
+  - Preserve the existing gathered boarding, gathered intercom, roll-call, and
+    helped-ending outcomes.
+  - Run focused regressions, full health, and an actual CLI playthrough.
+- Risks:
+  - The opened-manifest hub remains intentionally broad, so one 100-run random
+    sample can still miss individual variants.
+  - This pass improves the shared passenger route without solving remaining
+    misses such as `lost_after_dispatch_ending` or rare conductor handoff
+    variants.
+- Status:
+  - Completed.
+  - Moved `help_opened_passengers_gather` immediately after the opened
+    passenger morning chorus option and before threshold/thumbprint/count
+    variants.
+  - Updated exact ordering coverage for the promoted route.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest-specific platform beat|gathered-passenger"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    270 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> helped the opened passengers
+    gather by helping one another board -> listened to the gathered passenger
+    intercom -> pulled the release.
+  - The route ended at `passenger_helped_true_ending` with score 305 and no
+    objectives.
+  - The promoted option reads as a direct action version of the scene's
+    "no one boards alone" promise, and it appears before more specialized
+    threshold/thumbprint/count variants.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`,
+    `passenger_conductor_transfer_handoff`, or late opened-manifest variants.
+
 # Cycle 22 Promoted Manifest Thumbprint Oath
 
 - Date: 2026-06-03

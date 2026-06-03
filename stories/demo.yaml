@@ -1564,6 +1564,14 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: help_opened_passengers_gather
+        label: Help the opened passengers gather by helping one another board
+        to: passenger_gathered_boarding
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         to: passenger_threshold_boarding
@@ -1964,14 +1972,6 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
-      - id: help_opened_passengers_gather
-        label: Help the opened passengers gather before boarding
-        to: passenger_gathered_boarding
-        requires:
-          notFlag: helped_passengers_gather
-        effects:
-          set:
-            helped_passengers_gather: true
       - id: listen_as_opened_passengers_gather
         label: Listen as the opened passengers gather themselves
         to: passenger_gathered_intercom
