@@ -1,3 +1,65 @@
+# Cycle 17 Opened Echo Check Continuity
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery and continuity for the opened
+  manifest echo-check route from both listened echoes and answered manifest
+  play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 17 evidence. Health is green
+  and coverage reaches every scene, but random play still missed
+  `opened_manifest_echoes` and `passenger_echoed_check` in the 100-run sample.
+  The remaining weaknesses were a return-path gap after listening to opened
+  echoes and a label/behavior mismatch where an answered-manifest "check"
+  choice still routed through a boarding prelude.
+- Planned work:
+  - Add a post-listen boarding choice from `passengers_released` into the
+    existing echoed boarding/check route.
+  - Keep the first-visit opened-manifest hub order stable.
+  - Sharpen the answered-manifest echo-check bridge so its label lands directly
+    on the passenger check payoff.
+  - Extend focused regressions for both routes.
+  - Run full health and an actual CLI playthrough through the new return path.
+- Risks:
+  - The opened-manifest hub is choice-rich, so the new choice must only appear
+    after the player has already listened to echoes and returned.
+  - The direct answered-manifest check bridge must still preserve the existing
+    echoed ending and avoid reopening a redundant boarding step.
+- Status:
+  - Completed.
+  - Added `board_after_listening_opened_manifest_echoes`, gated by
+    `heard_passenger_echoes` and `notFlag: echoed_manifest_boarded`, so
+    listen-return players can still board via the echoed passenger route.
+  - Updated the opened-manifest listen regression to prove the return path
+    reaches `passenger_echoed_boarding`, `passenger_echoed_check`, and
+    `passenger_echoed_true_ending`.
+  - Updated the answered-manifest echo-check bridge to go directly to
+    `passenger_echoed_check` and mark `checked_echoed_passengers`.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest players listen"`
+    and
+    `npm test -- tests/story-paths.test.ts -t "opened manifest names answer"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `opened_manifest_echoes`, `passenger_echoed_boarding`,
+    `passenger_echoed_check`, and `passenger_echoed_manifest_intercom`.
+  - Actual CLI play followed the new opened-echo listen-return-board route,
+    ended at `passenger_echoed_true_ending`, scored 291, and left no
+    objectives.
+- Playtest feedback:
+  - The listened-echo return route now preserves player intent: backing out of
+    the listen beat no longer hides the echoed boarding/check payoff.
+  - The answered-manifest check route now honors its label immediately by
+    showing the thermos, newspaper, and mitten accountability beat before the
+    release.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random samples for whether `passenger_echoed_check` appears
+    more often. If the random miss persists, tune high-traffic passenger hub
+    choice ordering rather than adding another echoed ending.
+
 # Cycle 16 Opened Echo Newspaper Transfer Bridge
 
 - Date: 2026-06-03
