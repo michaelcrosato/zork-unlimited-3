@@ -1,3 +1,53 @@
+# Cycle 40 Promoted Opened Manifest Count
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_count` easier to notice during
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed `passenger_manifest_count`
+  while coverage proved it reachable. The opened-manifest hub is intentionally
+  rich, but the explicit "count everyone through" beat was late enough that a
+  normal player could see several release payoffs before realizing Mara can
+  review the opened page as a people-count.
+- Planned work:
+  - Move `review_open_manifest_count` into the early opened-manifest choice
+    cluster, directly after the morning-memory listening beat.
+  - Preserve the existing `passenger_manifest_count`,
+    `passenger_missing_count`, `passenger_counted_chorus`, and reviewed-count
+    payoff routes.
+  - Update the focused hub-order regression, run health, and actually play the
+    promoted reviewed-count route.
+- Risks:
+  - Random play is choice-uniform, so ordering alone mostly helps blind/player
+    scanning rather than pure random metrics.
+  - The opened-manifest hub remains dense; keep watching blind feedback for
+    whether this area needs pruning instead of further promotion.
+- Status:
+  - Completed.
+  - Moved `review_open_manifest_count` from the back half of the
+    `passengers_released` hub to the early opened-manifest cluster after
+    `listen_to_passenger_morning_chorus`.
+  - Updated story-path regressions that lock the hub order and preserved the
+    existing reviewed-count, missing-row, counted-chorus, conductor-count, and
+    reviewed-count ending routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|reviewed manifest count|opened manifest players"`.
+  - `npm run health` passed: format check, TypeScript, 266 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> reviewed Mara's opened
+    manifest count -> pulled the release while the reviewed count still held.
+  - The route ended at `passenger_reviewed_count_true_ending` with score 259
+    and no objectives.
+  - The promoted choice reads naturally because the hub text already says the
+    passengers are answering Mara's count; placing it early makes the
+    count-as-care idea visible before the player commits to the many object
+    proof variants.
+- Next step:
+  - Watch random/blind evidence for whether remaining misses now concentrate on
+    `lost_after_dispatch_ending`, conductor punch/transfer handoffs, or
+    lunch-tin intercom variants.
+
 # Cycle 39 Promoted Ready Manifest Intercom
 
 - Date: 2026-06-03
