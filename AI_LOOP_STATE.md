@@ -1,3 +1,79 @@
+# Cycle 20 Reviewed Count Echo Bridge
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for the opened-manifest echo,
+  newspaper transfer, and reviewed-count payoff routes from the reviewed
+  opened-manifest count hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 20 evidence. Health and
+  coverage were green, but the 100-run random sample still missed
+  `opened_manifest_echoes`, `passenger_newspaper_transfer`, and
+  `passenger_reviewed_count_true_ending`. These routes already work in
+  coverage; the likely issue is that normal random play must pass through
+  several choice-rich hubs before seeing them.
+- Planned work:
+  - Retarget the existing opened-manifest echo carry choice through
+    `opened_manifest_echoes` before boarding.
+  - Retarget the existing reviewed-count boarding choice directly into
+    `passenger_reviewed_count_true_ending`.
+  - Preserve existing count, newspaper, conductor, echo-boarding, and intercom
+    routes without adding more high-traffic hub branches.
+  - Extend focused story-path regressions for the retargeted routes.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    new reviewed-count payoff route.
+- Risks:
+  - The first implementation added extra choices and pushed the coverage test
+    past its timeout; this version must stay branch-neutral.
+  - The reviewed-count release should not bypass required manifest/Mara proof
+    because the scene is only reachable after opening the manifest with the
+    badge.
+  - The echo retarget must still allow the established echoed-passenger ending
+    after one additional explicit boarding choice.
+- Status:
+  - Completed.
+  - Retargeted `follow_opened_manifest_echoes` so the existing carry choice now
+    passes through `opened_manifest_echoes` before the player boards with the
+    familiar passenger sounds.
+  - Retargeted `board_after_manifest_count` so the reviewed-count hub can pay
+    off `passenger_reviewed_count_true_ending` directly with a clearer release
+    label.
+  - Preserved existing echoed passenger boarding by making it the explicit next
+    choice from `opened_manifest_echoes`.
+  - Preserved existing newspaper transfer discovery from
+    `opened_manifest_echoes`.
+  - The first attempted implementation added branches and caused
+    `npm run health` to fail on the 60s coverage-test timeout; the final
+    implementation is branch-neutral and health passed.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"`,
+    `npm test -- tests/story-paths.test.ts -t "passenger echo payoff"`,
+    `npm test -- tests/story-paths.test.ts -t "manifest margin notes"`, and
+    `npm test -- tests/story-paths.test.ts -t "direct release after reviewing"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `opened_manifest_echoes`, `passenger_newspaper_transfer`, and
+    `passenger_reviewed_count_true_ending`.
+  - Actual CLI play followed the reviewed-count release route, ended at
+    `passenger_reviewed_count_true_ending`, scored 259, and left no
+    objectives.
+- Playtest feedback:
+  - The reviewed-count route now reads as a clean immediate payoff: after Mara
+    checks the opened manifest, pulling the release while the count still holds
+    lands directly on the ending promised by the choice label.
+  - The opened-echo route now gives the echo scene more room to breathe before
+    boarding, and the newspaper transfer option remains visible from that
+    scene.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch the next random/blind samples for whether
+    `opened_manifest_echoes`, `passenger_newspaper_transfer`, and
+    `passenger_reviewed_count_true_ending` stop appearing as normal-play
+    misses. If they remain rare, tune high-traffic hub ordering or labels
+    before adding any new branches.
+
 # Cycle 19 Counted Conductor Bridges
 
 - Date: 2026-06-03

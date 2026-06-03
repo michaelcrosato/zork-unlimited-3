@@ -3738,8 +3738,15 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "follow_opened_manifest_echoes");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+
+    state = choose(story, state, "board_with_listened_manifest_echoes");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_echoed_boarding");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
 
     for (const choiceId of [
       "listen_to_echoed_manifest_from_boarding",
@@ -5375,7 +5382,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds[3]).toBe("listen_to_opened_manifest_echoes");
     expect(observation.choices[3]?.label).toBe("Listen to the opened door-echoes before boarding");
     expect(choiceIds[4]).toBe("follow_opened_manifest_echoes");
-    expect(observation.choices[4]?.label).toBe("Carry the opened door-echoes into the third car");
+    expect(observation.choices[4]?.label).toBe("Follow the opened door-echoes before boarding");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -5474,16 +5481,9 @@ describe("demo story critical paths", () => {
     state = choose(story, countedState, "board_after_manifest_count");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_counted_manifest_intercom"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_reviewed_manifest_count"
-    );
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "pull_release_with_manifest"
-    );
+    expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("lets opened passengers finish Mara's count directly from the manifest hub", async () => {
@@ -5569,16 +5569,23 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_echoed_boarding");
-    expect(observation.scene.text).toContain("waiting has turned into boarding");
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.text).toContain("without the ink between");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
-    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "check_echoed_passengers_before_release",
-      "listen_to_echoed_manifest_from_boarding",
-      "reach_release_with_echoed_manifest"
+      "board_with_listened_manifest_echoes",
+      "follow_newspaper_fold_from_opened_echoes",
+      "return_from_opened_manifest_echoes"
     ]);
+
+    state = choose(story, state, "board_with_listened_manifest_echoes");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.scene.text).toContain("waiting has turned into boarding");
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
 
     state = choose(story, state, "listen_to_echoed_manifest_from_boarding");
     observation = observe(story, state);
@@ -5747,8 +5754,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "review_open_manifest_count",
-      "board_after_manifest_count",
-      "pull_release_after_reviewed_manifest_count"
+      "board_after_manifest_count"
     ]) {
       state = choose(story, state, choiceId);
     }

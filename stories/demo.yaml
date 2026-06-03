@@ -1526,8 +1526,8 @@ scenes:
           set:
             heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
-        label: Carry the opened door-echoes into the third car
-        to: passenger_echoed_boarding
+        label: Follow the opened door-echoes before boarding
+        to: opened_manifest_echoes
         requires:
           all:
             - notFlag: heard_passenger_echoes
@@ -1537,7 +1537,6 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
-            echoed_manifest_boarded: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding
@@ -1965,8 +1964,8 @@ scenes:
         label: Cross through the counted crowd as they gather
         to: passenger_platform
       - id: board_after_manifest_count
-        label: Board the third car while Mara holds the count
-        to: train_car
+        label: Pull the release while Mara's reviewed count still holds
+        to: passenger_reviewed_count_true_ending
 
   passenger_missing_count:
     routeImportance: optional
