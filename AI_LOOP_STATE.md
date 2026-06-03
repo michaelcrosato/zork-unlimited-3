@@ -1,3 +1,61 @@
+# Cycle 27 Promoted Opened-Manifest Lunch-Tin Check
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_lunch_tin_check` easier to discover during
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 27 evidence showed coverage reaches every scene, but the
+  100-run random sample missed `passenger_lunch_tin_check` while still finding
+  several lunch-tin endings. The checked-count beat is useful because it turns
+  the lunch-tin worker's latch rhythm into a concrete passenger verification
+  before the release, not just a flavor detour.
+- Planned work:
+  - Promote the direct opened-manifest lunch-tin check into the early passenger
+    organization cluster.
+  - Rewrite its label so it reads as checking the worker's passenger count
+    before boarding.
+  - Preserve the existing `passenger_lunch_tin_check`,
+    lunch-tin intercom/roll-call, and lunch-tin true-ending outcomes.
+  - Run focused regressions, full health, and an actual CLI playthrough.
+- Risks:
+  - The opened-manifest hub remains intentionally broad, so a 100-run random
+    sample can still miss optional variants.
+  - This improves a passenger branch without addressing the remaining rare
+    Mara manifest handoff/thumbprint variants.
+- Status:
+  - Completed.
+  - Moved `check_lunch_tin_count_from_opened_manifest` up beside the early
+    passenger-gathering/conductor organization choices.
+  - Updated its label to emphasize checking the lunch-tin worker's passenger
+    count before boarding.
+  - Moved the direct lunch-tin check to the first choice inside
+    `passenger_lunch_tin_boarding` and `passenger_lunch_tin_intercom`, so
+    players already following the lunch-tin route see the verification beat
+    before roster or release shortcuts.
+  - Added regression coverage that verifies the promoted order, flags, checked
+    count scene, and lunch-tin true ending.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|lunch-tin|opened manifest"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    271 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> checked the lunch-tin worker's
+    passenger count before boarding -> pulled the release after every passenger
+    answered the count.
+  - The route ended at `passenger_lunch_tin_true_ending` with score 284 and no
+    objectives.
+  - The checked-count scene now reads as a natural verification step because
+    it appears before the roster/intercom/release shortcuts in the lunch-tin
+    branch.
+  - A fresh 100-run random sample visited `passenger_lunch_tin_check`; the
+    same sample missed `passenger_lunch_tin_roll_call`, which remains covered
+    by focused tests and the full coverage playtest.
+- Next step:
+  - Watch the next random/blind evidence for whether the lunch-tin check stays
+    visible; if so, shift attention to `mara_manifest_handoff`,
+    `opened_manifest_echoes`, or `passenger_counted_chorus`.
+
 # Cycle 26 Promoted HOME-Overruns-Mara Failure
 
 - Date: 2026-06-03

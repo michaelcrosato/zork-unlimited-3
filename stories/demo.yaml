@@ -1618,6 +1618,19 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
+      - id: check_lunch_tin_count_from_opened_manifest
+        label: Check the lunch-tin worker's passenger count before boarding
+        to: passenger_lunch_tin_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            checked_lunch_tin_passengers: true
+            heard_gathered_passengers: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         to: passenger_threshold_boarding
@@ -1736,19 +1749,6 @@ scenes:
           set:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
-            heard_gathered_passengers: true
-      - id: check_lunch_tin_count_from_opened_manifest
-        label: Check the lunch-tin count before the opened passengers release
-        to: passenger_lunch_tin_check
-        requires:
-          all:
-            - notFlag: helped_passengers_gather
-            - notFlag: checked_lunch_tin_passengers
-        effects:
-          set:
-            helped_passengers_gather: true
-            steadied_lunch_tin_worker: true
-            checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
       - id: call_lunch_tin_roster_from_opened_manifest
         label: Let the lunch-tin worker clock out the opened passengers
@@ -3377,6 +3377,15 @@ scenes:
       how to count people without keeping them. Under the first seat, the
       emergency release waits for the count to become movement.
     choices:
+      - id: check_lunch_tin_passengers_before_release
+        label: Check the lunch-tin count against the passengers in the aisle
+        to: passenger_lunch_tin_check
+        requires:
+          notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            checked_lunch_tin_passengers: true
+            heard_gathered_passengers: true
       - id: read_lunch_tin_roster_from_boarding
         label: Read the shift roster tucked inside the lunch tin before the release
         to: passenger_lunch_tin_roster
@@ -3391,15 +3400,6 @@ scenes:
         to: passenger_lunch_tin_intercom
         effects:
           set:
-            heard_gathered_passengers: true
-      - id: check_lunch_tin_passengers_before_release
-        label: Check the lunch-tin count against the passengers in the aisle
-        to: passenger_lunch_tin_check
-        requires:
-          notFlag: checked_lunch_tin_passengers
-        effects:
-          set:
-            checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
       - id: let_lunch_tin_count_become_roll_call
         label: Ask the worker to turn the latch-count into a final roster call
@@ -4910,6 +4910,14 @@ scenes:
       through the speaker. "Let that be the last thing the line counts. Pull
       the release while they are moving together."
     choices:
+      - id: check_lunch_tin_passengers_from_intercom
+        label: Check the lunch-tin count against the boarded passengers
+        to: passenger_lunch_tin_check
+        requires:
+          notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            checked_lunch_tin_passengers: true
       - id: read_lunch_tin_roster
         label: Read the shift roster tucked inside the lunch tin
         to: passenger_lunch_tin_roster
@@ -4927,14 +4935,6 @@ scenes:
           set:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
-      - id: check_lunch_tin_passengers_from_intercom
-        label: Check the lunch-tin count against the boarded passengers
-        to: passenger_lunch_tin_check
-        requires:
-          notFlag: checked_lunch_tin_passengers
-        effects:
-          set:
-            checked_lunch_tin_passengers: true
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
         to: passenger_lunch_tin_true_ending
