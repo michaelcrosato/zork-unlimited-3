@@ -75,7 +75,7 @@
   - Splitting the choice must not strand unlit players or remove their existing
     warned escape route.
 - Status:
-  - Completed pending final commit/push.
+  - Completed.
   - Added `warned_lit_escape_ending` as an Early escape ending for players who
     restore Platform 13, listen to Mara at the stairwell, then leave without
     fetching the signal token.
