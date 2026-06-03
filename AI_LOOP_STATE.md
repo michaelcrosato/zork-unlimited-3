@@ -1,3 +1,54 @@
+# Cycle 17 Promoted Opened Manifest Echo Check
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest passenger echo check easier to
+  discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `opened_manifest_echoes` and
+  `passenger_echoed_check` while coverage proved both reachable. The opened
+  manifest hub mentions the same door-echoes after release, but the direct
+  passenger-check payoff was separated from the earlier reflective echo
+  option by several unrelated boarding variants.
+- Planned work:
+  - Move `check_opened_manifest_echoes` directly after
+    `pause_on_opened_door_echoes` so the reflective beat and concrete
+    passenger-check payoff are presented together.
+  - Preserve the existing `opened_manifest_echoes`,
+    `passenger_echoed_check`, `passenger_echoed_boarding`, and newspaper-fold
+    routes.
+  - Update the opened-manifest hub-order regression, run health, and actually
+    play the promoted echo-check route.
+- Risks:
+  - This improves player scanning more than pure random-choice probability, so
+    small random samples may still miss the route.
+  - The opened-manifest hub is still dense; later blind feedback may call for a
+    larger grouping or pruning pass.
+- Status:
+  - Completed.
+  - Moved `check_opened_manifest_echoes` directly after
+    `pause_on_opened_door_echoes` in the opened-manifest hub.
+  - Preserved the reflective `opened_manifest_echoes` route and the existing
+    checked-echoes, echoed-boarding, and newspaper-transfer payoffs.
+  - Updated opened-manifest choice-order regressions.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest choices|opened-manifest players check familiar door-echoes directly|passenger echo payoff after release"`.
+  - `npm run health` passed: format check, TypeScript, 267 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> checked familiar door-echoes
+    against the opened passengers -> let Mara hear the checked echoes answer
+    -> pulled the release.
+  - The route ended at `passenger_echoed_true_ending` with score 280 and no
+    objectives.
+  - The promoted choice now sits beside the opened-door echo pause, so the hub
+    presents the reflective echo beat and concrete passenger-check payoff as a
+    readable pair instead of separating them with lunch-tin and threshold
+    variants.
+- Next step:
+  - Watch new random/blind evidence for whether remaining misses concentrate
+    on `lost_after_dispatch_ending`, `mara_manifest_handoff`, or
+    `passenger_lunch_tin_intercom`.
+
 # Cycle 16 Promoted Opened Manifest Conductor Punch
 
 - Date: 2026-06-03

@@ -1606,6 +1606,21 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
+      - id: check_opened_manifest_echoes
+        label: Check the familiar door-echoes against the opened passengers
+        to: passenger_echoed_check
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: checked_echoed_passengers
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
+            checked_echoed_passengers: true
       - id: board_with_passenger_morning_chorus
         label: Board with the passengers' remembered mornings in the speaker
         to: passenger_morning_intercom
@@ -1677,21 +1692,6 @@ scenes:
             heard_gathered_passengers: true
             heard_final_roll_call: true
             read_lunch_tin_roster: true
-      - id: check_opened_manifest_echoes
-        label: Check the familiar door-echoes against the opened passengers
-        to: passenger_echoed_check
-        requires:
-          all:
-            - notFlag: heard_passenger_echoes
-            - notFlag: checked_echoed_passengers
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            heard_passenger_echoes: true
-            echoed_manifest_boarded: true
-            checked_echoed_passengers: true
       - id: study_opened_newspaper_transfer
         label: Study the newspaper transfer column before the opened passengers board
         to: passenger_newspaper_transfer
