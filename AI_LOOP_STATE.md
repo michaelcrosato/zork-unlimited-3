@@ -47,7 +47,7 @@
     after the unchanged assertions crossed 60s under full-suite load while the
     direct coverage command completed successfully.
   - Focused regression passed:
-    `npm test -- tests/story-paths.test.ts -t "stopped clock|escape|gate-control fuse"`.
+    `npm test -- tests/story-paths.test.ts -t "escape players|escape ending available|token reminder|gate-control fuse"`.
   - `npm run health` passed: format check, TypeScript, 238 tests, validation,
     and coverage playtest.
   - Validation still reports 151 reachable scenes and 29 endings.
@@ -57,7 +57,7 @@
   - Actual CLI play followed the revised branch through `flee_platform`,
     `return_to_lit_platform_from_escape_warning`, and `go_to_stopped_clock`,
     recovered the token, returned to the lit platform, cleared Mara, and
-    reached `true_ending` with score 268.
+    reached `true_ending` with score 257.
   - The warning now gives wavering players a visible objective instead of
     presenting escape with no goal pressure.
   - The route after taking the token uses the generic tunnel/service-room
