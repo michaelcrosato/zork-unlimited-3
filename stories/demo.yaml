@@ -1574,6 +1574,28 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: follow_lunch_tin_latch
+        label: Follow the lunch-tin latch toward the third car
+        to: passenger_farewell
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+      - id: check_lunch_tin_count_from_opened_manifest
+        label: Check the lunch-tin count before the opened passengers release
+        to: passenger_lunch_tin_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            checked_lunch_tin_passengers: true
+            heard_gathered_passengers: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
         to: mara_manifest_thumbprint
@@ -1817,15 +1839,6 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
-      - id: follow_lunch_tin_latch
-        label: Follow the lunch-tin latch toward the third car
-        to: passenger_farewell
-        requires:
-          notFlag: helped_passengers_gather
-        effects:
-          set:
-            helped_passengers_gather: true
-            steadied_lunch_tin_worker: true
       - id: help_opened_passengers_gather
         label: Help the opened passengers gather before boarding
         to: passenger_gathered_boarding

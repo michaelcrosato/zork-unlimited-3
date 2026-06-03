@@ -1,3 +1,56 @@
+# Cycle 30 Promoted Opened-Manifest Lunch-Tin Check
+
+- Date: 2026-06-03
+- Main objective: Make the lunch-tin check/intercom route easier to discover
+  from the normal opened-manifest path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence reached `passenger_lunch_tin_boarding`
+  and `passenger_lunch_tin_true_ending`, but missed
+  `passenger_lunch_tin_check` and `passenger_lunch_tin_intercom`. That implies
+  normal play can find the lunch-tin ending but often skips the stronger
+  passenger-counting proof beats.
+- Planned work:
+  - Promote `follow_lunch_tin_latch` into the early opened-manifest response
+    group near the other high-signal passenger boarding options.
+  - Add a direct opened-manifest checked-count choice that reuses
+    `passenger_lunch_tin_check` and can continue into the existing intercom and
+    lunch-tin ending.
+  - Preserve the older answered-passenger, platform, roster, roll-call, and
+    direct-release lunch-tin paths.
+  - Update focused regressions, run health, and actually play the promoted
+    checked-count route.
+- Risks:
+  - The opened-manifest hub is still dense; promotion should improve scanning
+    but does not remove branch competition.
+  - The new direct check path skips the slower `passenger_farewell` and
+    `passenger_lunch_tin_boarding` setup, so the older branch remains available
+    beside it for pacing.
+- Status:
+  - Completed.
+  - Promoted `follow_lunch_tin_latch` into the early opened-manifest response
+    group immediately after the threshold option.
+  - Added `check_lunch_tin_count_from_opened_manifest`, which lands directly in
+    `passenger_lunch_tin_check`, sets the lunch-tin/gathered-passenger state,
+    and continues into the existing lunch-tin intercom and ideal ending.
+  - Preserved the older answered-passenger, platform, roster, roll-call, and
+    direct-release lunch-tin paths.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "optional opened-manifest count|opened-manifest players check"`.
+  - `npm run health` passed: format check, TypeScript, 262 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> checked lunch-tin count ->
+    carried checked count to Mara's speaker -> pulled the release.
+  - The route ended at `passenger_lunch_tin_true_ending` with score 289 and no
+    objectives.
+  - The sequence reads clearly: the hub's lunch-tin latch image now has an
+    immediate checked-count action, and the intercom reinforces that the count
+    is practical care rather than another ledger.
+- Next step:
+  - Watch the next random/blind evidence for whether `passenger_echoed_check`
+    remains a normal-play miss. If so, prefer a similar focused promotion or
+    direct check bridge for the opened door-echo route.
+
 # Cycle 29 Promoted Morning Chorus
 
 - Date: 2026-06-03
