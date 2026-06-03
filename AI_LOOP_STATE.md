@@ -1,3 +1,51 @@
+# Cycle 38 Promoted Opened Door-Echo Listening
+
+- Date: 2026-06-03
+- Main objective: Make `opened_manifest_echoes` easier to discover during
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle MCP random evidence missed `opened_manifest_echoes`
+  while coverage proved it reachable. The opened-manifest hub text already
+  says the door-echoes keep their rhythm after the passengers are released, but
+  the dedicated listening scene was buried behind many stronger-looking
+  payoffs.
+- Planned work:
+  - Add a clearer early hub choice that pauses on the opened door-echoes.
+  - Reuse the existing `opened_manifest_echoes` scene and existing echoed
+    passenger payoff routes.
+  - Set the same `heard_passenger_echoes` flag used by older entry points.
+  - Update focused regressions, run health, and actually play the promoted
+    route.
+- Risks:
+  - The opened-manifest hub remains dense; this adds one promoted route without
+    pruning older choices.
+  - The new direct choice increases echo-route visibility, so watch whether
+    random endings shift away from other passenger proof variants.
+- Status:
+  - Completed.
+  - Added `pause_on_opened_door_echoes`, an early opened-manifest hub choice
+    that routes directly to `opened_manifest_echoes`.
+  - Reused the existing echoed-passenger boarding, intercom, and
+    `passenger_echoed_true_ending` payoff.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest players discover|promotes opened door-echo|opened manifest choices"`.
+  - `npm run health` passed: format check, TypeScript, 266 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> paused on the opened
+    door-echoes -> boarded with the listened echoes -> listened as they
+    answered Mara -> pulled the release.
+  - The route ended at `passenger_echoed_true_ending` with score 280 and no
+    objectives.
+  - The promoted label reads naturally against the hub text because the hub
+    already says the same door-echoes keep their rhythm after release; the
+    scene now feels like an immediate listening beat instead of a buried
+    optional detour.
+- Next step:
+  - Watch random/blind evidence for whether remaining misses now concentrate
+    on `passenger_manifest_ready_intercom`, `passenger_keepsake_boarding`,
+    `passenger_newspaper_transfer`, or `lost_after_dispatch_ending`.
+
 # Cycle 37 Promoted Shared Room-Making Release
 
 - Date: 2026-06-03

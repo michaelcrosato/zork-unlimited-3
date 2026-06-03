@@ -1564,6 +1564,18 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: pause_on_opened_door_echoes
+        label: Pause on the opened door-echoes before boarding
+        to: opened_manifest_echoes
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
       - id: board_with_passenger_morning_chorus
         label: Board with the passengers' remembered mornings in the speaker
         to: passenger_morning_intercom
