@@ -2627,6 +2627,14 @@ scenes:
       ordinary space. Mara leaves the speaker open long enough for the car to
       sound crowded instead of haunted.
     choices:
+      - id: pass_room_release_after_making_room
+        label: Pass the release handle hand to hand through the room you made
+        to: passenger_room_release
+        requires:
+          notFlag: shared_release_reached
+        effects:
+          set:
+            shared_release_reached: true
       - id: listen_to_room_made_for_passengers
         label: Listen as the crowded car steadies around the release
         to: passenger_room_intercom

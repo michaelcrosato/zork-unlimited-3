@@ -4192,6 +4192,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("crowded instead of haunted");
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
@@ -4199,6 +4200,23 @@ describe("demo story critical paths", () => {
     ]);
 
     const roomState = state;
+
+    state = choose(story, roomState, "pass_room_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("You do not pull the release alone");
+    expect(observation.scene.text).toContain("room no one has to earn");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
+    expectIdealScore(observation.score);
 
     state = choose(story, roomState, "ask_conductor_to_clear_room_made");
     observation = observe(story, state);
@@ -4355,6 +4373,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
@@ -4491,6 +4510,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_boarding");
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
@@ -6984,6 +7004,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",

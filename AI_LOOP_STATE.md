@@ -1,3 +1,51 @@
+# Cycle 41 Passenger Room Release Discoverability
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_room_release` easier to discover during
+  normal play after players choose to make room in the third car.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and Cycle 1 evidence calls out
+  `passenger_room_release` as the only random-missed scene. Coverage confirms
+  the scene is reachable, so the useful improvement is reducing optional-chain
+  depth rather than adding new topology.
+- Planned work:
+  - Surface a direct shared-release choice from `passenger_room_boarding`.
+  - Keep the existing intercom and train-car handoff routes intact.
+  - Update exact choice-order regressions and add a direct route assertion for
+    the new shared-release action.
+  - Run focused tests, full health, and an actual playable route through the
+    new direct room-release path.
+- Risks:
+  - Choice-order changes can break tests that intentionally encode UX order.
+  - The new direct option should not bypass the core ending; it should still
+    flow through `passenger_room_release` into `passenger_true_ending`.
+- Status:
+  - Completed.
+  - Added a direct `pass_room_release_after_making_room` choice from
+    `passenger_room_boarding` to `passenger_room_release`.
+  - Kept the existing room intercom and train-car handoff routes intact.
+  - Updated exact choice-order regressions and added direct route assertions
+    for the newly surfaced shared-release action.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "make room"` and
+    `npm test -- tests/story-paths.test.ts -t "direct manifest boarders make room"`.
+  - `npm run health` passed: format check, TypeScript, 241 tests, validation,
+    and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed manifest release -> passenger platform -> make
+    room in the third car -> direct shared-release choice -> final pull,
+    ending at `passenger_true_ending` with score 253 and no objectives.
+  - A stopped CLI scene check confirmed the new shared-release choice is the
+    first visible option in `passenger_room_boarding`, before optional
+    intercom, conductor, newspaper, and generic release routes.
+  - The branch now pays off physical room-making in one fewer optional step,
+    which should improve normal discovery of `passenger_room_release` without
+    removing any existing payoff path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, use random
+    misses and adaptive-route friction to choose another narrow late-game
+    clarity or payoff pass.
+
 # Cycle 40 Passenger Platform Action Order
 
 - Date: 2026-06-03
