@@ -2308,8 +2308,8 @@ describe("demo story critical paths", () => {
 
     expect(observe(story, state).scene.id).toBe("sign_warning");
     expect(observe(story, state).choices.map((choice) => choice.id)).toEqual([
-      "look_away_from_sign",
       "listen_for_mara_under_home_warning",
+      "look_away_from_sign",
       "stare_at_home",
       "step_toward_porch_light"
     ]);
@@ -2341,9 +2341,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("sign_warning");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_for_mara_under_home_warning",
       "look_away_from_sign",
       "follow_mara_note_from_sign",
-      "listen_for_mara_under_home_warning",
       "stare_at_home",
       "step_toward_porch_light"
     ]);

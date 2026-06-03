@@ -4928,6 +4928,17 @@ scenes:
       enough to show a street you know and a porch light that should not still
       be on. Mara's warning crackles from the speaker: "Look away."
     choices:
+      - id: listen_for_mara_under_home_warning
+        label: Listen for Mara beneath the HOME sign
+        to: home_sign_dispatch
+        requires:
+          notFlag: heard_home_sign_dispatch
+        effects:
+          set:
+            heard_home_sign_dispatch: true
+            met_mara: true
+            knows_token_location: true
+            knows_badge_proof: true
       - id: look_away_from_sign
         label: Look away and trust the map
         to: morning_transfer
@@ -4945,17 +4956,6 @@ scenes:
             resisted_home_sign_with_mara_note: true
             met_mara: true
             knows_platform: true
-            knows_token_location: true
-            knows_badge_proof: true
-      - id: listen_for_mara_under_home_warning
-        label: Listen for Mara beneath the HOME sign
-        to: home_sign_dispatch
-        requires:
-          notFlag: heard_home_sign_dispatch
-        effects:
-          set:
-            heard_home_sign_dispatch: true
-            met_mara: true
             knows_token_location: true
             knows_badge_proof: true
       - id: stare_at_home

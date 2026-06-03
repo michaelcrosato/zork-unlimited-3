@@ -46,6 +46,56 @@
     especially `lost_after_dispatch_ending` and `home_sign_dispatch`; prefer
     another small priority or label clarity pass if those stay rare.
 
+# Cycle 49 HOME Dispatch Priority
+
+- Date: 2026-06-03
+- Main objective: Make `home_sign_dispatch` more naturally discoverable at the
+  first HOME sign warning.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, current health evidence is green, and the latest random evidence
+  still listed `home_sign_dispatch` and `lost_after_dispatch_ending` as
+  normal-play misses while coverage proves both reachable. The HOME warning
+  already contains Mara's voice; making the listen action first turns that
+  warning into the primary playable response instead of an optional third
+  choice.
+- Planned work:
+  - Move `listen_for_mara_under_home_warning` to the top of `sign_warning`.
+  - Preserve immediate morning transfer, Mara-note recovery, sign-stare, and
+    porch-light alternatives.
+  - Update focused HOME sign regressions to lock the new player-facing order.
+  - Run focused tests, full health, and an actual route through the
+    reprioritized dispatch branch into `lost_after_dispatch_ending`.
+- Risks:
+  - Choice order is player-facing UX and covered by exact-order tests.
+  - The non-ideal dispatch loss should become easier to inspect without making
+    it feel like the recommended outcome.
+- Status:
+  - Completed.
+  - Moved `listen_for_mara_under_home_warning` to the top of the first HOME
+    sign warning choices.
+  - Preserved immediate morning transfer, Mara-note recovery, sign-stare, and
+    porch-light alternatives.
+  - Updated the focused HOME sign regressions to enforce the new
+    dispatch-first player-facing order.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "HOME sign|sign trap"`.
+  - `npm run health` passed: format check, TypeScript, 242 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed train car -> HOME warning -> first visible Mara
+    dispatch -> let HOME drown Mara out, ending at
+    `lost_after_dispatch_ending` with score 50 and no objectives.
+  - The branch now reads as a clearer playable warning: Mara's practical rescue
+    checklist interrupts the false HOME sign before players decide whether to
+    return, transfer, or surrender.
+  - The bad dispatch ending remains explicitly opt-in after the warning, so
+    discoverability improves without turning failure into the default route.
+- Next step:
+  - Watch the next random/blind-play evidence for whether
+    `home_sign_dispatch` appears in normal play; if it remains rare, consider a
+    second bridge from `home_sign_echo` or a label clarity pass on the train-car
+    HOME-sign choice.
+
 # Cycle 47 Passenger Morning Chorus Payoff Priority
 
 - Date: 2026-06-03
