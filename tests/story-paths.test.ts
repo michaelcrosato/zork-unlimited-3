@@ -4152,11 +4152,17 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.scene.text).toContain("emergency release waits under the first seat");
+    expect(observation.scene.text).toContain("get them aboard and pull");
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "make_room_for_passengers_in_third_car"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain("hold_third_car_threshold");
     expect(observation.choices.at(-1)?.id).toBe("board_third_car_with_passengers");
+    expect(observation.choices.at(-1)?.label).toBe(
+      "Board the third car and pull the emergency release"
+    );
     expect(
       observation.choices.find((choice) => choice.id === "make_room_for_passengers_in_third_car")
         ?.label

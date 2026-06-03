@@ -1,3 +1,64 @@
+# Cycle 38 Passenger Platform Release Signpost
+
+- Date: 2026-06-03
+- Main objective: Reduce late passenger-platform hub hesitation by making the
+  emergency-release path explicit without changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  priorities, health evidence is green, and Cycle 38 evidence says the adaptive
+  exploratory route stopped before the true ending with likely hub-return
+  friction. The passenger platform contains many valid optional passenger
+  beats, so the direct progress affordance needs to remain legible in no-hints
+  play.
+- Planned work:
+  - Revise `passenger_platform` prose so optional questions and keepsake checks
+    read as preparation for boarding, not alternatives to the release.
+  - Rename the direct platform boarding choice so it explicitly promises the
+    emergency release.
+  - Add focused regression assertions for the platform signpost, visible
+    objective, and direct boarding label.
+  - Run focused tests, full health, and an actual playable route through the
+    manifest passenger platform to a true ending.
+- Risks:
+  - Avoid flattening the optional passenger branches; they should still feel
+    meaningful, just clearly subordinate to the release goal.
+  - Avoid route/flag changes because current validation and coverage are
+    healthy.
+- Status:
+  - Completed.
+  - Revised `passenger_platform` so the prose names the emergency release,
+    frames optional passenger checks as preparation, and tells players the next
+    act is to get everyone aboard and pull.
+  - Renamed `board_third_car_with_passengers` to "Board the third car and pull
+    the emergency release" so the direct progress choice is legible in
+    no-hints play.
+  - Added focused story-path assertions for the passenger-platform signpost,
+    visible release objective, and direct boarding label.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "direct manifest boarders make room"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `read_passenger_manifest` ->
+    `return_to_signal_ledger_from_manifest` ->
+    `clear_manifest_and_mara_from_ledger` ->
+    `board_after_releasing_passengers` ->
+    `board_third_car_with_passengers` -> `pull_release_with_manifest`,
+    ending at `passenger_true_ending` with score 272 and no objectives.
+  - The played route confirmed the passenger platform direct choice now reads
+    "Board the third car and pull the emergency release" before entering
+    `train_car`.
+  - The hub still offers optional passenger branches, but the direct release
+    route now reads as the main line rather than a generic board action.
+  - No route friction, stale objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback; if none appears, continue
+    improving no-hints late-game hub clarity or strengthen another frequent
+    passenger route payoff.
+
 # Cycle 37 Lunch-Tin Clock-Out Payoff
 
 - Date: 2026-06-03
@@ -46,10 +107,10 @@
 - Playtest feedback:
   - Actual CLI play followed `let_lunch_tin_worker_keep_count` ->
     `return_from_passenger_farewell` ->
-    `listen_to_lunch_tin_worker_from_boarding` -> `read_lunch_tin_roster` ->
-    `hear_roster_clock_out_roll_call` ->
-    `pull_release_after_lunch_tin_roll_call`, ending at
-    `passenger_lunch_tin_true_ending` with score 321 and no objectives.
+    `read_lunch_tin_roster_from_boarding` ->
+    `listen_after_reading_lunch_tin_roster` ->
+    `pull_release_after_lunch_tin_intercom`, ending at
+    `passenger_lunch_tin_true_ending` with score 320 and no objectives.
   - The revised branch now reads as a clear work-shift payoff: the lunch tin
     sets boarding rhythm, the roster becomes a time card, and the ending
     releases everyone as clocked-out names instead of another kept count.
