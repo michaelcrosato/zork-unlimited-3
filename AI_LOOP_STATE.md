@@ -1,3 +1,64 @@
+# Cycle 25 Last Dispatch Prompt Clarity
+
+- Date: 2026-06-03
+- Main objective: Make Mara's optional last-dispatch route more visible at the
+  late-game release decision.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 25 evidence shows the game is healthy enough to invest in
+  route depth and polish. The last-dispatch route is important to Mara's story
+  but comparatively rare in broad playtest distribution, so the best small
+  improvement is to make the route read as a concrete final-signoff choice
+  rather than another generic intercom aside.
+- Planned work:
+  - Revise `mara_released` so the available paths clearly include Mara signing
+    off with a final dispatch before boarding.
+  - Revise `train_car` so players who board directly still see the last
+    dispatch as an intentional final beat before pulling the release.
+  - Rename the two visible last-dispatch choice labels to use consistent
+    "final dispatch" language.
+  - Preserve all routing, flags, scoring, scene count, and ending count.
+  - Add focused regression assertions for the clarified prose and labels.
+  - Run focused tests, full health, and a playable route through the changed
+    beat.
+- Risks:
+  - Over-emphasizing the optional dispatch could make it feel mandatory; keep
+    the immediate release choice available and unchanged.
+  - Text-only changes should not affect reachability, but exact-label
+    assertions need to match the revised prompts.
+- Status:
+  - Completed.
+  - Revised `mara_released` so Mara's post-ledger options explicitly include
+    signing off with one final dispatch before boarding.
+  - Revised `train_car` so direct boarders see that Mara can still make one
+    last dispatch before the release.
+  - Renamed the two last-dispatch prompts to consistent "final dispatch"
+    language:
+    "Ask Mara for her final dispatch before boarding" and
+    "Ask Mara for her final dispatch before pulling."
+  - Added focused regression assertions for the new visible prose and labels
+    while preserving all choice ids and route behavior.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "last dispatch|emergency release after clearing Mara"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the clarified route through
+    `ask_mara_for_last_dispatch -> carry_last_dispatch_into_car ->
+pull_release_after_last_dispatch_goodbye` and ended at
+    `mara_last_dispatch_true_ending` with score 320 and no objectives.
+  - The `mara_released` prompt now makes the last-dispatch option feel like a
+    concrete final signoff rather than a generic conversation branch.
+  - The immediate release and handoff alternatives remain visible, so the
+    optional beat does not block players who want to finish directly.
+- Next step:
+  - Watch blind feedback and route distribution for whether final-dispatch
+    discovery improves. If the route remains rare, consider adding objective
+    wording only after confirming players are missing the option, not choosing
+    against it.
+
 # Cycle 25 Gate Control Readability
 
 - Date: 2026-06-03
