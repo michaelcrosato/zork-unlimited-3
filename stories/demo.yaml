@@ -3219,6 +3219,14 @@ scenes:
       platform sounds less like a ledger and more like people finding their
       places beside one another.
     choices:
+      - id: return_childs_mitten_from_keepsakes
+        label: Return the child's stamped mitten before the keepsakes board
+        to: passenger_mitten_memory
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            returned_lost_mitten: true
       - id: check_matched_keepsakes_before_boarding
         label: Check that every matched keepsake has the right hands
         to: passenger_keepsake_check

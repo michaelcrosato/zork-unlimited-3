@@ -1,3 +1,55 @@
+# Cycle 20 Cross-Linked Keepsakes To Mitten Memory
+
+- Date: 2026-06-03
+- Main objective: Make the `passenger_mitten_memory` beat easier to encounter
+  from normal passenger-rescue play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence showed full coverage could reach
+  `passenger_mitten_memory`, but the 100-run random sample missed it while
+  still finding keepsake endings. That suggested the child-with-mitten beat was
+  too isolated from the commonly reached matched-keepsake route.
+- Planned work:
+  - Add a local cross-link from `passenger_keepsake_handoff` into
+    `passenger_mitten_memory`.
+  - Preserve the existing checked-keepsake, speaker, and direct boarding
+    routes.
+  - Add regression coverage, run health, and actually play the promoted route.
+- Risks:
+  - The opened-manifest and passenger-platform hubs remain dense; a 100-run
+    random sample can still miss rare local texture even when the route is
+    clearer to a player.
+  - This improves the keepsake-to-mitten path without solving the remaining
+    threshold, newspaper-transfer, or lost-after-dispatch misses.
+- Status:
+  - Completed.
+  - Added `return_childs_mitten_from_keepsakes` from
+    `passenger_keepsake_handoff` to `passenger_mitten_memory`.
+  - Updated exact choice-order regressions for the keepsake handoff and added a
+    route test that reaches `passenger_mitten_true_ending` through the new
+    cross-link.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "matched keepsake|lost mitten"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    269 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed passenger manifest rescue -> matched keepsakes ->
+    returned the child's stamped mitten -> led the child to the third-car
+    speaker -> pulled the release.
+  - The route ended at `passenger_mitten_true_ending` with score 327 and no
+    objectives.
+  - The route reads naturally: the matched-keepsake handoff already mentions
+    ordinary proofs, so the child-specific memory now feels like a local
+    deepening instead of a separate hub-only choice.
+  - A follow-up 100-run random sample still missed `passenger_mitten_memory`,
+    so this should be treated as a qualitative/local discoverability
+    improvement rather than proof that the small random sample is fixed.
+- Next step:
+  - Watch blind/random evidence for whether remaining normal-play misses
+    concentrate on `passenger_threshold_boarding`,
+    `passenger_threshold_intercom`, `passenger_newspaper_transfer`, or
+    `lost_after_dispatch_ending`.
+
 # Cycle 19 Promoted Mara Manifest Handoff Speaker
 
 - Date: 2026-06-03
