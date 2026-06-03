@@ -1,3 +1,57 @@
+# Cycle 22 Manifest Thumbprint Prominence
+
+- Date: 2026-06-03
+- Main objective: Make `mara_manifest_thumbprint` and
+  `passenger_manifest_thumbprint_true_ending` easier to notice during normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed the manifest thumbprint scenes
+  while coverage proved them reachable. The branch already existed, but its
+  direct opened-door option sat low in a dense hub after many passenger-specific
+  choices.
+- Planned work:
+  - Foreground Mara's torn thumbprint in the opened-manifest hub prose.
+  - Move `notice_manifest_thumbprint_from_opened_doors` into the first visible
+    opened-manifest choice cluster.
+  - Update focused ordering regressions so the route stays prominent.
+  - Run focused tests, full health, and an actual route through the promoted
+    thumbprint option.
+- Risks:
+  - The opened-manifest hub is dense; promoting Mara's thumbprint could compete
+    with the opened passenger clues that previous cycles surfaced.
+  - The direct thumbprint branch sets `saw_mara_manifest_handoff`, so downstream
+    handoff options must still stay coherent.
+- Status:
+  - Completed.
+  - Revised `passengers_released` prose so Mara's torn thumbprint is visible
+    before the long list of opened-passenger clues.
+  - Moved `notice_manifest_thumbprint_from_opened_doors` into the first visible
+    opened-manifest choice cluster, directly after Mara's opened-door handoff
+    option and before the door-echo, mitten, count, keepsake, and roll-call
+    branches.
+  - Updated the opened-manifest ordering regression to preserve the new
+    prominence.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest-specific platform|manifest thumbprint"`.
+  - `npm run health` passed: format check, TypeScript, 249 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> promoted manifest thumbprint ->
+    thumbprint intercom -> release, ending at
+    `passenger_manifest_thumbprint_true_ending` with score 300 and no
+    objectives.
+  - The promoted option now appears while the player is still reading the
+    initial opened-manifest cluster, so Mara's oath feels like part of the
+    immediate rescue decision instead of a late list item.
+  - The payoff remained coherent because the branch still sets
+    `read_manifest_thumbprint`, `saw_mara_manifest_handoff`, and
+    `heard_mara_goodbye` before the ideal ending.
+- Next step:
+  - Watch random/blind evidence for whether `mara_manifest_thumbprint` and
+    `passenger_manifest_thumbprint_true_ending` still appear as normal-play
+    misses. If they do, consider a player-view objective hint around the
+    opened manifest rather than adding another branch.
+
 # Cycle 21 Opened Mitten Prominence
 
 - Date: 2026-06-03

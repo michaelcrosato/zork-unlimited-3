@@ -1508,18 +1508,20 @@ scenes:
     routeImportance: optional
     text: >
       When Mara's badge number touches the ledger, every tiny stamped door in
-      the manifest clicks open at once. The booth fills with ordinary sounds:
-      a child's laugh beside a damp mitten print, a lunch tin latch, umbrellas
-      shaking rain from their ribs, a newspaper transfer unfolding beside the
-      old conductor's punch, passengers answering Mara's count before it can
-      make anyone last, shoulders shifting to make room, a crowd pausing until
-      someone holds the third-car threshold. The same tiny door-echoes you
-      could have heard before opening the manifest keep their rhythm now that
-      the names are people. Mara breathes through the speaker and says, "Third
-      car. I can hold the line steady while they find the morning." When she
-      has already called the opened doors once, the third car speaker keeps a
-      small waiting hiss for her handoff. Once the opened passengers remember
-      morning aloud, the same speaker can carry those ordinary streets aboard.
+      the manifest clicks open at once. Mara's torn thumbprint darkens on the
+      opened page like a promise she is still holding. The booth fills with
+      ordinary sounds: a child's laugh beside a damp mitten print, a lunch tin
+      latch, umbrellas shaking rain from their ribs, a newspaper transfer
+      unfolding beside the old conductor's punch, passengers answering Mara's
+      count before it can make anyone last, shoulders shifting to make room, a
+      crowd pausing until someone holds the third-car threshold. The same tiny
+      door-echoes you could have heard before opening the manifest keep their
+      rhythm now that the names are people. Mara breathes through the speaker
+      and says, "Third car. I can hold the line steady while they find the
+      morning." When she has already called the opened doors once, the third
+      car speaker keeps a small waiting hiss for her handoff. Once the opened
+      passengers remember morning aloud, the same speaker can carry those
+      ordinary streets aboard.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1528,6 +1530,19 @@ scenes:
           notFlag: saw_mara_manifest_handoff
         effects:
           set:
+            saw_mara_manifest_handoff: true
+      - id: notice_manifest_thumbprint_from_opened_doors
+        label: Notice Mara's torn thumbprint in the opened manifest
+        to: mara_manifest_thumbprint
+        requires:
+          all:
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
             saw_mara_manifest_handoff: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
@@ -1784,19 +1799,6 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
-      - id: notice_manifest_thumbprint_from_opened_doors
-        label: Notice Mara's torn thumbprint in the opened manifest
-        to: mara_manifest_thumbprint
-        requires:
-          all:
-            - notFlag: read_manifest_thumbprint
-            - notFlag: heard_mara_goodbye
-            - notFlag: heard_passenger_answers
-            - notFlag: helped_passengers_gather
-        effects:
-          set:
-            read_manifest_thumbprint: true
-            saw_mara_manifest_handoff: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint
