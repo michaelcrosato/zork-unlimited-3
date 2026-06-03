@@ -1,3 +1,59 @@
+# Cycle 16 Opened Transfer Handoff Bridge
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_conductor_transfer_handoff` and
+  `passenger_conductor_transfer_proof` easier to find from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest MCP random sample reached
+  `passenger_conductor_transfer_true_ending` only once while missing its
+  handoff/proof scenes. Coverage proves the scenes are reachable, but normal
+  play can release straight from the transfer menu before seeing the child pass
+  proof to Mara.
+- Planned work:
+  - Add a direct opened-manifest hub choice into the conductor transfer handoff.
+  - Preserve the existing slower conductor-transfer scene and its release,
+    roll-call, handoff, and proof options.
+  - Add a focused regression for the new route through handoff, proof, and the
+    transfer ending.
+  - Run focused tests, full health, and an actual route through the new bridge.
+- Risks:
+  - The new choice bypasses the standalone transfer-punch scene, so it must set
+    the same conductor transfer flags expected by downstream handoff/proof
+    scenes.
+  - The hub already has many optional payoff branches; the new option should
+    not crowd out the existing slower transfer option or claim the branch after
+    passengers have already been gathered.
+- Status:
+  - Completed.
+  - Added `pass_opened_transfer_to_mara` from `passengers_released` to
+    `passenger_conductor_transfer_handoff`, setting the conductor transfer,
+    clearance, gathered-passenger, and carried-forward flags.
+  - Preserved the existing `ask_conductor_to_punch_opened_transfer` route into
+    the standalone transfer scene.
+  - Added a focused route regression covering the direct opened-manifest
+    handoff, proof scene, and transfer true ending.
+  - Updated the opened-manifest exact-order regression for the new option.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "conductor transfer"`.
+  - `npm run health` passed: format check, TypeScript, 245 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct punched-transfer handoff
+    -> speaker proof -> release, ending at
+    `passenger_conductor_transfer_true_ending` with score 285 and no
+    objectives.
+  - The direct option felt coherent from the opened-manifest hub because it
+    moves the proof into passengers' hands immediately, while the slower
+    conductor-punch scene remains available beside it for players who want the
+    setup beat.
+  - The proof scene provided a stronger pre-release pause than pulling directly
+    from the transfer menu.
+- Next step:
+  - Watch random/blind evidence for whether the transfer handoff/proof scenes
+    appear in normal play. If they remain rare, prefer tuning the conductor
+    transfer labels/order before adding more branches.
+
 # Cycle 15 Direct Morning Chorus Boarding
 
 - Date: 2026-06-03

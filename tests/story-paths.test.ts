@@ -7595,6 +7595,70 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest play pass the conductor transfer straight to Mara", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pass_opened_transfer_to_mara"
+    );
+
+    state = choose(story, state, "pass_opened_transfer_to_mara");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_handoff");
+    expect(observation.scene.text).toContain("walks it to the ceiling speaker");
+    expect(observation.scene.text).toContain("proof light enough to pass hand to hand");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.punched_conductor_transfer).toBe(true);
+    expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "press_transfer_to_speaker_grille",
+      "pull_release_after_transfer_handoff"
+    ]);
+
+    state = choose(story, state, "press_transfer_to_speaker_grille");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
+    expect(observation.scene.text).toContain("one small morning-shaped mark");
+    expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+
+    state = choose(story, state, "pull_release_after_transfer_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+  });
+
   it("pays off answered passenger roll call before a direct manifest release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -10844,6 +10908,7 @@ describe("demo story critical paths", () => {
       "listen_to_passenger_morning_chorus",
       "board_with_passenger_morning_chorus",
       "ask_conductor_to_punch_opened_transfer",
+      "pass_opened_transfer_to_mara",
       "ask_mara_to_sign_off_opened_manifest",
       "follow_lunch_tin_latch",
       "help_opened_passengers_gather",

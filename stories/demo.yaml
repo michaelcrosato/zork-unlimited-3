@@ -1675,6 +1675,20 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             punched_conductor_transfer: true
+      - id: pass_opened_transfer_to_mara
+        label: Let the child carry the punched transfer to Mara's speaker
+        to: passenger_conductor_transfer_handoff
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: punched_conductor_transfer
+            - notFlag: punched_transfer_carried_forward
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            punched_conductor_transfer: true
+            punched_transfer_carried_forward: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off to the opened passengers
         to: passenger_mara_signoff
