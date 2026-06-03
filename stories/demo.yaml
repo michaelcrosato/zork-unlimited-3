@@ -1996,13 +1996,15 @@ scenes:
   passenger_missing_count:
     routeImportance: optional
     text: >
-      Mara turns the opened manifest sideways so the blank spaces line up.
-      Every stamped door has unlocked, but one row still waits without a voice
-      beside it: not a missing passenger, she realizes, but the pause where the
-      line used to put her. The child with the mitten taps the paper, the
-      newspaper woman reads the stop aloud, and the old conductor lifts his
-      punch. "Then we answer that space together," Mara says, and the ledger no
-      longer has room to make anyone last.
+      Mara turns the opened manifest sideways until the blank spaces line up
+      with the aisle. Every stamped door has unlocked, but one row still waits
+      without a voice beside it: not a missing passenger, she realizes, but the
+      pause where the line used to put whoever helped last. The child with the
+      mitten taps the paper first. The newspaper woman reads Warden Street
+      aloud so the worker can answer from the door. The old conductor lifts his
+      punch, then lowers it when the passengers look from face to face and make
+      their own check. "Then we answer that space together," Mara says, and the
+      blank row becomes room for everyone still crossing.
     choices:
       - id: let_unanswered_row_become_roll_call
         label: Let the unanswered row become the passengers' roll call
@@ -2938,12 +2940,12 @@ scenes:
   passenger_gathered_boarding:
     routeImportance: optional
     text: >
-      The gathered passengers board by looking after the person nearest them.
+      The gathered passengers board by passing steadiness from hand to hand.
       The newspaper woman folds her transfer column into the child's mittened
-      hand, the old conductor checks the doorway without asking for tickets,
-      and the lunch-tin worker keeps his latch quiet so no one has to be counted
-      by the line again. At the first seat, the emergency release waits under a
-      crowd that is ready because it became a crowd.
+      palm, the old conductor braces the doorway for the lunch-tin worker, and
+      the lunch-tin worker keeps his latch quiet so no one has to be counted by
+      the line again. At the first seat, the emergency release waits under a
+      crowd that is ready because every passenger helped the next one move.
     choices:
       - id: listen_to_gathered_passengers_from_boarding
         label: Listen to the gathered passengers before the release
@@ -4103,11 +4105,12 @@ scenes:
       She names what each opened door carried back: newspaper, lunch tin,
       mitten, conductor's punch. The passengers answer in small practical
       sounds before she reaches the end, no longer just entries cleared from a
-      page but people checking that the others are still with them. The
-      newspaper woman waits for the mitten child to answer. The lunch-tin
-      worker holds his clasp until the conductor taps twice. "This is the count
-      the line cannot keep," Mara says. "Pull the release while they are
-      counting one another home."
+      page but people checking that the others are still with them. If the old
+      blank row has already been named, the check moves through the car like
+      extra space: the newspaper woman waits for the mitten child, the worker
+      waits for the conductor, and no one lets the pause close around Mara
+      again. "This is the count the line cannot keep," Mara says. "Pull the
+      release while they are counting one another home."
     choices:
       - id: let_passengers_finish_reviewed_count
         label: Let the passengers finish the reviewed count together
@@ -4466,9 +4469,11 @@ scenes:
     text: >
       The passengers gather themselves before Mara can call again. The child
       with the mitten counts the open doors, the old conductor answers each
-      number with "clear," and the platform finds a rhythm that does not belong
-      to the line anymore. Mara lets their voices carry through the speaker.
-      "Now," she says. "While they remember they can move together."
+      number with "clear," and the lunch-tin worker steadies the newspaper
+      woman's elbow when the car sways. The rhythm does not belong to the line
+      anymore; it belongs to people making room for one another. Mara lets their
+      voices carry through the speaker. "Now," she says. "While they remember
+      they can move together."
     choices:
       - id: hear_final_passenger_roll_call
         label: Hear the gathered passengers answer one last roll call
@@ -5098,8 +5103,9 @@ scenes:
       into people keeping track of one another: the newspaper woman checking
       the child beside her, the lunch-tin worker waiting until the old
       conductor steps clear, Mara letting the last number go unfinished because
-      no one is missing anymore. Morning rain reaches the third car as a crowd,
-      not a total.
+      no one is missing anymore. The old blank row does not vanish. It opens
+      into the space they make for whoever is still stepping down. Morning rain
+      reaches the third car as a crowd, not a total.
     choices: []
 
   passenger_reviewed_count_true_ending:
@@ -5199,11 +5205,12 @@ scenes:
     endingGroup: Passengers
     endingFamily: Core
     text: >
-      The release opens every door at once, and the lunch-tin worker's latch
-      becomes the first ordinary sound of morning. The child with the mitten
-      walks between two adults who know his name now; the old conductor holds
-      the doors until the last umbrella clears the rain. Mara thanks each
-      passenger by name, then saves one quiet thank-you for you.
+      The release opens every door at once, and the first ordinary sound of
+      morning is not Mara's roll call but passengers helping one another down:
+      the conductor's clear call, the lunch-tin worker's steady hand, the
+      newspaper woman guiding the child with both mittens into the rain. No one
+      crosses alone, and no one has to prove their name to the line again. Mara
+      thanks each passenger by name, then saves one quiet thank-you for you.
     choices: []
 
   passenger_roll_call_true_ending:

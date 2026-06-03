@@ -1865,7 +1865,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_missing_count");
     expect(observation.scene.text).toContain("one row still waits without a voice");
+    expect(observation.scene.text).toContain("whoever helped last");
+    expect(observation.scene.text).toContain("make their own check");
     expect(observation.scene.text).toContain("we answer that space together");
+    expect(observation.scene.text).toContain("room for everyone still crossing");
     expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_unanswered_row_become_roll_call",
@@ -1997,6 +2000,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("The old blank row does not vanish");
+    expect(observation.scene.text).toContain("space they make for whoever is still stepping down");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
     expectIdealScore(observation.score);
@@ -2032,6 +2037,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
     expect(observation.scene.text).toContain("checking that the others are still with them");
+    expect(observation.scene.text).toContain("extra space");
+    expect(observation.scene.text).toContain("no one lets the pause close around Mara again");
     expect(observation.scene.text).toContain("counting one another home");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "let_passengers_finish_reviewed_count",
@@ -2045,6 +2052,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_missing_count");
     expect(observation.scene.text).toContain("not a missing passenger");
+    expect(observation.scene.text).toContain("room for everyone still crossing");
     expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
 
     const returnedIntercomState = choose(
@@ -7810,8 +7818,8 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("board by looking after the person nearest them");
-    expect(observation.scene.text).toContain("ready because it became a crowd");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.text).toContain("every passenger helped the next one move");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -7829,6 +7837,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("passengers helping one another down");
+    expect(observation.scene.text).toContain("No one crosses alone");
     expectIdealScore(observation.score);
   });
 
@@ -8616,6 +8626,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_gathered_intercom");
     expect(observation.scene.text).toContain("The passengers gather themselves");
+    expect(observation.scene.text).toContain("making room for one another");
     expect(observation.scene.text).toContain("they can move together");
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -8629,6 +8640,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
+    expect(observation.scene.text).toContain("No one crosses alone");
     expectIdealScore(observation.score);
   });
 
@@ -10807,8 +10819,8 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("board by looking after the person nearest them");
-    expect(observation.scene.text).toContain("ready because it became a crowd");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.text).toContain("every passenger helped the next one move");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
 
     state = choose(story, state, "listen_to_gathered_passengers_from_boarding");
@@ -10831,6 +10843,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
+    expect(observation.scene.text).toContain("passengers helping one another down");
     expectIdealScore(observation.score);
   });
 
@@ -10864,8 +10877,8 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("board by looking after the person nearest them");
-    expect(observation.scene.text).toContain("ready because it became a crowd");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.text).toContain("every passenger helped the next one move");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_gathered_passengers_from_boarding",
@@ -10907,6 +10920,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("No one crosses alone");
     expectIdealScore(observation.score);
   });
 
@@ -10949,7 +10963,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("board by looking after the person nearest them");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_gathered_passengers_from_boarding",
@@ -11361,7 +11375,8 @@ describe("demo story critical paths", () => {
     let observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("became a crowd");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.text).toContain("every passenger helped the next one move");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([

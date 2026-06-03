@@ -1,3 +1,117 @@
+# Cycle 34 Manifest Blank-Row Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the opened-manifest blank-row branch without
+  changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health evidence is green, and Cycle 33 random/adaptive evidence shows
+  manifest passenger paths are normal-play routes. The blank-row beat is a good
+  late-passenger idea, but it benefits from clearer player-facing action: the
+  row should resolve because passengers check each other and make room, not
+  because the prose explains that nobody is missing.
+- Planned work:
+  - Revise `passenger_missing_count` so the blank row is tied to whoever gets
+    held last and is answered by passengers checking one another.
+  - Revise `passenger_counted_manifest_intercom` so the blank-row discovery
+    carries into the third car as extra space around Mara.
+  - Revise `passenger_counted_true_ending` so the row remains open as room for
+    the last person stepping down.
+  - Add focused regression assertions for the strengthened payoff language.
+  - Run focused tests, full health, and a real playable route through the
+    blank-row counted ending.
+- Risks:
+  - The reviewed-count branch has recent polish; keep this pass focused on the
+    blank-row subpath rather than rewriting the whole manifest family.
+  - Text assertions should capture key payoff images without locking full prose.
+- Status:
+  - Completed.
+  - Revised `passenger_missing_count` so the blank row is tied to whoever the
+    line made last and is answered by passengers checking one another.
+  - Revised `passenger_counted_manifest_intercom` so the blank-row discovery
+    carries into the third car as extra space around Mara.
+  - Revised `passenger_counted_true_ending` so the old blank row opens into
+    room for whoever is still stepping down.
+  - Added focused regression assertions for the strengthened payoff language.
+  - Updated one stale gathered-passenger assertion so it matches the current
+    verified mutual-aid wording.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "unanswered-row|reviewed count together"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `check_opened_manifest_blank_row` ->
+    `board_with_unanswered_row_resolved` ->
+    `pull_release_after_counted_manifest_goodbye`, ending at
+    `passenger_counted_true_ending` with score 274 and no objectives.
+  - The revised branch now reads as a sequence of visible passenger actions:
+    the blank row names who gets held last, the car creates extra space around
+    Mara, and the ending leaves that space open for the final person stepping
+    into rain.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback before adding new route topology;
+    if none appears, continue focused payoff passes on frequent passenger
+    routes with precise regression coverage.
+
+# Cycle 33 Gathered Passenger Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the high-frequency gathered-passenger helped
+  ending without changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health is green, all scenes are reachable, and Cycle 33 evidence
+  shows `passenger_helped_true_ending` is the most frequent coverage passenger
+  ending. The route should pay off the player's choice to gather passengers as
+  mutual aid, not as another generic open-doors ending.
+- Planned work:
+  - Revise `passenger_gathered_boarding` so boarding is framed as passengers
+    steadying one another.
+  - Revise `passenger_gathered_intercom` so the intercom beat reinforces
+    people making room for one another.
+  - Revise `passenger_helped_true_ending` so the ending resolves with no one
+    crossing into morning alone.
+  - Add focused regression assertions for the strengthened text.
+  - Run focused tests, full health, and an actual playable route through the
+    helped ending.
+- Risks:
+  - Text-only polish can blur into roll-call or keepsake branches; keep this
+    branch centered on mutual aid rather than names, objects, or manifests.
+  - Existing route coverage is broad, so brittle wording assertions can fail
+    quickly if they over-specify full prose.
+- Status:
+  - Completed.
+  - Revised `passenger_gathered_boarding` so the gathered passengers board by
+    passing steadiness from hand to hand.
+  - Revised `passenger_gathered_intercom` so the intercom beat centers on
+    people making room for one another.
+  - Revised `passenger_helped_true_ending` so the release payoff is passengers
+    helping one another into morning, with no one crossing alone.
+  - Added focused regression assertions for the gathered boarding, intercom,
+    and helped ending payoff language across existing route variants.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "morning chorus gather|gathered-passenger|answer listeners gather|opened manifest doors|Mara's passenger sign-off"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the manifest answer route through
+    `passenger_gathered_boarding`, `passenger_gathered_intercom`, and
+    `passenger_helped_true_ending`, ending with score 327.
+  - The revised route now reads as mutual aid: transfer, doorway, latch, and
+    release all reinforce passengers making room for one another.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Resolve or complete the current Cycle 34 blank-row work already present at
+    the top of this handoff file, or wait for a consolidated blind-play digest
+    before selecting the next branch polish target.
+
 # Cycle 32 Passenger Payoff Polish
 
 - Date: 2026-06-03
