@@ -1596,6 +1596,20 @@ scenes:
           set:
             read_manifest_thumbprint: true
             saw_mara_manifest_handoff: true
+      - id: carry_manifest_thumbprint_oath_from_opened_doors
+        label: Carry Mara's torn thumbprint oath straight to the third-car speaker
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
       - id: return_opened_manifest_mitten
         label: Return the opened manifest's lost mitten to the child
         to: passenger_mitten_memory

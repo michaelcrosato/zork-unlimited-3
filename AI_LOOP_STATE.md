@@ -1,3 +1,53 @@
+# Cycle 22 Promoted Manifest Thumbprint Oath
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_thumbprint_true_ending` and its
+  `mara_manifest_thumbprint_intercom` setup easier to discover from normal
+  opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence shows full coverage can reach every scene,
+  but the 100-run random sample missed the manifest thumbprint payoff while
+  larger MCP random only found it rarely. The route is a high-value thematic
+  beat because it reframes Mara's torn thumbprint from "I must be last" into
+  "I stayed long enough to leave with them."
+- Planned work:
+  - Add a direct opened-manifest choice that carries Mara's torn thumbprint
+    oath straight to the third-car speaker.
+  - Preserve the existing notice-first and handoff-first thumbprint routes.
+  - Add regression coverage, run health, and actually play the promoted route.
+- Risks:
+  - The opened-manifest hub remains broad, so a small random sample may still
+    miss one or more optional variants.
+  - This pass improves manifest-thumbprint discoverability without solving
+    remaining normal-play misses such as `passenger_conductor_transfer` or
+    `lost_after_dispatch_ending`.
+- Status:
+  - Completed.
+  - Added `carry_manifest_thumbprint_oath_from_opened_doors`, a direct
+    opened-manifest route into `mara_manifest_thumbprint_intercom`.
+  - Preserved the existing notice-first `mara_manifest_thumbprint` route and
+    later `carry_manifest_thumbprint_from_opened_doors` recovery route.
+  - Updated opened-manifest ordering coverage and added a direct route
+    regression to `passenger_manifest_thumbprint_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest choices|manifest-specific platform beat|manifest thumbprint|thumbprint oath"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    270 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> carried Mara's torn thumbprint
+    oath straight to the third-car speaker -> pulled the release.
+  - The route ended at `passenger_manifest_thumbprint_true_ending` with score
+    299 and no objectives.
+  - The new direct choice makes the payoff easier to scan because it states
+    the thumbprint's emotional action and destination in one label, while the
+    surrounding scene already names the thumbprint as a promise Mara is still
+    holding.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `passenger_conductor_transfer`,
+    `passenger_threshold_intercom`, or `lost_after_dispatch_ending`.
+
 # Cycle 21 Promoted Opened-Manifest Threshold
 
 - Date: 2026-06-03
