@@ -1,3 +1,116 @@
+# Cycle 24 Core True Ending Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the central `true_ending` payoff without adding
+  new branches or changing route balance.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 24 evidence shows health, coverage, and MCP
+  playthroughs are already green. Random play reaches ideal endings at a
+  healthy rate, with `true_ending` still one of the most common and important
+  Mara outcomes. The current central ending was brief compared with the route's
+  accumulated map, token, badge, ledger, and release setup, so richer ending
+  prose is the highest-impact low-risk improvement.
+- Planned work:
+  - Expand the `true_ending` text to pay off the gathered tools, the signal
+    ledger release, and Mara's voice going quiet by choice.
+  - Preserve all routing, ending metadata, scoring, and branch distribution.
+  - Add a focused regression assertion for the new central-ending imagery.
+  - Run focused tests, full health, and an actual playable route through the
+    central ending.
+- Risks:
+  - Text-only changes can still weaken pacing if they over-explain the ending;
+    keep the added prose concise and sensory.
+  - Because this change does not alter routing, the current 151-scene,
+    29-ending graph from the adjacent lit warned-escape work should remain
+    fully reachable.
+- Status:
+  - Completed.
+  - Expanded the central `true_ending` so the release now pays off passengers
+    leaving the tunnel's cold, the token going quiet, the map steadying, Mara's
+    badge becoming resting proof, and the line falling silent.
+  - Added regression assertions to the critical true-ending path for the new
+    final imagery.
+  - Preserved all core true-ending routing and metadata.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "can reach the true ending"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 151 reachable scenes and 29 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes.
+- Playtest feedback:
+  - Actual CLI play through the central Mara route ended at `true_ending` with
+    score 278 and no objectives. The expanded ending reads as a stronger final
+    release without adding a new decision or slowing the third-car scene.
+  - Also replayed the adjacent lit-platform stairwell escape route; it ended at
+    `warned_lit_escape_ending` with score 99 and no objectives, confirming the
+    current graph's new escape split is playable.
+- Next step:
+  - Watch blind feedback for whether the longer `true_ending` feels satisfying
+    or overwritten. If payoff is healthy, continue adding depth to high-traffic
+    endings and avoid adding new branch fan-out.
+
+# Cycle 24 Lit Warned Escape Payoff
+
+- Date: 2026-06-03
+- Main objective: Make the adaptive escape route acknowledge when a player has
+  already restored Platform 13 before choosing to leave after Mara's final
+  stairwell warning.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the supplied Cycle 24 evidence shows healthy core guidance: all
+  scenes visited, zero unfinished random runs, and a 79% random ideal-ending
+  rate. The adaptive exploratory route ended at `warned_escape_ending` after
+  restoring platform power, but the existing ending text was generic and could
+  read as if the lights were still unresolved. The best next improvement was a
+  small story payoff on that proven route, not another hub branch.
+- Planned work:
+  - Split the stairwell abandonment choice by `platform_lit`.
+  - Add a new `warned_lit_escape_ending` that names the restored lights, open
+    access plate, badge proof, and still-missing stopped-clock token.
+  - Preserve the original `warned_escape_ending` for unlit stairwell listeners.
+  - Update focused story-path regressions for both branches.
+  - Run focused tests, validation, random/coverage playtests, full health, and
+    an actual CLI playthrough of the changed route.
+- Risks:
+  - Adding an escape ending changes validation stats and coverage run count.
+  - Splitting the choice must not strand unlit players or remove their existing
+    warned escape route.
+- Status:
+  - Completed pending final commit/push.
+  - Added `warned_lit_escape_ending` as an Early escape ending for players who
+    restore Platform 13, listen to Mara at the stairwell, then leave without
+    fetching the signal token.
+  - Retargeted `mara_stairwell_call` so lit-platform players see
+    `leave_lit_platform_after_stairwell_call`, while unlit players keep
+    `leave_after_stairwell_call`.
+  - Updated focused regressions covering the lit split and the preserved unlit
+    warned escape route.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "fleeing players|unlit-platform explorers"`.
+  - Validation passed with 151 reachable scenes and 29 endings.
+  - Deterministic 100-run random playtest ended 100/100 runs, had zero
+    unfinished runs, visited all scenes, and reached
+    `warned_lit_escape_ending` once.
+  - Coverage playtest ended 78225/78347 generated runs with zero unfinished
+    runs, visited all scenes, and reached both `warned_lit_escape_ending` and
+    `warned_escape_ending` seven times each.
+- Playtest feedback:
+  - Actual CLI play followed
+    `take_lantern -> open_service_door -> search_locker -> take_fuse ->
+take_badge -> close_locker -> go_to_platform -> install_fuse ->
+flee_platform -> listen_at_stairwell ->
+leave_lit_platform_after_stairwell_call` and ended at
+    `warned_lit_escape_ending` with score 99 and no objectives.
+  - The new ending reads more honestly for the adaptive route: the player did
+    meaningful work, then abandoned one concrete remaining task rather than an
+    abstract unfinished route.
+  - No invalid choices, dangling objectives, unreachable scenes, or unfinished
+    playtest runs appeared.
+- Next step:
+  - Watch blind feedback for whether early escape endings feel fair and
+    consequence-rich; if recurring players treat escape as a success state,
+    consider clearer ending metadata/report language before adding more escape
+    variants.
+
 # Cycle 23 Last Dispatch Ending Payoff
 
 - Date: 2026-06-03

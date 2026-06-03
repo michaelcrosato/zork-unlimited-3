@@ -1020,9 +1020,16 @@ scenes:
       - id: return_from_stairwell_call
         label: Return to the stopped clock for the signal key
         to: clock
+      - id: leave_lit_platform_after_stairwell_call
+        label: Leave after lighting the platform and hearing Mara call
+        to: warned_lit_escape_ending
+        requires:
+          flag: platform_lit
       - id: leave_after_stairwell_call
         label: Leave Mara calling and run back to the street
         to: warned_escape_ending
+        requires:
+          notFlag: platform_lit
 
   ledger_warning:
     routeImportance: optional
@@ -4966,8 +4973,12 @@ scenes:
     endingFamily: Core
     text: >
       The release opens every door at once. Names vanish from the signal ledger
-      as passengers step into rain-bright morning. Mara's voice thanks you from
-      the speaker, finally close enough to sound alive.
+      as passengers step into rain-bright morning, each one carrying a little
+      of the tunnel's cold out into the rain. The token drops quiet in the
+      booth, the map stops trembling in your hand, and Mara's badge warms
+      against the release handle like proof that can finally rest. Her voice
+      thanks you from the speaker, close enough to sound alive, then lets the
+      line fall silent behind everyone it used to keep.
     choices: []
 
   mara_handoff_true_ending:
@@ -5310,6 +5321,21 @@ scenes:
       open, and her voice follows the rain down the stairs until traffic covers
       it. Someone else may answer tomorrow, but they will inherit the same
       unfinished route you understood well enough to abandon.
+    choices: []
+
+  warned_lit_escape_ending:
+    routeImportance: optional
+    ending: true
+    endingType: escape
+    endingGroup: Early escape
+    text: >
+      You leave after restoring light to Platform 13 and hearing Mara name the
+      signal key, so dawn does not feel like innocence when it finds you on
+      Warden Street. Behind you, the lit tiles, open access plate, and badge
+      proof wait for the one thing you refused to fetch from the stopped clock.
+      Mara's voice follows the rain up the stairs until traffic covers it.
+      Someone else may answer tomorrow, but they will inherit a route you
+      almost finished.
     choices: []
 
   lost_ending:

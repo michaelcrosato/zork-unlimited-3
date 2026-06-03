@@ -41,6 +41,9 @@ describe("demo story critical paths", () => {
 
     expect(finalObservation.scene.id).toBe("true_ending");
     expect(finalObservation.scene.ending).toBe(true);
+    expect(finalObservation.scene.text).toContain("the map stops trembling");
+    expect(finalObservation.scene.text).toContain("Mara's badge warms");
+    expect(finalObservation.scene.text).toContain("line fall silent");
     expect(finalObservation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);
     expect(finalObservation.state.flags.freed_mara).toBe(true);
     expectIdealScore(finalObservation.score);
@@ -9294,7 +9297,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.knows_token_location).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "return_from_stairwell_call",
-      "leave_after_stairwell_call"
+      "leave_lit_platform_after_stairwell_call"
     ]);
 
     state = choose(story, state, "return_from_stairwell_call");
@@ -9328,18 +9331,20 @@ describe("demo story critical paths", () => {
       "install_fuse",
       "flee_platform",
       "listen_at_stairwell",
-      "leave_after_stairwell_call"
+      "leave_lit_platform_after_stairwell_call"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("warned_escape_ending");
+    expect(observation.scene.id).toBe("warned_lit_escape_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("hearing Mara name the signal key");
-    expect(observation.scene.text).toContain("stopped clock");
-    expect(observation.scene.text).toContain("unfinished route");
+    expect(observation.scene.text).toContain("restoring light to Platform 13");
+    expect(observation.scene.text).toContain(
+      "one thing you refused to fetch from the stopped clock"
+    );
+    expect(observation.scene.text).toContain("a route you almost finished");
   });
 
   it("returns unlit stairwell listeners to Platform 13 after token recovery", async () => {
@@ -9479,6 +9484,34 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("read_personnel_file");
     expect(choiceIds).not.toContain("return_to_tunnel");
     expect(choiceIds).not.toContain("go_to_platform");
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "retreat_to_stairs_from_platform",
+      "listen_at_unlit_stairwell"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_stairwell_call");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_stairwell_call",
+      "leave_after_stairwell_call"
+    ]);
+
+    state = choose(story, state, "leave_after_stairwell_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("warned_escape_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("unfinished route");
 
     state = initialState(story);
 
