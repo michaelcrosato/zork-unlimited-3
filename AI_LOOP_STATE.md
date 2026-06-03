@@ -1,3 +1,64 @@
+# Cycle 13 Manifest Answer Payoff Bridges
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for the answered-handoff and
+  echoed-manifest passenger payoffs.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 13 evidence. Health is green,
+  coverage reaches every scene, and random play now has strong ideal-ending
+  pressure, but the 100-run sample still missed
+  `passenger_answered_handoff_*` and `passenger_echoed_*` scenes. Those are
+  authored passenger payoffs that should be easier to notice from common
+  opened-manifest play.
+- Planned work:
+  - Add an answered-handoff bridge from
+    `passenger_manifest_answers` into `passenger_answered_handoff_roll_call`.
+  - Add a direct echoed-manifest option from the same manifest-answer hub into
+    the existing `passenger_echoed_manifest_intercom` payoff.
+  - Reuse current scenes and endings rather than adding another passenger
+    ending.
+  - Extend route regressions for the new manifest-answer echo bridge.
+  - Run focused tests, full health, and an actual CLI playthrough of the
+    changed route.
+- Risks:
+  - `passenger_manifest_answers` now has four choices, so the new option must
+    read as a payoff for prior door sounds instead of another unrelated branch.
+  - The bridge sets `heard_passenger_echoes` late; it must still flow cleanly
+    into the existing echoed intercom ending without reopening boarding loops.
+- Status:
+  - Completed.
+  - Added `hand_manifest_answers_to_mara` from
+    `passenger_manifest_answers` to `passenger_answered_handoff_roll_call`.
+  - Added `let_manifest_answers_keep_door_rhythm` from
+    `passenger_manifest_answers` to `passenger_echoed_manifest_intercom`.
+  - Updated manifest-answer regression expectations and verified the new
+    bridges reach both `passenger_answered_handoff_true_ending` and
+    `passenger_echoed_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest names answer"`.
+  - `npm run health` passed: format check, TypeScript, 237 tests, validation,
+    and coverage playtest.
+  - Validation reports 148 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes; coverage
+    count for `passenger_echoed_true_ending` rose to 1821.
+  - Actual CLI play followed the manifest-answer handoff bridge, ended at
+    `passenger_answered_handoff_true_ending`, scored 305, and left no
+    objectives.
+  - Actual CLI play followed the new manifest-answer echo bridge, ended at
+    `passenger_echoed_true_ending`, scored 280, and left no objectives.
+- Playtest feedback:
+  - The new label reads as a natural tonal shift from answered names back to
+    the earlier door sounds rather than as a mechanical shortcut.
+  - The route is concise: open every manifest door, let names answer once, let
+    the names keep the door rhythm, then release while the opened doors answer.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch random and blind sessions for whether `passenger_echoed_true_ending`
+    appears more often in normal play; if it remains rare, tune labels around
+    `follow_opened_manifest_echoes` and `board_with_echoed_manifest` before
+    adding more branches.
+
 # Cycle 12 Passenger Payoff Discovery Bridges
 
 - Date: 2026-06-02

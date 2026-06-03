@@ -4499,6 +4499,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.manifest_names_answered_once).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
+      "hand_manifest_answers_to_mara",
+      "let_manifest_answers_keep_door_rhythm",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -8849,6 +8851,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.manifest_names_answered_once).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
+      "hand_manifest_answers_to_mara",
+      "let_manifest_answers_keep_door_rhythm",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -10676,6 +10680,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
+      "hand_manifest_answers_to_mara",
+      "let_manifest_answers_keep_door_rhythm",
       "pull_release_after_manifest_answers"
     ]);
 
@@ -10707,6 +10713,45 @@ describe("demo story critical paths", () => {
     );
 
     expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    const handoffState = choose(story, state, "hand_manifest_answers_to_mara");
+    observation = observe(story, handoffState);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_roll_call");
+    expect(observation.scene.text).toContain("handoff instead of a duty");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_answered_handoff_after_roll_call"
+    ]);
+
+    observation = observe(
+      story,
+      choose(
+        story,
+        choose(story, handoffState, "listen_to_answered_handoff_after_roll_call"),
+        "pull_release_after_answered_handoff_intercom"
+      )
+    );
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    observation = observe(
+      story,
+      choose(
+        story,
+        choose(story, state, "let_manifest_answers_keep_door_rhythm"),
+        "pull_release_after_echoed_manifest_goodbye"
+      )
+    );
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 

@@ -3862,6 +3862,24 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: hand_manifest_answers_to_mara
+        label: Let Mara hand the answered manifest to the passengers aboard
+        to: passenger_answered_handoff_roll_call
+        requires:
+          notFlag: heard_answered_passengers
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+      - id: let_manifest_answers_keep_door_rhythm
+        label: Let the answered names keep their old door rhythm
+        to: passenger_echoed_manifest_intercom
+        requires:
+          notFlag: heard_passenger_echoes
+        effects:
+          set:
+            heard_passenger_echoes: true
       - id: pull_release_after_manifest_answers
         label: Pull the release after the manifest answers
         to: passenger_manifest_true_ending
