@@ -3771,11 +3771,13 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "clear_manifest_and_mara_from_ledger");
+    const openedManifestState = state;
     state = choose(story, state, "follow_opened_manifest_echoes");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("opened_manifest_echoes");
     expect(observation.scene.text).toContain("newspaper fold");
+    expect(observation.scene.text).toContain("They ask to be followed");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
     expect(observation.state.flags.followed_opened_newspaper_fold).toBe(true);
     expect(observation.state.flags.heard_newspaper_memory).toBeUndefined();
@@ -3806,6 +3808,20 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
     expect(observation.scene.text).toContain("blank transfer column fills with destinations");
+    expectIdealScore(observation.score);
+
+    state = choose(story, openedManifestState, "let_opened_manifest_names_answer_once");
+    state = choose(story, state, "let_manifest_answers_keep_door_rhythm");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
+    expect(observation.scene.text).toContain("They keep time for people crossing it");
+
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.text).toContain("they have become footsteps");
     expectIdealScore(observation.score);
   });
 
@@ -5480,6 +5496,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_newspaper_transfer");
     expect(observation.scene.text).toContain("The blank transfer column is not blank anymore");
+    expect(observation.scene.text).toContain("proof they still get to arrive");
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -5492,6 +5509,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.scene.text).toContain("not the place where the route ends");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
 
     state = choose(story, state, "pull_release_after_newspaper_roll_call");
@@ -5499,6 +5517,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("a schedule that can finally be kept");
     expectIdealScore(observation.score);
 
     state = choose(story, countedState, "hear_conductor_count_after_manifest_count");

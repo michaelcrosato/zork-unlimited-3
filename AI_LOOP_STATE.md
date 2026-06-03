@@ -1,3 +1,116 @@
+# Cycle 31 Echoed Passenger Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the echoed-manifest passenger payoff on the
+  adaptive route without adding route complexity.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health is green, all scenes are reachable, and Cycle 31 evidence's
+  adaptive exploratory MCP route finished at `passenger_echoed_true_ending`.
+  With core guidance healthy, the highest-value improvement is making a
+  normally reached passenger branch feel more intentional and less like a
+  generic manifest ending.
+- Planned work:
+  - Revise the opened-manifest echo beat so familiar sounds read as a trusted
+    passenger signal, not another puzzle to solve.
+  - Revise the third-car echoed intercom beat so the echoes become departure
+    rhythm rather than repeated tunnel noise.
+  - Revise `passenger_echoed_true_ending` so the ordinary sounds resolve into
+    footsteps in morning.
+  - Add focused regression assertions for the strengthened text.
+  - Run focused tests, full health, and an actual playable route through the
+    echoed ending.
+- Risks:
+  - Text-only polish can blur into other manifest endings; keep this route
+    centered on heard sounds becoming movement.
+  - Existing Cycle 30 newspaper payoff edits are already present in the
+    worktree; preserve them and verify the combined milestone stays green.
+- Status:
+  - Completed.
+  - Revised `opened_manifest_echoes` so familiar sounds are framed as a
+    passenger signal to follow, not another puzzle to solve.
+  - Revised `passenger_echoed_manifest_intercom` so the echoes become timing
+    for people crossing the tunnel.
+  - Revised `passenger_echoed_true_ending` so the heard sounds resolve into
+    footsteps in morning.
+  - Added focused regression assertions for the opened-echo setup, echoed
+    intercom, and echoed ending.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "echoed|newspaper"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the opened-manifest route through
+    `opened_manifest_echoes`, `passenger_echoed_boarding`,
+    `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending`, ending with score 285.
+  - The revised branch now reads as sound becoming movement: the echoes stop
+    being clues and resolve into passengers stepping into rain.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Watch blind sessions for whether high-frequency passenger endings feel
+    more distinct after the newspaper and echoed payoff passes. If sameness
+    persists, prioritize the next recurring branch named by the digest instead
+    of broadening topology.
+
+# Cycle 30 Newspaper Passenger Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the newspaper passenger branch payoff without
+  adding new route complexity.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health is green, all scenes are reachable, and Cycle 30 evidence
+  shows the newspaper passenger ending remains a normally discovered
+  high-frequency ideal route. With core guidance healthy, the highest-value
+  improvement is making frequent passenger branches feel more distinct and
+  memorable.
+- Planned work:
+  - Revise the restored transfer beat so the newspaper reads as proof of
+    arrival, not just proof of delay.
+  - Revise the third-car intercom and roll-call beats so passengers answer
+    with destinations beyond Warden Street.
+  - Revise `passenger_newspaper_true_ending` so the route pays off as a
+    kept schedule in open air.
+  - Add focused regression assertions for the strengthened text.
+  - Run focused tests, full health, and an actual playable route through the
+    newspaper ending.
+- Risks:
+  - Text-only polish can become repetitive with other keepsake endings; keep
+    the newspaper route centered on routes, transfers, and future stops.
+  - Exact text assertions should lock only the key payoff beats, not the
+    entire prose.
+- Status:
+  - Completed.
+  - Revised `passenger_newspaper_transfer` so the restored transfer column is
+    proof the passengers still get to arrive.
+  - Revised the newspaper intercom and roll-call beats so passengers answer
+    with streets beyond Warden Street.
+  - Revised `passenger_newspaper_true_ending` so the ink dries in open air as
+    a schedule that can finally be kept.
+  - Added focused regression assertions for the restored transfer, roll-call,
+    and ending payoff text.
+  - Focused regression passed as part of:
+    `npm test -- tests/story-paths.test.ts -t "echoed|newspaper"`.
+  - `npm run health` passed with these changes included: format check,
+    TypeScript, 238 tests, validation, and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the opened-manifest count into the newspaper
+    transfer route and reached `passenger_newspaper_true_ending` with score 286.
+  - The ending now pays off the transfer-column clue as a kept schedule in
+    morning rather than another note about delay.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Compare future blind feedback across passenger branch endings; if players
+    still report sameness, continue branch-specific payoff passes rather than
+    adding new late-game choice topology.
+
 # Cycle 28 Lunch-Tin Passenger Payoff
 
 - Date: 2026-06-03

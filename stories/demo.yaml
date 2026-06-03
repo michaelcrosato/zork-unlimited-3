@@ -1886,8 +1886,9 @@ scenes:
       you and the people behind them. The lunch-tin latch, newspaper fold, and
       mitten knock are still there, but now each sound has footsteps under it.
       The rhythm points toward the third car more clearly than any arrow on
-      the tunnel wall. Mara leaves the speaker open, waiting to hear whether
-      you trust the passengers' own signal.
+      the tunnel wall. None of the echoes ask to be solved now. They ask to be
+      followed. Mara leaves the speaker open, waiting to hear whether you trust
+      the passengers' own signal.
     choices:
       - id: board_with_listened_manifest_echoes
         label: Board with the familiar echoes leading the way
@@ -2718,7 +2719,8 @@ scenes:
       timetable gave up: Warden Street, then morning transfer, then a row of
       smaller streets no one has spoken aloud since the signal fire. The old
       conductor rests two fingers beside the column and says, "That is enough
-      route for a clear signal."
+      route for a clear signal." For the first time, the paper is not proof
+      they were delayed. It is proof they still get to arrive.
     choices:
       - id: ask_conductor_to_punch_restored_transfer
         label: Ask the conductor to punch the restored transfer for morning
@@ -4027,7 +4029,9 @@ scenes:
       stamped doors: thermos cap, newspaper fold, mittened knock against the
       frame. They are no longer trapped behind ink, but the rhythm is familiar
       enough that Mara stops before reading the first name twice. "You heard
-      them waiting," she says. "Now let the line hear them leaving."
+      them waiting," she says. "Now let the line hear them leaving." The
+      echoes do not repeat the tunnel anymore. They keep time for people
+      crossing it.
     choices:
       - id: pause_for_echoed_boarding
         label: Pause long enough to watch the familiar echoes board
@@ -4640,6 +4644,8 @@ scenes:
       answers each stop with a clear signal while the lunch-tin latch keeps
       time beside her. Mara lets the schedule carry through the speaker.
       "Good," she says. "Let the line hear them naming where they are going."
+      The passengers do not answer with the station they lost. They answer
+      with the streets waiting after it.
     choices:
       - id: hear_final_newspaper_roll_call
         label: Hear the transfer column become the final roll call
@@ -4660,7 +4666,9 @@ scenes:
       turned the blank transfer column into a route everyone can answer. The
       old conductor calls clear after each stop, passengers repeat the names
       of streets they thought the line had erased, and the paper no longer
-      sounds like yesterday's news. It sounds like directions.
+      sounds like yesterday's news. It sounds like directions. By the time
+      the last stop answers, Warden Street is only the first line on the route,
+      not the place where the route ends.
     choices:
       - id: pull_release_after_newspaper_roll_call
         label: Pull the release after every transfer is named
@@ -5166,7 +5174,9 @@ scenes:
       behind the stamped manifest doors cross into morning before any name can
       be counted twice: thermos cap, newspaper fold, mitten against the rail,
       rain shaking loose from umbrellas. Mara does not read over them. She lets
-      the ordinary noise prove the passengers were never only entries.
+      the ordinary noise prove the passengers were never only entries. The
+      echoes thin as the passengers step into the rain, not because they are
+      lost, but because they have become footsteps.
     choices: []
 
   passenger_helped_true_ending:
@@ -5284,7 +5294,9 @@ scenes:
       rain-bright morning. Warden Street becomes a place behind them, not a
       trap beneath their feet. The old conductor reads the final stop aloud,
       Mara lets the speaker go quiet, and the woman folds tomorrow's route into
-      her coat before stepping through.
+      her coat before stepping through. The ink does not fade when the tunnel
+      lets go. It dries in the open air like a schedule that can finally be
+      kept.
     choices: []
 
   passenger_mitten_true_ending:
