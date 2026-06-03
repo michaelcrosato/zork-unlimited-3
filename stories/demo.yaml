@@ -1932,6 +1932,19 @@ scenes:
         effects:
           set:
             made_room_for_passengers: true
+      - id: pass_shared_release_from_opened_manifest
+        label: Pass the release hand to hand as the opened passengers make room
+        to: passenger_room_release
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: made_room_for_passengers
+            - notFlag: shared_release_reached
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            made_room_for_passengers: true
+            shared_release_reached: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         to: mara_manifest_thumbprint

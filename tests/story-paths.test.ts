@@ -4449,6 +4449,53 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("promotes the shared room-making release directly from opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "pass_shared_release_from_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("You do not pull the release alone");
+    expect(observation.scene.text).toContain("room no one has to earn");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_shared_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expectIdealScore(observation.score);
+  });
+
   it("lets the opened passenger platform directly surface the room-making intercom", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -11584,6 +11631,7 @@ describe("demo story critical paths", () => {
       "help_opened_passengers_gather",
       "listen_as_opened_passengers_gather",
       "make_room_from_opened_manifest",
+      "pass_shared_release_from_opened_manifest",
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",

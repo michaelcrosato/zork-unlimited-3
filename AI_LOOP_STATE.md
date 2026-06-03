@@ -1,3 +1,52 @@
+# Cycle 37 Promoted Shared Room-Making Release
+
+- Date: 2026-06-03
+- Main objective: Make the shared room-making release easier to discover from
+  normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence still missed `passenger_room_release`
+  while coverage proved it reachable, and the opened-manifest hub already
+  establishes shoulders shifting to make room in the third car. The existing
+  payoff is strong, but normal routes had to choose a physical room-making
+  beat or intercom detour before passing the handle hand to hand.
+- Planned work:
+  - Add a direct opened-manifest choice that passes the release hand to hand as
+    the passengers make room.
+  - Reuse the existing `passenger_room_release` scene and
+    `passenger_true_ending`.
+  - Set the same room-making and shared-release flags expected by older routes.
+  - Update focused regressions, run health, and actually play the promoted
+    shared-release route.
+- Risks:
+  - The opened-manifest hub remains dense; this promotes one clear payoff
+    without reducing branch volume.
+  - The direct route skips the longer `passenger_room_boarding` staging, so
+    watch blind feedback for whether the hub text gives enough context.
+- Status:
+  - Completed.
+  - Added `pass_shared_release_from_opened_manifest`, a direct opened-manifest
+    choice that routes to `passenger_room_release`.
+  - Set the existing `made_room_for_passengers` and `shared_release_reached`
+    flags so the promoted route behaves like older room-making routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "room-making|manifest-specific platform beat"`.
+  - `npm run health` passed: format check, TypeScript, 265 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> passed the release hand to hand
+    as the opened passengers made room -> pulled together once every hand found
+    the release.
+  - The route ended at `passenger_true_ending` with score 247 and no
+    objectives.
+  - The direct choice reads coherently because `passengers_released` already
+    establishes shoulders shifting to make room; the promoted branch turns that
+    into an immediate cooperative release payoff without removing the slower
+    physical boarding or intercom routes.
+- Next step:
+  - Watch random/blind evidence for whether remaining misses concentrate on
+    `opened_manifest_echoes`, `passenger_manifest_ready_intercom`,
+    `lost_after_dispatch_ending`, or late transfer handoff variants.
+
 # Cycle 36 Promoted Mara Manifest Handoff Payoff
 
 - Date: 2026-06-03
