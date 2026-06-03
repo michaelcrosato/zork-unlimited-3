@@ -5537,24 +5537,28 @@ describe("demo story critical paths", () => {
     expect(observation.choices[3]?.label).toBe(
       "Follow the newspaper fold in the opened door-echoes"
     );
-    expect(choiceIds[4]).toBe("return_opened_manifest_mitten");
+    expect(choiceIds[4]).toBe("board_with_opened_manifest_echoes");
     expect(observation.choices[4]?.label).toBe(
+      "Board with the opened door-echoes and check who answers"
+    );
+    expect(choiceIds[5]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[5]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
-    expect(choiceIds[5]).toBe("review_open_manifest_count");
-    expect(observation.choices[5]?.label).toBe(
+    expect(choiceIds[6]).toBe("review_open_manifest_count");
+    expect(observation.choices[6]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[6]).toBe("ask_conductor_to_read_opened_count");
-    expect(observation.choices[6]?.label).toBe(
+    expect(choiceIds[7]).toBe("ask_conductor_to_read_opened_count");
+    expect(observation.choices[7]?.label).toBe(
       "Ask the conductor to read Mara's opened count clear"
     );
-    expect(choiceIds[7]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[7]?.label).toBe(
+    expect(choiceIds[8]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[8]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
-    expect(choiceIds[8]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[8]?.label).toBe(
+    expect(choiceIds[9]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[9]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
@@ -5929,6 +5933,61 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "check_echoed_passengers_before_release");
+    state = choose(story, state, "carry_checked_echoes_to_speaker");
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces echoed passenger boarding directly from opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_with_opened_manifest_echoes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.scene.text).toContain("sounds you heard behind the stamped");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_echoed_passengers_before_release",
+      "listen_to_echoed_manifest_from_boarding",
+      "reach_release_with_echoed_manifest"
+    ]);
+
+    state = choose(story, state, "check_echoed_passengers_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.scene.text).toContain("echoes are no longer clues");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+
     state = choose(story, state, "carry_checked_echoes_to_speaker");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
     observation = observe(story, state);
@@ -11057,6 +11116,7 @@ describe("demo story critical paths", () => {
       "notice_manifest_thumbprint_from_opened_doors",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
+      "board_with_opened_manifest_echoes",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
       "ask_conductor_to_read_opened_count",

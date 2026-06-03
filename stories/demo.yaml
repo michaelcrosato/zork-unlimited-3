@@ -1569,6 +1569,20 @@ scenes:
           set:
             heard_passenger_echoes: true
             followed_opened_newspaper_fold: true
+      - id: board_with_opened_manifest_echoes
+        label: Board with the opened door-echoes and check who answers
+        to: passenger_echoed_boarding
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: echoed_manifest_boarded
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
       - id: return_opened_manifest_mitten
         label: Return the opened manifest's lost mitten to the child
         to: passenger_mitten_memory

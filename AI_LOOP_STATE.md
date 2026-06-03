@@ -1,3 +1,56 @@
+# Cycle 24 Direct Echo Boarding
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_echoed_boarding` and
+  `passenger_echoed_check` easier to discover from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the current Cycle 24 random evidence missed both echoed boarding
+  check scenes even though coverage proved them reachable. The route existed,
+  but normal players had to listen to opened echoes, return to the hub, then
+  notice a newly unlocked boarding option in an already dense choice list.
+- Planned work:
+  - Add a direct opened-manifest choice that boards with the opened door-echoes.
+  - Reuse `passenger_echoed_boarding`, `passenger_echoed_check`, and
+    `passenger_echoed_true_ending` without changing their payoff logic.
+  - Keep the older listen-return-board route valid for exploratory players.
+  - Update ordering and route regressions, then run focused tests, full health,
+    and an actual playthrough through the promoted echo option.
+- Risks:
+  - The opened-manifest hub is dense, so another visible branch can compete
+    with the thumbprint, count, conductor, mitten, and keepsake routes.
+  - The direct branch must set the same echo flags as the two-step route so the
+    train-car recovery logic does not offer duplicate boarding loops.
+- Status:
+  - Completed.
+  - Added `board_with_opened_manifest_echoes` directly to the early
+    `passengers_released` echo cluster, after the two listen/follow echo
+    options and before the mitten/count cluster.
+  - The new branch reuses `passenger_echoed_boarding`,
+    `passenger_echoed_check`, `passenger_echoed_manifest_intercom`, and
+    `passenger_echoed_true_ending`, setting `heard_passenger_echoes` and
+    `echoed_manifest_boarded` up front so downstream train-car recovery does
+    not duplicate the boarding route.
+  - Updated opened-manifest ordering regressions and added a direct-route
+    regression through checked echoes to the echoed manifest ending.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|opened manifest players listen to passenger echoes|surfaces echoed passenger boarding"`.
+  - `npm run health` passed: format check, TypeScript, 250 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct opened door-echo boarding
+    -> checked echoes -> Mara hears checked echoes -> release, ending at
+    `passenger_echoed_true_ending` with score 284 and no objectives.
+  - The new label makes the echo route readable as a passenger-identification
+    payoff instead of requiring a return-trip unlock, while the old
+    listen-return-board route still works.
+  - The final text stayed coherent: the checked thermos/newspaper/mitten echoes
+    become ordinary passenger sounds before the release.
+- Next step:
+  - Watch the next random/blind evidence for whether `passenger_echoed_boarding`
+    and `passenger_echoed_check` still appear as normal-play misses. If they do,
+    prefer reducing opened-manifest hub density or grouping choices by passenger
+    proof type rather than adding another echo branch.
+
 # Cycle 23 Direct Conductor Count
 
 - Date: 2026-06-03
