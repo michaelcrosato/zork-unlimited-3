@@ -9935,8 +9935,12 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("lit_platform");
     expect(observation.state.flags.platform_lit).toBe(true);
+    expect(observation.scene.text).toContain("booth is the next honest step");
     expect(choiceIds).toContain("return_from_lit_platform");
     expect(choiceIds).toContain("flee_platform");
+    expect(observation.choices.find((choice) => choice.id === "flee_platform")?.label).toBe(
+      "Leave before finding the stopped-clock token"
+    );
   });
 
   it("replaces broad survival guidance after players read the signal ledger", async () => {
@@ -10024,18 +10028,32 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
     expect(observation.choices.map((choice) => choice.id)).toContain("flee_platform");
+    expect(observation.scene.text).toContain("booth is the next honest step");
+    expect(observation.choices.find((choice) => choice.id === "flee_platform")?.label).toBe(
+      "Leave before finding the stopped-clock token"
+    );
 
     state = choose(story, state, "flee_platform");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("escape_warning");
     expect(observation.scene.text).toContain("unfinished work");
+    expect(observation.scene.text).toContain("signal key still waiting behind the stopped clock");
+    expect(observation.state.flags.knows_token_location).toBe(true);
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_at_stairwell",
       "look_back_from_escape_warning",
       "return_to_lit_platform_from_escape_warning",
       "confirm_flee_platform"
     ]);
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "return_to_lit_platform_from_escape_warning"
+      )?.label
+    ).toBe("Return through the service room toward the stopped clock");
 
     state = choose(story, state, "confirm_flee_platform");
     observation = observe(story, state);
@@ -10044,7 +10062,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
   });
 
-  it("lets wavering escape players return to the lit platform", async () => {
+  it("lets wavering escape players return toward the stopped clock", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -10066,9 +10084,20 @@ describe("demo story critical paths", () => {
     const observation = observe(story, state);
     const choiceIds = observation.choices.map((choice) => choice.id);
 
-    expect(observation.scene.id).toBe("lit_platform");
-    expect(choiceIds).toContain("flee_platform");
-    expect(choiceIds).toContain("return_from_lit_platform");
+    expect(observation.scene.id).toBe("service_room");
+    expect(choiceIds).toContain("go_to_stopped_clock");
+    expect(observation.objectives).toContain(
+      "Search the stopped tunnel clock for the signal booth token."
+    );
+
+    state = choose(story, state, "go_to_stopped_clock");
+    let recovered = observe(story, state);
+    expect(recovered.scene.id).toBe("clock");
+    expect(recovered.choices.map((choice) => choice.id)).toContain("take_token");
+
+    state = choose(story, state, "take_token");
+    recovered = observe(story, state);
+    expect(recovered.state.inventory).toContain("token");
   });
 
   it("adds a one-time Platform 13 poster beat that reinforces Mara's badge", async () => {

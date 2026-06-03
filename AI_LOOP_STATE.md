@@ -1,3 +1,74 @@
+# Cycle 27 Lit Escape Token Recovery
+
+- Date: 2026-06-03
+- Main objective: Make the lit-platform escape warning actively guide wavering
+  players back to the missing signal token.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and Cycle 27 evidence shows the adaptive exploratory route reached
+  `escape_ending` after lighting Platform 13 but before fetching the clock
+  token. The warning prose mentioned unfinished work, yet the player-view state
+  had no objective, making escape feel like an equally guided next step.
+- Planned work:
+  - Set the token-location flag when players flee the lit platform without the
+    signal token so the existing clock-token objective appears immediately.
+  - Revise the lit escape warning to name the stopped clock as the missing
+    piece.
+  - Route the return choice through the service room so the existing
+    `go_to_stopped_clock` recovery affordance carries the player to the token
+    without adding a new clock branch.
+  - Preserve the escape ending and the optional listen/look-back beats.
+  - Add focused regression assertions for the objective, label, and recovery
+    route.
+  - Run focused tests, full health, and an actual playable route through the
+    revised recovery path.
+- Risks:
+  - Routing through the service room is still a stronger nudge than returning
+    to the lit platform; keep the confirmed escape choice visible so the ending
+    remains an intentional opt-out.
+  - Coverage performance is sensitive to new recovery branches, so preserve
+    existing clock choice conditions.
+- Status:
+  - Completed.
+  - Revised `lit_platform` prose so leaving before the token reads as leaving
+    the signal-booth question unanswered.
+  - Renamed the lit-platform escape choice to "Leave before finding the
+    stopped-clock token."
+  - Set `knows_token_location` when players choose that escape path, causing
+    the existing "Search the stopped tunnel clock..." objective to appear on
+    `escape_warning`.
+  - Revised `escape_warning` to name the stopped clock and frame escape as
+    refusing a known next step.
+  - Routed the recovery choice to the service room with a label pointing toward
+    the stopped clock, preserving the existing `go_to_stopped_clock` recovery
+    route.
+  - Added focused regression assertions for the new prose, choice labels,
+    objective surfacing, and service-room recovery route.
+  - Raised the long-running coverage-discovery test timeout from 60s to 90s
+    after the unchanged assertions crossed 60s under full-suite load while the
+    direct coverage command completed successfully.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "stopped clock|escape|gate-control fuse"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed the revised branch through `flee_platform`,
+    `return_to_lit_platform_from_escape_warning`, and `go_to_stopped_clock`,
+    recovered the token, returned to the lit platform, cleared Mara, and
+    reached `true_ending` with score 268.
+  - The warning now gives wavering players a visible objective instead of
+    presenting escape with no goal pressure.
+  - The route after taking the token uses the generic tunnel/service-room
+    return before `return_to_lit_platform`; it is playable, but slightly less
+    smooth than a dedicated return-to-lit-platform token pickup.
+- Next step:
+  - Watch blind sessions for whether lit-platform escape drops. If players
+    still bounce after the token objective appears, consider a low-cost
+    dedicated clock return only if coverage performance can be kept under the
+    health timeout.
+
 # Cycle 26 Ledger Decision Clarity
 
 - Date: 2026-06-03

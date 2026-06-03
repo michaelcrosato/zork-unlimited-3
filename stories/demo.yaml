@@ -852,7 +852,9 @@ scenes:
       The platform lights buzz awake. Every advertisement shows the same face:
       Mara Vale, smiling from a missing-person poster dated forty-three years
       ago. The train sign flickers between HOME and WARDEN STREET, but the
-      gate control keeps tapping its token slot like a telegraph key.
+      gate control keeps tapping its token slot like a telegraph key. If the
+      stopped clock really holds the signal token, the booth is the next honest
+      step; the stairs are only a way to leave the question unanswered.
     choices:
       - id: use_token_slot
         label: Open the signal booth with the map ready
@@ -903,10 +905,13 @@ scenes:
             - notItem: token
             - notItem: badge
       - id: flee_platform
-        label: Run for the stairs before the train chooses you
+        label: Leave before finding the stopped-clock token
         to: escape_warning
         requires:
           notItem: token
+        effects:
+          set:
+            knows_token_location: true
 
   mara_posters:
     routeImportance: optional
@@ -957,7 +962,8 @@ scenes:
       The stairwell back to Warden Street is still open, but the lit platform
       makes the empty train look less like a ghost story and more like unfinished
       work. Mara's posters flutter in the tunnel wind, and the token slot keeps
-      tapping for a signal key you have not found.
+      tapping for the signal key still waiting behind the stopped clock. You
+      can still leave, but now leaving means refusing a named next step.
     choices:
       - id: listen_at_stairwell
         label: Listen before you leave Mara behind
@@ -979,8 +985,8 @@ scenes:
             looked_back_from_escape_warning: true
             knows_badge_proof: true
       - id: return_to_lit_platform_from_escape_warning
-        label: Return to the gate control and keep searching
-        to: lit_platform
+        label: Return through the service room toward the stopped clock
+        to: service_room
       - id: confirm_flee_platform
         label: Leave Mara calling and run back to the street
         to: escape_ending

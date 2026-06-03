@@ -141,7 +141,7 @@ describe("playtest strategies", () => {
     expect(trueEndingCount(report.summary.endings)).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBeGreaterThan(0);
     expect(report.summary.bestScoreRuns).toBeGreaterThan(0);
-  }, 60000);
+  }, 90000);
 
   it("goal strategy reliably reaches true endings with strong scores", async () => {
     const story = await loadStory("stories/demo.yaml");
