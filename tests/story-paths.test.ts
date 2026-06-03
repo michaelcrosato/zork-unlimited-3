@@ -5608,12 +5608,24 @@ describe("demo story critical paths", () => {
     expect(observation.choices[9]?.label).toBe(
       "Ask the conductor to read Mara's opened count clear"
     );
-    expect(choiceIds[10]).toBe("let_opened_passengers_finish_count");
+    expect(choiceIds[10]).toBe("ask_conductor_to_punch_opened_transfer");
     expect(observation.choices[10]?.label).toBe(
+      "Ask the conductor to punch the opened manifest transfer"
+    );
+    expect(choiceIds[11]).toBe("pass_opened_transfer_to_mara");
+    expect(observation.choices[11]?.label).toBe(
+      "Let the child carry the punched transfer to Mara's speaker"
+    );
+    expect(choiceIds[12]).toBe("press_opened_transfer_to_speaker");
+    expect(observation.choices[12]?.label).toBe(
+      "Press the opened manifest transfer to Mara's speaker grille"
+    );
+    expect(choiceIds[13]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[13]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
-    expect(choiceIds[11]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[11]?.label).toBe(
+    expect(choiceIds[14]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[14]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
@@ -7958,6 +7970,63 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
     expect(observation.scene.text).toContain("one small morning-shaped mark");
+    expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+
+    state = choose(story, state, "pull_release_after_transfer_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened-manifest play press the conductor transfer proof directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds.indexOf("press_opened_transfer_to_speaker")).toBeGreaterThan(
+      choiceIds.indexOf("ask_conductor_to_read_opened_count")
+    );
+    expect(choiceIds.indexOf("press_opened_transfer_to_speaker")).toBeLessThan(
+      choiceIds.indexOf("let_opened_passengers_finish_count")
+    );
+
+    state = choose(story, state, "press_opened_transfer_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_proof");
+    expect(observation.scene.text).toContain("one small morning-shaped mark");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.punched_conductor_transfer).toBe(true);
+    expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
 
     state = choose(story, state, "pull_release_after_transfer_proof");
@@ -11222,6 +11291,9 @@ describe("demo story critical paths", () => {
       "review_open_manifest_count",
       "board_with_opened_manifest_reviewed_count",
       "ask_conductor_to_read_opened_count",
+      "ask_conductor_to_punch_opened_transfer",
+      "pass_opened_transfer_to_mara",
+      "press_opened_transfer_to_speaker",
       "let_opened_passengers_finish_count",
       "board_with_completed_opened_count",
       "check_opened_manifest_blank_row",
@@ -11229,8 +11301,6 @@ describe("demo story critical paths", () => {
       "check_opened_manifest_keepsakes",
       "listen_to_passenger_morning_chorus",
       "board_with_passenger_morning_chorus",
-      "ask_conductor_to_punch_opened_transfer",
-      "pass_opened_transfer_to_mara",
       "ask_mara_to_read_opened_manifest",
       "follow_lunch_tin_latch",
       "help_opened_passengers_gather",

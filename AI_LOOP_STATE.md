@@ -1,3 +1,57 @@
+# Cycle 27 Promoted Conductor Transfer Proof
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest conductor transfer handoff/proof
+  route easier to discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 27 random evidence missed
+  `passenger_conductor_transfer_handoff` and
+  `passenger_conductor_transfer_proof`, while coverage proved both reachable.
+  The route was buried deep in the dense `passengers_released` hub, so normal
+  play could finish many other passenger endings before seeing the transfer
+  proof beat.
+- Planned work:
+  - Move the opened-manifest conductor transfer cluster next to the existing
+    conductor count option.
+  - Add a direct opened-manifest proof choice that reuses
+    `passenger_conductor_transfer_proof`.
+  - Preserve the older punch-transfer and child-handoff paths.
+  - Update focused route/order regressions, run full health, and actually play
+    the promoted proof route.
+- Risks:
+  - The opened-manifest hub remains dense, so ordering and one direct proof
+    branch help but do not fully solve branch competition.
+  - The direct proof path skips the child handoff scene; the handoff remains
+    adjacent and available as the neighboring choice.
+- Status:
+  - Completed.
+  - Promoted `ask_conductor_to_punch_opened_transfer` and
+    `pass_opened_transfer_to_mara` next to `ask_conductor_to_read_opened_count`.
+  - Added `press_opened_transfer_to_speaker`, which sets the same conductor
+    transfer/proof flags as the existing two-step route and lands directly in
+    `passenger_conductor_transfer_proof`.
+  - Updated focused choice-order expectations and added a direct proof route
+    regression.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest play (find the conductor transfer proof|pass the conductor transfer straight to Mara|press the conductor transfer proof directly)|optional opened-manifest count"`.
+  - `npm run health` passed: format check, TypeScript, 253 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct opened transfer proof ->
+    release, ending at `passenger_conductor_transfer_true_ending` with score
+    284 and no objectives.
+  - The promoted branch read coherently: `passengers_released` already names
+    the newspaper transfer and conductor punch, and the proof scene turns that
+    object into a clear release image without requiring an extra subscene.
+  - The neighboring child-handoff route remains available for players who want
+    the slower hand-to-hand version of the same payoff.
+- Next step:
+  - Watch the next random/blind evidence for whether
+    `passenger_conductor_transfer_handoff` and
+    `passenger_conductor_transfer_proof` still appear as normal-play misses. If
+    they do, prefer reducing opened-manifest hub density or grouping passenger
+    proof branches rather than adding more one-off direct choices.
+
 # Cycle 26 Promoted Mara Sign-Off
 
 - Date: 2026-06-03

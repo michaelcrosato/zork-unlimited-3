@@ -1639,6 +1639,47 @@ scenes:
             conductor_cleared_platform: true
             heard_conductor_clearance: true
             heard_final_roll_call: true
+      - id: ask_conductor_to_punch_opened_transfer
+        label: Ask the conductor to punch the opened manifest transfer
+        to: passenger_conductor_transfer
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: punched_conductor_transfer
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            punched_conductor_transfer: true
+      - id: pass_opened_transfer_to_mara
+        label: Let the child carry the punched transfer to Mara's speaker
+        to: passenger_conductor_transfer_handoff
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: punched_conductor_transfer
+            - notFlag: punched_transfer_carried_forward
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            punched_conductor_transfer: true
+            punched_transfer_carried_forward: true
+      - id: press_opened_transfer_to_speaker
+        label: Press the opened manifest transfer to Mara's speaker grille
+        to: passenger_conductor_transfer_proof
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: punched_conductor_transfer
+            - notFlag: pressed_transfer_to_speaker
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            punched_conductor_transfer: true
+            punched_transfer_carried_forward: true
+            pressed_transfer_to_speaker: true
       - id: carry_mara_manifest_handoff_from_opened_doors
         label: Carry Mara's opened-door handoff into the third car
         to: mara_manifest_handoff_intercom
@@ -1756,32 +1797,6 @@ scenes:
         effects:
           set:
             heard_passenger_morning_boarding: true
-      - id: ask_conductor_to_punch_opened_transfer
-        label: Ask the conductor to punch the opened manifest transfer
-        to: passenger_conductor_transfer
-        requires:
-          all:
-            - notFlag: helped_passengers_gather
-            - notFlag: punched_conductor_transfer
-        effects:
-          set:
-            helped_passengers_gather: true
-            conductor_cleared_platform: true
-            punched_conductor_transfer: true
-      - id: pass_opened_transfer_to_mara
-        label: Let the child carry the punched transfer to Mara's speaker
-        to: passenger_conductor_transfer_handoff
-        requires:
-          all:
-            - notFlag: helped_passengers_gather
-            - notFlag: punched_conductor_transfer
-            - notFlag: punched_transfer_carried_forward
-        effects:
-          set:
-            helped_passengers_gather: true
-            conductor_cleared_platform: true
-            punched_conductor_transfer: true
-            punched_transfer_carried_forward: true
       - id: ask_mara_to_read_opened_manifest
         label: Ask Mara to read the opened manifest over the third-car speaker
         to: mara_manifest_intercom
