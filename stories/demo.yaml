@@ -1740,6 +1740,18 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: ready_opened_manifest_for_mara
+        label: Ready every opened manifest name on the third car
+        to: passenger_manifest_ready_intercom
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
       - id: board_with_completed_opened_count
         label: Board with the passengers finishing Mara's opened count together
         to: passenger_counted_chorus

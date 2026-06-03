@@ -1,3 +1,52 @@
+# Cycle 39 Promoted Ready Manifest Intercom
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_manifest_ready_intercom` easier to discover
+  during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence missed
+  `passenger_manifest_ready_intercom` while coverage proved it reachable. The
+  opened-manifest hub already establishes that the opened names are now people
+  boarding the third car, but the ready-manifest speaker beat was buried behind
+  narrower passenger-prep routes.
+- Planned work:
+  - Add a direct opened-manifest choice that readies every opened manifest name
+    on the third car.
+  - Reuse the existing `passenger_manifest_ready_intercom` and
+    `mara_manifest_intercom` scenes.
+  - Set `reviewed_open_manifest_count` so the promoted route behaves like a
+    count-aware manifest route without prematurely setting Mara's goodbye.
+  - Update focused regressions, run health, and actually play the promoted
+    route.
+- Risks:
+  - The opened-manifest hub remains dense; this promotes one missed payoff
+    without reducing branch volume.
+  - The new direct route skips some object-specific passenger preparation, so
+    watch blind feedback for whether the ready-manifest image feels earned.
+- Status:
+  - Completed.
+  - Added `ready_opened_manifest_for_mara`, a direct opened-manifest hub choice
+    into `passenger_manifest_ready_intercom`.
+  - Focused regressions passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest"` and
+    `npm test -- tests/story-paths.test.ts -t "manifest-specific platform beat"`.
+  - `npm run health` passed: format check, TypeScript, 266 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> readied every opened manifest
+    name on the third car -> let Mara finish the ready count -> pulled the
+    release.
+  - The route ended at `passenger_manifest_true_ending` with score 276 and no
+    objectives.
+  - The promoted label reads coherently against the hub text because the hub
+    already establishes opened names boarding as people; the intercom scene
+    makes that readiness explicit before Mara turns the manifest back into a
+    passenger list.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`,
+    `passenger_conductor_count_roll_call`, or `passenger_manifest_count`.
+
 # Cycle 38 Promoted Opened Door-Echo Listening
 
 - Date: 2026-06-03

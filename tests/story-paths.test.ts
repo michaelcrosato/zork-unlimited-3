@@ -5779,32 +5779,36 @@ describe("demo story critical paths", () => {
     expect(observation.choices[18]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[19]).toBe("board_with_completed_opened_count");
+    expect(choiceIds[19]).toBe("ready_opened_manifest_for_mara");
     expect(observation.choices[19]?.label).toBe(
+      "Ready every opened manifest name on the third car"
+    );
+    expect(choiceIds[20]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[20]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
-    expect(choiceIds[20]).toBe("board_with_opened_manifest_reviewed_count");
-    expect(observation.choices[20]?.label).toBe(
+    expect(choiceIds[21]).toBe("board_with_opened_manifest_reviewed_count");
+    expect(observation.choices[21]?.label).toBe(
       "Board with Mara's reviewed count already on the speaker"
     );
-    expect(choiceIds[21]).toBe("ask_conductor_to_read_opened_count");
-    expect(observation.choices[21]?.label).toBe(
+    expect(choiceIds[22]).toBe("ask_conductor_to_read_opened_count");
+    expect(observation.choices[22]?.label).toBe(
       "Ask the conductor to read Mara's opened count clear"
     );
-    expect(choiceIds[22]).toBe("ask_conductor_to_punch_opened_transfer");
-    expect(observation.choices[22]?.label).toBe(
+    expect(choiceIds[23]).toBe("ask_conductor_to_punch_opened_transfer");
+    expect(observation.choices[23]?.label).toBe(
       "Ask the conductor to punch the opened manifest transfer"
     );
-    expect(choiceIds[23]).toBe("pass_opened_transfer_to_mara");
-    expect(observation.choices[23]?.label).toBe(
+    expect(choiceIds[24]).toBe("pass_opened_transfer_to_mara");
+    expect(observation.choices[24]?.label).toBe(
       "Let the child carry the punched transfer to Mara's speaker"
     );
-    expect(choiceIds[24]).toBe("press_opened_transfer_to_speaker");
-    expect(observation.choices[24]?.label).toBe(
+    expect(choiceIds[25]).toBe("press_opened_transfer_to_speaker");
+    expect(observation.choices[25]?.label).toBe(
       "Press the opened manifest transfer to Mara's speaker grille"
     );
-    expect(choiceIds[25]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[25]?.label).toBe(
+    expect(choiceIds[26]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[26]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
@@ -5844,6 +5848,27 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+
+    state = choose(story, openedManifestState, "ready_opened_manifest_for_mara");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_ready_intercom");
+    expect(observation.scene.text).toContain("Every kept name is aboard");
+    expect(observation.scene.text).toContain("a passenger list instead of a sentence");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_finish_ready_manifest"
+    ]);
+
+    state = choose(story, state, "listen_to_mara_finish_ready_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_manifest_goodbye"
+    );
 
     state = choose(story, openedManifestState, "review_open_manifest_count");
     observation = observe(story, state);
@@ -11677,6 +11702,7 @@ describe("demo story critical paths", () => {
       "board_with_opened_manifest_echoes",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
+      "ready_opened_manifest_for_mara",
       "board_with_completed_opened_count",
       "board_with_opened_manifest_reviewed_count",
       "ask_conductor_to_read_opened_count",
