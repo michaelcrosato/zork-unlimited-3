@@ -1683,6 +1683,17 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: listen_as_opened_passengers_gather
+        label: Listen as the opened passengers gather themselves
+        to: passenger_gathered_intercom
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_gathered_passengers
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold for the opened passengers
         to: passenger_threshold_boarding

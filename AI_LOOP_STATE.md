@@ -46,6 +46,57 @@
     appears in normal play; if remaining misses persist, prefer a small
     priority pass for another low-frequency but coverage-reachable route.
 
+# Cycle 51 Gathered Intercom Bridge
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_gathered_intercom` more naturally
+  discoverable from the opened-manifest doors.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the latest random evidence missed `passenger_gathered_intercom`
+  while coverage proved it reachable. The route previously required choosing
+  the gathered-passenger branch and then choosing the intercom over the roll
+  call and direct release, so normal play could skip the broader gathered-voice
+  beat.
+- Planned work:
+  - Add a direct opened-manifest choice into `passenger_gathered_intercom`.
+  - Preserve the existing gathered boarding, final roll-call, and direct helped
+    release routes.
+  - Add a focused regression for the new direct bridge.
+  - Run focused tests, full health, and an actual playable route through the
+    bridge.
+- Risks:
+  - The direct bridge should not bypass the helped-passenger state used by the
+    helped ending.
+  - The existing gathered boarding route should remain intact for players who
+    want the physical boarding scene first.
+- Status:
+  - Completed.
+  - Added `listen_as_opened_passengers_gather`, which sets both
+    `helped_passengers_gather` and `heard_gathered_passengers` before entering
+    `passenger_gathered_intercom`.
+  - Added a regression proving the new bridge reaches
+    `passenger_gathered_intercom`, offers the final roll call and helped
+    release choices, and can finish at `passenger_helped_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "gathered-passenger|opened manifest doors"`.
+  - `npm run health` passed: format check, TypeScript, 243 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct gathered-passenger
+    listening bridge -> helped emergency release, ending at
+    `passenger_helped_true_ending` with score 294 and no objectives.
+  - The new branch reads cleanly: the opened-passenger soundscape now has a
+    one-step playable payoff where the passengers organize themselves before
+    the release.
+  - The older gathered boarding path, final roll-call payoff, and direct helped
+    release remain available, so this improves discovery without removing
+    route variety.
+- Next step:
+  - Watch the next random/blind-play evidence for whether
+    `passenger_gathered_intercom` appears in normal play; if it remains rare,
+    prefer a choice-order pass in `passengers_released` before adding more
+    content.
+
 # Cycle 48 Lit Stairwell Glance Priority
 
 - Date: 2026-06-03
