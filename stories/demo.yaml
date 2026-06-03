@@ -2596,8 +2596,9 @@ scenes:
       The opened passengers cross one by one with the practical care of people
       remembering how to board: newspaper folded flat, lunch tin held clear of
       the door, child's mitten tapping the rail before the next person moves.
-      Mara does not count over them. She lets the threshold prove they are
-      becoming a crowd.
+      Each person leaves room for the next shoulder, the next bag, the next
+      breath that the tunnel tried to file away. Mara does not count over them.
+      She lets the threshold prove they are becoming a crowd.
     choices:
       - id: listen_to_threshold_from_boarding
         label: Listen as Mara holds the threshold open
@@ -4057,7 +4058,8 @@ scenes:
       the first passenger, then stops when the doorway answers in footsteps
       instead: newspaper, lunch tin, mitten, umbrella, breath. The line tries
       to make the pause into a count, but the passengers keep moving through
-      it together. "That is enough proof," Mara says. "Pull the release before
+      it together, each cleared inch becoming an invitation for the person
+      behind them. "That is enough proof," Mara says. "Pull the release before
       the threshold remembers how to close."
     choices:
       - id: pull_release_after_threshold_manifest
@@ -4070,8 +4072,9 @@ scenes:
       The speaker carries the noise of people making room for one another:
       knees shifting, bags passed hand to hand, the lunch tin set carefully
       under the first seat beside the release. Mara does not read another name.
-      "That is what the ledger never knew how to count," she says. "Enough
-      space for everyone to leave together."
+      "That is what the ledger never knew how to count," she says. "Not proof
+      that each passenger belongs to the line. Proof that there is enough space
+      for everyone to leave together."
     choices:
       - id: pass_room_release_after_intercom
         label: Pass the release handle through the steadied car
@@ -4092,7 +4095,7 @@ scenes:
       the lunch-tin worker clears the strap from the floor, and the mittened
       child puts both hands over yours before the handle gives. The motion
       travels through the crowded car like a decision everyone is allowed to
-      share.
+      share, then settles back into the aisle as room no one has to earn.
     choices:
       - id: pull_shared_release_after_making_room
         label: Pull together once every hand has found the release
@@ -5055,11 +5058,12 @@ scenes:
     endingGroup: Passengers
     endingFamily: Core
     text: >
-      The release opens every door at once. The manifest becomes a platform
-      full of ordinary miracles: a lunch tin snapping shut, a lost mitten
-      pressed into a child's hand, umbrellas lifting into rain-bright morning.
-      Mara's voice thanks each passenger by name, then lets the speaker go
-      quiet.
+      The release opens every door at once, and the crowd leaves by making room
+      for itself. The manifest becomes a platform full of ordinary miracles: a
+      lunch tin snapping shut, a lost mitten pressed into a child's hand,
+      umbrellas lifting into rain-bright morning while strangers step aside for
+      one another. Mara's voice thanks each passenger by name, then lets the
+      speaker go quiet over an empty aisle that finally belongs to no one.
     choices: []
 
   passenger_answered_true_ending:

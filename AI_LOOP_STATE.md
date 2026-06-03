@@ -1,3 +1,68 @@
+# Cycle 34 Base Passenger Room Payoff
+
+- Date: 2026-06-03
+- Main objective: Strengthen the base passenger true-ending path around
+  threshold and shared-release room without changing route topology.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, health evidence is green, and Cycle 34 random evidence shows
+  `passenger_true_ending` is a normal-play ending. More specialized passenger
+  branches now have distinct motifs, so the base passenger route should pay off
+  the player's physical act of making room instead of reading like a generic
+  manifest release.
+- Planned work:
+  - Revise `passenger_threshold_boarding` so holding the door visibly creates
+    space for the next passenger.
+  - Revise `passenger_threshold_intercom` so the speaker frames that space as
+    proof, not another count.
+  - Revise `passenger_room_intercom` and `passenger_room_release` so passing
+    the handle hand to hand pays off as shared room.
+  - Revise `passenger_true_ending` so the core passenger ending resolves with
+    the crowd leaving by making room for itself.
+  - Add focused regression assertions for the strengthened payoff language.
+  - Run focused tests, full health, and a real playable route through the
+    strengthened base passenger ending.
+- Risks:
+  - Keep this branch distinct from the gathered-passenger mutual-aid ending:
+    this pass is about physical space in the third car, not the whole crowd
+    helping one another through every beat.
+  - Avoid route or flag changes because current validation, coverage, and
+    random playtest evidence are healthy.
+- Status:
+  - Completed.
+  - Revised `passenger_threshold_boarding` so each passenger visibly leaves
+    room for the next shoulder, bag, and breath.
+  - Revised `passenger_threshold_intercom` so cleared space becomes proof that
+    the passengers can keep moving without another count.
+  - Revised `passenger_room_intercom` and `passenger_room_release` so the
+    shared handle motion resolves as room no one has to earn.
+  - Revised `passenger_true_ending` so the base passenger ending now pays off
+    with the crowd leaving by making room for itself and an empty aisle that
+    belongs to no one.
+  - Added focused regression assertions for the strengthened threshold,
+    room-release, and base passenger ending language.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "threshold beat|make room for the passenger crowd|opened-manifest players make room"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation still reports 151 reachable scenes and 29 endings.
+  - Coverage playtest still visits all scenes with zero unvisited scenes and
+    zero unfinished runs.
+- Playtest feedback:
+  - Actual CLI play followed `make_room_for_passengers_in_third_car` ->
+    `listen_to_room_made_for_passengers` ->
+    `pass_room_release_after_intercom` ->
+    `pull_shared_release_after_making_room`, ending at
+    `passenger_true_ending` with score 259 and no objectives.
+  - The revised route now reads as a physical-space payoff: the car steadies,
+    the handle passes through the crowd, and the ending leaves an empty aisle
+    that no longer belongs to the line.
+  - No route friction, missing objectives, or dead ends appeared on the played
+    path.
+- Next step:
+  - Wait for consolidated blind-play feedback before adding new route topology;
+    if none appears, continue focused payoff passes on frequent but less
+    distinctive endings.
+
 # Cycle 34 Manifest Blank-Row Payoff
 
 - Date: 2026-06-03

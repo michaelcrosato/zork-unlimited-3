@@ -4000,6 +4000,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_threshold_boarding");
     expect(observation.scene.text).toContain("stand at the third-car threshold");
+    expect(observation.scene.text).toContain("Each person leaves room for the next shoulder");
     expect(observation.scene.text).toContain("becoming a crowd");
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -4013,6 +4014,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_threshold_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("threshold you held");
+    expect(observation.scene.text).toContain("each cleared inch becoming an invitation");
     expect(observation.scene.text).toContain("before the threshold remembers how to close");
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
@@ -4020,6 +4022,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
 
     state = initialState(story);
@@ -4049,6 +4053,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_threshold_boarding");
     expect(observation.scene.text).toContain("stand at the third-car threshold");
+    expect(observation.scene.text).toContain("Each person leaves room for the next shoulder");
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
 
@@ -4057,6 +4062,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_threshold_intercom");
     expect(observation.scene.text).toContain("threshold you held");
+    expect(observation.scene.text).toContain("each cleared inch becoming an invitation");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
@@ -4064,6 +4070,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
 
     state = initialState(story);
@@ -4210,7 +4218,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_room_intercom");
     expect(observation.scene.text).toContain("people making room for one another");
-    expect(observation.scene.text).toContain("Enough space for everyone");
+    expect(observation.scene.text).toContain("Proof that there is enough space");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
@@ -4222,6 +4230,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.scene.text).toContain("You do not pull the release alone");
+    expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
     state = choose(story, state, "pull_shared_release_after_making_room");
@@ -4229,6 +4238,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
 
     state = choose(story, roomState, "listen_to_room_made_for_passengers");
@@ -4239,6 +4250,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
 
     state = choose(story, roomState, "reach_release_after_making_room");
@@ -4258,6 +4271,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.scene.text).toContain("You do not pull the release alone");
     expect(observation.scene.text).toContain("everyone is allowed to share");
+    expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
     state = choose(story, state, "pull_shared_release_after_making_room");
@@ -4265,6 +4279,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
   });
 
@@ -4314,7 +4330,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_room_intercom");
     expect(observation.scene.text).toContain("people making room for one another");
-    expect(observation.scene.text).toContain("Enough space for everyone");
+    expect(observation.scene.text).toContain("Proof that there is enough space");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
@@ -4325,6 +4341,7 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
     state = choose(story, state, "pull_shared_release_after_making_room");
@@ -4332,6 +4349,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
     expectIdealScore(observation.score);
   });
 
