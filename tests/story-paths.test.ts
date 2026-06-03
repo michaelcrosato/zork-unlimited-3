@@ -5117,6 +5117,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
+      "listen_to_manifest_handoff_from_handoff",
       "ask_mara_signoff_after_manifest_handoff",
       "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
@@ -6663,7 +6664,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "watch_mara_open_manifest",
-      "board_after_mara_manifest_handoff"
+      "listen_to_manifest_handoff_from_handoff"
     ]) {
       state = choose(story, state, choiceId);
     }

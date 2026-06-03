@@ -1,3 +1,51 @@
+# Cycle 19 Promoted Mara Manifest Handoff Speaker
+
+- Date: 2026-06-03
+- Main objective: Make Mara's opened-manifest handoff feel more naturally
+  discoverable after players choose to watch her call the opened doors.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current random evidence missed `mara_manifest_handoff` in the
+  100-run summary even though coverage and the larger MCP sample proved it
+  reachable. The opened-manifest hub already offered an early watch-Mara beat,
+  but after entering that scene the speaker payoff was framed as generic
+  boarding, so players could skip the intended third-car handoff texture.
+- Planned work:
+  - Add an explicit third-car speaker listening choice inside
+    `mara_manifest_handoff`.
+  - Preserve the existing immediate release, direct boarding, passenger
+    sign-off, morning, threshold, room, thumbprint, and answered-passenger
+    branches.
+  - Update route-order/regression coverage, run health, and actually play the
+    promoted handoff route.
+- Risks:
+  - This improves the route's readability more than pure random probability;
+    small random samples can still miss it.
+  - The opened-manifest hub remains dense, so future blind feedback may still
+    call for broader grouping.
+- Status:
+  - Completed.
+  - Added `listen_to_manifest_handoff_from_handoff`, a distinct choice from
+    `mara_manifest_handoff` into `mara_manifest_handoff_intercom`.
+  - Updated story-path regressions so the new choice is locked into the Mara
+    handoff menu and the promoted route reaches
+    `passenger_manifest_handoff_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "Mara's manifest handoff|opened manifest choices"`.
+  - `npm run health` passed: format check, TypeScript, 268 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> watched Mara call the opened
+    doors -> listened through the third-car speaker as she handed names
+    forward -> pulled the release.
+  - The route ended at `passenger_manifest_handoff_true_ending` with score 291
+    and no objectives.
+  - The new choice makes the handoff scene's payoff explicit without removing
+    faster release or passenger-variant choices.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`, threshold variants,
+    `passenger_mitten_memory`, or `passenger_newspaper_transfer`.
+
 # Cycle 18 Promoted Opened Manifest Lunch-Tin Speaker
 
 - Date: 2026-06-03

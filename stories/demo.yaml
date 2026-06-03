@@ -2394,6 +2394,14 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: listen_to_manifest_handoff_from_handoff
+        label: Listen through the third-car speaker as Mara hands the names forward
+        to: mara_manifest_handoff_intercom
+        requires:
+          notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: ask_mara_signoff_after_manifest_handoff
         label: Ask Mara to sign off before anyone boards alone
         to: passenger_mara_signoff
