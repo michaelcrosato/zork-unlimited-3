@@ -1,3 +1,56 @@
+# Cycle 36 Promoted Mara Manifest Handoff Payoff
+
+- Date: 2026-06-03
+- Main objective: Make Mara's opened-door handoff payoff easier to discover
+  during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle random evidence still missed
+  `mara_manifest_handoff_intercom` and
+  `passenger_manifest_handoff_true_ending`, while coverage proved both
+  reachable. The opened-manifest hub already names Mara's handoff first, but
+  the strongest payoff required either choosing board from the handoff scene or
+  returning to the hub and carrying it forward.
+- Planned work:
+  - Add a direct opened-manifest choice that carries Mara's opened-door handoff
+    straight into the third car.
+  - Route it to the existing `mara_manifest_handoff_intercom` scene and
+    existing `passenger_manifest_handoff_true_ending`.
+  - Set the same handoff and goodbye flags expected by older routes.
+  - Update focused regressions, run health, and actually play the promoted
+    handoff payoff route.
+- Risks:
+  - The opened-manifest hub remains dense; this promotes one story-critical
+    payoff without reducing overall branch count.
+  - Directly entering the intercom skips the longer handoff scene's physical
+    staging, so watch blind feedback for whether the direct label is clear
+    enough.
+- Status:
+  - Completed.
+  - Added `carry_mara_handoff_as_doors_open`, a direct opened-manifest hub
+    choice that routes to `mara_manifest_handoff_intercom`.
+  - Set the existing `saw_mara_manifest_handoff` and `heard_mara_goodbye`
+    flags so the promoted route behaves like the older handoff-to-intercom
+    routes.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|opened-door handoff|manifest hub"`.
+  - `npm run health` passed: format check, TypeScript, 264 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> carried Mara's opened-door
+    handoff straight to the third car -> pulled the release while Mara held the
+    manifest open.
+  - The route ended at `passenger_manifest_handoff_true_ending` with score 289
+    and no objectives.
+  - The direct choice reads coherently because `passengers_released` already
+    establishes Mara's opened-door handoff and the third-car speaker; the
+    promoted branch makes the payoff visible without removing the slower
+    watch-return-carry route.
+- Next step:
+  - Watch random/blind evidence for whether remaining normal-play misses now
+    concentrate on `lost_after_dispatch_ending`,
+    `passenger_conductor_count_roll_call`, or one of the late passenger proof
+    variants.
+
 # Cycle 35 Promoted Opened-Threshold Intercom
 
 - Date: 2026-06-03
