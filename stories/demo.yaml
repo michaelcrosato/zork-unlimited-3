@@ -1513,6 +1513,18 @@ scenes:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
             heard_passenger_answers: true
+      - id: listen_to_opened_manifest_echoes
+        label: Listen to the opened door-echoes before boarding
+        to: opened_manifest_echoes
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
         label: Carry the opened door-echoes into the third car
         to: passenger_echoed_boarding
@@ -1836,6 +1848,26 @@ scenes:
       - id: board_after_passenger_mara_signoff
         label: Board the third car after Mara signs off
         to: train_car
+
+  opened_manifest_echoes:
+    routeImportance: optional
+    text: >
+      You stop long enough to hear the opened doors without the ink between
+      you and the people behind them. The lunch-tin latch, newspaper fold, and
+      mitten knock are still there, but now each sound has footsteps under it.
+      The rhythm points toward the third car more clearly than any arrow on
+      the tunnel wall. Mara leaves the speaker open, waiting to hear whether
+      you trust the passengers' own signal.
+    choices:
+      - id: board_with_listened_manifest_echoes
+        label: Board with the familiar echoes leading the way
+        to: passenger_echoed_boarding
+        effects:
+          set:
+            echoed_manifest_boarded: true
+      - id: return_from_opened_manifest_echoes
+        label: Return to the opened manifest doors
+        to: passengers_released
 
   passenger_manifest_count:
     routeImportance: optional

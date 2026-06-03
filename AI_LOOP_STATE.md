@@ -1,3 +1,63 @@
+# Cycle 15 Opened Manifest Echo Listening Bridge
+
+- Date: 2026-06-03
+- Main objective: Improve normal-play discovery for the opened-manifest echoed
+  passenger payoff by adding a listen-before-board beat from the common opened
+  manifest hub.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, so this cycle used the supplied Cycle 15 evidence. Health is green and
+  coverage reaches every scene, but the 100-run random sample still missed
+  `passenger_echoed_boarding`, `passenger_echoed_check`, and
+  `passenger_echoed_manifest_intercom`. The echo route is authored as a
+  passenger-accountability beat, and normal players should be able to notice it
+  before committing to the third car.
+- Planned work:
+  - Finish the opened-manifest echo-listening bridge already staged in
+    `stories/demo.yaml`.
+  - Keep the route scoped to existing echoed passenger scenes and ending.
+  - Verify the focused opened-manifest regressions cover the new
+    `opened_manifest_echoes` scene and return path.
+  - Run full health and an actual CLI playthrough through the new route.
+- Risks:
+  - `passengers_released` is choice-rich; the new listen option must read as a
+    sensory preview, not another duplicate boarding command.
+  - Returning from `opened_manifest_echoes` sets `heard_passenger_echoes`, so
+    the hub should naturally offer the existing board-with-echoed-manifest route
+    instead of replaying the same listening beat.
+- Status:
+  - Completed.
+  - Added `listen_to_opened_manifest_echoes` from `passengers_released` to a
+    new `opened_manifest_echoes` scene, gated before existing echo, Mara
+    goodbye, passenger answer, and gathering commitments.
+  - Added a concise listen-before-board beat that lets players either board
+    with the familiar echoes or return to the opened manifest doors.
+  - Updated opened-manifest route regressions to assert choice ordering, the new
+    scene, return-safe state, and the full route to `passenger_echoed_true_ending`.
+  - Focused opened-manifest regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest"`.
+  - `npm run health` passed: format check, TypeScript, 238 tests, validation,
+    and coverage playtest.
+  - Validation reports 149 reachable scenes and 27 endings.
+  - Coverage playtest visited all scenes with zero unvisited scenes, including
+    `opened_manifest_echoes`, `passenger_echoed_boarding`,
+    `passenger_echoed_check`, and `passenger_echoed_manifest_intercom`.
+  - Actual CLI play followed the new listen-before-board echo route, ended at
+    `passenger_echoed_true_ending`, scored 290, and left no objectives.
+- Playtest feedback:
+  - The new beat gives the player a sensory confirmation that the opened
+    manifest sounds now belong to people before asking them to board.
+  - The route feels more deliberate than immediately carrying echoes into the
+    third car, and the check scene gives a clean accountability payoff.
+  - Returning from the listening scene should naturally steer players to the
+    existing echoed boarding choice because `heard_passenger_echoes` is set.
+  - No invalid choices, dangling objectives, unreachable scenes, or coverage
+    regressions appeared.
+- Next step:
+  - Watch future random and blind sessions for whether normal play now reaches
+    `opened_manifest_echoes`, `passenger_echoed_boarding`, and
+    `passenger_echoed_check`; if echoed routes stabilize, shift attention to
+    `passenger_newspaper_transfer` discoverability.
+
 # Cycle 14 Manifest Echo Boarding Check Bridge
 
 - Date: 2026-06-03

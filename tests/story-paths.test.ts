@@ -5340,8 +5340,10 @@ describe("demo story critical paths", () => {
     expect(observation.choices[2]?.label).toBe(
       "Let the opened passengers finish Mara's count together"
     );
-    expect(choiceIds[3]).toBe("follow_opened_manifest_echoes");
-    expect(observation.choices[3]?.label).toBe("Carry the opened door-echoes into the third car");
+    expect(choiceIds[3]).toBe("listen_to_opened_manifest_echoes");
+    expect(observation.choices[3]?.label).toBe("Listen to the opened door-echoes before boarding");
+    expect(choiceIds[4]).toBe("follow_opened_manifest_echoes");
+    expect(observation.choices[4]?.label).toBe("Carry the opened door-echoes into the third car");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -5507,6 +5509,63 @@ describe("demo story critical paths", () => {
       "pull_release_after_echoed_manifest_goodbye"
     ]);
 
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened manifest players listen to passenger echoes before boarding them", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_opened_manifest_echoes"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.text).toContain("without the ink between");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "board_with_listened_manifest_echoes",
+      "return_from_opened_manifest_echoes"
+    ]);
+
+    state = choose(story, state, "board_with_listened_manifest_echoes");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "check_echoed_passengers_before_release"
+    );
+
+    state = choose(story, state, "check_echoed_passengers_before_release");
+    state = choose(story, state, "carry_checked_echoes_to_speaker");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
     observation = observe(story, state);
 
@@ -10194,6 +10253,7 @@ describe("demo story critical paths", () => {
       "watch_mara_open_manifest",
       "review_open_manifest_count",
       "let_opened_passengers_finish_count",
+      "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
       "check_opened_manifest_blank_row",
       "return_opened_manifest_mitten",
