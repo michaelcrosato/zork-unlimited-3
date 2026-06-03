@@ -1,3 +1,57 @@
+# Cycle 25 Direct Reviewed Count Boarding
+
+- Date: 2026-06-03
+- Main objective: Make `passenger_counted_manifest_intercom` easier to reach
+  from normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 25 random evidence missed
+  `passenger_counted_manifest_intercom`, while coverage proved it reachable and
+  `passenger_manifest_true_ending` remained comparatively rare. The reviewed
+  count payoff existed, but normal players had to choose a review beat and then
+  notice a second boarding option inside that subscene.
+- Planned work:
+  - Add a direct opened-manifest boarding choice for Mara's reviewed count.
+  - Reuse `passenger_counted_manifest_intercom` and its existing endings
+    without changing payoff logic.
+  - Keep the older review-then-board route valid for exploratory players.
+  - Update focused ordering and direct-route regressions, run full health, and
+    actually play the promoted route.
+- Risks:
+  - The opened-manifest hub is dense, so one more direct branch can compete
+    with the nearby conductor, echo, thumbprint, and completed-count routes.
+  - The direct branch must set the same reviewed-count and intercom flags as
+    the two-step path so downstream choices remain coherent.
+- Status:
+  - Completed.
+  - Added `board_with_opened_manifest_reviewed_count` directly to the early
+    `passengers_released` count cluster, immediately after the optional count
+    review and before the conductor-count route.
+  - The new branch reuses `passenger_counted_manifest_intercom` and its
+    existing `passenger_reviewed_count_true_ending` /
+    `passenger_counted_true_ending` payoffs, setting
+    `reviewed_open_manifest_count` and `heard_mara_goodbye` up front to match
+    the old two-step board route.
+  - Updated opened-manifest ordering regressions and added a direct-route
+    regression from opened manifest to `passenger_counted_true_ending`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count|reviewed manifest count|manifest-specific platform"`.
+  - `npm run health` passed: format check, TypeScript, 251 tests, story
+    validation, and coverage playtest with all scenes visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct reviewed-count boarding
+    -> release, ending at `passenger_counted_true_ending` with score 273 and
+    no objectives.
+  - The route now presents the reviewed count as an immediate boarding payoff
+    rather than hiding it behind the optional count-review subscene.
+  - The final text stayed coherent: Mara carries the reviewed count into the
+    third car, then the passengers turn it into people checking one another
+    instead of a total.
+- Next step:
+  - Watch the next random/blind evidence for whether
+    `passenger_counted_manifest_intercom` still appears as a normal-play miss.
+    If it does, prefer reducing opened-manifest hub density or grouping the
+    count choices visually rather than adding more direct branches.
+
 # Cycle 24 Direct Echo Boarding
 
 - Date: 2026-06-03

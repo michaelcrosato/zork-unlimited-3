@@ -1600,6 +1600,19 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: board_with_opened_manifest_reviewed_count
+        label: Board with Mara's reviewed count already on the speaker
+        to: passenger_counted_manifest_intercom
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            heard_mara_goodbye: true
       - id: ask_conductor_to_read_opened_count
         label: Ask the conductor to read Mara's opened count clear
         to: passenger_conductor_count_roll_call

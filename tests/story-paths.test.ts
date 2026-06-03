@@ -5549,16 +5549,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices[6]?.label).toBe(
       "Review Mara's opened manifest count before boarding"
     );
-    expect(choiceIds[7]).toBe("ask_conductor_to_read_opened_count");
+    expect(choiceIds[7]).toBe("board_with_opened_manifest_reviewed_count");
     expect(observation.choices[7]?.label).toBe(
+      "Board with Mara's reviewed count already on the speaker"
+    );
+    expect(choiceIds[8]).toBe("ask_conductor_to_read_opened_count");
+    expect(observation.choices[8]?.label).toBe(
       "Ask the conductor to read Mara's opened count clear"
     );
-    expect(choiceIds[8]).toBe("let_opened_passengers_finish_count");
-    expect(observation.choices[8]?.label).toBe(
+    expect(choiceIds[9]).toBe("let_opened_passengers_finish_count");
+    expect(observation.choices[9]?.label).toBe(
       "Board as Mara's opened count finishes, then pull the release"
     );
-    expect(choiceIds[9]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[9]?.label).toBe(
+    expect(choiceIds[10]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[10]?.label).toBe(
       "Board with the passengers finishing Mara's opened count together"
     );
     expect(choiceIds).toContain("listen_to_passenger_answers");
@@ -6084,6 +6088,51 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the reviewed count falls apart");
     expect(observation.scene.text).toContain("not a total");
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces direct boarding with Mara's reviewed count from the opened manifest", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_with_opened_manifest_reviewed_count"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
+    expect(observation.scene.text).toContain("reviewed count");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_counted_manifest_goodbye"
+    );
+
+    state = choose(story, state, "pull_release_after_counted_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -11119,6 +11168,7 @@ describe("demo story critical paths", () => {
       "board_with_opened_manifest_echoes",
       "return_opened_manifest_mitten",
       "review_open_manifest_count",
+      "board_with_opened_manifest_reviewed_count",
       "ask_conductor_to_read_opened_count",
       "let_opened_passengers_finish_count",
       "board_with_completed_opened_count",
