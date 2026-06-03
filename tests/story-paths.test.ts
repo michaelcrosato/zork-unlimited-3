@@ -5732,27 +5732,34 @@ describe("demo story critical paths", () => {
     expect(observation.choices[4]?.label).toBe(
       "Help the opened passengers gather by helping one another board"
     );
-    expect(choiceIds[5]).toBe("hold_opened_manifest_threshold");
+    expect(choiceIds[5]).toBe("ask_conductor_punch_from_opened_manifest");
     expect(observation.choices[5]?.label).toBe(
+      "Ask the old conductor to punch a clear path for the opened passengers"
+    );
+    expect(choiceIds[6]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[6]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[6]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[6]?.label).toBe(
+    expect(choiceIds[7]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[7]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[7]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[7]?.label).toBe(
+    expect(choiceIds[8]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[8]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(choiceIds[8]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[8]?.label).toBe(
+    expect(choiceIds[9]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[9]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[9]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[9]?.label).toBe(
+    expect(choiceIds[10]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[10]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("help_opened_passengers_gather")).toBeLessThan(
+      choiceIds.indexOf("hold_opened_manifest_threshold")
+    );
+    expect(choiceIds.indexOf("ask_conductor_punch_from_opened_manifest")).toBeLessThan(
       choiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(choiceIds.indexOf("help_opened_passengers_gather")).toBeLessThan(
@@ -8295,10 +8302,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds.indexOf("ask_conductor_punch_from_opened_manifest")).toBeGreaterThan(
-      choiceIds.indexOf("study_opened_newspaper_transfer")
+      choiceIds.indexOf("help_opened_passengers_gather")
     );
     expect(choiceIds.indexOf("ask_conductor_punch_from_opened_manifest")).toBeLessThan(
-      choiceIds.indexOf("listen_to_opened_manifest_echoes")
+      choiceIds.indexOf("hold_opened_manifest_threshold")
     );
 
     state = choose(story, state, "ask_conductor_punch_from_opened_manifest");
@@ -8309,6 +8316,9 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.state.flags.heard_conductor_punch_memory).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "follow_punch_memory_to_third_car"
+    ]);
 
     state = choose(story, state, "follow_punch_memory_to_third_car");
     observation = observe(story, state);
@@ -8322,6 +8332,24 @@ describe("demo story critical paths", () => {
       "hold_for_conductor_roll_call_before_release"
     ]);
 
+    const promotedConductorIntercomState = state;
+
+    state = choose(story, state, "hear_final_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.ending).toBe(true);
+
+    state = promotedConductorIntercomState;
     state = choose(story, state, "ask_conductor_to_punch_transfer");
     observation = observe(story, state);
 
@@ -11876,6 +11904,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_sign_off_opened_manifest",
       "listen_to_passenger_morning_chorus",
       "help_opened_passengers_gather",
+      "ask_conductor_punch_from_opened_manifest",
       "hold_opened_manifest_threshold",
       "listen_to_opened_threshold_from_manifest",
       "notice_manifest_thumbprint_from_opened_doors",
@@ -11890,7 +11919,6 @@ describe("demo story critical paths", () => {
       "check_lunch_tin_count_from_opened_manifest",
       "call_lunch_tin_roster_from_opened_manifest",
       "study_opened_newspaper_transfer",
-      "ask_conductor_punch_from_opened_manifest",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
       "board_with_opened_manifest_echoes",

@@ -1572,6 +1572,18 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: ask_conductor_punch_from_opened_manifest
+        label: Ask the old conductor to punch a clear path for the opened passengers
+        to: passenger_conductor_punch_memory
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_conductor_punch_memory
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_punch_memory: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         to: passenger_threshold_boarding
@@ -1735,18 +1747,6 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
-      - id: ask_conductor_punch_from_opened_manifest
-        label: Ask what the old conductor's punch remembers from the opened manifest
-        to: passenger_conductor_punch_memory
-        requires:
-          all:
-            - notFlag: helped_passengers_gather
-            - notFlag: heard_conductor_punch_memory
-        effects:
-          set:
-            helped_passengers_gather: true
-            conductor_cleared_platform: true
-            heard_conductor_punch_memory: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
         to: opened_manifest_echoes

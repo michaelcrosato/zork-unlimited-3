@@ -1,3 +1,61 @@
+# Cycle 24 Promoted Opened-Manifest Conductor Clear
+
+- Date: 2026-06-03
+- Main objective: Make the opened-manifest conductor punch, intercom, and final
+  clear-call route easier to discover during normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 24 evidence shows coverage reaches every conductor scene, but
+  the 100-run random sample missed `passenger_conductor_intercom`,
+  `passenger_conductor_punch_memory`, and `passenger_conductor_roll_call`.
+  Those beats are a strong passenger-branch payoff because they let a trapped
+  worker help turn the crowd's boarding into a shared clear signal instead of
+  another count Mara must carry alone.
+- Planned work:
+  - Promote the existing opened-manifest conductor-punch choice into the early
+    crowd-boarding decision cluster.
+  - Rewrite its label as an immediate platform-clear action for the opened
+    passengers.
+  - Preserve the existing punch memory, conductor intercom, roll-call, transfer,
+    and conductor true-ending outcomes.
+  - Run focused regressions, full health, and an actual playthrough of the
+    promoted route.
+- Risks:
+  - The opened-manifest hub remains intentionally broad, so a 100-run random
+    sample can still miss some optional variants.
+  - This improves conductor-route visibility without addressing remaining rare
+    misses such as `lost_after_dispatch_ending`.
+- Status:
+  - Completed.
+  - Moved `ask_conductor_punch_from_opened_manifest` into the early
+    opened-manifest crowd-boarding choices, immediately after the shared
+    passenger-gathering option and before threshold variants.
+  - Updated its label to frame the route as a direct clear-path action for the
+    opened passengers.
+  - Extended the conductor regression to assert the promoted route through
+    `passenger_conductor_punch_memory`, `passenger_conductor_intercom`,
+    `passenger_conductor_roll_call`, and `passenger_conductor_true_ending`,
+    while preserving the punched-transfer branch.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest-specific platform beat|conductor"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    270 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> asked the old conductor to
+    punch a clear path for opened passengers -> followed his remembered clear
+    signal into the third car -> held for the final clear call -> pulled the
+    release.
+  - The route ended at `passenger_conductor_true_ending` with score 298 and no
+    objectives.
+  - The promoted choice reads better in context because the opened-manifest
+    scene already names the old conductor's punch; seeing the action near the
+    early boarding options makes it feel like a way to organize the crowd, not
+    a late optional lore detour.
+- Next step:
+  - Watch the next random/blind evidence for whether remaining normal-play
+    misses concentrate on `lost_after_dispatch_ending`,
+    `passenger_lunch_tin_check`, or other late opened-manifest variants.
+
 # Cycle 23 Promoted Shared Passenger Boarding
 
 - Date: 2026-06-03
