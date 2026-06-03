@@ -5290,6 +5290,15 @@ scenes:
             met_mara: true
             knows_token_location: true
             knows_badge_proof: true
+      - id: let_home_overrun_first_dispatch
+        label: Keep listening until HOME talks over Mara's warning
+        to: lost_after_dispatch_ending
+        effects:
+          set:
+            heard_home_sign_dispatch: true
+            met_mara: true
+            surrendered_home_after_dispatch: true
+            let_home_drown_mara: true
       - id: look_away_from_sign
         label: Look away and trust the map
         to: morning_transfer

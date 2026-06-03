@@ -1,3 +1,52 @@
+# Cycle 26 Promoted HOME-Overruns-Mara Failure
+
+- Date: 2026-06-03
+- Main objective: Make `lost_after_dispatch_ending` easier to discover during
+  normal play without weakening the recoverable HOME-sign warning route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 26 evidence showed the route was reachable in coverage but
+  absent from the 100-run random sample. The branch is useful because it
+  distinguishes a generic HOME-sign loss from the more specific mistake of
+  hearing Mara's dispatch and still letting the false HOME drown her out.
+- Planned work:
+  - Add a direct first-warning choice that keeps listening until HOME talks
+    over Mara.
+  - Preserve the existing "listen for Mara" recovery path and later
+    dispatch-specific loss variants.
+  - Add focused regression coverage for the new branch and updated sign
+    warning choice order.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This is intentionally a bad-ending affordance, so it improves failure-state
+    texture and discoverability rather than ideal-ending rate.
+  - The opened-manifest hub still has optional variants that a 100-run random
+    sample can miss.
+- Status:
+  - Completed.
+  - Added `let_home_overrun_first_dispatch` at `sign_warning`, routing to
+    `lost_after_dispatch_ending` while setting the same dispatch/loss flags as
+    later HOME-drowns-Mara variants.
+  - Updated sign-warning regression expectations and added a dedicated
+    dispatch-specific lost-ending test.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "HOME sign|HOME warning|dispatch-specific lost"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    271 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed lantern -> service door -> map -> platform ->
+    train -> HOME sign -> keep listening until HOME talks over Mara.
+  - The route ended at `lost_after_dispatch_ending` with score 44 and no
+    objectives.
+  - The failure now reads as a deliberate wrong response to Mara's warning,
+    rather than a rare consequence hidden behind a later optional listen step.
+  - A 100-run random sample reached `lost_after_dispatch_ending` 3 times and
+    listed it in visited scenes.
+- Next step:
+  - Shift attention to remaining normal-play misses such as
+    `passenger_threshold_boarding`, `passenger_lunch_tin_check`, or the rare
+    Mara manifest handoff/thumbprint setup variants.
+
 # Cycle 25 Promoted Opened-Manifest Reviewed Count
 
 - Date: 2026-06-03

@@ -2309,6 +2309,7 @@ describe("demo story critical paths", () => {
     expect(observe(story, state).scene.id).toBe("sign_warning");
     expect(observe(story, state).choices.map((choice) => choice.id)).toEqual([
       "listen_for_mara_under_home_warning",
+      "let_home_overrun_first_dispatch",
       "look_away_from_sign",
       "stare_at_home",
       "step_toward_porch_light"
@@ -2342,6 +2343,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("sign_warning");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_for_mara_under_home_warning",
+      "let_home_overrun_first_dispatch",
       "look_away_from_sign",
       "follow_mara_note_from_sign",
       "stare_at_home",
@@ -2382,6 +2384,34 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
+  });
+
+  it("lets the first HOME warning overrun Mara into the dispatch-specific lost ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "take_lantern",
+      "open_service_door",
+      "take_map",
+      "go_to_platform",
+      "board_train",
+      "look_at_sign",
+      "let_home_overrun_first_dispatch"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("lost_after_dispatch_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
+    expect(observation.state.flags.met_mara).toBe(true);
+    expect(observation.state.flags.surrendered_home_after_dispatch).toBe(true);
+    expect(observation.state.flags.let_home_drown_mara).toBe(true);
+    expect(observation.scene.text).toContain("Mara is still speaking");
+    expect(observation.scene.text).toContain("clock token, fuse, badge, ledger");
   });
 
   it("lets the first HOME sign warning carry Mara's dispatch back into the true route", async () => {
