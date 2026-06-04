@@ -1,3 +1,57 @@
+# Cycle 32 Echoed-Boarding Check Gate
+
+- Date: 2026-06-04
+- Main objective: Prevent the echoed-passenger boarding route from bypassing
+  `passenger_echoed_check` when players try to pull the release after the
+  familiar sounds are aboard.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 32 evidence showed health and coverage were green, but the
+  100-run random sample still missed `opened_manifest_echoes` and
+  `passenger_echoed_check` while reaching `passenger_echoed_boarding` and
+  `passenger_echoed_true_ending`. That meant a normal route could hear the
+  door sounds board, then end without matching those sounds back to people.
+- Planned work:
+  - Route unchecked echoed-boarding release choices through
+    `passenger_echoed_check`.
+  - Preserve immediate echoed-passenger endings once
+    `checked_echoed_passengers` is already set.
+  - Update focused regression coverage for the previous bypass.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This adds one extra scene before one echoed-passenger ending path, so the
+    check must read like confirmation at the release instead of a detour.
+  - The opened-manifest hub is still broad, so small random samples may still
+    miss `opened_manifest_echoes`; this specifically strengthens the route
+    once players reach echoed boarding.
+- Status:
+  - Completed.
+  - Changed both `passenger_echoed_boarding` and `train_car` echoed-release
+    shortcuts so unchecked routes visit `passenger_echoed_check` first.
+  - Added checked-only direct release choices for players who already verified
+    the familiar echoes.
+  - Updated regression coverage for echoed boarding after a Mara sign-off
+    detour and after hearing the train-car intercom first.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "echoed passenger|door-echo|opened manifest echoes"`.
+  - Actual CLI play followed opened passenger manifest -> heard door echoes ->
+    Mara sign-off -> boarded -> heard echoed intercom -> paused for echoed
+    boarding -> tried to pull release -> checked echoes -> pulled release.
+  - The route ended at `passenger_echoed_true_ending`; final state included
+    `checked_echoed_passengers: true`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - The attempted-release transition feels natural because the check scene is
+    framed as the last confirmation before touching the release.
+  - The sequence now pays off the thermos, newspaper, and mitten sounds before
+    the echoed ending describes those sounds becoming ordinary again.
+- Next step:
+  - Watch random/blind evidence for whether `passenger_echoed_check` appears
+    more consistently. If it does, shift attention to normal-play discovery
+    for `opened_manifest_echoes` itself or the adaptive route's repeated
+    hub-return pressure.
+
 # Cycle 31 Checked Lunch-Tin Roll Call Payoff
 
 - Date: 2026-06-04

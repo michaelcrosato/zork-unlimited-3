@@ -4974,10 +4974,10 @@ describe("demo story critical paths", () => {
       "listen_to_echoed_manifest_intercom"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_echoed_boarding"
+      "pull_release_after_checked_echoed_boarding"
     );
 
-    state = choose(story, state, "pull_release_after_echoed_boarding");
+    state = choose(story, state, "pull_release_after_checked_echoed_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_true_ending");
@@ -5101,6 +5101,16 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_echoed_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.scene.text).toContain("echoes are no longer clues");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_checked_echoes"
+    ]);
+
+    state = choose(story, state, "pull_release_after_checked_echoes");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_true_ending");

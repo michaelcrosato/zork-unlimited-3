@@ -2942,9 +2942,21 @@ scenes:
           notFlag: heard_mara_goodbye
       - id: pull_release_after_echoed_boarding
         label: Pull the release once the familiar echoes are aboard
+        to: passenger_echoed_check
+        requires:
+          all:
+            - flag: heard_mara_goodbye
+            - notFlag: checked_echoed_passengers
+        effects:
+          set:
+            checked_echoed_passengers: true
+      - id: pull_release_after_checked_echoed_boarding
+        label: Pull the release once the checked echoes are aboard
         to: passenger_echoed_true_ending
         requires:
-          flag: heard_mara_goodbye
+          all:
+            - flag: heard_mara_goodbye
+            - flag: checked_echoed_passengers
 
   passenger_echoed_check:
     routeImportance: optional
@@ -3877,6 +3889,21 @@ scenes:
             - notFlag: reviewed_open_manifest_count
       - id: pull_release_after_echoed_boarding
         label: Pull the release while the familiar echoes answer
+        to: passenger_echoed_check
+        requires:
+          all:
+            - flag: freed_mara
+            - flag: read_passenger_manifest
+            - flag: heard_passenger_echoes
+            - flag: echoed_manifest_boarded
+            - notFlag: checked_echoed_passengers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            checked_echoed_passengers: true
+      - id: pull_release_after_checked_echoed_boarding
+        label: Pull the release while the checked echoes answer
         to: passenger_echoed_true_ending
         requires:
           all:
@@ -3884,6 +3911,7 @@ scenes:
             - flag: read_passenger_manifest
             - flag: heard_passenger_echoes
             - flag: echoed_manifest_boarded
+            - flag: checked_echoed_passengers
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
       - id: pull_release_after_reviewed_manifest_count
