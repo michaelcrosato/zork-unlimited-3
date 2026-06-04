@@ -1,3 +1,57 @@
+# Cycle 47 Gathered Release Discoverability
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_gathered_release` appear in normal random
+  play after the new shared-release beat proved reachable but remained buried.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The current deterministic 100-run random sample missed only
+  `passenger_gathered_release`, while coverage and focused tests reached it.
+  The issue was discoverability, not reachability.
+- Planned work:
+  - Promote the shared-release check to the first action in
+    `passenger_gathered_boarding`.
+  - Promote the same shared-release check to the first action in
+    `passenger_gathered_intercom`.
+  - Update gathered-passenger menu-order regression tests.
+  - Run focused tests, fresh random evidence, full health, and a CLI route
+    through the promoted beat.
+- Risks:
+  - Moving the shared-release check first may shift a small amount of random
+    traffic from `passenger_helped_true_ending` to
+    `passenger_roll_call_true_ending`.
+  - The gathered route now foregrounds an optional inspection beat before the
+    direct release, so future blind feedback should watch for unnecessary
+    late-game friction.
+- Status:
+  - Completed.
+  - `passenger_gathered_boarding` now surfaces
+    `check_shared_release_from_gathered_boarding` before roll call, intercom,
+    and direct release choices.
+  - `passenger_gathered_intercom` now surfaces
+    `check_shared_release_from_gathered_intercom` before final roll call and
+    direct release choices.
+  - Focused gathered regression passed:
+    `npm test -- tests/story-paths.test.ts -t "gathered"`.
+  - Fresh 100-run random playtest now visits `passenger_gathered_release` and
+    reports `unvisitedScenes: []` with `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 275 tests, story
+    validation with all 154 scenes reachable, and coverage playtest with all
+    scenes visited and `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> passenger answers -> gathered
+    boarding -> shared release check -> `passenger_helped_true_ending`.
+    Final score was 327 with no objectives.
+  - The promoted choice now reads as the natural next inspection at the release
+    handle, making the shared-responsibility beat visible without removing the
+    direct release or roll-call payoffs.
+  - Nothing in the playthrough felt blocked; the route still ends cleanly after
+    one optional pause.
+- Next step:
+  - Watch the next random/blind evidence for whether the promoted shared check
+    overexposes the gathered route compared with the direct helped ending. If
+    coverage remains healthy, prefer another small payoff or clarity pass on a
+    common ideal route.
+
 # Cycle 46 Gathered Release Check
 
 - Date: 2026-06-04
