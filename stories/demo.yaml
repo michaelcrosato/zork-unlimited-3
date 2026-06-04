@@ -4982,8 +4982,14 @@ scenes:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
       - id: pull_release_after_checked_lunch_tin_count
-        label: Pull the release after every passenger answers the count
-        to: passenger_lunch_tin_true_ending
+        label: Start the release after every passenger answers the count
+        to: passenger_lunch_tin_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+            read_lunch_tin_roster: true
 
   passenger_lunch_tin_roster:
     routeImportance: optional

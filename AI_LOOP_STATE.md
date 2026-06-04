@@ -1,3 +1,56 @@
+# Cycle 31 Checked Lunch-Tin Roll Call Payoff
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_lunch_tin_roll_call` harder to bypass after
+  players already check the lunch-tin worker's passenger count.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 31 evidence shows health and coverage are green, but the
+  100-run random sample still missed `passenger_lunch_tin_roll_call` while
+  finding lunch-tin endings and the lunch-tin checked-count branch. That means
+  normal routes can reach the ending without hearing the worker's strongest
+  roster payoff.
+- Planned work:
+  - Route the checked-count release action through
+    `passenger_lunch_tin_roll_call` before the lunch-tin true ending.
+  - Set the final-roll-call and roster flags on that transition so the state
+    reflects what the player has now heard.
+  - Update focused regression coverage for opened-manifest and boarding
+    checked-count routes.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This adds one extra step before one lunch-tin ending path, so the text and
+    label need to read like a payoff rather than friction.
+  - Other lunch-tin shortcuts remain intentionally available for players who
+    do not choose the checked-count route.
+- Status:
+  - Completed.
+  - Changed the checked lunch-tin release path so it now visits
+    `passenger_lunch_tin_roll_call` before `passenger_lunch_tin_true_ending`.
+  - Added focused regression coverage for the opened-manifest checked-count
+    path and the in-car lunch-tin boarding checked-count path.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Actual CLI play followed opened manifest -> checked the lunch-tin worker's
+    count -> started the release -> heard the final roster roll call -> pulled
+    the release.
+  - The route ended at `passenger_lunch_tin_true_ending` with score 298 and
+    no objectives.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - The new "Start the release" label reads correctly because the next scene
+    is the worker making the final roll call before the release actually opens
+    the doors.
+  - The payoff is stronger than the previous immediate ending because the
+    worker names himself last before the lunch-tin ending says he is no longer
+    a counter or counted.
+- Next step:
+  - Watch the next random/blind evidence for whether
+    `passenger_lunch_tin_roll_call` appears more consistently; if it does,
+    shift attention to `passenger_echoed_check`, `opened_manifest_echoes`, or
+    the adaptive route's repeated hub-return pressure.
+
 # Cycle 30 Morning-Chorus Mara Handoff Bridge
 
 - Date: 2026-06-04
