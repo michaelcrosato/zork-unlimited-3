@@ -2364,7 +2364,10 @@ scenes:
         to: passenger_platform
       - id: board_after_manifest_count
         label: Pull the release while Mara's reviewed count still holds
-        to: passenger_reviewed_count_true_ending
+        to: passenger_counted_chorus
+        effects:
+          set:
+            passengers_finished_reviewed_count: true
 
   passenger_missing_count:
     routeImportance: optional

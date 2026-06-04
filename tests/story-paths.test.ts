@@ -6081,6 +6081,17 @@ describe("demo story critical paths", () => {
     state = choose(story, countedState, "board_after_manifest_count");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus",
+      "pull_release_while_reviewed_count_holds"
+    ]);
+
+    state = choose(story, state, "pull_release_while_reviewed_count_holds");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
@@ -6531,7 +6542,18 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    const observation = observe(story, state);
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus",
+      "pull_release_while_reviewed_count_holds"
+    ]);
+
+    state = choose(story, state, "pull_release_while_reviewed_count_holds");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.ending).toBe(true);

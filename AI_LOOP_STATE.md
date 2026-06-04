@@ -1,3 +1,59 @@
+# Cycle 34 Reviewed-Count Release Chorus Gate
+
+- Date: 2026-06-04
+- Main objective: Make the normal reviewed-count release attempt visit
+  `passenger_counted_chorus` before the reviewed-count ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 34 evidence is healthy overall, but the 100-run random sample
+  still missed `passenger_counted_chorus` and
+  `passenger_reviewed_count_true_ending` while coverage reached both. The
+  reviewed-count branch had an immediate release choice from
+  `passenger_manifest_count`, so players could ask Mara to review the opened
+  count and still skip the passenger chorus that makes the count emotionally
+  legible.
+- Planned work:
+  - Route `board_after_manifest_count` through `passenger_counted_chorus`.
+  - Set `passengers_finished_reviewed_count` on that transition so state
+    matches the scene.
+  - Preserve the reviewed-count ideal ending as the next release choice from
+    the chorus.
+  - Update focused regression coverage and run health plus an actual CLI
+    playthrough.
+- Risks:
+  - This adds one extra beat after a release-labeled action, so the chorus
+    must read as the release beginning through the passengers rather than an
+    unrelated detour.
+  - The opened-manifest hub remains broad; small random samples may still miss
+    a specific optional count path.
+- Status:
+  - Completed.
+  - `board_after_manifest_count` now routes through
+    `passenger_counted_chorus` and sets `passengers_finished_reviewed_count`
+    before the reviewed-count release.
+  - Updated focused regressions for both direct reviewed-count paths that now
+    pass through the chorus gate.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "reviewed count|finish Mara's count|manifest count"`.
+  - Story validation passed:
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Actual CLI play followed opened manifest -> review opened count -> pull
+    while Mara's reviewed count holds -> passenger counted chorus -> reviewed
+    count true ending. Final score was 278 with no objectives.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - The new intermediate chorus makes the first release action feel like the
+    passengers answering through the release rather than skipping straight to
+    outcome text.
+  - The repeated release label is understandable in transcript context, but a
+    future polish pass could rename the first action to "Start the release..."
+    if blind players read it as a double pull.
+- Next step:
+  - Watch the next random/blind sample for whether
+    `passenger_counted_chorus` appears in normal play. If it does, move back
+    to `mara_manifest_handoff` or any new consolidated blind-play issue.
+
 # Cycle 33 Opened-Ready Door-Echo Confirmation
 
 - Date: 2026-06-04
