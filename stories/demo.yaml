@@ -1893,8 +1893,8 @@ scenes:
           set:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
-        label: Board as Mara's opened count finishes, then pull the release
-        to: passenger_reviewed_count_true_ending
+        label: Listen as the opened passengers finish Mara's count together
+        to: passenger_counted_chorus
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:
@@ -4559,6 +4559,9 @@ scenes:
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
         to: passenger_counted_true_ending
+      - id: pull_release_while_reviewed_count_holds
+        label: Pull the release while Mara's reviewed count still holds
+        to: passenger_reviewed_count_true_ending
 
   passenger_morning_intercom:
     routeImportance: optional

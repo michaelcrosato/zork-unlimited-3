@@ -1,3 +1,47 @@
+# Cycle 29 Opened-Count Chorus Payoff
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_counted_chorus` and the reviewed-count
+  payoff easier to discover during normal opened-manifest play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 29 evidence showed health and coverage were green, but the
+  100-run random sample still missed `passenger_counted_chorus` and
+  `passenger_reviewed_count_true_ending`. The chorus is a high-value beat
+  because it turns Mara's reviewed manifest into passengers audibly checking
+  one another through.
+- Planned work:
+  - Route the common opened-manifest "finish count" action through
+    `passenger_counted_chorus` instead of skipping straight to an ending.
+  - Add a reviewed-count release option from the chorus so the reviewed-count
+    ideal ending remains easy to reach after hearing the payoff beat.
+  - Update focused regression coverage for the new two-step path.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - The opened-manifest hub is still broad, so 100-run random samples can miss
+    individual optional beats.
+  - This improves the manifest count branch without addressing rarer Mara
+    manifest handoff variants.
+- Status:
+  - Completed.
+  - Story route and focused regression updates are implemented.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "count|opened manifest|reviewed"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    271 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> opened passengers finish
+    Mara's count together -> pull while Mara's reviewed count still holds.
+  - The route now visits `passenger_counted_chorus` before ending at
+    `passenger_reviewed_count_true_ending` with score 270 and no objectives.
+  - The sequence reads better because the passengers audibly finish the count
+    before the reviewed-count ending says they become one another's proof.
+- Next step:
+  - Watch future random/blind evidence for whether `passenger_counted_chorus`
+    and `passenger_reviewed_count_true_ending` appear more reliably; if so,
+    shift attention to `mara_manifest_handoff` or remaining rare lunch-tin
+    roll-call variants.
+
 # Cycle 28 Morning-Chorus Door-Echo Bridge
 
 - Date: 2026-06-03
