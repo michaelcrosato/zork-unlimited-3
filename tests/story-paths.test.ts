@@ -6340,7 +6340,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("surfaces echoed passenger boarding directly from opened manifest doors", async () => {
+  it("surfaces opened door-echo listening directly from opened manifest doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -6369,17 +6369,18 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_echoed_boarding");
-    expect(observation.scene.text).toContain("sounds you heard behind the stamped");
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.text).toContain("without the ink between");
     expect(observation.state.flags.heard_passenger_echoes).toBe(true);
-    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "check_echoed_passengers_before_release",
-      "listen_to_echoed_manifest_from_boarding",
-      "reach_release_with_echoed_manifest"
+      "check_listened_manifest_echoes",
+      "board_with_listened_manifest_echoes",
+      "follow_newspaper_fold_from_opened_echoes",
+      "return_from_opened_manifest_echoes"
     ]);
 
-    state = choose(story, state, "check_echoed_passengers_before_release");
+    state = choose(story, state, "check_listened_manifest_echoes");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_check");
@@ -12855,6 +12856,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_after_passenger_morning_chorus",
       "let_morning_chorus_answer_names",
+      "listen_for_echoes_inside_morning_chorus",
       "gather_after_passenger_morning_chorus",
       "cross_after_passenger_morning_chorus",
       "return_from_passenger_morning_chorus"
@@ -12870,6 +12872,33 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_answered_names_to_intercom"
     );
+
+    const echoedMorningState = choose(story, state, "listen_for_echoes_inside_morning_chorus");
+    observation = observe(story, echoedMorningState);
+
+    expect(observation.scene.id).toBe("opened_manifest_echoes");
+    expect(observation.scene.text).toContain("without the ink between");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
+
+    let echoedBoardingState = choose(story, echoedMorningState, "check_listened_manifest_echoes");
+    observation = observe(story, echoedBoardingState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+
+    echoedBoardingState = choose(story, echoedBoardingState, "carry_checked_echoes_to_speaker");
+    echoedBoardingState = choose(
+      story,
+      echoedBoardingState,
+      "pull_release_after_echoed_manifest_goodbye"
+    );
+    observation = observe(story, echoedBoardingState);
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     const returnedState = choose(story, state, "return_from_passenger_morning_chorus");
     observation = observe(story, returnedState);

@@ -1,3 +1,55 @@
+# Cycle 28 Morning-Chorus Door-Echo Bridge
+
+- Date: 2026-06-03
+- Main objective: Make `opened_manifest_echoes` easier to discover after the
+  common opened-passenger morning-memory beat.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 28 evidence showed health and full coverage were green, but
+  the 250-run MCP random playtest still missed `opened_manifest_echoes`. The
+  scene is useful because it reframes the passengers' earlier door sounds as
+  people boarding under their own signal, which strengthens the passenger
+  branch before the echoed-passenger ending.
+- Planned work:
+  - Add a bridge from `passenger_morning_chorus` into
+    `opened_manifest_echoes`.
+  - Preserve existing direct opened-manifest echo routes and echoed-passenger
+    endings.
+  - Extend focused regression coverage for the new bridge, flags, and ending.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - The opened-manifest hub remains broad, so small random samples can still
+    miss individual optional beats.
+  - This improves passenger echo discoverability without changing the rare
+    Mara manifest handoff variants.
+- Status:
+  - Completed.
+  - Added the morning-chorus-to-door-echo bridge.
+  - Routed the direct opened-manifest echo shortcut through
+    `opened_manifest_echoes` before the echoed-passenger check, so that
+    shortcut no longer bypasses the sensory verification scene.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "morning chorus|passenger echo payoff|opened door-echo"`.
+  - Final focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "morning chorus|passenger echo payoff|opened door-echo|opened manifest players"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    271 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> opened door-echo shortcut ->
+    checked listened echoes -> Mara heard the checked echoes -> release.
+  - The route ended at `passenger_echoed_true_ending` with score 284 and no
+    objectives.
+  - The echo scene now reads as the intended sensory bridge between the
+    opened-manifest hub and the echoed-passenger ending.
+  - A fresh deterministic 100-run random sample still missed
+    `opened_manifest_echoes`, so random visibility remains worth watching even
+    though full coverage and focused route tests are green.
+- Next step:
+  - Watch the next random/blind evidence for whether `opened_manifest_echoes`
+    appears more often; if it remains rare, consider making a common boarding
+    path acknowledge the echo beat in text instead of adding more optional
+    choices.
+
 # Cycle 27 Promoted Opened-Manifest Lunch-Tin Check
 
 - Date: 2026-06-03
