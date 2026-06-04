@@ -1,3 +1,62 @@
+# Cycle 43 Checked Lunch-Tin Release Payoff
+
+- Date: 2026-06-04
+- Main objective: Make the checked lunch-tin count payoff easier to encounter
+  in normal play.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Fresh random evidence from the current checkout still missed
+  `passenger_lunch_tin_checked_true_ending` and
+  `passenger_lunch_tin_true_ending`, even though coverage reaches them. The
+  checked-count scene already has an immediate release choice, but that choice
+  was silently promoted into the roster roll-call ending, so a natural checked
+  route bypassed the checked ending.
+- Planned work:
+  - Route the checked-count scene's immediate release action to
+    `passenger_lunch_tin_checked_true_ending`.
+  - Keep explicit roster and roll-call actions on
+    `passenger_lunch_tin_roster_true_ending`.
+  - Update focused lunch-tin path tests, run health, and play a CLI route to
+    the checked ending.
+- Risks:
+  - Small deterministic random samples may still miss the direct generic
+    lunch-tin ending because the branch has several optional proof choices.
+  - The checked route should not erase the roster payoff; explicit roster
+    choices must remain covered by tests.
+- Status:
+  - Completed.
+  - `pull_release_after_checked_lunch_tin_count` now goes directly to
+    `passenger_lunch_tin_checked_true_ending`.
+  - `pull_release_after_lunch_tin_boarding` is now the first visible action in
+    `passenger_lunch_tin_boarding`, matching the scene text that foregrounds
+    the emergency release.
+  - `pull_release_after_checked_lunch_tin_count` is now the first visible action
+    in `passenger_lunch_tin_check`, while explicit speaker and roster choices
+    remain available.
+  - Focused lunch-tin regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Fresh 100-run random sample now reaches both previously missed endings:
+    `passenger_lunch_tin_checked_true_ending: 1` and
+    `passenger_lunch_tin_true_ending: 1`, with `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 274 tests, story
+    validation, and coverage playtest with all 153 scenes visited,
+    `unfinished: 0`, `passenger_lunch_tin_checked_true_ending: 11681`,
+    `passenger_lunch_tin_true_ending: 5841`, and
+    `passenger_lunch_tin_roster_true_ending: 11681`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> direct lunch-tin count check ->
+    immediate checked release -> `passenger_lunch_tin_checked_true_ending`.
+    Final score was 279 with no objectives.
+  - The adjusted ordering feels clearer: once the text says the release is
+    waiting, the release action is available before optional elaboration.
+  - The deterministic 100-run random sample has only two lunch-tin branch runs;
+    those now cover the direct and checked endings. Roster remains covered by
+    focused tests and full coverage, but the next blind digest should watch
+    whether roster-specific payoff becomes less visible in normal play.
+- Next step:
+  - If blind/random evidence continues to miss roster in normal play, add a
+    natural roster prompt from the checked/direct lunch-tin endings or improve
+    sample diversity in the report rather than adding more ending variants.
+
 # Cycle 42 Lunch-Tin Payoff Variants
 
 - Date: 2026-06-04

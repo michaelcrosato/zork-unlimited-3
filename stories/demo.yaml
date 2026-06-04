@@ -3427,6 +3427,9 @@ scenes:
       how to count people without keeping them. Under the first seat, the
       emergency release waits for the count to become movement.
     choices:
+      - id: pull_release_after_lunch_tin_boarding
+        label: Pull the release while the lunch-tin count holds
+        to: passenger_lunch_tin_true_ending
       - id: check_lunch_tin_passengers_before_release
         label: Check the lunch-tin count against the passengers in the aisle
         to: passenger_lunch_tin_check
@@ -3460,9 +3463,6 @@ scenes:
           set:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
-      - id: pull_release_after_lunch_tin_boarding
-        label: Pull the release while the lunch-tin count holds
-        to: passenger_lunch_tin_true_ending
 
   train_car:
     routeImportance: main
@@ -5062,20 +5062,14 @@ scenes:
       behind the word passenger. Nobody is only a number now, and the release
       under the first seat feels less like an escape than the end of a shift.
     choices:
+      - id: pull_release_after_checked_lunch_tin_count
+        label: Start the release after every passenger answers the count
+        to: passenger_lunch_tin_checked_true_ending
       - id: carry_checked_lunch_tin_count_to_speaker
         label: Carry the checked lunch-tin count to Mara's speaker
         to: passenger_lunch_tin_intercom
       - id: turn_checked_lunch_tin_count_into_roll_call
         label: Turn the checked count into the final roster call
-        to: passenger_lunch_tin_roll_call
-        requires:
-          notFlag: heard_final_roll_call
-        effects:
-          set:
-            heard_final_roll_call: true
-            read_lunch_tin_roster: true
-      - id: pull_release_after_checked_lunch_tin_count
-        label: Start the release after every passenger answers the count
         to: passenger_lunch_tin_roll_call
         requires:
           notFlag: heard_final_roll_call

@@ -5898,25 +5898,17 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_checked_lunch_tin_count",
       "carry_checked_lunch_tin_count_to_speaker",
-      "turn_checked_lunch_tin_count_into_roll_call",
-      "pull_release_after_checked_lunch_tin_count"
+      "turn_checked_lunch_tin_count_into_roll_call"
     ]);
 
     state = choose(story, state, "pull_release_after_checked_lunch_tin_count");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
-    expect(observation.scene.text).toContain("The worker reads the roster");
-    expect(observation.state.flags.heard_final_roll_call).toBe(true);
-    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
-
-    state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("after the roster clocks everyone out");
+    expect(observation.scene.text).toContain("after the lunch-tin worker's checked count");
     expectIdealScore(observation.score);
 
     state = choose(story, openedManifestState, "study_opened_newspaper_transfer");
@@ -7559,11 +7551,11 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_boarding",
       "check_lunch_tin_passengers_before_release",
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
-      "let_lunch_tin_count_become_roll_call",
-      "pull_release_after_lunch_tin_boarding"
+      "let_lunch_tin_count_become_roll_call"
     ]);
 
     const boardingState = state;
@@ -7651,9 +7643,9 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_checked_lunch_tin_count",
       "carry_checked_lunch_tin_count_to_speaker",
-      "turn_checked_lunch_tin_count_into_roll_call",
-      "pull_release_after_checked_lunch_tin_count"
+      "turn_checked_lunch_tin_count_into_roll_call"
     ]);
 
     const checkedLunchTinState = state;
@@ -7661,21 +7653,9 @@ describe("demo story critical paths", () => {
     state = choose(story, checkedLunchTinState, "pull_release_after_checked_lunch_tin_count");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
-    expect(observation.scene.text).toContain("The worker reads the roster");
-    expect(observation.scene.text).toContain("counted him without keeping him");
-    expect(observation.state.flags.heard_final_roll_call).toBe(true);
-    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call"
-    ]);
-
-    state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("after the roster clocks everyone out");
+    expect(observation.scene.text).toContain("after the lunch-tin worker's checked count");
     expectIdealScore(observation.score);
 
     state = checkedLunchTinState;
@@ -7927,11 +7907,11 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_boarding",
       "check_lunch_tin_passengers_before_release",
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
-      "let_lunch_tin_count_become_roll_call",
-      "pull_release_after_lunch_tin_boarding"
+      "let_lunch_tin_count_become_roll_call"
     ]);
 
     state = choose(story, state, "listen_to_lunch_tin_worker_from_boarding");
@@ -9237,11 +9217,11 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_boarding",
       "check_lunch_tin_passengers_before_release",
       "read_lunch_tin_roster_from_boarding",
       "listen_to_lunch_tin_worker_from_boarding",
-      "let_lunch_tin_count_become_roll_call",
-      "pull_release_after_lunch_tin_boarding"
+      "let_lunch_tin_count_become_roll_call"
     ]);
   });
 
@@ -9280,9 +9260,9 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_checked_lunch_tin_count",
       "carry_checked_lunch_tin_count_to_speaker",
-      "turn_checked_lunch_tin_count_into_roll_call",
-      "pull_release_after_checked_lunch_tin_count"
+      "turn_checked_lunch_tin_count_into_roll_call"
     ]);
 
     state = choose(story, state, "carry_checked_lunch_tin_count_to_speaker");
