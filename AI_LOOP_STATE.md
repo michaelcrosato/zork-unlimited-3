@@ -1,3 +1,51 @@
+# Cycle 30 Morning-Chorus Mara Handoff Bridge
+
+- Date: 2026-06-04
+- Main objective: Make `mara_manifest_handoff` more discoverable from a
+  normal opened-passenger route by bridging the passenger morning chorus back
+  into Mara's name-by-name handoff.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 30 evidence shows health, coverage, and actual MCP play are
+  green, but the 100-run random sample still missed `mara_manifest_handoff`.
+  The scene is a useful emotional bridge because it shows Mara transferring
+  steadiness through the whole opened manifest instead of remaining only a
+  booth voice or release trigger.
+- Planned work:
+  - Add a `passenger_morning_chorus` choice that lets Mara hand the remembered
+    mornings from name to name.
+  - Set `saw_mara_manifest_handoff` on that bridge so the opened-manifest hub
+    does not repeat the same beat.
+  - Add focused regression coverage for the new route and its ideal ending.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - The opened-manifest hub is intentionally broad, so small random samples may
+    still miss any one optional beat.
+  - This improves a story bridge without changing route weighting or random
+    strategy behavior.
+- Status:
+  - Completed.
+  - Added a `passenger_morning_chorus` bridge into `mara_manifest_handoff`.
+  - Added focused regression coverage for morning chorus -> Mara manifest
+    handoff -> manifest-handoff ideal ending.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "morning chorus|manifest handoff"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> passenger morning chorus ->
+    Mara hands remembered mornings from name to name -> pull release during
+    the handoff.
+  - The route ended at `passenger_manifest_handoff_true_ending` with score
+    281 and no objectives.
+  - The new beat reads naturally because the morning memories give Mara
+    something concrete to hand from passenger to passenger before the release.
+- Next step:
+  - Watch future random/blind evidence for whether `mara_manifest_handoff`
+    appears in small random samples; if it remains rare, consider promoting a
+    handoff acknowledgement inside another common boarding path rather than
+    adding more hub choices.
+
 # Cycle 29 Opened-Count Chorus Payoff
 
 - Date: 2026-06-04

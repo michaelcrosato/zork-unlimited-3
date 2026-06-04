@@ -2143,6 +2143,14 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: let_mara_handoff_morning_names
+        label: Let Mara hand the remembered mornings from name to name
+        to: mara_manifest_handoff
+        requires:
+          notFlag: saw_mara_manifest_handoff
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
       - id: listen_for_echoes_inside_morning_chorus
         label: Listen for the opened door-echoes inside the morning chorus
         to: opened_manifest_echoes
