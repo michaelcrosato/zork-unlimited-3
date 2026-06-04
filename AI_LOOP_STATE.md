@@ -1,3 +1,69 @@
+# Cycle 40 Reviewed Count Speaker Bridge
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_counted_manifest_intercom` and
+  `passenger_reviewed_count_true_ending` show up in normal play while
+  preserving the generic counted-count payoff from Cycle 39.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 40 evidence showed random play reached
+  `passenger_counted_true_ending` once but still missed
+  `passenger_counted_manifest_intercom` and
+  `passenger_reviewed_count_true_ending`, while coverage reached both. The
+  deterministic random trace showed reviewed-count players often peeled into
+  conductor-count routes before Mara's reviewed speaker beat.
+- Planned work:
+  - Route the manifest-count "finish reviewed count" action through the
+    third-car reviewed-count intercom before the chorus.
+  - Add a conductor-count bridge that can hand the counted clear call back to
+    Mara's reviewed speaker.
+  - Keep conductor-count endings available and prevent the new bridge from
+    reopening late blank-row loops.
+  - Update focused route tests, run health, and play the edited path through
+    the CLI.
+- Risks:
+  - Adding a bridge from the conductor count could increase late route
+    duplication if future content gives every passenger helper a return to the
+    same intercom.
+  - The bridge intentionally marks the blank-row/count context resolved so
+    coverage stays finite; future edits should keep that guard if the intercom
+    gains more backtracking choices.
+- Status:
+  - Completed.
+  - `finish_reviewed_count_before_boarding` now enters
+    `passenger_counted_manifest_intercom` instead of skipping directly to the
+    chorus.
+  - `passenger_conductor_count_roll_call` now exposes
+    `hand_counted_clear_call_to_mara` when the opened manifest count has been
+    reviewed and Mara has not already signed off.
+  - The new conductor bridge sets `heard_mara_goodbye`,
+    `checked_missing_passenger_count`, `passengers_finished_reviewed_count`,
+    and `reviewed_count_release_ready`, so it presents the intercom as a final
+    reviewed-count handoff rather than reopening earlier count work.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "reviewed speaker|reviewed manifest count|opened-manifest count|lets the passengers finish|conductor route"`.
+  - Fresh 100-run random sample now visits
+    `passenger_counted_manifest_intercom` and reaches
+    `passenger_reviewed_count_true_ending` 3 times while still reaching
+    `passenger_counted_true_ending` once.
+  - Full `npm run health` passed: format check, TypeScript, 273 tests, story
+    validation, and coverage playtest with all 151 scenes visited,
+    `unfinished: 0`, `passenger_reviewed_count_true_ending: 9645`, and
+    `passenger_counted_true_ending: 1837`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest count -> conductor counted roll
+    call -> Mara's reviewed speaker -> passenger chorus ->
+    `passenger_reviewed_count_true_ending`. Final score was 321 with no
+    objectives.
+  - The bridge reads naturally: the conductor can still own his count ending,
+    but players who have been following Mara's reviewed manifest now get an
+    explicit way to hand that counted clear call back to the speaker before
+    the final release.
+- Next step:
+  - Watch the next blind digest for whether late manifest routes feel
+    over-branched. If no S0-S2 issues appear, shift from route discoverability
+    to transcript/report quality so future exploratory stalls are easier to
+    diagnose.
+
 # Cycle 39 Shared Count Payoff Balance
 
 - Date: 2026-06-04
