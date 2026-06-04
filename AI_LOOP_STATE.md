@@ -1,3 +1,51 @@
+# Cycle 46 Gathered Release Check
+
+- Date: 2026-06-04
+- Main objective: Add a small optional payoff beat to the gathered-passenger
+  route without changing its successful ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence is green: all scenes are visited, random
+  play has no unfinished runs, and the adaptive exploratory route ended at
+  `passenger_helped_true_ending`. With discoverability pressure low, the best
+  next improvement is richer texture on a route normal play already reaches.
+- Planned work:
+  - Add a `passenger_gathered_release` scene where the gathered passengers
+    share responsibility for the emergency release before the existing helped
+    ending.
+  - Surface it from both `passenger_gathered_boarding` and
+    `passenger_gathered_intercom` while preserving direct release choices.
+  - Update focused gathered-passenger regression coverage, run health, and play
+    a CLI route through the new beat.
+- Risks:
+  - Adding another optional choice could slightly dilute random traffic on the
+    gathered route.
+  - Exact menu-order tests need to track the new option without making the
+    existing direct release feel hidden.
+- Status:
+  - Completed.
+  - Added `passenger_gathered_release` as an optional shared-release check from
+    both gathered-passenger boarding and intercom scenes.
+  - Preserved direct release and final-roll-call routes.
+  - Focused gathered-passenger regression passed:
+    `npm test -- tests/story-paths.test.ts -t "gathered"`.
+  - Full `npm run health` passed: format check, TypeScript, 275 tests, story
+    validation with all 154 scenes reachable, and coverage playtest with
+    `passenger_gathered_release` visited and `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> passenger answers -> gathered
+    boarding -> shared release check -> `passenger_helped_true_ending`.
+    Final score was 327 with no objectives.
+  - The new beat makes the helped ending feel less abrupt by showing the
+    release becoming a group action rather than another task the player does
+    alone.
+  - The direct release choice remains available from the gathered boarding and
+    intercom scenes for players who do not want another pause.
+- Next step:
+  - Watch blind/random evidence for whether added optional depth starts to
+    crowd the gathered branch. If normal-play visibility stays healthy, keep
+    adding small payoff beats to common ideal routes instead of more route
+    reordering.
+
 # Cycle 45 Newspaper Transfer Discovery
 
 - Date: 2026-06-04

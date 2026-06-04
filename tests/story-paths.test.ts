@@ -7469,6 +7469,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -7506,6 +7507,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
   });
@@ -9180,6 +9182,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
     expect(
@@ -10166,6 +10169,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_passenger_roll_call",
+      "check_shared_release_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -10254,8 +10258,58 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.steadied_lunch_tin_worker).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_passenger_roll_call",
+      "check_shared_release_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
+  });
+
+  it("lets gathered passengers share the release before the helped ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_answers",
+      "return_from_passenger_answers",
+      "help_passengers_gather",
+      "check_shared_release_from_gathered_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.scene.text).toContain("a chain of people making sure");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_roll_call_after_shared_release",
+      "pull_release_after_shared_gathered_check"
+    ]);
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_helped_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
   });
 
   it("gives the optional final roll call its own true-ending payoff", async () => {
@@ -12580,6 +12634,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -12609,6 +12664,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_passenger_roll_call",
+      "check_shared_release_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -12657,6 +12713,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_passenger_roll_call",
+      "check_shared_release_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -12713,6 +12770,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 
@@ -13302,6 +13360,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "answer_final_roll_call_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
+      "check_shared_release_from_gathered_boarding",
       "pull_release_after_gathered_boarding"
     ]);
 

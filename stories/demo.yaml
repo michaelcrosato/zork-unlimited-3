@@ -3414,6 +3414,12 @@ scenes:
         effects:
           set:
             heard_gathered_passengers: true
+      - id: check_shared_release_from_gathered_boarding
+        label: Check how the gathered passengers share the release
+        to: passenger_gathered_release
+        effects:
+          set:
+            heard_gathered_passengers: true
       - id: pull_release_after_gathered_boarding
         label: Pull the release once every passenger is ready
         to: passenger_helped_true_ending
@@ -4986,6 +4992,9 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+      - id: check_shared_release_from_gathered_intercom
+        label: Check how the gathered passengers share the release
+        to: passenger_gathered_release
       - id: pull_release_after_gathered_intercom
         label: Pull the release while the passengers hold the doors
         to: passenger_helped_true_ending
@@ -4996,6 +5005,30 @@ scenes:
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+
+  passenger_gathered_release:
+    routeImportance: optional
+    text: >
+      The release handle is close enough for one hand, but the gathered
+      passengers refuse to make it one person's burden. The conductor braces
+      the seat frame, the lunch-tin worker steadies your wrist, and the
+      newspaper woman folds the child's mitten over the cold metal so every
+      small handhold has a place. Mara does not give an order. She only keeps
+      the speaker open while the crowd learns the shape of leaving together:
+      not a rescue line, not a roll call, but a chain of people making sure the
+      next person is ready before the doors open.
+    choices:
+      - id: hear_final_roll_call_after_shared_release
+        label: Let the gathered passengers answer one last roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_shared_gathered_check
+        label: Pull the release once every hand is ready
+        to: passenger_helped_true_ending
 
   passenger_lunch_tin_intercom:
     routeImportance: optional
