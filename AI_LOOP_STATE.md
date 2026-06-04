@@ -1,3 +1,56 @@
+# Cycle 38 Reviewed-Count Payoff Context
+
+- Date: 2026-06-04
+- Main objective: Make explicit reviewed-count routes pay off at
+  `passenger_reviewed_count_true_ending` instead of splitting back to the
+  generic counted ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 38 evidence is green overall, but the 100-run random sample
+  still missed only `passenger_reviewed_count_true_ending` while coverage
+  reached every scene. The route existed, but common labels that promised
+  Mara's reviewed count still landed on a chorus with an equally available
+  generic counted-release ending.
+- Planned work:
+  - Add a small context flag when the player enters the chorus through a
+    reviewed-count route.
+  - Hide the generic counted-release choice while that reviewed-count context
+    is active, leaving the reviewed-count release as the natural payoff.
+  - Keep the generic counted ending available from non-context chorus routes.
+  - Update focused regression coverage and run health plus an actual CLI
+    playthrough.
+- Risks:
+  - Over-gating could make `passenger_counted_true_ending` harder to reach if
+    every chorus route set the context flag, so one existing non-context route
+    remains covered.
+  - Small deterministic random samples can still miss optional late branches
+    because the opened-manifest hub is broad.
+- Status:
+  - Completed.
+  - `reviewed_count_release_ready` is now set by reviewed-count chorus routes
+    and suppresses the generic counted-release choice at
+    `passenger_counted_chorus`.
+  - Focused reviewed/count path regression passed.
+  - Full `npm run health` passed: format check, TypeScript, 272 tests, story
+    validation, and coverage playtest with all 151 scenes visited.
+  - Actual CLI play followed opened manifest -> opened passengers finish
+    Mara's count -> `passenger_counted_chorus` ->
+    `passenger_reviewed_count_true_ending`. Final score was 270 with no
+    objectives.
+- Playtest feedback:
+  - The route now matches its labels: when the player chooses an explicit
+    Mara-reviewed-count path, the final release no longer asks them to choose
+    between the named payoff and a generic counted ending.
+  - A fresh deterministic 100-run random sample now reaches
+    `passenger_reviewed_count_true_ending` once, but misses
+    `passenger_counted_true_ending`; coverage still reaches both. The next
+    cycle should smooth both sibling manifest endings rather than simply
+    swapping which one small random samples miss.
+- Next step:
+  - Improve late manifest-count branching so both
+    `passenger_reviewed_count_true_ending` and
+    `passenger_counted_true_ending` appear in small random samples without
+    making the final chorus feel like duplicate options.
+
 # Cycle 37 Reviewed-Count Intercom Chorus Gate
 
 - Date: 2026-06-04

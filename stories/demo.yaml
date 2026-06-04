@@ -1901,6 +1901,7 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding
@@ -2312,6 +2313,7 @@ scenes:
         effects:
           set:
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
       - id: board_with_reviewed_manifest_count
         label: Board with Mara's reviewed count already on the speaker
         to: passenger_counted_manifest_intercom
@@ -2366,6 +2368,7 @@ scenes:
         effects:
           set:
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
 
   passenger_missing_count:
     routeImportance: optional
@@ -4585,6 +4588,7 @@ scenes:
         effects:
           set:
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
       - id: ask_who_reviewed_count_left_blank
         label: Ask Mara who the old blank space belonged to
         to: passenger_missing_count
@@ -4599,12 +4603,14 @@ scenes:
         effects:
           set:
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
       - id: pull_release_after_counted_manifest_goodbye
         label: Let the reviewed count become the passengers' chorus
         to: passenger_counted_chorus
         effects:
           set:
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: true
 
   passenger_counted_chorus:
     routeImportance: optional
@@ -4620,6 +4626,8 @@ scenes:
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
         to: passenger_counted_true_ending
+        requires:
+          notFlag: reviewed_count_release_ready
       - id: pull_release_while_reviewed_count_holds
         label: Pull the release while Mara's reviewed count still holds
         to: passenger_reviewed_count_true_ending
