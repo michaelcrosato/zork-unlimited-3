@@ -1757,6 +1757,7 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
       - id: call_lunch_tin_roster_from_opened_manifest
         label: Read the lunch-tin worker's roster for the opened passengers
         to: passenger_lunch_tin_roster
@@ -2276,6 +2277,7 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
       - id: return_from_opened_manifest_echoes
         label: Return to the opened manifest doors
         to: passengers_released
@@ -2335,6 +2337,7 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
       - id: ask_conductor_after_manifest_count
         label: Ask the conductor to carry Mara's opened count clear
         to: passenger_conductor_signal
@@ -2728,6 +2731,7 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
             helped_passengers_gather: true
             heard_gathered_passengers: true
             heard_final_roll_call: true
@@ -2775,6 +2779,7 @@ scenes:
           set:
             heard_newspaper_memory: true
             studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
       - id: ask_lunch_tin_worker_to_set_pace
         label: Ask the lunch-tin worker to set the boarding pace
         to: passenger_farewell
@@ -3091,6 +3096,15 @@ scenes:
       again in more than one voice. The paper stops being yesterday's proof of
       delay and becomes a timetable the passengers can read to one another.
     choices:
+      - id: study_newspaper_transfer_column
+        label: Study the blank transfer column before boarding
+        to: passenger_newspaper_transfer
+        requires:
+          notFlag: studied_newspaper_transfer
+        effects:
+          set:
+            studied_newspaper_transfer: true
+            restored_newspaper_transfer: true
       - id: ask_conductor_after_newspaper_memory
         label: Let the old conductor call the final platform clear
         to: passenger_conductor_roll_call
@@ -3124,14 +3138,6 @@ scenes:
             matched_manifest_keepsakes: true
             helped_passengers_gather: true
             heard_gathered_passengers: true
-      - id: study_newspaper_transfer_column
-        label: Study the blank transfer column before boarding
-        to: passenger_newspaper_transfer
-        requires:
-          notFlag: studied_newspaper_transfer
-        effects:
-          set:
-            studied_newspaper_transfer: true
       - id: help_passengers_after_newspaper_memory
         label: Use the transfer column to gather passengers into the third car
         to: passenger_newspaper_intercom

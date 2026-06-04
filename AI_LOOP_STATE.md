@@ -1,3 +1,52 @@
+# Cycle 45 Newspaper Transfer Discovery
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_newspaper_transfer` show up more naturally in
+  normal play after the previous lunch-tin roster visibility fix.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence is green overall, but the deterministic
+  100-run random sample missed only `passenger_newspaper_transfer` while full
+  coverage reached it. The scene was reachable but too easy to bypass through
+  adjacent newspaper-memory and intercom choices.
+- Planned work:
+  - Promote `study_newspaper_transfer_column` to the first available action in
+    `passenger_newspaper_memory`.
+  - Set the existing `restored_newspaper_transfer` scoring flag whenever a
+    route restores or reads the transfer column.
+  - Update focused path tests, run health, and play a CLI route through the
+    newspaper transfer branch.
+- Risks:
+  - Reordering the newspaper-memory menu could shift random traffic away from
+    mitten/keepsake helper routes, though those remain available and covered.
+  - The random sample may still miss the scene in some 100-run windows because
+    the passenger branch now has many valid optional routes.
+- Status:
+  - Completed.
+  - `study_newspaper_transfer_column` now appears first in
+    `passenger_newspaper_memory`, giving normal play a stronger bridge from
+    Lenora's newspaper memory into `passenger_newspaper_transfer`.
+  - Newspaper transfer entry paths now set `restored_newspaper_transfer`, so the
+    existing score award is earned when the transfer column is restored.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "newspaper"`.
+  - Fresh 100-run random sample now visits `passenger_newspaper_transfer` and
+    reports `unvisitedScenes: []` with `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 274 tests, story
+    validation with all 153 scenes reachable, and coverage playtest with all
+    scenes visited and `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed passenger platform -> newspaper memory -> restored
+    transfer -> newspaper roll call -> `passenger_newspaper_true_ending`.
+    Final score was 315 with no objectives.
+  - The promoted choice reads naturally after Lenora explains Warden Street and
+    the morning transfer column; it turns the memory into an actionable proof
+    before the player boards.
+  - The score ledger now acknowledges the restored transfer, which made the
+    route feel more complete without adding new scenes.
+- Next step:
+  - Watch the next random/blind evidence for whether moving the transfer choice
+    first reduces visibility of the adjacent mitten and keepsake helper paths.
+
 # Cycle 44 Opened-Manifest Lunch-Tin Roster Discovery
 
 - Date: 2026-06-04

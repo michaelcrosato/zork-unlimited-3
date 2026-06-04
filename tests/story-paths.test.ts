@@ -1643,6 +1643,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_newspaper_transfer");
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.state.flags.restored_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_conductor_to_punch_restored_transfer",
       "read_restored_transfer_into_roll_call",
@@ -1670,9 +1671,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("a timetable the passengers can read to one another");
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "study_newspaper_transfer_column",
       "return_lost_mitten_after_newspaper_memory",
       "match_keepsakes_after_newspaper_memory",
-      "study_newspaper_transfer_column",
       "help_passengers_after_newspaper_memory",
       "board_after_newspaper_memory"
     ]);
@@ -1692,6 +1693,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("enough route for a clear signal");
     expect(observation.scene.text).toContain("making a connection");
     expect(observation.state.flags.studied_newspaper_transfer).toBe(true);
+    expect(observation.state.flags.restored_newspaper_transfer).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_conductor_to_punch_restored_transfer",
       "read_restored_transfer_into_roll_call",
