@@ -5280,10 +5280,34 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "carry_mara_handoff_as_doors_open");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.scene.text).toContain("steadiness can be handed from name to name");
+    expect(observation.scene.text).toContain(
+      "asking for room as plainly as it asks for the release"
+    );
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_during_mara_manifest_handoff",
+      "board_after_mara_manifest_handoff",
+      "listen_to_manifest_handoff_from_handoff",
+      "ask_mara_signoff_after_manifest_handoff",
+      "ask_mara_about_morning_after_manifest_handoff",
+      "make_room_after_mara_manifest_handoff",
+      "hold_threshold_after_mara_manifest_handoff",
+      "finish_count_after_mara_manifest_handoff",
+      "touch_mara_manifest_thumbprint",
+      "continue_manifest_handoff_roll_call",
+      "board_with_mara_answered_handoff",
+      "return_from_mara_manifest_handoff"
+    ]);
+
+    state = choose(story, state, "board_after_mara_manifest_handoff");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
     expect(observation.scene.text).toContain("called every stamped door");
     expect(observation.scene.text).toContain("they still sound like people");
-    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_manifest_handoff_goodbye"
@@ -5774,9 +5798,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds[0]).toBe("watch_mara_open_manifest");
     expect(choiceIds[1]).toBe("carry_mara_handoff_as_doors_open");
-    expect(observation.choices[1]?.label).toBe(
-      "Carry Mara's opened-door handoff straight to the third car"
-    );
+    expect(observation.choices[1]?.label).toBe("Carry Mara's opened-door handoff to the third car");
     expect(choiceIds[2]).toBe("ask_mara_to_sign_off_opened_manifest");
     expect(observation.choices[2]?.label).toBe(
       "Ask Mara to sign off before the opened passengers board"

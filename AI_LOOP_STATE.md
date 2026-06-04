@@ -1,3 +1,58 @@
+# Cycle 35 Manifest-Handoff Shortcut Visibility
+
+- Date: 2026-06-04
+- Main objective: Make the direct opened-door handoff route visit
+  `mara_manifest_handoff` instead of silently marking it seen.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 35 evidence shows health and the required true-ending
+  playthrough are green, but the 100-run random sample still missed
+  `mara_manifest_handoff` while reaching opened manifest handoff intercom
+  routes. One direct hub choice set `saw_mara_manifest_handoff` and jumped to
+  the intercom, which could permanently bypass the scene most clearly showing
+  Mara handing names forward.
+- Planned work:
+  - Route `carry_mara_handoff_as_doors_open` through
+    `mara_manifest_handoff`.
+  - Remove its early `heard_mara_goodbye` effect so the existing handoff scene
+    can present the board, listen, release, and passenger-payoff choices.
+  - Update focused regression coverage for the promoted route.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    promoted handoff route.
+- Risks:
+  - This adds one extra beat to a previously direct shortcut, so the choice
+    label must not promise an immediate intercom jump.
+  - The opened-manifest hub remains broad; small random samples may still miss
+    one optional scene, but this removes a bypass that hid it after setting
+    its seen flag.
+- Status:
+  - Completed.
+  - `carry_mara_handoff_as_doors_open` now routes through
+    `mara_manifest_handoff` and no longer sets `heard_mara_goodbye` before
+    the scene is visible.
+  - Updated the direct opened-door handoff regression so it verifies the
+    promoted handoff scene, the available follow-up choices, the intercom
+    continuation, and the final handoff ending.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-door handoff|manifest handoff"`.
+  - Story validation passed:
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Actual CLI play followed opened manifest -> carry Mara's opened-door
+    handoff -> `mara_manifest_handoff` -> board while Mara keeps calling names
+    -> manifest handoff intercom -> handoff true ending. Final score was 293
+    with no objectives.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - The promoted handoff beat makes the shortcut read as Mara actively handing
+    opened names forward instead of an invisible flag transition.
+  - The objective remains clear at the handoff scene, and the route still gives
+    a direct board-and-release path for players who intended the old shortcut.
+- Next step:
+  - Watch the next small random/blind sample for whether
+    `mara_manifest_handoff` appears more consistently. If it does, prioritize
+    any newly consolidated blind-play issue or late-game hub-return pressure.
+
 # Cycle 34 Reviewed-Count Release Chorus Gate
 
 - Date: 2026-06-04

@@ -1532,8 +1532,8 @@ scenes:
           set:
             saw_mara_manifest_handoff: true
       - id: carry_mara_handoff_as_doors_open
-        label: Carry Mara's opened-door handoff straight to the third car
-        to: mara_manifest_handoff_intercom
+        label: Carry Mara's opened-door handoff to the third car
+        to: mara_manifest_handoff
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
@@ -1544,7 +1544,6 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
-            heard_mara_goodbye: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off before the opened passengers board
         to: passenger_mara_signoff
