@@ -4594,11 +4594,17 @@ scenes:
           set:
             checked_missing_passenger_count: true
       - id: pull_release_before_reviewed_count_finishes
-        label: Pull the release before Mara has to finish the count
-        to: passenger_reviewed_count_true_ending
+        label: Start the release before Mara has to finish the count
+        to: passenger_counted_chorus
+        effects:
+          set:
+            passengers_finished_reviewed_count: true
       - id: pull_release_after_counted_manifest_goodbye
-        label: Pull the release while the reviewed count holds
-        to: passenger_counted_true_ending
+        label: Let the reviewed count become the passengers' chorus
+        to: passenger_counted_chorus
+        effects:
+          set:
+            passengers_finished_reviewed_count: true
 
   passenger_counted_chorus:
     routeImportance: optional

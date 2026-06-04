@@ -1998,7 +1998,8 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "check_opened_manifest_blank_row",
       "board_with_unanswered_row_resolved",
-      "pull_release_after_counted_manifest_goodbye"
+      "pull_release_after_counted_manifest_goodbye",
+      "pull_release_after_counted_chorus"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -2053,6 +2054,16 @@ describe("demo story critical paths", () => {
       "pull_release_before_reviewed_count_finishes",
       "pull_release_after_counted_manifest_goodbye"
     ]);
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "pull_release_before_reviewed_count_finishes"
+      )?.label
+    ).toBe("Start the release before Mara has to finish the count");
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "pull_release_after_counted_manifest_goodbye"
+      )?.label
+    ).toBe("Let the reviewed count become the passengers' chorus");
 
     const missingCountState = choose(story, state, "ask_who_reviewed_count_left_blank");
     observation = observe(story, missingCountState);
@@ -6630,6 +6641,17 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_counted_manifest_goodbye");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus",
+      "pull_release_while_reviewed_count_holds"
+    ]);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the reviewed count falls apart");
@@ -6689,6 +6711,13 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_after_counted_manifest_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
@@ -6789,7 +6818,14 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    const observation = observe(story, state);
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+
+    state = choose(story, state, "pull_release_while_reviewed_count_holds");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_reviewed_count_true_ending");
     expect(observation.scene.ending).toBe(true);

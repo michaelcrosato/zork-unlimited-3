@@ -1,3 +1,57 @@
+# Cycle 37 Reviewed-Count Intercom Chorus Gate
+
+- Date: 2026-06-04
+- Main objective: Make the reviewed-count intercom release choices visit
+  `passenger_counted_chorus` before either count ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 37 evidence is healthy, but the 100-run random sample still
+  missed `passenger_counted_chorus` and
+  `passenger_reviewed_count_true_ending` while coverage reached both. Prior
+  cycles promoted the reviewed-count scene and one direct release route, but
+  `passenger_counted_manifest_intercom` still allowed players to take an
+  immediate ending without seeing the passenger chorus that explains why the
+  count now belongs to the passengers.
+- Planned work:
+  - Route both reviewed-count intercom release choices through
+    `passenger_counted_chorus`.
+  - Rename the intercom choices so the first action reads as starting the
+    release/count transition rather than finishing it instantly.
+  - Update focused regression coverage for the intercom-to-chorus-to-ending
+    path.
+  - Run focused tests, full health, and an actual CLI playthrough through the
+    modified route.
+- Risks:
+  - This adds one more beat to a late route that already has several optional
+    count scenes, so labels need to keep the player oriented.
+  - Small random samples may still miss the branch because the opened-manifest
+    hub has many ideal endings.
+- Status:
+  - Completed.
+  - `pull_release_before_reviewed_count_finishes` and
+    `pull_release_after_counted_manifest_goodbye` now route to
+    `passenger_counted_chorus` and set `passengers_finished_reviewed_count`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "reviewed count|passengers finish Mara|reviewed manifest count|unanswered row"`.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+  - Actual CLI play followed opened manifest -> review opened count ->
+    reviewed-count intercom -> start release before Mara finishes the count ->
+    `passenger_counted_chorus` -> `passenger_reviewed_count_true_ending`.
+    Final score was 297 with no objectives.
+- Playtest feedback:
+  - The new "Start the release..." label reads more honestly than an immediate
+    ending label, because the next scene shows the passengers completing the
+    count before the final pull.
+  - The route now has a stronger emotional handoff: Mara begins the reviewed
+    count, the passengers turn it into a chorus, and the player chooses which
+    count payoff to finish.
+- Next step:
+  - Watch the next small random and blind samples for whether
+    `passenger_counted_chorus` and `passenger_reviewed_count_true_ending`
+    appear more reliably. If they do, move from discoverability fixes toward
+    richer story depth or transcript/report quality.
+
 # Cycle 36 Reviewed-Count Shortcut Review Gate
 
 - Date: 2026-06-04
