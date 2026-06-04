@@ -1,3 +1,51 @@
+# Cycle 41 Exploratory Evidence Fallback
+
+- Date: 2026-06-04
+- Main objective: Preserve actionable adaptive-route transcripts when MCP
+  evidence times out before the exploratory route can be recorded.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 41 health and coverage were green, but MCP validation and
+  playtest calls timed out and the adaptive exploratory section reported
+  "No exploratory transcript." That makes the loop say to inspect a stalled
+  route while withholding the route evidence needed to improve it.
+- Planned work:
+  - Reuse the adaptive least-visited choice heuristic locally against the
+    engine as a fallback when MCP evidence gathering fails.
+  - Mark the exploratory route source in the cycle report so future agents know
+    whether the route came from MCP or the fallback.
+  - Add a regression test proving unfinished fallback routes still include a
+    transcript, final scene, score, objectives, and available choices.
+  - Run health and play a real CLI route after implementation.
+- Risks:
+  - The fallback does not exercise the MCP server itself, so MCP failures still
+    need attention when they recur; the fallback only prevents blind
+    exploratory evidence.
+  - Source labeling must stay visible so agents do not mistake fallback
+    evidence for MCP verification.
+- Status:
+  - Completed.
+  - MCP evidence failures now fall back to a local adaptive route over
+    `stories/demo.yaml`, preserving the final scene, score, transcript, and
+    current choices in the report instead of showing "No exploratory
+    transcript."
+  - The adaptive route report now includes a source line so fallback evidence
+    is distinguishable from MCP evidence.
+  - Added a focused regression for an unfinished local fallback route.
+  - Focused test passed: `npm test -- tests/ai-loop.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 274 tests, story
+    validation, and coverage playtest with all 151 scenes visited and
+    `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed the standard Mara proof route to `true_ending`.
+    Final score was 305, objectives were empty, and the route transcript was
+    written under ignored `ai-runs/`.
+  - This change does not alter playable story content, but it improves the
+    next cycle's ability to diagnose exactly where exploratory play stalls.
+- Next step:
+  - If MCP timeouts recur, inspect the MCP server/client timeout behavior
+    directly. With the fallback in place, future reports should still include
+    enough exploratory transcript context to guide story or pacing fixes.
+
 # Cycle 40 Reviewed Count Speaker Bridge
 
 - Date: 2026-06-04

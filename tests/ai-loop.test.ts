@@ -6,10 +6,12 @@ import {
   getRestartSensitiveChangedPaths,
   idealEndingRate,
   parseMcpJsonResult,
+  runLocalExploratoryRouteForStory,
   parsePorcelainPaths,
   requiresLoopRestart,
   restartRequestedExitCode
 } from "../src/ai-loop.js";
+import type { Story } from "../src/schema.js";
 
 describe("AI loop restart detection", () => {
   it("requires a restart when loop runtime files change", () => {
@@ -102,5 +104,30 @@ describe("AI loop restart detection", () => {
         "choose_option"
       )
     ).toThrow(/MCP tool 'choose_option' returned non-JSON text: .*Choice 'return_to_service_room'/);
+  });
+
+  it("keeps adaptive exploratory evidence useful when the local fallback stops unfinished", () => {
+    const story: Story = {
+      id: "fallback-test",
+      title: "Fallback Test",
+      start: "hub",
+      scenes: {
+        hub: {
+          text: "Hub",
+          ending: false,
+          routeImportance: "main",
+          choices: [{ id: "wait", label: "Wait here", to: "hub" }]
+        }
+      }
+    };
+
+    const result = runLocalExploratoryRouteForStory(story, 41);
+
+    expect(result.ok).toBe(false);
+    expect(result.source).toBe("local-fallback");
+    expect(result.finalScene).toBe("hub");
+    expect(result.transcript).toContain("## Final State");
+    expect(result.transcript).toContain("Available choices:");
+    expect(result.transcript).toContain("Wait here (wait -> hub)");
   });
 });

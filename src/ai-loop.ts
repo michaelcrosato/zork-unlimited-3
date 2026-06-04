@@ -7,6 +7,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { appendCycleObservation } from "./ai-loop-observations.js";
 import type { CycleObservationInput } from "./ai-loop-observations.js";
+import { choose, initialState, observe } from "./engine.js";
 import {
   cycleSavePath,
   exploratoryMaxSteps,
@@ -20,6 +21,7 @@ import {
 } from "./ai-loop-metrics.js";
 import type { Story } from "./schema.js";
 import { loadStory } from "./story.js";
+import { renderTranscript } from "./transcript.js";
 
 export {
   cycleSavePath,
@@ -44,6 +46,7 @@ interface McpPlayResult {
   score?: string;
   transcript?: string;
   error?: string;
+  source?: "mcp" | "local-fallback";
 }
 
 interface McpEvidence {
@@ -373,6 +376,7 @@ ${(mcpPlay.transcript ?? mcpPlay.error ?? "No transcript.").slice(-3000)}
 ## Adaptive Exploratory MCP Route
 
 - Status: ${mcpEvidence.exploratory?.ok ? "PASS" : "INCOMPLETE"}
+- Source: ${mcpEvidence.exploratory?.source ?? "mcp"}
 - Final scene: ${mcpEvidence.exploratory?.finalScene ?? "unknown"}
 - Score: ${mcpEvidence.exploratory?.score ?? "unknown"}
 - Finding: ${
@@ -833,9 +837,11 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     };
   } catch (error) {
     await client.close().catch(() => undefined);
+    const exploratory = await runLocalExploratoryRoute("stories/demo.yaml", cycle);
     return {
       tools: [],
       missingRequiredTools: requiredTools,
+      exploratory,
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -931,12 +937,61 @@ async function runMcpExploratoryRoute(
       ok: observation.scene.ending,
       finalScene: observation.scene.id,
       score: `${observation.score.score}`,
-      transcript
+      transcript,
+      source: "mcp"
     };
   } catch (error) {
     return {
       ok: false,
       error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
+async function runLocalExploratoryRoute(storyPath: string, cycle: number): Promise<McpPlayResult> {
+  const story = await loadStory(storyPath);
+  return runLocalExploratoryRouteForStory(story, cycle);
+}
+
+export function runLocalExploratoryRouteForStory(story: Story, cycle: number): McpPlayResult {
+  try {
+    let state = initialState(story);
+    const history: string[] = [state.currentScene];
+    const rng = seededRandom(cycle + 4242);
+
+    for (let step = 0; step < exploratoryMaxSteps; step += 1) {
+      const observation = observe(story, state);
+      if (observation.scene.ending || observation.choices.length === 0) {
+        break;
+      }
+
+      const choiceVisits = observation.choices.map((choice) => {
+        const visits = history.filter((sceneId) => sceneId === choice.to).length;
+        return { choice, visits };
+      });
+      choiceVisits.sort((left, right) => left.visits - right.visits);
+
+      const minVisits = choiceVisits[0].visits;
+      const candidates = choiceVisits.filter((candidate) => candidate.visits === minVisits);
+      const selected = candidates[Math.floor(rng() * candidates.length)].choice;
+
+      state = choose(story, state, selected.id);
+      history.push(state.currentScene);
+    }
+
+    const observation = observe(story, state);
+    return {
+      ok: observation.scene.ending,
+      finalScene: observation.scene.id,
+      score: `${observation.score.score}`,
+      transcript: renderTranscript(story, state),
+      source: "local-fallback"
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+      source: "local-fallback"
     };
   }
 }
