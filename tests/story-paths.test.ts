@@ -5925,14 +5925,26 @@ describe("demo story critical paths", () => {
     state = choose(story, openedManifestState, "call_lunch_tin_roster_from_opened_manifest");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
-    expect(observation.scene.text).toContain("The worker reads the roster");
-    expect(observation.scene.text).toContain("counted him without keeping him");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster");
+    expect(observation.scene.text).toContain("CLOCK OUT AFTER EVERYONE ELSE");
+    expect(observation.scene.text).toContain("Dispatcher Vale");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_after_reading_lunch_tin_roster",
+      "hear_roster_clock_out_roll_call",
+      "pull_release_after_lunch_tin_roster"
+    ]);
+
+    state = choose(story, state, "hear_roster_clock_out_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
+    expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("counted him without keeping him");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_lunch_tin_roll_call"
     ]);
@@ -12256,8 +12268,8 @@ describe("demo story critical paths", () => {
       "board_with_passenger_morning_chorus",
       "follow_lunch_tin_latch",
       "listen_to_lunch_tin_latch_from_opened_manifest",
-      "call_lunch_tin_roster_from_opened_manifest",
       "study_opened_newspaper_transfer",
+      "call_lunch_tin_roster_from_opened_manifest",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
       "board_with_opened_manifest_echoes",

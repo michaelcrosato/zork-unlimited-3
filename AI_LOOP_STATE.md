@@ -1,3 +1,58 @@
+# Cycle 44 Opened-Manifest Lunch-Tin Roster Discovery
+
+- Date: 2026-06-04
+- Main objective: Make the lunch-tin roster route show up in normal play from
+  the opened-manifest branch.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. The current cycle's deterministic 100-run random evidence reached
+  the direct and checked lunch-tin endings, but still missed
+  `passenger_lunch_tin_intercom`, `passenger_lunch_tin_roll_call`,
+  `passenger_lunch_tin_roster`, and
+  `passenger_lunch_tin_roster_true_ending`. Coverage reached them, so the
+  problem was normal-play discoverability rather than unreachable content.
+- Planned work:
+  - Move the opened-manifest lunch-tin roster choice into the menu position
+    where current random exploration was already landing.
+  - Route that opened-manifest roster choice through
+    `passenger_lunch_tin_roster` instead of jumping directly to the roll call,
+    so the proof scene is actually seen before the payoff.
+  - Update ordering/path tests, run health, and play a CLI route through the
+    roster branch.
+- Risks:
+  - Reordering the opened-manifest menu may reduce normal random visibility for
+    `passenger_newspaper_transfer`; this cycle intentionally favors the
+    explicit lunch-tin miss called out by current evidence.
+  - The roster route should not erase direct lunch-tin or checked-count endings.
+- Status:
+  - Completed.
+  - `call_lunch_tin_roster_from_opened_manifest` now appears after
+    `study_opened_newspaper_transfer` and opens `passenger_lunch_tin_roster`.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest|lunch-tin"`.
+  - Fresh 100-run random sample now reaches
+    `passenger_lunch_tin_intercom`, `passenger_lunch_tin_roll_call`,
+    `passenger_lunch_tin_roster`,
+    `passenger_lunch_tin_roster_true_ending: 5`,
+    `passenger_lunch_tin_checked_true_ending: 1`, and
+    `passenger_lunch_tin_true_ending: 1`, with `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 274 tests, story
+    validation with all 153 scenes reachable, and coverage playtest with all
+    scenes visited and `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> lunch-tin roster -> roster
+    roll call -> `passenger_lunch_tin_roster_true_ending`. Final score was
+    280 with no objectives.
+  - The route now reads more coherently: the player sees the roster proof
+    before asking the worker to clock everyone out, instead of jumping straight
+    from the opened-manifest menu to the final roll call.
+  - The fresh random sample now leaves `passenger_newspaper_transfer`
+    unvisited, so the next cycle should watch whether the newspaper transfer
+    needs its own normal-play bridge.
+- Next step:
+  - If the next random/blind evidence still misses
+    `passenger_newspaper_transfer`, improve that branch's normal-play
+    placement without undoing the lunch-tin roster visibility.
+
 # Cycle 43 Checked Lunch-Tin Release Payoff
 
 - Date: 2026-06-04
