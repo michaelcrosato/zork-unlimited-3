@@ -1,3 +1,61 @@
+# Cycle 33 Opened-Ready Door-Echo Confirmation
+
+- Date: 2026-06-04
+- Main objective: Make `opened_manifest_echoes` show up more naturally during
+  ordinary opened-manifest play by routing manifest-ready boarding through the
+  door-echo confirmation beat.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 33 evidence is healthy overall, but the 100-run random sample
+  still missed `opened_manifest_echoes` while reaching many opened-passenger
+  endings. The echo scene is useful because it turns the manifest's item
+  sounds into people moving toward the third car, but it was easy to bypass in
+  direct ready-manifest routes.
+- Planned work:
+  - Route opened-manifest ready choices through `opened_manifest_echoes`.
+  - Add a clear continuation from the echo beat into
+    `passenger_manifest_ready_intercom`.
+  - Preserve existing manifest-ready flags and ideal-ending path.
+  - Update focused regression coverage and run health plus an actual CLI
+    playthrough.
+- Risks:
+  - This adds one extra confirmation scene before two manifest-ready routes,
+    so it must read like sensory payoff rather than friction.
+  - The opened-manifest hub remains broad, so small random samples may still
+    miss other optional beats.
+- Status:
+  - Implemented.
+  - `ready_opened_manifest_for_mara` and
+    `board_and_confirm_opened_manifest_ready` now visit
+    `opened_manifest_echoes` first and set `heard_passenger_echoes` alongside
+    their existing ready-manifest state.
+  - Added `confirm_ready_manifest_after_opened_echoes` to continue into the
+    existing `passenger_manifest_ready_intercom` route.
+  - Kept ready-manifest echo visits focused on that continuation so the new
+    beat does not become another broad branch hub during coverage search.
+  - Updated focused story-path tests for both ready-manifest branches.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened manifest|manifest ready|door-echo|echoes"`.
+  - Story validation passed:
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Actual CLI play followed opened manifest -> ready every opened name ->
+    opened door-echoes -> confirm every kept name -> manifest-ready intercom
+    -> Mara manifest intercom -> manifest true ending.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+- Playtest feedback:
+  - The inserted echo beat felt like a natural last listen before confirming
+    everyone is aboard, because the scene already says the sounds have
+    footsteps under them.
+  - The continuation label keeps agency clear: the player is not detouring
+    away from the ready-manifest plan, only confirming it through the
+    passengers' own signal.
+- Next step:
+  - Watch the next random/blind evidence for whether `opened_manifest_echoes`
+    appears in small samples. If it does, shift to richer late-game payoff or
+    blind-play digest issues; if not, promote the echo beat from another common
+    platform or train-car path.
+
 # Cycle 32 Echoed-Boarding Check Gate
 
 - Date: 2026-06-04

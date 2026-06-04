@@ -1813,7 +1813,7 @@ scenes:
             heard_passenger_echoes: true
       - id: ready_opened_manifest_for_mara
         label: Ready every opened manifest name on the third car
-        to: passenger_manifest_ready_intercom
+        to: opened_manifest_echoes
         requires:
           all:
             - notFlag: reviewed_open_manifest_count
@@ -1823,6 +1823,8 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+            heard_manifest_ready: true
+            heard_passenger_echoes: true
       - id: ask_conductor_to_read_opened_count
         label: Ask the conductor to read Mara's opened count clear
         to: passenger_conductor_count_roll_call
@@ -2100,7 +2102,7 @@ scenes:
             checked_answered_passengers: true
       - id: board_and_confirm_opened_manifest_ready
         label: Board and confirm every manifest passenger is aboard
-        to: passenger_manifest_ready_intercom
+        to: opened_manifest_echoes
         requires:
           all:
             - notFlag: heard_manifest_ready
@@ -2115,6 +2117,7 @@ scenes:
         effects:
           set:
             heard_manifest_ready: true
+            heard_passenger_echoes: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         to: passenger_platform
@@ -2235,11 +2238,20 @@ scenes:
       followed. Mara leaves the speaker open, waiting to hear whether you trust
       the passengers' own signal.
     choices:
+      - id: confirm_ready_manifest_after_opened_echoes
+        label: Confirm every kept name after the door-echoes answer
+        to: passenger_manifest_ready_intercom
+        requires:
+          all:
+            - flag: heard_manifest_ready
+            - notFlag: heard_mara_goodbye
       - id: check_listened_manifest_echoes
         label: Check the familiar echoes against the boarding passengers
         to: passenger_echoed_check
         requires:
-          notFlag: checked_echoed_passengers
+          all:
+            - notFlag: checked_echoed_passengers
+            - notFlag: heard_manifest_ready
         effects:
           set:
             heard_passenger_echoes: true
@@ -2249,7 +2261,9 @@ scenes:
         label: Board with the familiar echoes leading the way
         to: passenger_echoed_boarding
         requires:
-          notFlag: followed_opened_newspaper_fold
+          all:
+            - notFlag: followed_opened_newspaper_fold
+            - notFlag: heard_manifest_ready
         effects:
           set:
             echoed_manifest_boarded: true
@@ -2257,7 +2271,9 @@ scenes:
         label: Follow the newspaper fold into the restored transfer column
         to: passenger_newspaper_transfer
         requires:
-          notFlag: studied_newspaper_transfer
+          all:
+            - notFlag: studied_newspaper_transfer
+            - notFlag: heard_manifest_ready
         effects:
           set:
             heard_newspaper_memory: true
@@ -2266,7 +2282,9 @@ scenes:
         label: Return to the opened manifest doors
         to: passengers_released
         requires:
-          notFlag: followed_opened_newspaper_fold
+          all:
+            - notFlag: followed_opened_newspaper_fold
+            - notFlag: heard_manifest_ready
 
   passenger_manifest_count:
     routeImportance: optional
