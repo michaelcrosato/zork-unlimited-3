@@ -5229,6 +5229,14 @@ scenes:
       to move in the same direction. Every named street pulls the third car one
       stop closer to morning.
     choices:
+      - id: check_newspaper_departure_board
+        label: Check the departure board against the restored transfer
+        to: passenger_newspaper_departure_board
+        requires:
+          notFlag: checked_newspaper_departure_board
+        effects:
+          set:
+            checked_newspaper_departure_board: true
       - id: hear_final_newspaper_roll_call
         label: Hear the transfer column become the final roll call
         to: passenger_newspaper_roll_call
@@ -5239,6 +5247,29 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_gathered_intercom
         label: Pull the release while the transfer column holds
+        to: passenger_newspaper_true_ending
+
+  passenger_newspaper_departure_board:
+    routeImportance: optional
+    text: >
+      Above the third-car doors, the blank destination sign tries to spell HOME
+      and then falters. The newspaper woman lifts her restored transfer column
+      until the wet page catches the same light, and the board answers with
+      smaller words: Warden Street, morning transfer, and every stop the
+      passengers have named aloud. No one has to choose between home and where
+      they meant to go anymore. The board is not promising one destination. It
+      is promising that the line will stop taking destinations away.
+    choices:
+      - id: read_departure_board_into_newspaper_roll_call
+        label: Read the departure board into the final roll call
+        to: passenger_newspaper_roll_call
+        requires:
+          notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_final_roll_call: true
+      - id: pull_release_after_newspaper_departure_board
+        label: Pull the release once the board keeps every transfer
         to: passenger_newspaper_true_ending
 
   passenger_newspaper_roll_call:

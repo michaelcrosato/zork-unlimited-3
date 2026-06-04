@@ -1763,9 +1763,13 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_newspaper_departure_board",
       "hear_final_newspaper_roll_call",
       "pull_release_after_gathered_intercom"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "check_newspaper_departure_board")?.label
+    ).toBe("Check the departure board against the restored transfer");
     expect(
       observation.choices.find((choice) => choice.id === "hear_final_newspaper_roll_call")?.label
     ).toBe("Hear the transfer column become the final roll call");
@@ -1773,6 +1777,37 @@ describe("demo story critical paths", () => {
       observation.choices.find((choice) => choice.id === "pull_release_after_gathered_intercom")
         ?.label
     ).toBe("Pull the release while the transfer column holds");
+
+    const departureBoardState = choose(story, state, "check_newspaper_departure_board");
+    observation = observe(story, departureBoardState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_departure_board");
+    expect(observation.scene.text).toContain("the board answers with smaller words");
+    expect(observation.scene.text).toContain("where they meant to go");
+    expect(observation.scene.text).toContain("stop taking destinations away");
+    expect(observation.state.flags.checked_newspaper_departure_board).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_departure_board_into_newspaper_roll_call",
+      "pull_release_after_newspaper_departure_board"
+    ]);
+
+    const boardRollCallState = choose(
+      story,
+      departureBoardState,
+      "read_departure_board_into_newspaper_roll_call"
+    );
+    observation = observe(story, boardRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_roll_call");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+
+    observation = observe(
+      story,
+      choose(story, departureBoardState, "pull_release_after_newspaper_departure_board")
+    );
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expectIdealScore(observation.score);
 
     const rollCallState = choose(story, state, "hear_final_newspaper_roll_call");
     observation = observe(story, rollCallState);

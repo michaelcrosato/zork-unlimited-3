@@ -1,3 +1,55 @@
+# Cycle 48 Newspaper Departure Board
+
+- Date: 2026-06-04
+- Main objective: Add a small optional payoff beat to the common newspaper
+  route before its ideal ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the current cycle evidence is healthy: all scenes are visited,
+  random play has no unfinished runs, and normal play reaches newspaper endings
+  regularly. With discoverability pressure low, the best next improvement is
+  richer late-route texture without blocking the direct release.
+- Planned work:
+  - Add a `passenger_newspaper_departure_board` scene from the newspaper
+    intercom.
+  - Preserve direct release and final-roll-call choices from the newspaper
+    intercom.
+  - Add focused regression coverage for the new scene, flag, roll-call path,
+    and direct ending path.
+  - Run focused tests, validation, random/coverage playtests, full health, and
+    a CLI route through the new beat.
+- Risks:
+  - Adding another optional action to a branch with many variants could dilute
+    some random traffic across adjacent newspaper endings.
+  - The new HOME-sign contrast must clarify destination restoration without
+    making the route feel like a required detour.
+- Status:
+  - Completed.
+  - Added `passenger_newspaper_departure_board` as an optional check before the
+    newspaper ideal ending.
+  - Focused newspaper regression passed:
+    `npm test -- tests/story-paths.test.ts -t newspaper`.
+  - Story validation passed with 155 reachable scenes.
+  - Fresh 100-run random playtest visited
+    `passenger_newspaper_departure_board`, had `unvisitedScenes: []`, and had
+    `unfinished: 0`.
+  - Fresh coverage playtest visited all scenes, including the new departure
+    board, and had `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 275 tests, story
+    validation with all 155 scenes reachable, and coverage playtest with all
+    scenes visited and `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI play followed passenger platform -> newspaper memory ->
+    newspaper intercom -> departure board ->
+    `passenger_newspaper_true_ending`.
+  - The new beat cleanly reframes the HOME sign as a board that can hold every
+    restored transfer instead of one forced destination.
+  - The route ended with no objectives and the new
+    `checked_newspaper_departure_board` flag set.
+- Next step:
+  - Watch the next blind/random evidence for whether the newspaper route now
+    has enough late payoff, then prefer a similarly small clarity or texture
+    pass on another common ideal branch.
+
 # Cycle 47 Gathered Release Discoverability
 
 - Date: 2026-06-04
