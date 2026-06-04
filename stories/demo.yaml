@@ -1893,7 +1893,7 @@ scenes:
           set:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
-        label: Listen as the opened passengers finish Mara's count together
+        label: Listen as the opened passengers finish the count together
         to: passenger_counted_chorus
         requires:
           notFlag: passengers_finished_reviewed_count
@@ -1901,7 +1901,7 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
-            reviewed_count_release_ready: true
+            shared_count_release_ready: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
         to: passenger_echoed_boarding
@@ -2415,10 +2415,12 @@ scenes:
             heard_final_roll_call: true
       - id: board_with_unanswered_row_resolved
         label: Board once the unanswered row belongs to everyone
-        to: passenger_counted_manifest_intercom
+        to: passenger_counted_chorus
         effects:
           set:
-            heard_mara_goodbye: true
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
+            shared_count_release_ready: true
       - id: return_from_unanswered_row
         label: Return to the reviewed manifest count
         to: passenger_manifest_count
@@ -4631,6 +4633,8 @@ scenes:
       - id: pull_release_while_reviewed_count_holds
         label: Pull the release while Mara's reviewed count still holds
         to: passenger_reviewed_count_true_ending
+        requires:
+          notFlag: shared_count_release_ready
 
   passenger_morning_intercom:
     routeImportance: optional

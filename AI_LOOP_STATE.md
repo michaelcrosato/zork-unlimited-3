@@ -1,3 +1,65 @@
+# Cycle 39 Shared Count Payoff Balance
+
+- Date: 2026-06-04
+- Main objective: Make `passenger_counted_true_ending` easier to encounter in
+  normal play without undoing the reviewed-count payoff from Cycle 38.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 39 evidence is green overall, but the 100-run random sample
+  missed only `passenger_counted_true_ending` while coverage reached every
+  scene. Cycle 38 intentionally made explicitly reviewed-count routes suppress
+  the generic counted ending, so the next safest improvement is to make a
+  broad passenger-finished-count hub route expose both count payoffs.
+- Planned work:
+  - Keep explicit reviewed-count routes exclusive to
+    `passenger_reviewed_count_true_ending`.
+  - Change the broad opened-passenger count route so it does not set
+    `reviewed_count_release_ready`.
+  - Rename that route label away from Mara-specific reviewed-count language.
+  - Update focused regression coverage, run health, and play the adjusted
+    route through the CLI.
+- Risks:
+  - Small random samples can still miss one sibling count ending because the
+    opened-manifest hub has many late ideal endings.
+  - Showing two count release choices at the chorus can feel duplicative if
+    labels drift; keep the exclusive reviewed routes available for a cleaner
+    named payoff.
+- Status:
+  - Completed.
+  - `let_opened_passengers_finish_count` now uses the label "Listen as the
+    opened passengers finish the count together" and no longer sets
+    `reviewed_count_release_ready`.
+  - Added `shared_count_release_ready` as the counterpart context to
+    `reviewed_count_release_ready`: shared passenger-count routes now suppress
+    the reviewed-count release, while explicit Mara-reviewed routes still
+    suppress the generic counted release.
+  - `board_with_unanswered_row_resolved` now routes through
+    `passenger_counted_chorus`, matching its label that the blank row belongs
+    to everyone instead of sending the player through the reviewed-count
+    intercom.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "unanswered row|opened passengers finish|reviewed manifest count|reviewing Mara"`.
+  - Fresh 100-run random sample now reaches `passenger_counted_true_ending`
+    once with 0 unfinished runs. This deterministic sample no longer reaches
+    `passenger_reviewed_count_true_ending`, but full coverage still reaches
+    both sibling endings.
+  - Full `npm run health` passed after implementation: format check,
+    TypeScript, 272 tests, story validation, and coverage playtest with all
+    151 scenes visited. Coverage ending counts included
+    `passenger_counted_true_ending: 1837` and
+    `passenger_reviewed_count_true_ending: 6765`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> blank row ->
+    `board_with_unanswered_row_resolved` -> `passenger_counted_chorus` ->
+    `passenger_counted_true_ending`. Final score was 274 with no objectives.
+  - The missing-row branch now reads more naturally: once the blank row becomes
+    room for everyone, the next release is about passengers keeping track of
+    one another rather than Mara's reviewed proof.
+- Next step:
+  - Watch the next blind digest and random sample for whether the count
+    sibling endings keep alternating. If so, add clearer player-facing
+    language that distinguishes "Mara reviewed the count" from "the passengers
+    finished the shared count" at the opened-manifest hub.
+
 # Cycle 38 Reviewed-Count Payoff Context
 
 - Date: 2026-06-04
