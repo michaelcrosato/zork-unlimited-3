@@ -5817,7 +5817,7 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[6]).toBe("board_with_opened_manifest_reviewed_count");
     expect(observation.choices[6]?.label).toBe(
-      "Carry Mara's reviewed count onto the third-car speaker"
+      "Review Mara's opened count before carrying it to the speaker"
     );
     expect(choiceIds[7]).toBe("help_opened_passengers_gather");
     expect(observation.choices[7]?.label).toBe(
@@ -6637,7 +6637,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("surfaces direct boarding with Mara's reviewed count from the opened manifest", async () => {
+  it("surfaces the reviewed-count scene before the opened-manifest count reaches the speaker", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -6666,9 +6666,23 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_manifest_count");
+    expect(observation.scene.text).toContain("They need more than clearance");
+    expect(observation.scene.text).toContain("checks whether everyone made it through");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "finish_reviewed_count_before_boarding"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_with_reviewed_manifest_count"
+    );
+
+    state = choose(story, state, "board_with_reviewed_manifest_count");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_counted_manifest_intercom");
     expect(observation.scene.text).toContain("reviewed count");
-    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_counted_manifest_goodbye"

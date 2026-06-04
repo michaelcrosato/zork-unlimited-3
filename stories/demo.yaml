@@ -1585,8 +1585,8 @@ scenes:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
       - id: board_with_opened_manifest_reviewed_count
-        label: Carry Mara's reviewed count onto the third-car speaker
-        to: passenger_counted_manifest_intercom
+        label: Review Mara's opened count before carrying it to the speaker
+        to: passenger_manifest_count
         requires:
           all:
             - notFlag: reviewed_open_manifest_count
@@ -1596,7 +1596,6 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
-            heard_mara_goodbye: true
       - id: help_opened_passengers_gather
         label: Help the opened passengers gather by helping one another board
         to: passenger_gathered_boarding

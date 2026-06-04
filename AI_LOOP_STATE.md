@@ -1,3 +1,64 @@
+# Cycle 36 Reviewed-Count Shortcut Review Gate
+
+- Date: 2026-06-04
+- Main objective: Make the opened-manifest reviewed-count shortcut show
+  `passenger_manifest_count` before it can reach the third-car count intercom.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Cycle 36 evidence is healthy, but small random samples still miss
+  `passenger_counted_chorus` and `passenger_reviewed_count_true_ending` even
+  though coverage reaches them. One opened-manifest shortcut labeled as a
+  reviewed-count speaker route set `reviewed_open_manifest_count` and jumped
+  straight to `passenger_counted_manifest_intercom`, which let normal play
+  imply count progress without visibly reviewing what the count means.
+- Planned work:
+  - Route `board_with_opened_manifest_reviewed_count` through
+    `passenger_manifest_count`.
+  - Rename the choice so it promises reviewing the opened count before
+    carrying it to the speaker.
+  - Keep the existing intercom payoff available one choice later via
+    `board_with_reviewed_manifest_count`.
+  - Update focused regression coverage and run health plus an actual CLI
+    playthrough.
+- Risks:
+  - The opened-manifest hub is broad, so a 100-run random sample may still miss
+    the final reviewed-count ending even after removing this bypass.
+  - The shortcut now adds one extra beat, so its label must make the review
+    stop feel intentional rather than like a delayed board action.
+- Status:
+  - Completed.
+  - `board_with_opened_manifest_reviewed_count` now routes to
+    `passenger_manifest_count`, sets only `reviewed_open_manifest_count`, and
+    leaves `heard_mara_goodbye` unset until the player chooses an actual
+    speaker/intercom continuation.
+  - Updated the player-facing label to "Review Mara's opened count before
+    carrying it to the speaker."
+  - Updated regression coverage so the shortcut must expose
+    `passenger_manifest_count`, offer both the chorus and intercom follow-ups,
+    and still reach the existing count intercom payoff.
+  - Focused regression passed:
+    `npm test -- tests/story-paths.test.ts -t "reviewed-count scene|reviewed count|opened count"`.
+  - Actual CLI play followed opened manifest -> reviewed-count shortcut ->
+    `passenger_manifest_count` -> `passenger_counted_chorus` ->
+    `passenger_reviewed_count_true_ending`. Final score was 274 with no
+    objectives.
+  - `npm run health` passed after implementation: format check, TypeScript,
+    272 tests, story validation, and coverage playtest with all 151 scenes
+    visited.
+  - Fresh 100-run random summary remained unchanged for the two missed count
+    scenes, which suggests the broad opened-manifest hub still dilutes this
+    optional branch in small samples.
+- Playtest feedback:
+  - The promoted review beat makes the shortcut read more honestly: Mara
+    reviews the count on-page before the player decides whether to finish the
+    chorus or carry the count to the speaker.
+  - The reviewed-count ending route now has a clean three-beat shape from the
+    hub: review what the count is doing, let passengers complete it, then pull
+    while it still holds.
+- Next step:
+  - If no blind-play digest issue appears, improve the hub pressure around
+    the count branch itself, likely by making one common manifest-ready or
+    train-car release route visit `passenger_counted_chorus` before ending.
+
 # Cycle 35 Manifest-Handoff Shortcut Visibility
 
 - Date: 2026-06-04
