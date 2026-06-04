@@ -5033,6 +5033,22 @@ scenes:
       - id: pull_release_after_lunch_tin_intercom
         label: Pull the release while the lunch tin keeps time
         to: passenger_lunch_tin_true_ending
+        requires:
+          all:
+            - notFlag: checked_lunch_tin_passengers
+            - notFlag: read_lunch_tin_roster
+      - id: pull_release_after_checked_lunch_tin_intercom
+        label: Pull the release after the checked lunch-tin count
+        to: passenger_lunch_tin_checked_true_ending
+        requires:
+          all:
+            - flag: checked_lunch_tin_passengers
+            - notFlag: read_lunch_tin_roster
+      - id: pull_release_after_roster_lunch_tin_intercom
+        label: Pull the release after the roster clocks everyone out
+        to: passenger_lunch_tin_roster_true_ending
+        requires:
+          flag: read_lunch_tin_roster
 
   passenger_lunch_tin_check:
     routeImportance: optional
@@ -5093,7 +5109,7 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_lunch_tin_roster
         label: Pull the release after the worker clocks everyone out
-        to: passenger_lunch_tin_true_ending
+        to: passenger_lunch_tin_roster_true_ending
 
   passenger_lunch_tin_roll_call:
     routeImportance: optional
@@ -5109,7 +5125,7 @@ scenes:
     choices:
       - id: pull_release_after_lunch_tin_roll_call
         label: Pull the release after the roster clocks everyone out
-        to: passenger_lunch_tin_true_ending
+        to: passenger_lunch_tin_roster_true_ending
 
   passenger_mitten_intercom:
     routeImportance: optional
@@ -5775,6 +5791,39 @@ scenes:
       inside has become a row of clocked-out names, and the tin holds only
       steam, daylight, and the quiet proof that everyone got a break at last.
       The line has nothing left to keep.
+    choices: []
+
+  passenger_lunch_tin_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once after the lunch-tin worker's checked
+      count. He does not move until the child has both mittens, the newspaper
+      woman has her transfer, the conductor has raised his punch, and Mara's
+      badge is warm against the handle. Only then does his latch click for
+      himself. The car exhales into rain-bright morning without leaving a
+      hidden passenger behind the word passenger, and the tin swings open in
+      his hand like the end of a shift finally witnessed by everyone on it.
+      The line has no missed count left to keep.
+    choices: []
+
+  passenger_lunch_tin_roster_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once after the roster clocks everyone
+      out. The worker reads the last names into the rain-bright morning, draws
+      one final line through his own overtime, and lets the lunch tin fall open
+      with nothing inside but steam and daylight. Child, newspaper woman,
+      conductor, dispatcher, worker: each proof of return is already written in
+      the margin, and none of it belongs to the line anymore. The time card
+      waits on the seat, finished at last.
     choices: []
 
   passenger_conductor_true_ending:

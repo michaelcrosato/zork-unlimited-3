@@ -1,3 +1,55 @@
+# Cycle 42 Lunch-Tin Payoff Variants
+
+- Date: 2026-06-04
+- Main objective: Make the common lunch-tin passenger route remember whether
+  the player checked the count or read the roster before pulling the release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current cycle evidence is green with all scenes visited. The
+  adaptive exploratory route ended at `passenger_lunch_tin_true_ending`, so the
+  best next improvement is story depth on a route normal play already reaches
+  rather than another discoverability bridge.
+- Planned work:
+  - Keep the direct lunch-tin release on the existing ending.
+  - Add a checked-count ending for players who verify the lunch-tin count before
+    carrying it back to Mara's speaker.
+  - Add a roster ending for players who read the roster or turn the count into
+    the final roll call.
+  - Update focused path tests, run health, and play a CLI route to one new
+    ending.
+- Risks:
+  - More ideal ending variants can make summary counts noisier, but the scenes
+    stay in existing `endingGroup`/`endingFamily` metadata and do not introduce
+    side lists.
+  - The intercom now has state-specific release choices; future edits should
+    preserve mutually exclusive requirements so duplicate release choices do
+    not appear.
+- Status:
+  - Completed.
+  - Added `passenger_lunch_tin_checked_true_ending` and
+    `passenger_lunch_tin_roster_true_ending`.
+  - Routed checked-count intercom release to the checked ending and roster or
+    roll-call release to the roster ending.
+  - Focused lunch-tin regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Focused opened-manifest count regression passed:
+    `npm test -- tests/story-paths.test.ts -t "opened-manifest count"`.
+  - Full `npm run health` passed: format check, TypeScript, 274 tests, story
+    validation, and coverage playtest with all 153 scenes visited,
+    `unfinished: 0`, `passenger_lunch_tin_roster_true_ending: 11681`,
+    `passenger_lunch_tin_checked_true_ending: 5841`, and
+    `passenger_lunch_tin_true_ending: 5841`.
+- Playtest feedback:
+  - Actual CLI play followed passenger answers -> lunch-tin boarding -> roster
+    proof -> final roster roll call -> `passenger_lunch_tin_roster_true_ending`.
+    Final score was 315 with no objectives.
+  - The roster route now feels like it pays off the player's extra inspection:
+    the ending explicitly clocks out the worker and names the passenger proofs
+    instead of returning to the generic lunch-tin count text.
+- Next step:
+  - Watch the next random/blind samples for whether the added lunch-tin ending
+    variants make passenger-core summaries too noisy. If not, apply the same
+    state-specific payoff approach to another common passenger helper route.
+
 # Cycle 41 Exploratory Evidence Fallback
 
 - Date: 2026-06-04
