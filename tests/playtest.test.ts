@@ -137,6 +137,7 @@ describe("playtest strategies", () => {
 
     expect(report.summary.unfinished).toBe(0);
     expect(report.summary.frontierSamples).toBeGreaterThan(0);
+    expect(report.summary.runs).toBeLessThanOrEqual(Object.keys(story.scenes).length + 100);
     expect(report.summary.unvisitedScenes).toEqual([]);
     expect(trueEndingCount(report.summary.endings)).toBeGreaterThan(0);
     expect(report.summary.bestScore).toBeGreaterThan(0);

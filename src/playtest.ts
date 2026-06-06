@@ -1,5 +1,5 @@
-import { choose, initialState, observe } from "./engine.js";
-import { Condition, GameState, Story } from "./schema.js";
+import { canChoose, choose, initialState, observe } from "./engine.js";
+import { Choice, Condition, GameState, Scene, Story } from "./schema.js";
 import { scoreState } from "./score.js";
 
 export type PlaytestStrategy = "random" | "coverage" | "goal";
@@ -29,6 +29,11 @@ export interface PlaytestReport {
     bestScoreRuns: number;
   };
   runs: PlaytestRun[];
+}
+
+interface CoverageObservation {
+  scene: Scene & { id: string };
+  choices: Choice[];
 }
 
 export function runRandomPlaytests(
@@ -84,7 +89,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
     if (seen.has(signature)) continue;
     seen.add(signature);
 
-    const observation = observe(story, current.state);
+    const observation = observeForCoverage(story, current.state);
     expandedScenes.add(observation.scene.id);
     if (!reportedScenes.has(observation.scene.id) && !observation.scene.ending) {
       reportedScenes.add(observation.scene.id);
@@ -101,17 +106,20 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
     }
 
     if (observation.scene.ending || observation.choices.length === 0 || current.steps >= maxSteps) {
+      const shouldRecord = !reportedScenes.has(observation.scene.id) || runs.length < maxRuns;
       reportedScenes.add(observation.scene.id);
-      runs.push({
-        run: runs.length + 1,
-        status: classifyStoppedRun(observation.scene.ending, observation.choices.length, true),
-        ended: observation.scene.ending,
-        finalScene: observation.scene.id,
-        steps: current.steps,
-        path: current.path,
-        readablePath: describePath(story, current.path),
-        ...scoreOnly(story, current.state)
-      });
+      if (shouldRecord) {
+        runs.push({
+          run: runs.length + 1,
+          status: classifyStoppedRun(observation.scene.ending, observation.choices.length, true),
+          ended: observation.scene.ending,
+          finalScene: observation.scene.id,
+          steps: current.steps,
+          path: current.path,
+          readablePath: describePath(story, current.path),
+          ...scoreOnly(story, current.state)
+        });
+      }
       continue;
     }
 
@@ -122,7 +130,7 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
       const steps = current.steps + 1;
 
       if (!reportedScenes.has(next.currentScene)) {
-        const nextObservation = observe(story, next);
+        const nextObservation = observeForCoverage(story, next);
         reportedScenes.add(next.currentScene);
         runs.push({
           run: runs.length + 1,
@@ -169,6 +177,18 @@ function runCoveragePlaytests(story: Story, maxRuns: number, maxSteps: number): 
   }
 
   return runs;
+}
+
+function observeForCoverage(story: Story, state: GameState): CoverageObservation {
+  const scene = story.scenes[state.currentScene];
+  if (!scene) {
+    throw new Error(`Current scene does not exist: ${state.currentScene}`);
+  }
+
+  return {
+    scene: { ...scene, id: state.currentScene },
+    choices: scene.choices.filter((choice) => canChoose(state, choice))
+  };
 }
 
 function stateSignature(state: GameState, relevantFlags?: Set<string>): string {
