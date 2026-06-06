@@ -618,7 +618,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.promised_mara).toBe(true);
     expect(observation.state.inventory).toEqual(["badge", "fuse", "token"]);
     expect(observation.objectives[0]).toBe("Recover the marked Platform 13 map before boarding.");
-    expect(mapChoice?.label).toBe("Take the marked Platform 13 map Mara asked for");
+    expect(mapChoice?.label).toBe("Take the marked Platform 13 map from the desk");
     expect(observation.choices.map((choice) => choice.id)).not.toContain("return_to_tunnel");
     expect(observation.choices.map((choice) => choice.id)).not.toContain("go_to_platform");
   });

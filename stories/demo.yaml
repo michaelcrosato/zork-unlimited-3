@@ -451,7 +451,7 @@ scenes:
       red pencil.
     choices:
       - id: take_map
-        label: Take the marked Platform 13 map Mara asked for
+        label: Take the marked Platform 13 map from the desk
         to: service_room
         requires:
           notItem: map
@@ -3922,7 +3922,7 @@ scenes:
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
       - id: pull_release_after_echoed_boarding
-        label: Pull the release while the familiar echoes answer
+        label: Check the familiar echoes before pulling the release
         to: passenger_echoed_check
         requires:
           all:
