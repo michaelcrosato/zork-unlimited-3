@@ -2304,3 +2304,52 @@ tests/ai-loop.test.ts`
 
 - Consider a CLI convenience mode for choosing by visible numeric index when
   manually smoke-testing routes outside MCP/player-view tooling.
+
+## 2026-06-06 - Repository Audit Stabilization
+
+### Changes
+
+- Hardened the CLI subprocess tests with explicit child-process and Vitest
+  timeouts so `npm run health` does not depend on the default 5-second test
+  budget on slower mounted filesystems.
+- Ran one autonomous evidence cycle and recorded the resulting observation.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - `npm run ai:cycle`
+  - Manual CLI route from `entrance` to `passenger_echoed_true_ending`
+- Quantitative metrics:
+  - Tests: 15 files, 275 tests passing
+  - Validation: 155 scenes, 31 endings, 155 reachable scenes
+  - Coverage self-play: 135,115 effective runs, 0 unfinished, all scenes visited
+  - Manual route: reached `passenger_echoed_true_ending` with score 360
+- What worked:
+  - Objectives narrowed cleanly after collecting the lantern, token, map, fuse,
+    badge, and ledger proof.
+  - The notice, badge back, gate control, and ledger all fairly signposted the
+    ideal passenger route.
+  - The final passenger-echo route recovered cleanly after an optional
+    confirmation beat.
+- What felt bad/confusing:
+  - `passengers_released` presents a very large choice list. The direct route is
+    still findable, but the density briefly slows the late-game climax.
+  - The label "Pull the release while the familiar echoes answer" led to a
+    confirmation scene before the actual ending, which felt slightly more
+    indirect than the wording implied.
+- Bugs found:
+  - `npm run health` could fail spuriously when `tests/cli.test.ts` subprocess
+    cases exceeded Vitest's default timeout during the full chained gate.
+
+### Evaluation
+
+- Repository health and evidence generation are green after the CLI test
+  stabilization.
+- Gameplay remained playable through a real route to an ideal ending.
+
+### Next Iteration
+
+- Consider condensing or ranking the `passengers_released` choice surface so the
+  direct emergency-release path stays visually prominent after the larger rescue
+  opens.
