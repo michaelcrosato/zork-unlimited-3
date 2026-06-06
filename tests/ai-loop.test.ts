@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  agentAuthFailureExitCode,
   cycleSavePath,
   exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
   idealEndingRate,
+  isAgentAuthenticationFailure,
   parseMcpJsonResult,
   runLocalExploratoryRouteForStory,
   parsePorcelainPaths,
@@ -32,6 +34,10 @@ describe("AI loop restart detection", () => {
 
   it("uses a stable restart-request exit code for loop.sh", () => {
     expect(restartRequestedExitCode).toBe(75);
+  });
+
+  it("uses a stable agent-auth failure exit code for loop.sh", () => {
+    expect(agentAuthFailureExitCode).toBe(76);
   });
 
   it("does not require a restart for ordinary story, docs, or test changes", () => {
@@ -104,6 +110,15 @@ describe("AI loop restart detection", () => {
         "choose_option"
       )
     ).toThrow(/MCP tool 'choose_option' returned non-JSON text: .*Choice 'return_to_service_room'/);
+  });
+
+  it("recognizes non-retryable nested agent authentication failures", () => {
+    expect(
+      isAgentAuthenticationFailure(
+        "ERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header"
+      )
+    ).toBe(true);
+    expect(isAgentAuthenticationFailure("MCP error -32001: Request timed out")).toBe(false);
   });
 
   it("keeps adaptive exploratory evidence useful when the local fallback stops unfinished", () => {

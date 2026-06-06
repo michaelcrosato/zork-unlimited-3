@@ -74,7 +74,7 @@ if [[ "$EVIDENCE_ONLY" == "1" ]]; then
 elif [[ -z "${AI_AGENT_CMD:-}" ]]; then
   if command -v codex >/dev/null 2>&1; then
     CODEX_SANDBOX="${AI_CODEX_SANDBOX:-workspace-write}"
-    export AI_AGENT_CMD="codex exec --cd \"$ROOT_DIR\" --sandbox \"$CODEX_SANDBOX\" -"
+    export AI_AGENT_CMD="codex exec --ephemeral --cd \"$ROOT_DIR\" --sandbox \"$CODEX_SANDBOX\" -"
   else
     export AI_LOOP_EVIDENCE_ONLY=1
     echo "No AI_AGENT_CMD set and codex was not found; running evidence-only."
@@ -96,6 +96,7 @@ if [[ "$RUN_ONCE" == "1" ]]; then
 fi
 
 RESTART_EXIT_CODE=75
+AGENT_AUTH_FAILURE_EXIT_CODE=76
 
 while true; do
   set +e
@@ -106,6 +107,11 @@ while true; do
   if [[ "$status" == "$RESTART_EXIT_CODE" && "${AI_LOOP_AUTO_RESTART:-1}" != "0" ]]; then
     echo "AI loop requested a fresh process after runtime changes; restarting ./loop.sh."
     exec "$0" "$@"
+  fi
+
+  if [[ "$status" == "$AGENT_AUTH_FAILURE_EXIT_CODE" ]]; then
+    echo "AI loop stopped after an agent authentication failure. Fix AI_AGENT_CMD credentials or run ./loop.sh --evidence-only."
+    exit "$status"
   fi
 
   if [[ "$status" != "0" && "${AI_LOOP_EXIT_ON_ERROR:-0}" != "1" ]]; then

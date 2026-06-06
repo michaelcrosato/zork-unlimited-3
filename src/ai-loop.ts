@@ -34,6 +34,8 @@ export {
   restartRequestedExitCode
 } from "./ai-loop-metrics.js";
 
+export const agentAuthFailureExitCode = 76;
+
 interface CommandResult {
   command: string;
   exitCode: number;
@@ -160,6 +162,13 @@ async function main(): Promise<void> {
       console.log(`Wrote ${agentPath}`);
       if (agentResult.exitCode !== 0) {
         console.error(`AI agent command failed with exit code ${agentResult.exitCode}.`);
+        if (isAgentAuthenticationFailure(agentResult.output)) {
+          console.error(
+            "AI agent command failed with an authentication error; stopping the loop instead of retrying doomed cycles. Fix AI_AGENT_CMD credentials or run ./loop.sh --evidence-only."
+          );
+          stopped = true;
+          process.exitCode = agentAuthFailureExitCode;
+        }
       }
       const postAgentResult = await runPostAgentAutomation(cycle, agentResult, baselineStatus);
       await writeText(postAgentPath, renderPostAgentResult(postAgentResult));
@@ -1157,6 +1166,15 @@ ${(result.mcpPlay?.transcript ?? result.mcpPlay?.error ?? "").slice(-3000)}
 
 function shellQuote(value: string): string {
   return `'${value.replace(/'/g, `'\\''`)}'`;
+}
+
+export function isAgentAuthenticationFailure(output: string): boolean {
+  return (
+    /401 Unauthorized/i.test(output) ||
+    /Missing bearer or basic authentication/i.test(output) ||
+    /invalid api key/i.test(output) ||
+    /authentication (?:failed|required)/i.test(output)
+  );
 }
 
 async function getChangedPathsSince(baselineHead: string): Promise<string[]> {

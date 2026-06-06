@@ -66,7 +66,7 @@ to the repo workspace, while the outer loop handles commits and pushes after
 verification:
 
 ```bash
-codex exec --cd "$PWD" --sandbox workspace-write -
+codex exec --ephemeral --cd "$PWD" --sandbox workspace-write -
 ```
 
 Use `AI_CODEX_SANDBOX=danger-full-access` only for a trusted disposable
@@ -104,6 +104,9 @@ Run without allowing an agent to edit the repo:
 - If the Node loop exits unexpectedly, `./loop.sh` retries instead of ending the
   unattended run. Set `AI_LOOP_EXIT_ON_ERROR=1` when debugging and you want the
   shell wrapper to stop on the first unexpected failure.
+- If the default Codex agent exits with an authentication error, `./loop.sh`
+  stops instead of retrying the same doomed cycle. Fix Codex credentials, set a
+  working `AI_AGENT_CMD`, or use `./loop.sh --evidence-only`.
 - `AI_LOOP_DELAY_MS` controls the delay between cycles.
 - `AI_LOOP_MAX_CYCLES` limits the loop for dry runs.
 - `AI_AGENT_TIMEOUT_MS` controls the per-agent timeout.
