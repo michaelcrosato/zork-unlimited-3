@@ -149,13 +149,14 @@ Run the stdio MCP server from the project root:
 npm run mcp
 ```
 
-Agent/client config generally needs this command:
+Agent/client config should start the server directly so stdout remains MCP JSON:
 
 ```json
 {
-  "command": "npm",
-  "args": ["run", "mcp"],
-  "cwd": "/home/michael_crosato/projects/zork-unlimited-3"
+  "command": "node",
+  "args": ["--import", "tsx", "src/mcp.ts"],
+  "cwd": "/absolute/path/to/zork-unlimited-3",
+  "startup_timeout_sec": 60
 }
 ```
 

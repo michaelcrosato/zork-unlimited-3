@@ -1,5 +1,8 @@
 node_modules/
 .git/
+.codex/.tmp/
+.codex/skills/
+.codex/sessions/
 saves/
 transcripts/
 ai-runs/

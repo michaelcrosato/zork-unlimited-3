@@ -1,5 +1,11 @@
 node_modules/
 .codex/tmp/
+.codex/.tmp/
+.codex/skills/
+.codex/sessions/
+.codex/*.sqlite
+.codex/*.sqlite-*
+.codex/installation_id
 dist/
 saves/*.json
 transcripts/*.md

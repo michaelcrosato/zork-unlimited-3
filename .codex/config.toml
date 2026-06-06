@@ -1,7 +1,7 @@
 [mcp_servers.zork_unlimited]
 command = "node"
 args = ["--import", "tsx", "src/mcp.ts"]
-cwd = "/home/michael_crosato/projects/zork-unlimited-3"
-startup_timeout_sec = 20
+cwd = "."
+startup_timeout_sec = 60
 tool_timeout_sec = 60
 enabled = true

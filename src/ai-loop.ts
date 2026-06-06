@@ -116,6 +116,9 @@ const agentTimeoutMs = Number(process.env.AI_AGENT_TIMEOUT_MS ?? "3600000");
 const autoCommit = process.env.AI_LOOP_AUTO_COMMIT !== "0";
 const autoPush = process.env.AI_LOOP_AUTO_PUSH !== "0";
 const allowDirtyBaseline = process.env.AI_LOOP_ALLOW_DIRTY_BASELINE === "1";
+const mcpStartupRequestOptions = { timeout: 120000 };
+const mcpQuickRequestOptions = { timeout: 120000 };
+const mcpLongRequestOptions = { timeout: 300000 };
 
 let stopped = false;
 process.on("SIGINT", () => {
@@ -727,16 +730,22 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
   });
 
   try {
-    await client.connect(transport);
-    const tools = (await client.listTools()).tools.map((tool) => tool.name).sort();
+    await client.connect(transport, mcpStartupRequestOptions);
+    const tools = (await client.listTools(undefined, mcpQuickRequestOptions)).tools
+      .map((tool) => tool.name)
+      .sort();
     const missingRequiredTools = requiredTools.filter((tool) => !tools.includes(tool));
 
     // 1. Story discovery
     const storiesRes = parseMcpJsonResult(
-      await client.callTool({
-        name: "list_stories",
-        arguments: {}
-      }),
+      await client.callTool(
+        {
+          name: "list_stories",
+          arguments: {}
+        },
+        undefined,
+        mcpQuickRequestOptions
+      ),
       "list_stories"
     );
     const mainStory =
@@ -744,10 +753,14 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
 
     // 2. Story validation
     const validateStory = parseMcpJsonResult(
-      await client.callTool({
-        name: "validate_story",
-        arguments: { storyPath: mainStory }
-      }),
+      await client.callTool(
+        {
+          name: "validate_story",
+          arguments: { storyPath: mainStory }
+        },
+        undefined,
+        mcpQuickRequestOptions
+      ),
       "validate_story"
     );
     if (!validateStory.ok) {
@@ -758,16 +771,20 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
 
     // 3. Automated playtest evidence with random strategy (include runs to inspect suspicious samples)
     const randomPlaytestRes = parseMcpJsonResult(
-      await client.callTool({
-        name: "run_playtest",
-        arguments: {
-          storyPath: mainStory,
-          runs: 250,
-          maxSteps: 80,
-          strategy: "random",
-          includeRuns: true
-        }
-      }),
+      await client.callTool(
+        {
+          name: "run_playtest",
+          arguments: {
+            storyPath: mainStory,
+            runs: 250,
+            maxSteps: 80,
+            strategy: "random",
+            includeRuns: true
+          }
+        },
+        undefined,
+        mcpLongRequestOptions
+      ),
       "run_playtest"
     );
     const randomSummary = randomPlaytestRes.summary;
@@ -789,30 +806,38 @@ async function runMcpEvidence(cycle: number): Promise<McpEvidence> {
     }
 
     const coverageSummary = parseMcpJsonResult(
-      await client.callTool({
-        name: "run_playtest",
-        arguments: {
-          storyPath: mainStory,
-          runs: 100,
-          maxSteps: 60,
-          strategy: "coverage",
-          includeRuns: false
-        }
-      }),
+      await client.callTool(
+        {
+          name: "run_playtest",
+          arguments: {
+            storyPath: mainStory,
+            runs: 100,
+            maxSteps: 60,
+            strategy: "coverage",
+            includeRuns: false
+          }
+        },
+        undefined,
+        mcpLongRequestOptions
+      ),
       "run_playtest"
     ).summary;
 
     const goalSummary = parseMcpJsonResult(
-      await client.callTool({
-        name: "run_playtest",
-        arguments: {
-          storyPath: mainStory,
-          runs: 10,
-          maxSteps: 40,
-          strategy: "goal",
-          includeRuns: false
-        }
-      }),
+      await client.callTool(
+        {
+          name: "run_playtest",
+          arguments: {
+            storyPath: mainStory,
+            runs: 10,
+            maxSteps: 40,
+            strategy: "goal",
+            includeRuns: false
+          }
+        },
+        undefined,
+        mcpLongRequestOptions
+      ),
       "run_playtest"
     ).summary;
 
@@ -1182,7 +1207,7 @@ async function runMcpPlaythrough(cycle: number): Promise<McpPlayResult> {
   });
 
   try {
-    await client.connect(transport);
+    await client.connect(transport, mcpStartupRequestOptions);
     const result = await runMcpRoute(client, savePath, choices, "true_ending");
     await client.close();
     return result;
