@@ -9733,7 +9733,8 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "tap_paired_mittens_for_missing_name",
       "hear_final_mitten_roll_call",
-      "pull_release_after_mitten_child_intercom"
+      "pull_release_after_mitten_child_intercom",
+      "confirm_paired_mittens_from_intercom"
     ]);
 
     state = choose(story, state, "pull_release_after_mitten_child_intercom");
@@ -9804,7 +9805,8 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "tap_paired_mittens_for_missing_name",
       "hear_final_mitten_roll_call",
-      "pull_release_after_mitten_child_intercom"
+      "pull_release_after_mitten_child_intercom",
+      "confirm_paired_mittens_from_intercom"
     ]);
 
     state = choose(story, state, "pull_release_after_mitten_child_intercom");
@@ -10279,7 +10281,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_mitten_roll_call"
+      "pull_release_after_mitten_roll_call",
+      "confirm_mitten_pair_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_mitten_roll_call");
@@ -10329,10 +10332,22 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "tap_paired_mittens_for_missing_name",
       "hear_final_mitten_roll_call",
-      "pull_release_after_mitten_child_intercom"
+      "pull_release_after_mitten_child_intercom",
+      "confirm_paired_mittens_from_intercom"
     ]);
 
-    state = choose(story, state, "pull_release_after_mitten_child_intercom");
+    state = choose(story, state, "confirm_paired_mittens_from_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_check");
+    expect(observation.scene.text).toContain("both mittened palms");
+    expect(observation.scene.text).toContain("Both hands accounted for");
+    expect(observation.state.flags.confirmed_mitten_pair).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_mitten_pair"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_mitten_pair");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
@@ -10379,19 +10394,37 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mitten_pair_memory).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_roll_call_after_paired_mittens",
-      "pull_release_after_paired_mittens"
+      "pull_release_after_paired_mittens",
+      "confirm_paired_mittens_after_memory"
     ]);
 
-    state = choose(story, state, "hear_roll_call_after_paired_mittens");
+    const pairMemoryState = state;
+    const pairCheckState = choose(story, pairMemoryState, "confirm_paired_mittens_after_memory");
+    observation = observe(story, pairCheckState);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_check");
+    expect(observation.state.flags.confirmed_mitten_pair).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_mitten_pair"
+    ]);
+
+    state = choose(story, pairMemoryState, "hear_roll_call_after_paired_mittens");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_mitten_roll_call"
+      "pull_release_after_mitten_roll_call",
+      "confirm_mitten_pair_before_release"
     ]);
 
-    state = choose(story, state, "pull_release_after_mitten_roll_call");
+    state = choose(story, state, "confirm_mitten_pair_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_check");
+    expect(observation.state.flags.confirmed_mitten_pair).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_mitten_pair");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");

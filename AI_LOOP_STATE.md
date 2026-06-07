@@ -1,3 +1,72 @@
+# Cycle 60 Returned-Mitten Door Confirmation
+
+- Date: 2026-06-07
+- Main objective: Add an optional final paired-mitten confirmation beat before
+  the returned-mitten passenger ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current cycle evidence is green and random play reaches
+  `passenger_mitten_true_ending` regularly. Recent high-traffic passenger
+  endings gained optional final witness checks, but the returned-mitten route
+  still moves from the child's intercom or roll call directly to release.
+- Planned work:
+  - Add a focused `passenger_mitten_pair_check` scene that confirms the child's
+    returned mitten and the person who carried it are both physically through
+    the door.
+  - Expose the check from `passenger_mitten_intercom`,
+    `passenger_mitten_pair_memory`, and the returned-mitten branch of
+    `passenger_roll_call_epilogue` while preserving direct release choices.
+  - Set a narrow `confirmed_mitten_pair` flag for regression and playtest
+    visibility.
+  - Update returned-mitten story-path regressions.
+  - Run focused tests, validation, full health, and an actual CLI route through
+    the new beat.
+- Risks:
+  - One more late option could make the mitten climax feel slower if it reads
+    as mandatory.
+  - The shared roll-call epilogue also serves non-mitten passenger endings, so
+    the new choice must stay gated to `returned_lost_mitten`.
+- Status:
+  - Completed.
+  - Added `confirm_paired_mittens_from_intercom` to
+    `passenger_mitten_intercom`, preserving the existing direct release.
+  - Added `confirm_paired_mittens_after_memory` to
+    `passenger_mitten_pair_memory`.
+  - Added `confirm_mitten_pair_before_release` to the returned-mitten branch of
+    `passenger_roll_call_epilogue`, gated by `returned_lost_mitten`.
+  - Added `passenger_mitten_pair_check`, which sets
+    `confirmed_mitten_pair` and resolves to `passenger_mitten_true_ending`.
+  - Updated returned-mitten regressions for the direct ending, intercom
+    confirmation, paired-memory confirmation, and roll-call confirmation.
+  - Focused returned-mitten regression passed:
+    `npm test -- tests/story-paths.test.ts -t "mitten"`.
+  - Story validation passed with 164 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 164 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus a tracked cycle observation. Its health evidence was
+    green; random and coverage both had `unfinished: 0` and
+    `unvisitedScenes: []`, and coverage visited `passenger_mitten_pair_check`.
+  - Evidence-cycle MCP calls returned `MCP error -32000: Connection closed`;
+    the loop's adaptive route used the local fallback and reached
+    `passenger_lunch_tin_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> returned lost mitten ->
+    mitten intercom -> paired-mitten confirmation ->
+    `passenger_mitten_true_ending`.
+  - The new beat reads as a final physical safety check: the child and the
+    passenger who carried the mitten both have hands on the open door before
+    Mara says they are accounted for.
+  - The route ended with score 316, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and `confirmed_mitten_pair` set.
+- Commit status:
+  - Commit/push was attempted after green checks, but this sandbox could not
+    create `.git/index.lock` because `.git` is mounted read-only.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving high-traffic passenger payoffs or investigate
+    the intermittent MCP connection-closed failure before relying on MCP-only
+    evidence.
+
 # Cycle 59 Manifest Handoff Door Confirmation
 
 - Date: 2026-06-07

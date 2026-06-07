@@ -5348,6 +5348,12 @@ scenes:
       - id: pull_release_after_mitten_child_intercom
         label: Pull the release while the child's door stays open
         to: passenger_mitten_true_ending
+      - id: confirm_paired_mittens_from_intercom
+        label: Confirm both mittens are through the door before release
+        to: passenger_mitten_pair_check
+        effects:
+          set:
+            confirmed_mitten_pair: true
 
   passenger_mitten_pair_memory:
     routeImportance: optional
@@ -5371,6 +5377,27 @@ scenes:
             heard_final_roll_call: true
       - id: pull_release_after_paired_mittens
         label: Pull the release after both mittens answer
+        to: passenger_mitten_true_ending
+      - id: confirm_paired_mittens_after_memory
+        label: Confirm both mittened hands before pulling the release
+        to: passenger_mitten_pair_check
+        effects:
+          set:
+            confirmed_mitten_pair: true
+
+  passenger_mitten_pair_check:
+    routeImportance: optional
+    text: >
+      You hold the release while the child turns both mittened palms toward the
+      open door. One cuff is damp from the station floor; the other is warm
+      from the passenger who carried it back to him. The person who found it
+      touches two fingers to the frame beside his small hand, and the child
+      knocks once with each mitten so neither answer has to stand alone. Mara
+      waits until the paired sound reaches the speaker, then says, "Both hands
+      accounted for."
+    choices:
+      - id: pull_release_after_confirmed_mitten_pair
+        label: Pull the release after both mittened hands answer
         to: passenger_mitten_true_ending
 
   passenger_newspaper_intercom:
@@ -5557,6 +5584,14 @@ scenes:
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+      - id: confirm_mitten_pair_before_release
+        label: Confirm both mittens are accounted for before release
+        to: passenger_mitten_pair_check
+        requires:
+          flag: returned_lost_mitten
+        effects:
+          set:
+            confirmed_mitten_pair: true
 
   passenger_roll_call_answer_check:
     routeImportance: optional
