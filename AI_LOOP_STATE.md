@@ -1,3 +1,57 @@
+# Cycle 53 Newspaper Stop Confirmation
+
+- Date: 2026-06-07
+- Main objective: Add a small optional payoff beat to the high-traffic
+  newspaper transfer route without weakening its existing direct ending.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and the 250-run MCP random sample reached
+  `passenger_newspaper_true_ending` more often than any passenger sub-route,
+  so a focused final-action clarity beat there should improve normal-play
+  texture without touching core guidance.
+- Planned work:
+  - Add an optional stop-confirmation scene after
+    `passenger_newspaper_roll_call`.
+  - Keep `pull_release_after_newspaper_roll_call` first so ready players still
+    finish immediately.
+  - Set a narrow `confirmed_newspaper_stops` flag for the optional beat.
+  - Update focused newspaper regressions, then run validation, full health, and
+    an actual playthrough through the new beat.
+- Risks:
+  - Adding a second exit from the shared newspaper roll-call scene could
+    slightly dilute direct roll-call traffic in small random samples.
+  - The beat must read as payoff and confirmation, not as a new mandatory
+    requirement for the newspaper ending.
+- Status:
+  - Completed.
+  - Added `passenger_newspaper_stop_check` as an optional confirmation after
+    the newspaper roll call.
+  - Kept `pull_release_after_newspaper_roll_call` first so the existing
+    newspaper ending remains immediate.
+  - Added `confirmed_newspaper_stops` to mark the optional confirmation beat.
+  - Updated newspaper route regressions to expect the new second roll-call
+    exit and verify the stop-check scene resolves to
+    `passenger_newspaper_true_ending`.
+  - Focused newspaper regression passed:
+    `npm test -- tests/story-paths.test.ts -t newspaper`.
+  - Story validation passed with 158 reachable scenes.
+  - Full `npm run health` passed: format check, TypeScript, 278 tests, story
+    validation, and coverage playtest with all 158 scenes visited.
+  - Fresh 100-run random play had `ended: 100`, `unfinished: 0`,
+    `unvisitedScenes: []`, visited `passenger_newspaper_stop_check`, and kept
+    `passenger_newspaper_true_ending` at 6 endings.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> newspaper memory -> restored
+    transfer -> newspaper roll call -> stop confirmation ->
+    `passenger_newspaper_true_ending`.
+  - The new beat reads as a final check that every street belongs to a person,
+    not as another puzzle gate.
+  - The route ended with score 316, no objectives, and
+    `confirmed_newspaper_stops` set.
+- Next step:
+  - Watch the next blind digest for whether high-frequency passenger routes
+    need deeper payoff; if no S0-S2 issues appear, prefer transcript/report
+    quality or another common ending branch.
+
 # Cycle 52 Lunch-Tin Completion Split
 
 - Date: 2026-06-07

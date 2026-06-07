@@ -1713,7 +1713,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_newspaper_roll_call"
+      "pull_release_after_newspaper_roll_call",
+      "confirm_newspaper_stops_before_release"
     ]);
 
     const conductorTransferState = choose(
@@ -1817,12 +1818,32 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("It sounds like directions");
     expect(observation.scene.text).toContain("shared platform");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_newspaper_roll_call"
+      "pull_release_after_newspaper_roll_call",
+      "confirm_newspaper_stops_before_release"
     ]);
 
     observation = observe(
       story,
       choose(story, rollCallState, "pull_release_after_newspaper_roll_call")
+    );
+
+    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expectIdealScore(observation.score);
+
+    const stopCheckState = choose(story, rollCallState, "confirm_newspaper_stops_before_release");
+    observation = observe(story, stopCheckState);
+
+    expect(observation.scene.id).toBe("passenger_newspaper_stop_check");
+    expect(observation.scene.text).toContain("no one lets a street answer alone");
+    expect(observation.scene.text).toContain("All named stops accounted for");
+    expect(observation.state.flags.confirmed_newspaper_stops).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_newspaper_stops"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, stopCheckState, "pull_release_after_confirmed_newspaper_stops")
     );
 
     expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
@@ -9070,7 +9091,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_newspaper_roll_call"
+      "pull_release_after_newspaper_roll_call",
+      "confirm_newspaper_stops_before_release"
     ]);
 
     newspaperRollCallState = choose(

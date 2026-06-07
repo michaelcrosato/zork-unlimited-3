@@ -5365,6 +5365,29 @@ scenes:
       - id: pull_release_after_newspaper_roll_call
         label: Pull the release after every transfer is named
         to: passenger_newspaper_true_ending
+      - id: confirm_newspaper_stops_before_release
+        label: Confirm each named stop before pulling the release
+        to: passenger_newspaper_stop_check
+        effects:
+          set:
+            confirmed_newspaper_stops: true
+
+  passenger_newspaper_stop_check:
+    routeImportance: optional
+    text: >
+      You hold the release while the newspaper woman reads the column one last
+      time. This time no one lets a street answer alone. The child points to
+      the stop with the school awning. The lunch-tin worker marks the factory
+      siding with his thumb. The old conductor repeats each destination in his
+      clear-call voice, not because the line doubts them, but because every
+      passenger deserves to hear the route accept them before the doors open.
+      When Mara says, "All named stops accounted for," the destination sign
+      stops trying to spell HOME over them and gives the smaller streets room
+      to shine beside it.
+    choices:
+      - id: pull_release_after_confirmed_newspaper_stops
+        label: Pull the release after every named stop answers
+        to: passenger_newspaper_true_ending
 
   passenger_keepsake_intercom:
     routeImportance: optional
