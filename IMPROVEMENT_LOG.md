@@ -2353,3 +2353,57 @@ tests/ai-loop.test.ts`
 - Consider condensing or ranking the `passengers_released` choice surface so the
   direct emergency-release path stays visually prominent after the larger rescue
   opens.
+
+## 2026-06-07 - Repository Audit Verification
+
+### Changes
+
+- Re-ran the repository audit from a clean `main` baseline and confirmed
+  `origin/main` was already integrated.
+- Verified dependencies with `npm ci` and `npm ls --all`; no required
+  dependency or vulnerability issues were found.
+- Ran the required autonomous evidence cycle and recorded the new cycle
+  observation.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run format`
+  - `npm ci`
+  - `npm run build`
+  - `npm run lint`
+  - `npm test`
+  - `npm run health`
+  - `npm run ai:cycle`
+  - Manual MCP route from `entrance` to
+    `passenger_conductor_transfer_true_ending`
+- Quantitative metrics:
+  - Tests: 15 files, 279 tests passing
+  - Validation: 160 scenes, 31 endings, 160 reachable scenes
+  - Coverage self-play: 172 effective runs, 0 unfinished, all scenes visited
+  - AI cycle: true-ending rate 0.78, 0 unfinished runs, best score 399
+  - Manual route: reached `passenger_conductor_transfer_true_ending` with score
+    289 and no remaining objectives
+- What worked:
+  - The notice, clock, service-room, badge, gate-control, and manifest clues
+    formed a readable chain to an ideal passenger ending.
+  - Objectives narrowed correctly as route-critical items were collected.
+  - The MCP route used only visible legal choices and ended without save or
+    transcript errors.
+- What felt bad/confusing:
+  - Late passenger-route scenes are coherent but text-heavy; the route is
+    playable, but the pacing slows once the manifest branches into individual
+    passenger memories.
+- Bugs found:
+  - None during this audit pass.
+
+### Evaluation
+
+- Repository health is green after clean dependency installation, formatting,
+  build, lint, tests, validation, coverage playtest, AI-cycle evidence, and a
+  manual MCP route.
+
+### Next Iteration
+
+- Continue improving true-ending discoverability while keeping the passenger
+  branch's late-game choice surface easy to scan.
