@@ -4413,6 +4413,31 @@ scenes:
       - id: pull_release_after_handoff_goodbye
         label: Pull the release while Mara opens the far door
         to: mara_handoff_true_ending
+      - id: confirm_mara_handoff_last_door
+        label: Confirm Mara has the last door clear
+        to: mara_handoff_door_check
+        requires:
+          all:
+            - notFlag: checked_mara_handoff
+            - notFlag: confirmed_mara_handoff_doors
+        effects:
+          set:
+            checked_mara_handoff: true
+            confirmed_mara_handoff_doors: true
+
+  mara_handoff_door_check:
+    routeImportance: optional
+    text: >
+      You hold the release instead of pulling on the first breath. Through the
+      open car doors, Mara steps backward to the far threshold and plants one
+      hand against the rail, leaving her other hand free for the passengers
+      crossing past her. She looks down the length of the train until every
+      door answers with morning rain. "Clear," she says, not into the speaker
+      this time. "Now."
+    choices:
+      - id: pull_release_after_handoff_door_check
+        label: Pull the release after Mara clears the last door
+        to: mara_handoff_true_ending
 
   mara_thumbprint_handoff_intercom:
     routeImportance: optional

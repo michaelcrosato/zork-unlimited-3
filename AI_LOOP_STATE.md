@@ -1,3 +1,66 @@
+# Cycle 58 Mara Handoff Last-Door Check
+
+- Date: 2026-06-07
+- Main objective: Add an optional final last-door confirmation to the common
+  Mara handoff ending route without weakening the direct release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is healthy, and random play continues to reach
+  `mara_handoff_true_ending` as a common Mara-core payoff. The handoff route had
+  a strong platform-side setup, but its final intercom still resolved straight
+  to release; a small readiness beat gives the player one more chance to
+  witness that Mara is physically clear of the threshold.
+- Planned work:
+  - Add an optional check from `mara_handoff_intercom` while keeping
+    `pull_release_after_handoff_goodbye` first.
+  - Gate the new check behind `notFlag: checked_mara_handoff` so it does not
+    duplicate the earlier far-door verification.
+  - Add focused story-path coverage for the new check and preserve direct
+    release expectations on existing handoff paths.
+  - Run focused tests, validation, full health, the evidence-only AI cycle, and
+    an actual route through the new beat.
+- Risks:
+  - One more late handoff option could slow the ending if it reads as required.
+  - The shared `mara_handoff_intercom` scene is reached from multiple Mara
+    branches, so older direct-release regressions needed updated expectations.
+- Status:
+  - Completed.
+  - Added `confirm_mara_handoff_last_door` to `mara_handoff_intercom`, with the
+    direct release still first.
+  - Added `mara_handoff_door_check`, which sets
+    `confirmed_mara_handoff_doors` and resolves to
+    `mara_handoff_true_ending`.
+  - Updated handoff regressions for immediate boarders, badge-proof boarders,
+    last-dispatch handoff boarders, and the post-boarding intercom route.
+  - Focused handoff regression passed:
+    `npm test -- tests/story-paths.test.ts -t "handoff"`.
+  - Story validation passed with 162 reachable scenes and no warnings.
+  - Fresh random and coverage playtests both had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `mara_handoff_door_check`.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 162 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus the tracked cycle observation; health evidence was
+    green and all scenes were visited.
+  - Discovered Zork MCP tool calls for validation/start returned
+    `user cancelled MCP tool call`, so the actual route verification used the
+    CLI save/choose interface.
+  - Commit/push was attempted after green checks, but this sandbox could not
+    create `.git/index.lock` because `.git` is mounted read-only.
+- Playtest feedback:
+  - Actual CLI play followed Mara-only rescue -> physical handoff ->
+    post-boarding intercom -> last-door confirmation ->
+    `mara_handoff_true_ending`.
+  - The check reads as a final safety/witness beat: Mara steps to the far
+    threshold, confirms every door answers with morning rain, then calls
+    "Clear" before the release.
+  - The route ended with score 282, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and
+    `confirmed_mara_handoff_doors` set.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to high-traffic endings or improve
+    transcript critique quality without broadening the story surface too much.
+
 # Cycle 57 Roll-Call Answer Confirmation
 
 - Date: 2026-06-07
