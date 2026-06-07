@@ -1,3 +1,179 @@
+# Cycle 52 Lunch-Tin Completion Split
+
+- Date: 2026-06-07
+- Main objective: Recover normal-play visibility for both the direct lunch-tin
+  ending and the checked lunch-tin count after the self-count promotion.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence and Cycle 51 showed the new self-count beat was
+  visible, but the deterministic random sample could miss
+  `passenger_lunch_tin_check` and `passenger_lunch_tin_true_ending`. The route
+  needed a clearer split between "the worker counts himself and releases" and
+  "the worker counts himself, then the aisle is checked."
+- Planned work:
+  - Keep the direct lunch-tin release first from
+    `passenger_lunch_tin_boarding`.
+  - Make boarding-side self-count resolve to the plain lunch-tin ending unless
+    the player explicitly checks the aisle afterward.
+  - Preserve checked-count self-count behavior when the player reaches the
+    pause from `passenger_lunch_tin_check`.
+  - Update focused regressions and run validation, playtests, full health, and
+    a real CLI playthrough.
+- Risks:
+  - Adding one more exit from `passenger_lunch_tin_self_count` could dilute one
+    of the two lunch-tin endings in small random samples.
+  - Reusing `passenger_lunch_tin_check` after self-count must avoid offering
+    the self-count choice again.
+- Status:
+  - Completed.
+  - Removed `checked_lunch_tin_passengers` from the boarding-side self-count
+    effect so it remains the direct lunch-tin completion path.
+  - Added a conditional direct release from `passenger_lunch_tin_self_count` to
+    `passenger_lunch_tin_true_ending` when the aisle has not been checked.
+  - Added `check_lunch_tin_passengers_after_self_count` so the same pause can
+    still flow into `passenger_lunch_tin_check` and then the checked ending.
+  - Preserved the checked self-count release when the player reaches the pause
+    from `passenger_lunch_tin_check`.
+  - Focused lunch-tin regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Story validation passed with 157 reachable scenes.
+  - Fresh 100-run random play had `unfinished: 0`, `unvisitedScenes: []`, and
+    visited `passenger_lunch_tin_check`, `passenger_lunch_tin_self_count`,
+    `passenger_lunch_tin_true_ending`, and
+    `passenger_lunch_tin_checked_true_ending`.
+  - Fresh coverage playtest had `unfinished: 0` and `unvisitedScenes: []`.
+  - Full `npm run health` passed: format check, TypeScript, 278 tests, story
+    validation, and coverage playtest with all 157 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports. Its health evidence passed and its local fallback
+    adaptive route reached `passenger_lunch_tin_checked_true_ending`; MCP
+    stdio still closed before tool verification in this sandbox.
+- Playtest feedback:
+  - Actual CLI play followed answered passengers -> lunch-tin boarding ->
+    boarding self-count -> optional aisle check ->
+    `passenger_lunch_tin_checked_true_ending`.
+  - The new choice reads naturally after the self-count pause: direct release
+    is available, and checking the aisle is clearly optional extra care.
+  - The checked route ended with score 310, no objectives, and both
+    `counted_lunch_tin_worker_self` and `checked_lunch_tin_passengers` set.
+- Next step:
+  - Let the next blind digest decide whether lunch-tin now has enough
+    attention; if no S0-S2 issues appear, prefer a different late-route payoff
+    or transcript/report quality improvement.
+
+# Cycle 51 Lunch-Tin Self Count Discoverability
+
+- Date: 2026-06-07
+- Main objective: Make the lunch-tin worker self-count beat easier to find
+  during normal lunch-tin play without making it mandatory.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and the previous cycle added `passenger_lunch_tin_self_count` but
+  noted that random play missed it. The beat is a strong emotional payoff for
+  the route, so the best next improvement is to surface it from the earlier
+  lunch-tin boarding hub while preserving the immediate release.
+- Planned work:
+  - Add a direct optional self-count choice from `passenger_lunch_tin_boarding`.
+  - Keep `pull_release_after_lunch_tin_boarding` first so ready players still
+    finish immediately.
+  - Set the same count flags used by the deeper checked-count route.
+  - Update focused lunch-tin regressions and run health plus an actual
+    playthrough through the promoted beat.
+- Risks:
+  - Another choice on `passenger_lunch_tin_boarding` can slightly dilute direct
+    `passenger_lunch_tin_true_ending` random traffic.
+  - The self-count route now flows into the checked-count ending, so the flags
+    must clearly mark the passenger count as checked.
+- Status:
+  - Completed.
+  - Added `let_lunch_tin_worker_count_himself_from_boarding` after the direct
+    lunch-tin release.
+  - Updated focused route coverage for the new boarding self-count path.
+  - Focused lunch-tin regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Story validation passed with 157 reachable scenes.
+  - Fresh 100-run random play visited `passenger_lunch_tin_self_count`; the
+    same deterministic sample missed `passenger_lunch_tin_check` and
+    `passenger_lunch_tin_true_ending`, so this should be watched for direct
+    lunch-tin ending dilution.
+  - Full `npm run health` passed: format check, TypeScript, 278 tests, story
+    validation, and coverage playtest with all 157 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports. Its health evidence passed, but its internal MCP stdio
+    connection closed; the loop's adaptive local fallback still reached
+    `passenger_lunch_tin_checked_true_ending`.
+- Playtest feedback:
+  - MCP `start_game` through the connector was cancelled by the tool layer, so
+    actual play used the CLI.
+  - Actual CLI play followed answered passengers -> lunch-tin boarding ->
+    boarding self-count -> `passenger_lunch_tin_checked_true_ending`.
+  - The promoted option reads naturally at the boarding scene because the
+    worker is already counting the aisle; setting `checked_lunch_tin_passengers`
+    keeps the ending text coherent.
+  - The route ended with score 309, no objectives, and
+    `counted_lunch_tin_worker_self` set.
+- Next step:
+  - Watch the next random/blind evidence for whether
+    `passenger_lunch_tin_true_ending` needs a nudge after the self-count
+    promotion.
+
+# Cycle 50 Lunch-Tin Self Count
+
+- Date: 2026-06-07
+- Main objective: Add a small optional payoff beat to the checked lunch-tin
+  route surfaced by the latest adaptive exploratory MCP playthrough.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence is green: all scenes are visited, random play
+  has no unfinished runs, and the adaptive route ended at
+  `passenger_lunch_tin_checked_true_ending`. With core guidance healthy, the
+  highest-impact next step is richer late-route clarity on a route actual
+  exploration just reached.
+- Planned work:
+  - Add an optional `passenger_lunch_tin_self_count` scene from
+    `passenger_lunch_tin_check`.
+  - Keep the direct checked-count release first so the ending remains immediate
+    for ready players.
+  - Add focused regression coverage for the new scene, flag, and same-ending
+    path.
+  - Run focused tests, story validation, full health, and a CLI playthrough
+    through the new beat.
+- Risks:
+  - Adding another option to a late route could dilute direct checked-count
+    random traffic.
+  - The beat must read as payoff, not as a new required count or hidden
+    requirement.
+- Status:
+  - Completed.
+  - Added `passenger_lunch_tin_self_count` as an optional final pause after
+    the checked lunch-tin count.
+  - Kept `pull_release_after_checked_lunch_tin_count` first so players can
+    still finish immediately.
+  - Updated lunch-tin route regressions to cover the new scene, flag, and
+    same-ending path.
+  - Focused lunch-tin regression passed:
+    `npm test -- tests/story-paths.test.ts -t "lunch-tin"`.
+  - Story validation passed with 157 reachable scenes.
+  - Fresh coverage evidence visited `passenger_lunch_tin_self_count` and had
+    `unvisitedScenes: []` with `unfinished: 0`; the deterministic 100-run
+    random sample missed the new optional scene.
+  - Full `npm run health` passed: format check, TypeScript, 278 tests, story
+    validation, and coverage playtest with all 157 scenes visited.
+  - `npm run ai:cycle` ran its evidence phase and wrote ignored `ai-runs`
+    artifacts. Its nested `codex exec` agent command failed to initialize an
+    app-server client on a read-only path, and post-agent automation refused
+    auto-commit because the repo was already dirty.
+  - Manual `git add && git commit` also failed because `.git/index.lock` could
+    not be created on the read-only `.git` filesystem in this sandbox.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> checked lunch-tin count ->
+    self-count -> `passenger_lunch_tin_checked_true_ending`.
+  - The new beat makes the worker count himself as a person instead of only
+    counting the passengers, which sharpens the route's emotional payoff.
+  - The route ended with no objectives and `counted_lunch_tin_worker_self`
+    set.
+- Next step:
+  - Watch normal-play evidence for whether `passenger_lunch_tin_self_count`
+    needs promotion, since random missed it while coverage and direct play
+    reached it.
+
 # Cycle 49 Release Handle Check
 
 - Date: 2026-06-07

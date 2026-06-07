@@ -3441,6 +3441,15 @@ scenes:
       - id: pull_release_after_lunch_tin_boarding
         label: Pull the release while the lunch-tin count holds
         to: passenger_lunch_tin_true_ending
+      - id: let_lunch_tin_worker_count_himself_from_boarding
+        label: Let the lunch-tin worker count himself before the release
+        to: passenger_lunch_tin_self_count
+        requires:
+          notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            heard_gathered_passengers: true
+            counted_lunch_tin_worker_self: true
       - id: check_lunch_tin_passengers_before_release
         label: Check the lunch-tin count against the passengers in the aisle
         to: passenger_lunch_tin_check
@@ -5133,6 +5142,14 @@ scenes:
       - id: pull_release_after_checked_lunch_tin_count
         label: Start the release after every passenger answers the count
         to: passenger_lunch_tin_checked_true_ending
+      - id: let_lunch_tin_worker_count_himself
+        label: Let the lunch-tin worker count himself last
+        to: passenger_lunch_tin_self_count
+        requires:
+          notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            counted_lunch_tin_worker_self: true
       - id: carry_checked_lunch_tin_count_to_speaker
         label: Carry the checked lunch-tin count to Mara's speaker
         to: passenger_lunch_tin_intercom
@@ -5145,6 +5162,37 @@ scenes:
           set:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
+
+  passenger_lunch_tin_self_count:
+    routeImportance: optional
+    text: >
+      The lunch-tin worker almost reaches for the release before the old habit
+      stops him. He checks the aisle once more, then taps the tin against his
+      own chest instead of the door frame. "Shift complete," he says, quiet
+      enough that it sounds borrowed from a break room instead of a platform.
+      The child answers with both mittens, the newspaper woman folds the
+      transfer around his name, and the conductor raises his punch without
+      taking a ticket. Mara lets the pause stand. For once, the person doing
+      the counting has not disappeared inside the count.
+    choices:
+      - id: pull_release_after_lunch_tin_self_count
+        label: Pull the release after the worker counts himself
+        to: passenger_lunch_tin_true_ending
+        requires:
+          notFlag: checked_lunch_tin_passengers
+      - id: check_lunch_tin_passengers_after_self_count
+        label: Check the aisle once more after the worker counts himself
+        to: passenger_lunch_tin_check
+        requires:
+          notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            checked_lunch_tin_passengers: true
+      - id: pull_release_after_checked_lunch_tin_self_count
+        label: Pull the release after the checked count includes him
+        to: passenger_lunch_tin_checked_true_ending
+        requires:
+          flag: checked_lunch_tin_passengers
 
   passenger_lunch_tin_roster:
     routeImportance: optional
