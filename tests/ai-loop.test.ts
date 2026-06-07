@@ -11,7 +11,8 @@ import {
   runLocalExploratoryRouteForStory,
   parsePorcelainPaths,
   requiresLoopRestart,
-  restartRequestedExitCode
+  restartRequestedExitCode,
+  shouldCommitCycleObservation
 } from "../src/ai-loop.js";
 import type { Story } from "../src/schema.js";
 
@@ -38,6 +39,13 @@ describe("AI loop restart detection", () => {
 
   it("uses a stable agent-auth failure exit code for loop.sh", () => {
     expect(agentAuthFailureExitCode).toBe(76);
+  });
+
+  it("commits cycle observations only after pushed agent cycles", () => {
+    expect(shouldCommitCycleObservation("pushed", true)).toBe(true);
+    expect(shouldCommitCycleObservation("committed", true)).toBe(false);
+    expect(shouldCommitCycleObservation("failed", true)).toBe(false);
+    expect(shouldCommitCycleObservation("pushed", false)).toBe(false);
   });
 
   it("does not require a restart for ordinary story, docs, or test changes", () => {

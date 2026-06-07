@@ -36,6 +36,7 @@ export {
 } from "./ai-loop-metrics.js";
 
 export const agentAuthFailureExitCode = 76;
+const cycleObservationPath = "ai-loop-observations/cycles.jsonl";
 
 interface CommandResult {
   command: string;
@@ -189,6 +190,14 @@ async function main(): Promise<void> {
           ? mcpPlayObservation(postAgentResult.mcpPlay)
           : artifacts.observation.mcpRoute
       });
+      if (shouldCommitCycleObservation(postAgentResult.status, autoPush)) {
+        const observationCommitResult = await commitCycleObservation(cycle);
+        if (observationCommitResult.status === "failed") {
+          console.error(`Failed to commit cycle observation: ${observationCommitResult.reason}`);
+          stopped = true;
+          process.exitCode = 1;
+        }
+      }
       const restartPaths = getRestartSensitiveChangedPaths(changedPaths);
       if (restartPaths.length > 0) {
         console.log(
@@ -210,6 +219,13 @@ async function main(): Promise<void> {
     if (once || cycle >= maxCycles || stopped) break;
     await sleep(delayMs);
   } while (!stopped);
+}
+
+export function shouldCommitCycleObservation(
+  postAgentStatus: PostAgentResult["status"],
+  autoPushEnabled: boolean
+): boolean {
+  return postAgentStatus === "pushed" && autoPushEnabled;
 }
 
 async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
@@ -1180,6 +1196,48 @@ async function runPostAgentAutomation(
   }
 
   return { status: "pushed", commands, mcpPlay };
+}
+
+async function commitCycleObservation(cycle: number): Promise<PostAgentResult> {
+  const commands: CommandResult[] = [];
+  const branch = (await runCommand("git branch --show-current")).output.trim();
+  commands.push({ command: "git branch --show-current", exitCode: branch ? 0 : 1, output: branch });
+
+  if (!branch) {
+    return {
+      status: "failed",
+      reason: "Could not determine current git branch for cycle observation commit.",
+      commands
+    };
+  }
+
+  const add = await runCommand(`git add ${shellQuote(cycleObservationPath)}`);
+  commands.push(add);
+  if (add.exitCode !== 0) {
+    return { status: "failed", reason: "git add cycle observation failed.", commands };
+  }
+
+  const staged = await runCommand("git diff --cached --name-only");
+  commands.push(staged);
+  if (!staged.output.split(/\r?\n/).includes(cycleObservationPath)) {
+    return { status: "clean", reason: "No cycle observation row to commit.", commands };
+  }
+
+  const commit = await runCommand(
+    `git commit -m ${shellQuote(`Record AI loop cycle ${cycle} observation`)}`
+  );
+  commands.push(commit);
+  if (commit.exitCode !== 0) {
+    return { status: "failed", reason: "git commit cycle observation failed.", commands };
+  }
+
+  const push = await runCommand(`git push origin ${shellQuote(branch)}`);
+  commands.push(push);
+  if (push.exitCode !== 0) {
+    return { status: "failed", reason: "git push cycle observation failed.", commands };
+  }
+
+  return { status: "pushed", commands };
 }
 
 function renderPostAgentResult(result: PostAgentResult): string {
