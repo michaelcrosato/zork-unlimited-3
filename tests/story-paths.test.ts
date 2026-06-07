@@ -2930,6 +2930,7 @@ describe("demo story critical paths", () => {
 
     expect(choiceIds[0]).toBe("pull_release");
     expect(observation.choices[0]?.label).toBe("Pull the emergency release now");
+    expect(choiceIds).toContain("inspect_release_handle");
     expect(choiceIds).toContain("ask_mara_for_train_car_dispatch");
     expect(choiceIds).toContain("listen_to_mara_intercom");
     expect(choiceIds).not.toContain("ride_with_map");
@@ -3069,11 +3070,15 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_last_dispatch).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release",
+      "inspect_release_handle",
       "ask_mara_for_train_car_dispatch",
       "listen_to_mara_intercom",
       "wait_for_mara_at_far_door"
     ]);
     expect(observation.choices[0]?.label).toBe("Pull the emergency release now");
+    expect(
+      observation.choices.find((choice) => choice.id === "inspect_release_handle")?.label
+    ).toBe("Check the emergency release before pulling");
     expect(
       observation.choices.find((choice) => choice.id === "ask_mara_for_train_car_dispatch")?.label
     ).toBe("Ask Mara for her final dispatch before pulling");
@@ -3099,6 +3104,54 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Passenger release authorized by proof");
     expect(observation.scene.text).toContain("third car answers first");
     expect(observation.scene.text).toContain("signal ledger loses its last excuse");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets direct-release players check the emergency handle before pulling", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "inspect_release_handle"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("release_handle_check");
+    expect(observation.scene.text).toContain("ALL DOORS");
+    expect(observation.scene.text).toContain("Mara's cleared badge");
+    expect(observation.scene.text).toContain("open what the ledger tried to keep closed");
+    expect(observation.state.flags.checked_release_handle).toBe(true);
+    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_handle_check"
+    ]);
+
+    state = choose(story, state, "pull_release_after_handle_check");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 

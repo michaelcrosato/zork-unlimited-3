@@ -1,3 +1,63 @@
+# Cycle 49 Release Handle Check
+
+- Date: 2026-06-07
+- Main objective: Add a small optional payoff beat to the common direct
+  `true_ending` route before the final release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence is green: all scenes are visited, random play
+  has no unfinished runs, and the direct Mara route remains one of the most
+  common ideal endings. With core guidance healthy, the highest-impact next
+  step is richer final-action clarity without blocking the direct release.
+- Planned work:
+  - Add a `release_handle_check` scene from the plain Mara-cleared third-car
+    state.
+  - Keep `pull_release` first so the ending remains immediate for players who
+    are ready.
+  - Add focused regression coverage for the new scene, flag, and direct
+    ending path.
+  - Run focused tests, story validation, full health, and a CLI playthrough
+    through the new beat.
+- Risks:
+  - Adding a choice to the high-traffic train-car hub could slightly dilute
+    direct `true_ending` random traffic.
+  - The scene must clarify the release without implying another required item
+    or route branch.
+- Status:
+  - Completed.
+  - Added `release_handle_check` as an optional final confirmation before the
+    direct `true_ending`.
+  - Kept `pull_release` first in the plain third-car menu and constrained the
+    new choice away from badge-proof, thumbprint, handoff, and manifest
+    variants.
+  - Refactored `src/cli.ts` to expose an in-process command runner and updated
+    CLI tests after nested `tsx` subprocess output capture returned empty
+    stdout/stderr in this sandbox.
+  - Updated `src/ai-loop.ts` so local `cyoa` evidence commands use the same
+    in-process runner, preventing parse-empty reports for random and coverage
+    summaries.
+  - Focused release regression passed:
+    `npm test -- tests/story-paths.test.ts -t "release"`.
+  - Story validation passed with 156 reachable scenes.
+  - Fresh coverage playtest visited `release_handle_check`, had
+    `unvisitedScenes: []`, and had `unfinished: 0`.
+  - Full `npm run health` passed: format check, TypeScript, 278 tests, story
+    validation with all 156 scenes reachable, and coverage playtest with all
+    scenes visited and `unfinished: 0`.
+  - `npm run ai:cycle` was run; its nested agent refused to auto-commit because
+    the repo was dirty, and its MCP stdio path closed in this sandbox. The
+    separate CLI playthrough below satisfied the actual-play requirement.
+- Playtest feedback:
+  - Actual CLI play followed Mara-cleared third car -> release handle check ->
+    `true_ending`.
+  - The new beat cleanly explains that the handle opens all ledger-held doors
+    rather than choosing HOME as a destination.
+  - The route ended with no objectives and the `checked_release_handle` flag
+    set.
+- Next step:
+  - Watch normal-play evidence for any direct `true_ending` dilution from the
+    extra optional choice, then prefer another small late-route payoff if
+    random coverage remains healthy.
+
 # Cycle 48 Newspaper Departure Board
 
 - Date: 2026-06-04

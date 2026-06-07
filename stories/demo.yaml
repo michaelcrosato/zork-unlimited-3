@@ -3493,6 +3493,22 @@ scenes:
           all:
             - flag: freed_mara
             - notFlag: read_passenger_manifest
+      - id: inspect_release_handle
+        label: Check the emergency release before pulling
+        to: release_handle_check
+        requires:
+          all:
+            - flag: freed_mara
+            - notFlag: read_passenger_manifest
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_mara_thumbprint
+            - notFlag: saw_mara_handoff
+            - notFlag: knows_badge_proof
+            - notFlag: heard_mara_last_dispatch
+            - notFlag: checked_release_handle
+        effects:
+          set:
+            checked_release_handle: true
       - id: listen_to_badge_proof_after_last_dispatch
         label: Listen as Mara folds the badge proof into her last dispatch
         to: mara_badge_proof_intercom
@@ -4008,6 +4024,20 @@ scenes:
         to: sign_warning
         requires:
           notFlag: freed_mara
+
+  release_handle_check:
+    routeImportance: optional
+    text: >
+      The emergency release is not hidden magic. It is a red handle under the
+      first seat, paint worn down where other hands tried to make it count for
+      them. A stamped plate reads ALL DOORS, but the train has scratched HOME
+      over the word all until Mara's cleared badge warms against the metal.
+      From the speaker, her breath steadies once. The handle will not choose a
+      destination. It will only open what the ledger tried to keep closed.
+    choices:
+      - id: pull_release_after_handle_check
+        label: Pull the release after checking the handle
+        to: true_ending
 
   train_map:
     routeImportance: main

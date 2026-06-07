@@ -1,10 +1,13 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
+import { runCliCommand } from "../src/cli.js";
 
-const execFileAsync = promisify(execFile);
-const cliSubprocessTimeoutMs = 15_000;
 const cliTestTimeoutMs = 20_000;
+
+interface CliTestError extends Error {
+  code: number;
+  stdout: string;
+  stderr: string;
+}
 
 describe("cli", () => {
   it(
@@ -56,8 +59,28 @@ describe("cli", () => {
 });
 
 function runCli(args: string[]) {
-  return execFileAsync("node", ["--import", "tsx", "src/cli.ts", ...args], {
-    cwd: process.cwd(),
-    timeout: cliSubprocessTimeoutMs
+  return runCliInProcess(args);
+}
+
+async function runCliInProcess(args: string[]): Promise<{ stdout: string; stderr: string }> {
+  let stdout = "";
+  let stderr = "";
+  const code = await runCliCommand(args, {
+    stdout: (text) => {
+      stdout += text;
+    },
+    stderr: (text) => {
+      stderr += text;
+    }
   });
+
+  if (code !== 0) {
+    const error = new Error(`Command failed: cyoa ${args.join(" ")}`) as CliTestError;
+    error.code = code;
+    error.stdout = stdout;
+    error.stderr = stderr;
+    throw error;
+  }
+
+  return { stdout, stderr };
 }

@@ -7,6 +7,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { appendCycleObservation } from "./ai-loop-observations.js";
 import type { CycleObservationInput } from "./ai-loop-observations.js";
+import { runCliCommand } from "./cli.js";
 import { choose, initialState, observe } from "./engine.js";
 import {
   cycleSavePath,
@@ -230,18 +231,49 @@ async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
 }
 
 async function runCycle(cycle: number): Promise<CycleArtifacts> {
-  const commands = [
-    "npm run format:check",
-    "npm run lint",
-    "npm test",
-    "npm run cyoa -- validate stories/demo.yaml --json",
-    "npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random --summary --json",
-    "npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json"
+  const commands: Array<() => Promise<CommandResult>> = [
+    () => runCommand("npm run format:check"),
+    () => runCommand("npm run lint"),
+    () => runCommand("npm test"),
+    () =>
+      runCyoaCommand("npm run cyoa -- validate stories/demo.yaml --json", [
+        "validate",
+        "stories/demo.yaml",
+        "--json"
+      ]),
+    () =>
+      runCyoaCommand(
+        "npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy random --summary --json",
+        [
+          "playtest",
+          "stories/demo.yaml",
+          "--runs",
+          "100",
+          "--strategy",
+          "random",
+          "--summary",
+          "--json"
+        ]
+      ),
+    () =>
+      runCyoaCommand(
+        "npm run cyoa -- playtest stories/demo.yaml --runs 100 --strategy coverage --summary --json",
+        [
+          "playtest",
+          "stories/demo.yaml",
+          "--runs",
+          "100",
+          "--strategy",
+          "coverage",
+          "--summary",
+          "--json"
+        ]
+      )
   ];
 
   const results: CommandResult[] = [];
-  for (const command of commands) {
-    results.push(await runCommand(command));
+  for (const run of commands) {
+    results.push(await run());
   }
 
   const randomSummary = parseLastJson(results[4].output);
@@ -653,6 +685,20 @@ function runCommand(command: string): Promise<CommandResult> {
       resolve({ command, exitCode: exitCode ?? 1, output });
     });
   });
+}
+
+async function runCyoaCommand(command: string, args: string[]): Promise<CommandResult> {
+  let output = "";
+  const exitCode = await runCliCommand(args, {
+    stdout: (text) => {
+      output += text;
+    },
+    stderr: (text) => {
+      output += text;
+    }
+  });
+
+  return { command, exitCode, output };
 }
 
 function runAgentCommand(
