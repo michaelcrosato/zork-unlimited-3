@@ -8409,12 +8409,38 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the aisle becomes a transfer platform");
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_transfer_proof",
+      "check_punched_transfer_stops"
+    ]);
+
+    const transferProofState = state;
 
     state = choose(story, state, "pull_release_after_transfer_proof");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
     expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(story, transferProofState, "check_punched_transfer_stops");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_stop_check");
+    expect(observation.scene.text).toContain(
+      "lets each passenger look through the star-shaped cut"
+    );
+    expect(observation.scene.text).toContain("Then every stop is witnessed");
+    expect(observation.state.flags.confirmed_transfer_stops).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_transfer_stop_check"
+    ]);
+
+    state = choose(story, state, "pull_release_after_transfer_stop_check");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("Morning has already accepted the change");
     expectIdealScore(observation.score);
 
     state = choose(story, conductorTransferState, "pass_punched_transfer_to_child");
@@ -8440,7 +8466,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Now it belongs to them too");
     expect(observation.state.flags.pressed_transfer_to_speaker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_transfer_proof"
+      "pull_release_after_transfer_proof",
+      "check_punched_transfer_stops"
     ]);
 
     state = choose(story, state, "pull_release_after_transfer_proof");

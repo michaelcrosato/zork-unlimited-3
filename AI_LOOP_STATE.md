@@ -1,3 +1,61 @@
+# Cycle 55 Conductor Transfer Stop Check
+
+- Date: 2026-06-07
+- Main objective: Add a small optional stop-check payoff to the conductor
+  transfer route without weakening the existing direct transfer release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green, and random play reaches conductor
+  transfer endings often enough that a focused final confirmation should add
+  emotional clarity on a common passenger branch while preserving route
+  health.
+- Planned work:
+  - Add an optional stop-check scene after `passenger_conductor_transfer_proof`.
+  - Keep `pull_release_after_transfer_proof` first so ready players still
+    finish immediately.
+  - Set a narrow `confirmed_transfer_stops` flag for the optional beat.
+  - Update focused conductor-transfer regressions, then run validation, full
+    health, and an actual CLI playthrough through the new beat.
+- Risks:
+  - Adding a second exit from `passenger_conductor_transfer_proof` could
+    slightly dilute direct transfer-ending traffic in small random samples.
+  - The scene must read as final confirmation and payoff, not as a new hidden
+    requirement for the punched-transfer ending.
+- Status:
+  - Completed.
+  - Added `passenger_conductor_transfer_stop_check` as an optional final
+    confirmation after the conductor's transfer proof.
+  - Kept `pull_release_after_transfer_proof` first so the existing transfer
+    ending remains immediate.
+  - Added `confirmed_transfer_stops` to mark the optional stop-check beat.
+  - Updated conductor-transfer regressions to expect the new second proof exit,
+    verify the stop-check scene, and confirm it resolves to
+    `passenger_conductor_transfer_true_ending`.
+  - Focused conductor-transfer regression passed:
+    `npm test -- tests/story-paths.test.ts -t "conductor transfer"`.
+  - Story validation passed with 160 reachable scenes.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 160 scenes visited.
+  - Fresh 100-run random play had `ended: 100`, `unfinished: 0`, and preserved
+    the current ending mix, but did not visit
+    `passenger_conductor_transfer_stop_check`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports. Its health evidence passed; random play again missed
+    `passenger_conductor_transfer_stop_check`, while coverage visited it. MCP
+    stdio still failed in this sandbox, and the local fallback adaptive route
+    reached `passenger_lunch_tin_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> conductor punched transfer ->
+    transfer proof -> stop check ->
+    `passenger_conductor_transfer_true_ending`.
+  - The new beat reads as a final witness check for each passenger's intended
+    stop, not as a new puzzle requirement.
+  - The route ended with score 292, no objectives, and
+    `confirmed_transfer_stops` set.
+- Next step:
+  - Improve normal-play discovery for `passenger_conductor_transfer_stop_check`
+    if blind or random evidence continues to miss it; otherwise prefer another
+    high-traffic route payoff or transcript/report quality improvement.
+
 # Cycle 54 Keepsake Owner Confirmation
 
 - Date: 2026-06-07

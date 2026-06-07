@@ -4934,6 +4934,30 @@ scenes:
       - id: pull_release_after_transfer_proof
         label: Pull the release while the punched transfer shines through
         to: passenger_conductor_transfer_true_ending
+      - id: check_punched_transfer_stops
+        label: Check the punched transfer against every passenger's stop
+        to: passenger_conductor_transfer_stop_check
+        requires:
+          notFlag: confirmed_transfer_stops
+        effects:
+          set:
+            confirmed_transfer_stops: true
+
+  passenger_conductor_transfer_stop_check:
+    routeImportance: optional
+    text: >
+      The conductor holds the punched transfer beneath the carriage light and
+      lets each passenger look through the star-shaped cut. The child sees the
+      stairs past Warden Street. The newspaper woman sees the stop her column
+      promised. The lunch-tin worker sees the factory bell as something he can
+      leave instead of answer. Mara's voice comes through the same little hole,
+      softer now: "Then every stop is witnessed." The transfer is still only
+      paper, but the aisle treats it like a route no one can erase by keeping
+      the doors shut.
+    choices:
+      - id: pull_release_after_transfer_stop_check
+        label: Pull the release after every transfer stop answers
+        to: passenger_conductor_transfer_true_ending
 
   passenger_conductor_roll_call:
     routeImportance: supporting
