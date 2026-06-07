@@ -8453,7 +8453,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "press_transfer_to_speaker_grille",
-      "pull_release_after_transfer_handoff"
+      "pull_release_after_transfer_handoff",
+      "check_handoff_transfer_stops"
     ]);
 
     const transferHandoffState = state;
@@ -8471,6 +8472,23 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_transfer_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
+    expect(observation.scene.text).toContain("punched transfer");
+    expectIdealScore(observation.score);
+
+    state = choose(story, transferHandoffState, "check_handoff_transfer_stops");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_stop_check");
+    expect(observation.scene.text).toContain("every stop is witnessed");
+    expect(observation.state.flags.confirmed_transfer_stops).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_transfer_stop_check"
+    ]);
+
+    state = choose(story, state, "pull_release_after_transfer_stop_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
@@ -8726,7 +8744,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "press_transfer_to_speaker_grille",
-      "pull_release_after_transfer_handoff"
+      "pull_release_after_transfer_handoff",
+      "check_handoff_transfer_stops"
     ]);
 
     handoffState = choose(story, handoffState, "press_transfer_to_speaker_grille");
@@ -8972,7 +8991,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.punched_transfer_carried_forward).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "press_transfer_to_speaker_grille",
-      "pull_release_after_transfer_handoff"
+      "pull_release_after_transfer_handoff",
+      "check_handoff_transfer_stops"
     ]);
 
     state = choose(story, state, "press_transfer_to_speaker_grille");

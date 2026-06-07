@@ -4918,6 +4918,14 @@ scenes:
       - id: pull_release_after_transfer_handoff
         label: Pull the release after the punched transfer reaches Mara
         to: passenger_conductor_transfer_true_ending
+      - id: check_handoff_transfer_stops
+        label: Check the carried transfer against every passenger's stop
+        to: passenger_conductor_transfer_stop_check
+        requires:
+          notFlag: confirmed_transfer_stops
+        effects:
+          set:
+            confirmed_transfer_stops: true
 
   passenger_conductor_transfer_proof:
     routeImportance: optional

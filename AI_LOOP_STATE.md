@@ -1,3 +1,64 @@
+# Cycle 56 Handoff Transfer Stop Discovery
+
+- Date: 2026-06-07
+- Main objective: Improve normal-play discovery for
+  `passenger_conductor_transfer_stop_check` by exposing it from the carried
+  transfer handoff as well as from the proof scene.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current loop evidence specifically called out normal-play discovery
+  for `passenger_conductor_transfer_stop_check`; the scene exists and is
+  covered, but a player who follows the child/Mara handoff branch could only
+  reach it after choosing the proof option first.
+- Planned work:
+  - Add a stop-check choice to `passenger_conductor_transfer_handoff`.
+  - Preserve the existing direct release and proof routes.
+  - Update focused conductor-transfer regressions for the new handoff route.
+  - Run story validation, full health, and an actual CLI playthrough through
+    the new handoff stop-check path.
+- Risks:
+  - One extra handoff choice may slightly redistribute random samples away from
+    immediate transfer endings.
+  - The new choice must read as optional confirmation, not as a hidden
+    requirement for the conductor transfer ending.
+- Status:
+  - Completed.
+  - Added `check_handoff_transfer_stops` to
+    `passenger_conductor_transfer_handoff`, routing the carried-transfer branch
+    into `passenger_conductor_transfer_stop_check`.
+  - Preserved `press_transfer_to_speaker_grille` and
+    `pull_release_after_transfer_handoff`; the direct handoff release remains
+    available before the optional stop-check.
+  - Updated conductor-transfer regressions to expect the new handoff choice and
+    verify it sets `confirmed_transfer_stops` before resolving to
+    `passenger_conductor_transfer_true_ending`.
+  - Focused conductor-transfer regression passed:
+    `npm test -- tests/story-paths.test.ts -t "conductor transfer"`.
+  - Fresh 100-run random play passed with `ended: 100`, `unfinished: 0`, and
+    `passenger_conductor_transfer_stop_check` in `visitedScenes`.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 160 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports. Its health evidence passed; random and coverage both
+    had `unvisitedScenes: []`. Built-in MCP stdio still reported
+    `Connection closed`, while its local fallback route reached
+    `passenger_lunch_tin_checked_true_ending`.
+  - A discovered Zork MCP app validation attempt returned
+    `user cancelled MCP tool call`, so final route verification used the CLI
+    save/choose interface.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> carried conductor transfer ->
+    handoff stop check -> `passenger_conductor_transfer_true_ending`.
+  - The stop-check reads naturally after the child carries the transfer to
+    Mara's speaker; it confirms each passenger's intended stop without making
+    the proof route mandatory.
+  - The route ended with score 285, no objectives, and
+    `confirmed_transfer_stops` set.
+- Next step:
+  - With the current discoverability miss fixed in random and coverage samples,
+    prefer the next blind-digest S0-S2 issue when available; otherwise expand
+    the next high-traffic passenger payoff while preserving validation and
+    ending coverage.
+
 # Cycle 55 Conductor Transfer Stop Check
 
 - Date: 2026-06-07
