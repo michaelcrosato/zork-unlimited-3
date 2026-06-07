@@ -1,3 +1,67 @@
+# Cycle 59 Manifest Handoff Door Confirmation
+
+- Date: 2026-06-07
+- Main objective: Add an optional final door-confirmation beat to the manifest
+  handoff intercom route without weakening the direct release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and random play reaches manifest-family
+  endings regularly. The manifest handoff route already has strong platform-side
+  setup, but its third-car intercom currently resolves straight to release; one
+  optional readiness beat can make the handoff feel physically witnessed.
+- Planned work:
+  - Add a second choice from `mara_manifest_handoff_intercom`, keeping
+    `pull_release_after_manifest_handoff_goodbye` first.
+  - Add a focused optional scene that confirms every manifest door has a person
+    moving through it.
+  - Set a narrow `confirmed_manifest_handoff_doors` flag for playtest and
+    regression visibility.
+  - Update exact-choice manifest-handoff regressions.
+  - Run focused tests, validation, full health, the evidence-only AI cycle, and
+    an actual CLI route through the new beat.
+- Risks:
+  - One more late-route option could slow the climax if it reads as required.
+  - `mara_manifest_handoff_intercom` is reached from several manifest branches,
+    so direct-release expectations need careful updates.
+- Status:
+  - Completed.
+  - Added `confirm_manifest_handoff_doors` to
+    `mara_manifest_handoff_intercom`, with the direct release still first.
+  - Added `passenger_manifest_handoff_door_check`, which sets
+    `confirmed_manifest_handoff_doors` and resolves to
+    `passenger_manifest_handoff_true_ending`.
+  - Updated manifest-handoff regressions for direct release and the new
+    confirmation route.
+  - Focused manifest-handoff regression passed:
+    `npm test -- tests/story-paths.test.ts -t "manifest handoff"`.
+  - Story validation passed with 163 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 163 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus a tracked cycle observation. Health evidence was
+    green; random and coverage both had `unfinished: 0` and
+    `unvisitedScenes: []`, and coverage visited
+    `passenger_manifest_handoff_door_check`.
+  - Discovered Zork MCP app validation/start calls returned
+    `user cancelled MCP tool call`, so route verification used the CLI
+    save/choose interface.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> Mara manifest handoff ->
+    third-car intercom -> door confirmation ->
+    `passenger_manifest_handoff_true_ending`.
+  - The new beat reads as a physical count by doors instead of page numbers:
+    each named passenger has a hand on a threshold before Mara says the list
+    can move.
+  - The route ended with score 294, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and
+    `confirmed_manifest_handoff_doors` set.
+- Commit status:
+  - Commit/push was attempted after green checks, but this sandbox could not
+    create `.git/index.lock` because `.git` is mounted read-only.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving high-traffic passenger payoffs or transcript
+    critique quality without widening the story surface too aggressively.
+
 # Cycle 58 Mara Handoff Last-Door Check
 
 - Date: 2026-06-07

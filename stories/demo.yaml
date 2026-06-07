@@ -4467,6 +4467,29 @@ scenes:
       - id: pull_release_after_manifest_handoff_goodbye
         label: Pull the release while Mara holds the manifest open
         to: passenger_manifest_handoff_true_ending
+      - id: confirm_manifest_handoff_doors
+        label: Confirm every manifest door has someone moving through it
+        to: passenger_manifest_handoff_door_check
+        requires:
+          notFlag: confirmed_manifest_handoff_doors
+        effects:
+          set:
+            confirmed_manifest_handoff_doors: true
+
+  passenger_manifest_handoff_door_check:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm and count by doors instead of page
+      numbers. Mara stands where the platform wind can reach her now, passing
+      each name to the passenger nearest the threshold. The newspaper woman
+      takes the child by the mittened hand. The conductor steadies the
+      lunch-tin worker with one punched transfer tucked between two fingers.
+      Every stamped door has a living hand on it before Mara looks back and
+      says, "Now the list can move."
+    choices:
+      - id: pull_release_after_manifest_handoff_door_check
+        label: Pull the release after every manifest handoff is moving
+        to: passenger_manifest_handoff_true_ending
 
   mara_manifest_thumbprint_intercom:
     routeImportance: optional

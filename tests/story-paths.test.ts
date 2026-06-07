@@ -5432,7 +5432,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye"
+      "pull_release_after_manifest_handoff_goodbye",
+      "confirm_manifest_handoff_doors"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -5487,10 +5488,22 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye"
+      "pull_release_after_manifest_handoff_goodbye",
+      "confirm_manifest_handoff_doors"
     ]);
 
-    state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
+    state = choose(story, state, "confirm_manifest_handoff_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_door_check");
+    expect(observation.scene.text).toContain("count by doors instead of page numbers");
+    expect(observation.scene.text).toContain("Every stamped door has a living hand on it");
+    expect(observation.state.flags.confirmed_manifest_handoff_doors).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_handoff_door_check"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_handoff_door_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
@@ -5821,7 +5834,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBeUndefined();
     expect(observation.scene.text).toContain("called every stamped door");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye"
+      "pull_release_after_manifest_handoff_goodbye",
+      "confirm_manifest_handoff_doors"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -7087,7 +7101,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("called every stamped door");
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye"
+      "pull_release_after_manifest_handoff_goodbye",
+      "confirm_manifest_handoff_doors"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -7145,7 +7160,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye"
+      "pull_release_after_manifest_handoff_goodbye",
+      "confirm_manifest_handoff_doors"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
