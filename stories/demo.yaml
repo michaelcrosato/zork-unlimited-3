@@ -5426,6 +5426,28 @@ scenes:
       - id: pull_release_after_keepsake_roll_call
         label: Pull the release after every keepsake answers
         to: passenger_keepsake_true_ending
+      - id: confirm_keepsake_owners_before_release
+        label: Confirm each keepsake has found its person
+        to: passenger_keepsake_owner_check
+        effects:
+          set:
+            confirmed_keepsake_owners: true
+
+  passenger_keepsake_owner_check:
+    routeImportance: optional
+    text: >
+      You hold the release while the matched objects make their last quiet
+      circuit through the aisle. The lunch tin is not just under the right
+      seat; its owner knows the dent by the latch. The newspaper is not just
+      folded to the right column; the woman can name the stop without reading
+      it. One umbrella changes hands after a whispered initial, and the child
+      with the mitten points out the passenger who had been too cold to ask.
+      Mara waits until every keepsake has been claimed by memory instead of
+      ink, then says, "All ordinary proof accounted for."
+    choices:
+      - id: pull_release_after_confirmed_keepsake_owners
+        label: Pull the release after every keepsake finds its owner
+        to: passenger_keepsake_true_ending
 
   passenger_roll_call_epilogue:
     routeImportance: optional

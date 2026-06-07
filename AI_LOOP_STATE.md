@@ -1,3 +1,59 @@
+# Cycle 54 Keepsake Owner Confirmation
+
+- Date: 2026-06-07
+- Main objective: Add a small optional confirmation beat to the matched-keepsake
+  ending route without weakening its existing direct release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and normal random play is reaching passenger
+  ideal endings reliably, so the best next improvement is richer late-route
+  payoff on a common, emotionally specific branch.
+- Planned work:
+  - Add an optional owner-confirmation scene after
+    `passenger_keepsake_roll_call`.
+  - Keep `pull_release_after_keepsake_roll_call` first so ready players still
+    finish immediately.
+  - Set a narrow `confirmed_keepsake_owners` flag for the optional beat.
+  - Update focused keepsake regressions, then run validation, full health, and
+    an actual playthrough through the new beat.
+- Risks:
+  - Adding a second exit from the keepsake roll-call scene could slightly dilute
+    direct keepsake-ending traffic in small random samples.
+  - The beat must read as a final confirmation, not a new hidden requirement.
+- Status:
+  - Completed.
+  - Added `passenger_keepsake_owner_check` as an optional confirmation after
+    the keepsake roll call.
+  - Kept `pull_release_after_keepsake_roll_call` first so the existing
+    keepsake ending remains immediate.
+  - Added `confirmed_keepsake_owners` to mark the optional confirmation beat.
+  - Updated keepsake regressions to expect the new second roll-call exit and
+    verify the owner-check scene resolves to `passenger_keepsake_true_ending`.
+  - Focused keepsake regression passed:
+    `npm test -- tests/story-paths.test.ts -t "keepsake"`.
+  - Story validation passed with 159 reachable scenes.
+  - Full `npm run health` passed: format check, TypeScript, 279 tests, story
+    validation, and coverage playtest with all 159 scenes visited.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports. Its health evidence passed; random play had
+    `ended: 100`, `unfinished: 0`, `unvisitedScenes: []`, and visited
+    `passenger_keepsake_owner_check`. MCP stdio still closed in this sandbox,
+    while the local fallback adaptive route reached
+    `passenger_lunch_tin_checked_true_ending`.
+  - Commit/push was attempted after the green checks, but this sandbox could
+    not create `.git/index.lock` because `.git` is mounted read-only.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> matched keepsakes -> third-car
+    boarding -> keepsake roll call -> owner confirmation ->
+    `passenger_keepsake_true_ending`.
+  - The new beat reads as a final ownership check for the objects, not a new
+    puzzle requirement.
+  - The route ended with score 314, no objectives, and
+    `confirmed_keepsake_owners` set.
+- Next step:
+  - Watch the next blind digest for whether keepsake branches need more
+    discoverability; if no S0-S2 issues appear, prefer transcript/report
+    quality or another focused payoff on a common passenger route.
+
 # Cycle 53 Newspaper Stop Confirmation
 
 - Date: 2026-06-07

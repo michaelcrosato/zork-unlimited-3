@@ -10049,7 +10049,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_keepsake_roll_call"
+      "pull_release_after_keepsake_roll_call",
+      "confirm_keepsake_owners_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_keepsake_roll_call");
@@ -10147,10 +10148,30 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("every initial has a hand beneath it");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_keepsake_roll_call"
+      "pull_release_after_keepsake_roll_call",
+      "confirm_keepsake_owners_before_release"
     ]);
 
-    state = choose(story, state, "pull_release_after_keepsake_roll_call");
+    const rollCallState = state;
+
+    state = choose(story, rollCallState, "pull_release_after_keepsake_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, rollCallState, "confirm_keepsake_owners_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_check");
+    expect(observation.scene.text).toContain("All ordinary proof accounted for");
+    expect(observation.state.flags.confirmed_keepsake_owners).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_keepsake_owners"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
