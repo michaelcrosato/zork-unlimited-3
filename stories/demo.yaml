@@ -5496,11 +5496,34 @@ scenes:
         to: passenger_roll_call_true_ending
         requires:
           notFlag: returned_lost_mitten
+      - id: confirm_roll_call_answers_before_release
+        label: Confirm each answer belongs to someone present
+        to: passenger_roll_call_answer_check
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            confirmed_roll_call_answers: true
       - id: pull_release_after_mitten_roll_call
         label: Pull the release after the child's answer
         to: passenger_mitten_true_ending
         requires:
           flag: returned_lost_mitten
+
+  passenger_roll_call_answer_check:
+    routeImportance: optional
+    text: >
+      You hold the release while the passengers pass the last answers back
+      through the aisle. No name is allowed to hang alone in Mara's speaker.
+      The newspaper woman repeats the conductor's stop with him, the conductor
+      calls clear for the lunch-tin worker, and the child points to the person
+      who found his other mitten under the bench. Each answer lands beside a
+      living face instead of a ledger mark. Mara waits for the final echo to
+      become a voice and says, "Every answer has someone standing with it."
+    choices:
+      - id: pull_release_after_confirmed_roll_call_answers
+        label: Pull the release after every answer is witnessed
+        to: passenger_roll_call_true_ending
 
   gate_warning:
     routeImportance: optional

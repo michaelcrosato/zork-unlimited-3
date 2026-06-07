@@ -1,3 +1,62 @@
+# Cycle 57 Roll-Call Answer Confirmation
+
+- Date: 2026-06-07
+- Main objective: Add an optional final answer-confirmation beat to the core
+  passenger roll-call ending route without weakening the existing direct
+  release.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green, normal play reaches
+  `passenger_roll_call_true_ending`, and recent cycles have improved late-route
+  payoff on adjacent passenger branches. The core roll-call branch was still a
+  direct jump from chorus to release, so a small confirmation scene gives that
+  common route the same final witness texture.
+- Planned work:
+  - Add a core-only optional choice from `passenger_roll_call_epilogue` to a new
+    confirmation scene.
+  - Preserve the existing direct `pull_release_after_final_roll_call` path.
+  - Leave returned-mitten roll-call routing unchanged so its specific payoff
+    remains clean.
+  - Update focused story-path regressions for both direct and confirmed release
+    paths.
+  - Run validation, full health, and an actual CLI playthrough through the new
+    confirmation route.
+- Risks:
+  - Adding one more late-route choice could slightly slow the climax if it read
+    as mandatory.
+  - The shared roll-call epilogue also serves the returned-mitten ending, so the
+    new choice must not leak into that branch.
+- Status:
+  - Completed.
+  - Added `confirm_roll_call_answers_before_release` to
+    `passenger_roll_call_epilogue`, gated behind `notFlag: returned_lost_mitten`.
+  - Added `passenger_roll_call_answer_check`, which sets
+    `confirmed_roll_call_answers` and resolves to
+    `passenger_roll_call_true_ending`.
+  - Preserved the existing direct release and returned-mitten release choices.
+  - Updated focused story-path regressions to verify the new optional route from
+    both gathered-passenger roll-call entry points.
+  - Focused final-roll-call regression passed:
+    `npm test -- tests/story-paths.test.ts -t "final roll call"`.
+  - Story validation passed with 161 reachable scenes.
+  - Fresh random and coverage playtests both had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `passenger_roll_call_answer_check`.
+  - Full `npm run health` passed after the story/test edits: format check,
+    TypeScript, 279 tests, story validation, and coverage playtest with all 161
+    scenes visited.
+  - Commit/push was attempted after the green checks, but this sandbox could
+    not create `.git/index.lock` because `.git` is mounted read-only.
+- Playtest feedback:
+  - Actual CLI play followed manifest rescue -> gathered passengers -> final
+    roll call -> answer confirmation -> `passenger_roll_call_true_ending`.
+  - The confirmation beat reads as a witness check for the passenger chorus,
+    not as a new puzzle gate; direct release remains first for ready players.
+  - The route ended with score 329, no objectives, and
+    `confirmed_roll_call_answers` set.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise keep improving high-traffic late passenger payoffs or transcript
+    critique quality without expanding the choice surface too broadly.
+
 # Cycle 56 Handoff Transfer Stop Discovery
 
 - Date: 2026-06-07
