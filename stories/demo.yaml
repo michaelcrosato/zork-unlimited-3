@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1745,6 +1745,21 @@ scenes:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
+      - id: pull_release_on_opened_lunch_tin_count
+        label: Pull the release as the lunch-tin count holds the opened line
+        choiceGroup: Lunch tin / shift count
+        to: passenger_lunch_tin_true_ending
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_lunch_tin_passengers
+            - notFlag: read_lunch_tin_roster
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            heard_gathered_passengers: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         choiceGroup: Door echoes / threshold

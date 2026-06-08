@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6727,33 +6727,38 @@ describe("demo story critical paths", () => {
       "Let the lunch-tin worker set the opened boarding pace"
     );
     expect(observation.choices[14]?.choiceGroup).toBe("Lunch tin / shift count");
-    expect(choiceIds[15]).toBe("hold_opened_manifest_threshold");
+    expect(choiceIds[15]).toBe("pull_release_on_opened_lunch_tin_count");
     expect(observation.choices[15]?.label).toBe(
+      "Pull the release as the lunch-tin count holds the opened line"
+    );
+    expect(observation.choices[15]?.choiceGroup).toBe("Lunch tin / shift count");
+    expect(choiceIds[16]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[16]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[16]).toBe("hold_and_confirm_opened_manifest_threshold");
-    expect(observation.choices[16]?.label).toBe(
+    expect(choiceIds[17]).toBe("hold_and_confirm_opened_manifest_threshold");
+    expect(observation.choices[17]?.label).toBe(
       "Hold the threshold and confirm every opened passenger clears it"
     );
-    expect(choiceIds[17]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[17]?.label).toBe(
+    expect(choiceIds[18]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[18]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[18]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[18]?.label).toBe(
+    expect(choiceIds[19]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[19]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(choiceIds[19]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[19]?.label).toBe(
+    expect(choiceIds[20]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[20]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[20]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
-    expect(observation.choices[20]?.label).toBe(
+    expect(choiceIds[21]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
+    expect(observation.choices[21]?.label).toBe(
       "Confirm Mara's thumbprint oath reaches the opened passengers"
     );
-    expect(observation.choices[20]?.choiceGroup).toBe("Mara and manifest");
-    expect(choiceIds[21]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[21]?.label).toBe(
+    expect(observation.choices[21]?.choiceGroup).toBe("Mara and manifest");
+    expect(choiceIds[22]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[22]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
@@ -6781,6 +6786,9 @@ describe("demo story critical paths", () => {
       choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")
     );
     expect(choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")).toBeLessThan(
+      choiceIds.indexOf("pull_release_on_opened_lunch_tin_count")
+    );
+    expect(choiceIds.indexOf("pull_release_on_opened_lunch_tin_count")).toBeLessThan(
       choiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(choiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
@@ -8764,6 +8772,69 @@ describe("demo story critical paths", () => {
       "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
+  });
+
+  it("lets opened manifest players pull on the lunch-tin count directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const openedChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
+    expect(openedChoiceIds).toContain("pull_release_on_opened_lunch_tin_count");
+    expect(openedChoiceIds.indexOf("pull_release_on_opened_lunch_tin_count")).toBeGreaterThan(
+      openedChoiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")
+    );
+    expect(openedChoiceIds.indexOf("pull_release_on_opened_lunch_tin_count")).toBeLessThan(
+      openedChoiceIds.indexOf("hold_opened_manifest_threshold")
+    );
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_on_opened_lunch_tin_count")
+        ?.label
+    ).toBe("Pull the release as the lunch-tin count holds the opened line");
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_on_opened_lunch_tin_count")
+        ?.choiceGroup
+    ).toBe("Lunch tin / shift count");
+
+    state = choose(story, state, "pull_release_on_opened_lunch_tin_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("lunch-tin worker's count");
+    expect(observation.scene.text).toContain("everyone got a break at last");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.checked_lunch_tin_passengers).toBeUndefined();
+    expect(observation.state.flags.read_lunch_tin_roster).toBeUndefined();
+    expectIdealScore(observation.score);
   });
 
   it("lets answer listeners follow the lunch-tin count directly into the third car", async () => {
@@ -14385,6 +14456,7 @@ describe("demo story critical paths", () => {
       "confirm_opened_conductor_clearance",
       "check_lunch_tin_count_from_opened_manifest",
       "let_opened_lunch_tin_worker_set_pace",
+      "pull_release_on_opened_lunch_tin_count",
       "hold_opened_manifest_threshold",
       "hold_and_confirm_opened_manifest_threshold",
       "listen_to_opened_threshold_from_manifest",

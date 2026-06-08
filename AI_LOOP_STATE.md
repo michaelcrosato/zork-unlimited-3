@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 20 Direct Lunch-Tin Release
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players pull the release directly on the
+  lunch-tin worker's count.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 20 random evidence is healthy overall, but the simple
+  `passenger_lunch_tin_true_ending` still did not appear in the 100-run random
+  sample while nearby checked and roster lunch-tin variants did.
+- Why this matters: The lunch-tin worker is one of the clearest ordinary-life
+  passenger payoffs. A normal player should be able to trust his practical
+  count and finish the rescue without first choosing the boarding scene,
+  speaker scene, self-count, checked count, or roster proof.
+- Planned work:
+  - Add a direct opened-manifest choice that pulls the release while the
+    lunch-tin count holds the opened line.
+  - Keep the existing lunch-tin pace, boarding, intercom, checked-count, and
+    roster-proof routes intact.
+  - Update the opened-manifest objective so player-facing guidance names the
+    direct lunch-tin release.
+  - Add regression coverage for choice visibility, menu placement, flags, and
+    the resulting ideal ending.
+  - Run focused tests, full health, evidence gathering, and one actual route
+    through the new lunch-tin release.
+- Risks:
+  - The opened-manifest hub is already broad, so the new choice must stay
+    grouped with lunch-tin actions and avoid hiding the richer checked/roster
+    variants.
+  - Random play may still under-sample the route because many ideal passenger
+    endings compete from the same hub.
+- Status:
+  - Completed.
+  - Added `pull_release_on_opened_lunch_tin_count` from `passengers_released`
+    to `passenger_lunch_tin_true_ending`, setting the passenger-gathering and
+    lunch-tin pace flags without marking the checked-count or roster variants.
+  - Updated the opened-manifest objective so player-facing guidance now names
+    pulling on the lunch-tin count.
+  - Preserved existing lunch-tin pace, boarding, intercom, checked-count,
+    self-count, and roster-proof routes.
+  - Added regression coverage for choice visibility, lunch-tin group
+    placement, label, flags, objective text, and the resulting ideal ending.
+  - Focused lunch-tin tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 324 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 292,
+    through `pull_release_on_opened_lunch_tin_count`; objectives were cleared.
+  - `npm run ai:cycle` was rerun with `AI_LOOP_EVIDENCE_ONLY=1` and completed,
+    writing ignored `ai-runs/` artifacts plus the tracked cycle observation.
+- Playtest feedback:
+  - The new label sits inside the lunch-tin group between the pace setup and
+    threshold actions, so it reads as a direct finish to that passenger thread
+    rather than a generic release.
+  - The ending payoff is clear and not abrupt: the worker counts child,
+    newspaper woman, conductor, Mara, then himself last, resolving the "count
+    people without keeping them" motif.
+  - No stale objective, invalid choice, unreachable scene, unfinished playtest,
+    or route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_roll_call_checked_true_ending`, `passenger_answered_boarding_true_ending`,
+    or `passenger_threshold_boarding`.
+
 # Cycle 19 Direct Shared-Room Intercom
 
 - Date: 2026-06-08
