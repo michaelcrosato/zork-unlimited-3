@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 76 Manifest Thumbprint Receipt Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the manifest-thumbprint receipt show up in normal seeded
+  play without removing the direct release path.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence: seeded random play missed
+  `mara_manifest_thumbprint_receipt` while coverage and MCP could reach it.
+- Why this matters: Players who notice Mara's torn thumbprint are making a
+  careful story choice. The game should naturally surface the proof that the
+  opened passengers receive that oath before the release, while still letting
+  decisive players pull immediately.
+- Planned work:
+  - Put `confirm_manifest_thumbprint_receipt` ahead of the immediate release
+    in `mara_manifest_thumbprint_intercom`.
+  - Keep `pull_release_after_manifest_thumbprint_goodbye` available from the
+    same scene.
+  - Update path and seeded-random regression coverage.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the receipt route.
+- Risks:
+  - Optional late-route confirmations can feel mandatory if too many are
+    placed ahead of releases.
+  - The receipt should stay about Mara's oath reaching passengers, not another
+    generic count check.
+- Status:
+  - Completed.
+  - Reordered `mara_manifest_thumbprint_intercom` so
+    `confirm_manifest_thumbprint_receipt` appears before the immediate release.
+  - Kept `pull_release_after_manifest_thumbprint_goodbye` available from the
+    same scene, so decisive players can still end the route without the extra
+    confirmation.
+  - Updated manifest-thumbprint path tests to lock the new choice order while
+    still proving the direct release path works.
+  - Extended seeded-random regression coverage so 100-run normal play must
+    visit `mara_manifest_thumbprint_receipt`.
+  - Focused checks passed:
+    `npm test -- -t "manifest-thumbprint|optional receipt"` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Seeded random playtest now visits `mara_manifest_thumbprint_receipt` with
+    `unfinished: 0`, `unvisitedScenes: []`, and stable ending distribution.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `mara_manifest_thumbprint_receipt`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+    tracked cycle observation; long-run metrics stayed stable with true-ending
+    rate 78%, unfinished random runs 0, and best score 399.
+  - Actual CLI route reached `passenger_manifest_thumbprint_true_ending`
+    through `confirm_manifest_thumbprint_receipt` and
+    `pull_release_after_manifest_thumbprint_receipt` with score 312, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_manifest_thumbprint_receipt` set.
+- Playtest feedback:
+  - The route now foregrounds the story proof players were likely trying to
+    get: Mara's oath is received by passengers before the release opens every
+    door.
+  - The direct release remains in the scene, but careful play has a more
+    natural next step and normal seeded play now sees it.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise shift from adding more receipt beats to checking whether the
+    late-game confirmation density still feels paced and optional.
+
 # Cycle 75 Threshold Clearance Discovery
 
 - Date: 2026-06-08

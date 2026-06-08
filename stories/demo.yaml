@@ -4589,9 +4589,6 @@ scenes:
       answer loosens the old ink. "Let it mean I stayed long enough to leave
       with them."
     choices:
-      - id: pull_release_after_manifest_thumbprint_goodbye
-        label: Pull the release while Mara leaves with the manifest
-        to: passenger_manifest_thumbprint_true_ending
       - id: confirm_manifest_thumbprint_receipt
         label: Confirm the thumbprint oath reaches the opened passengers
         to: mara_manifest_thumbprint_receipt
@@ -4600,6 +4597,9 @@ scenes:
         effects:
           set:
             confirmed_manifest_thumbprint_receipt: true
+      - id: pull_release_after_manifest_thumbprint_goodbye
+        label: Pull the release while Mara leaves with the manifest
+        to: passenger_manifest_thumbprint_true_ending
 
   mara_manifest_thumbprint_receipt:
     routeImportance: optional

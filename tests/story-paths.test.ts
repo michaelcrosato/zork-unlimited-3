@@ -7518,8 +7518,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_thumbprint_goodbye",
-      "confirm_manifest_thumbprint_receipt"
+      "confirm_manifest_thumbprint_receipt",
+      "pull_release_after_manifest_thumbprint_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
@@ -7908,8 +7908,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("Let it mean I stayed long enough to leave");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_thumbprint_goodbye",
-      "confirm_manifest_thumbprint_receipt"
+      "confirm_manifest_thumbprint_receipt",
+      "pull_release_after_manifest_thumbprint_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
