@@ -5043,6 +5043,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
     expect(observation.state.flags.checked_echoed_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_echoed_manifest_seats",
       "pull_release_after_checked_echoes"
     ]);
 
@@ -5135,8 +5136,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("same small sounds you heard behind the");
     expect(observation.scene.text).toContain("Now let the line hear them leaving");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_echoed_manifest_goodbye",
-      "confirm_echoed_manifest_seats"
+      "confirm_echoed_manifest_seats",
+      "pull_release_after_echoed_manifest_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
@@ -5182,11 +5183,23 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.echoed_manifest_boarded).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pause_for_echoed_boarding",
-      "pull_release_after_echoed_manifest_goodbye",
-      "confirm_echoed_manifest_seats"
+      "confirm_echoed_manifest_seats",
+      "pull_release_after_echoed_manifest_goodbye"
     ]);
 
     state = choose(story, state, "confirm_echoed_manifest_seats");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_check");
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.confirmed_echoed_manifest_seats).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_echoed_manifest_seats",
+      "pull_release_after_checked_echoes"
+    ]);
+
+    state = choose(story, state, "confirm_checked_echoed_manifest_seats");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_echoed_seat_receipt");
@@ -5381,6 +5394,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("echoes are no longer clues");
     expect(observation.state.flags.checked_echoed_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_echoed_manifest_seats",
       "pull_release_after_checked_echoes"
     ]);
 
@@ -6569,8 +6583,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_echoed_manifest_goodbye",
-      "confirm_echoed_manifest_seats"
+      "confirm_echoed_manifest_seats",
+      "pull_release_after_echoed_manifest_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");

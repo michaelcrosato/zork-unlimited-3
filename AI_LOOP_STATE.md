@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 67 Echoed Confirmation Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the echoed-passenger check and seat receipt show up in
+  normal random play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle used the live loop evidence: 100-run random play reached
+  `passenger_echoed_true_ending` but missed `passenger_echoed_check` and
+  `passenger_echoed_seat_receipt`.
+- Why this matters: Players were reaching the echoed ending, but normal play
+  skipped the clearest proof that the old door sounds now belong to visible
+  passengers aboard the third car.
+- Planned work:
+  - Keep `pull_release_after_echoed_manifest_goodbye` available from
+    `passenger_echoed_manifest_intercom`.
+  - Move the optional confirmation ahead of the direct release and route it
+    through `passenger_echoed_check`.
+  - Add a checked-echoes follow-up into `passenger_echoed_seat_receipt`.
+  - Add a deterministic random-play regression for the previously missed
+    scenes.
+  - Run focused tests, validation, full health, evidence-only cycle, and an
+    actual CLI playthrough through the new beat.
+- Risks:
+  - Moving the optional confirmation ahead of the direct release can make the
+    climax feel slightly more cautious, but the direct release remains visible
+    from the same intercom.
+  - The echoed route now has a two-step optional proof path, so future blind
+    feedback should watch whether it reads like payoff rather than friction.
+- Status:
+  - Completed.
+  - Added `confirm_checked_echoed_manifest_seats` from
+    `passenger_echoed_check` to `passenger_echoed_seat_receipt`.
+  - Changed `confirm_echoed_manifest_seats` so it now leads to
+    `passenger_echoed_check` before the seat receipt, while leaving
+    `pull_release_after_echoed_manifest_goodbye` as the direct ending choice.
+  - Added `tests/playtest.test.ts` coverage proving seeded 100-run random play
+    visits both `passenger_echoed_check` and `passenger_echoed_seat_receipt`.
+  - Focused echo regressions passed: `npm test -- -t "echo"` with 11 relevant
+    tests green.
+  - Focused random-discovery regression passed:
+    `npm test -- -t "seeded random demo play discovers the echoed passenger receipt"`.
+  - Story validation passed with 170 reachable scenes and no warnings.
+  - Fresh 100-run random play had `unfinished: 0`, `unvisitedScenes: []`, and
+    visited both previously missed echoed scenes.
+  - Full `npm run health` passed: format check, TypeScript, 292 tests, story
+    validation, and coverage playtest. Coverage also had `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus one tracked cycle observation. Long-run signals
+    stayed stable: ideal-ending rate 78%, unfinished random runs 0, best score
+    399, and the MCP route reached `true_ending` with score 305.
+  - Actual CLI route reached `passenger_echoed_true_ending` with score 282, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_echoed_manifest_seats` set.
+- Playtest feedback:
+  - The new path reads more coherently: choosing to confirm echoes now first
+    identifies the passengers, then proves they are actually seated aboard.
+  - The direct release still works from the intercom, so impatient players are
+    not forced through the optional receipt.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise expand a small story payoff beat while preserving validation,
+    coverage, and the current low non-ideal-ending pressure.
+
 # Cycle 66 Echoed-Seat Receipt Confirmation
 
 - Date: 2026-06-08
