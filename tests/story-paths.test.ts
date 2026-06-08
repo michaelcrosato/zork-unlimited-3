@@ -2996,7 +2996,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wait_for_handoff_after_last_dispatch",
-      "pull_release_after_last_dispatch_goodbye"
+      "pull_release_after_last_dispatch_goodbye",
+      "confirm_last_dispatch_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
@@ -3114,7 +3115,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wait_for_handoff_after_last_dispatch",
-      "pull_release_after_last_dispatch_goodbye"
+      "pull_release_after_last_dispatch_goodbye",
+      "confirm_last_dispatch_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
@@ -3427,7 +3429,8 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_badge_proof_after_last_dispatch",
       "wait_for_handoff_after_last_dispatch",
-      "pull_release_after_last_dispatch_goodbye"
+      "pull_release_after_last_dispatch_goodbye",
+      "confirm_last_dispatch_receipt"
     ]);
 
     state = choose(story, state, "listen_to_badge_proof_after_last_dispatch");
@@ -3499,7 +3502,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wait_for_handoff_after_last_dispatch",
-      "pull_release_after_last_dispatch_goodbye"
+      "pull_release_after_last_dispatch_goodbye",
+      "confirm_last_dispatch_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
@@ -3615,10 +3619,23 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "wait_for_handoff_after_last_dispatch",
-      "pull_release_after_last_dispatch_goodbye"
+      "pull_release_after_last_dispatch_goodbye",
+      "confirm_last_dispatch_receipt"
     ]);
 
-    state = choose(story, state, "pull_release_after_last_dispatch_goodbye");
+    state = choose(story, state, "confirm_last_dispatch_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_last_dispatch_receipt");
+    expect(observation.scene.text).toContain("Route held");
+    expect(observation.scene.text).toContain("the line heard her correctly at last");
+    expect(observation.scene.text).toContain("Received");
+    expect(observation.state.flags.confirmed_last_dispatch_receipt).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_dispatch_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_dispatch_receipt");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");

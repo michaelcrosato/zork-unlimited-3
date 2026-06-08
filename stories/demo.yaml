@@ -4379,6 +4379,29 @@ scenes:
       - id: pull_release_after_last_dispatch_goodbye
         label: Pull the release after Mara's last dispatch
         to: mara_last_dispatch_true_ending
+      - id: confirm_last_dispatch_receipt
+        label: Confirm every car repeats Mara's dispatch
+        to: mara_last_dispatch_receipt
+        requires:
+          notFlag: confirmed_last_dispatch_receipt
+        effects:
+          set:
+            confirmed_last_dispatch_receipt: true
+
+  mara_last_dispatch_receipt:
+    routeImportance: optional
+    text: >
+      You hold the release and let Mara's dispatch travel car by car before
+      you pull. The first speaker answers with Route held. The second answers
+      Doors ready. The third, closest to your hand, repeats Passenger release
+      authorized by proof, not by permission. The words come back changed by
+      every open doorway they pass: not an order, not a delay, but a receipt
+      that the line heard her correctly at last. Mara exhales once over the
+      channel. "Received," she says. "Now make it true."
+    choices:
+      - id: pull_release_after_dispatch_receipt
+        label: Pull the release after the dispatch is received
+        to: mara_last_dispatch_true_ending
 
   mara_thumbprint_intercom:
     routeImportance: optional

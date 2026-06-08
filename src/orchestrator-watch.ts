@@ -37,6 +37,13 @@ export interface Anomaly {
   reason: string;
 }
 
+interface CycleObservationLike {
+  mcpRoute?: {
+    ok?: boolean;
+  };
+  postAgentStatus?: string;
+}
+
 export function monitorCadence(elapsedMs: number): WatchCadence {
   if (elapsedMs < 5 * minute) {
     return { stage: "first-5-minutes", delayMs: minute };
@@ -123,7 +130,30 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
     anomalies.push({ severity: "hard", reason: "agent command or post-agent automation failed" });
   }
 
+  const observation = parseLatestObservation(snapshot.latestObservation);
+  if (observation?.mcpRoute?.ok === false) {
+    anomalies.push({
+      severity: "hard",
+      reason: "latest cycle observation reports MCP route failure"
+    });
+  }
+  if (observation?.postAgentStatus === "failed") {
+    anomalies.push({
+      severity: "hard",
+      reason: "latest cycle observation reports failed post-agent automation"
+    });
+  }
+
   return anomalies;
+}
+
+function parseLatestObservation(line: string | undefined): CycleObservationLike | undefined {
+  if (!line) return undefined;
+  try {
+    return JSON.parse(line) as CycleObservationLike;
+  } catch {
+    return undefined;
+  }
 }
 
 function countMatches(text: string, pattern: RegExp): number {

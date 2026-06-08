@@ -2587,3 +2587,48 @@ tests/ai-loop.test.ts`
 ### Next Iteration
 
 - Relaunch from a clean tree and restart the staged monitoring schedule.
+
+## 2026-06-08 - Observation-Backed Monitor Recovery
+
+### Changes
+
+- Extended `orchestrator:watch` to parse the latest
+  `ai-loop-observations/cycles.jsonl` row and flag `mcpRoute.ok: false` or
+  `postAgentStatus: failed` as hard anomalies.
+- Took ownership of the interrupted loop's dirty cycle output after the MCP
+  route anomaly, verified it locally, and prepared it for a normal commit.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm test -- tests/orchestrator-watch.test.ts`
+  - `npm run health`
+  - Direct SDK-backed MCP route to `true_ending`
+  - CLI route through `mara_last_dispatch_receipt`
+- Quantitative metrics:
+  - Tests: 16 files, 287 tests passing
+  - Validation: 166 scenes, 31 endings, 166 reachable scenes
+  - Coverage self-play: 178 effective runs, 0 unfinished, all scenes visited
+  - Direct MCP route: reached `true_ending` with score 305
+  - Dispatch receipt route: reached `mara_last_dispatch_true_ending` with score
+    294 and `confirmed_last_dispatch_receipt`
+- What worked:
+  - The monitor now catches hard failures that are only visible in cycle
+    observation rows.
+  - The recovered story beat gives Mara's final dispatch a small receipt proof
+    before release without removing the direct release route.
+- What felt bad/confusing:
+  - The previous monitor checked logs and wrapper state but missed an
+    observation-only MCP failure.
+- Bugs found:
+  - Observation-backed MCP route failures were invisible to the monitor.
+
+### Evaluation
+
+- The monitor now covers process health, artifact freshness, log failures, and
+  latest observation failures.
+
+### Next Iteration
+
+- Commit the recovered changes, relaunch from a clean tree, and restart the
+  staged monitor schedule again.

@@ -1,3 +1,77 @@
+# Active Audience Reminder
+
+- Treat the ongoing loop as a pop quiz for a VP-level manager who is not
+  tech-savvy.
+- Keep technical rigor in the work, but explain status, risks, evidence, and
+  next decisions in plain language.
+- Lead with what changed for the player or operator, what proof we have, and
+  what the loop should trust next.
+
+# Cycle 62 Mara Last-Dispatch Receipt Confirmation
+
+- Date: 2026-06-08
+- Main objective: Add an optional dispatch-receipt confirmation to Mara's
+  last-dispatch ending route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and the goal strategy reliably reaches
+  `mara_last_dispatch_true_ending`, but that route moved from Mara's public
+  record straight to release without letting the player verify that the train
+  heard the dispatch as a receipt rather than another command.
+- Planned work:
+  - Add a focused `mara_last_dispatch_receipt` scene after
+    `mara_last_dispatch_intercom`.
+  - Keep `pull_release_after_last_dispatch_goodbye` available so direct
+    last-dispatch routes stay fast.
+  - Set `confirmed_last_dispatch_receipt` for regression and playtest
+    visibility.
+  - Update last-dispatch story-path regressions for both direct release and the
+    new receipt route.
+  - Run focused tests, validation, full health, the evidence-only AI cycle, and
+    an actual playthrough through the new beat.
+- Risks:
+  - Another late Mara-core choice can slow the climax if it reads as mandatory.
+  - The last-dispatch intercom is reached from both pre-boarding and train-car
+    paths, so exact choice regressions had to preserve direct release.
+- Status:
+  - Completed.
+  - Added `confirm_last_dispatch_receipt` to
+    `mara_last_dispatch_intercom`, preserving the existing direct release
+    choice.
+  - Added `mara_last_dispatch_receipt`, which confirms each car repeats
+    Mara's dispatch and resolves to `mara_last_dispatch_true_ending`.
+  - Updated last-dispatch regressions for direct release and the new receipt
+    path.
+  - Focused last-dispatch regression passed:
+    `npm test -- -t "last dispatch"`.
+  - Story validation passed with 166 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 285 tests, story
+    validation, and coverage playtest with all 166 scenes visited. Coverage
+    visited `mara_last_dispatch_receipt`, had `unfinished: 0`, and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus a tracked cycle observation. Local health and
+    random/coverage evidence were green; random ideal-ending rate stayed at
+    78%, and coverage visited `mara_last_dispatch_receipt`.
+  - Zork MCP connector calls returned `user cancelled MCP tool call`, while the
+    evidence runner's MCP client returned MCP error -32000: Connection closed.
+    Route verification therefore used the CLI save/choose interface.
+- Playtest feedback:
+  - Actual CLI play followed Mara cleared -> final dispatch -> carry dispatch
+    into the third car -> dispatch receipt -> `mara_last_dispatch_true_ending`.
+  - The new beat reads as a small but useful final proof: Route held, Doors
+    ready, and Passenger release authorized come back from the cars as receipt
+    language before the player pulls.
+  - The route ended with score 294, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and
+    `confirmed_last_dispatch_receipt` set.
+- Commit status:
+  - Pending commit/push attempt after state update.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff beats only where a high-traffic
+    route lacks a distinct final proof, or investigate the persistent MCP
+    connector cancellation.
+
 # Cycle 61 Answered-Handoff Threshold Confirmation
 
 - Date: 2026-06-08

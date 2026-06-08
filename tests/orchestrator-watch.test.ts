@@ -108,4 +108,34 @@ describe("orchestrator anomaly classification", () => {
       reason: "agent command or post-agent automation failed"
     });
   });
+
+  it("flags MCP route failures from the latest cycle observation", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          latestObservation: JSON.stringify({
+            mcpRoute: { ok: false }
+          })
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "latest cycle observation reports MCP route failure"
+    });
+  });
+
+  it("flags post-agent failures from the latest cycle observation", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          latestObservation: JSON.stringify({
+            postAgentStatus: "failed"
+          })
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "latest cycle observation reports failed post-agent automation"
+    });
+  });
 });
