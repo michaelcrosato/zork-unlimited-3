@@ -6660,11 +6660,14 @@ scenes:
     endingFamily: Manifest
     text: >
       The release opens every door at once while Mara is still mid-handoff.
-      She reads the first names, then stops because the passengers are already
-      carrying them through the rain-bright doors: newspaper woman to child,
-      conductor to lunch-tin worker, stranger to stranger until the manifest is
-      no longer a duty in one voice. Mara lets the final page close only after
-      every answer has become movement.
+      The timing matters: because the handoff began before the handle moved,
+      the old line cannot turn her call into another order. She reads the
+      first names, then stops because the passengers are already carrying them
+      through the rain-bright doors: newspaper woman to child, conductor to
+      lunch-tin worker, stranger to stranger until the manifest is no longer a
+      duty in one voice. By the time the third-car speaker falls quiet, each
+      open door has someone answering for the next person. Mara lets the final
+      page close only after every answer has become movement.
     choices: []
 
   passenger_manifest_handoff_door_checked_true_ending:

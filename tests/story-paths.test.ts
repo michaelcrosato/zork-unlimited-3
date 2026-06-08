@@ -6237,6 +6237,12 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("The timing matters");
+    expect(observation.scene.text).toContain(
+      "the old line cannot turn her call into another order"
+    );
+    expect(observation.scene.text).toContain("third-car speaker falls quiet");
+    expect(observation.scene.text).toContain("someone answering for the next person");
     expectIdealScore(observation.score);
   });
 
@@ -7625,7 +7631,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara is still mid-handoff");
+    expect(observation.scene.text).toContain("The timing matters");
     expect(observation.scene.text).toContain("no longer a duty in one voice");
+    expect(observation.scene.text).toContain("someone answering for the next person");
     expectIdealScore(observation.score);
   });
 

@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 29 Manifest Handoff Ending Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the rare opened-manifest handoff ending explain why the
+  player's timing mattered.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. The previous milestone already handled the supplied
+  `passenger_manifest_handoff_true_ending` discoverability target, so this
+  cycle followed the long-run signal to invest in richer story depth.
+- Why this matters: The handoff route asks the player to let Mara begin passing
+  opened passenger names forward before pulling the release. The ending now
+  says what that accomplished: the line cannot turn Mara's call into another
+  order, and each open door already has someone answering for the next person.
+- Planned work:
+  - Revise `passenger_manifest_handoff_true_ending` with clearer cause and
+    effect.
+  - Keep route behavior, metadata, choice order, score rules, and ending count
+    unchanged.
+  - Add regression assertions for the new payoff language.
+  - Run focused tests, full health, evidence collection, and a real CLI route
+    through the changed ending.
+- Risks:
+  - This improves narrative payoff, not route probability.
+  - The opened-manifest hub is still intentionally broad; future blind-play
+    feedback may still ask for menu simplification.
+- Status:
+  - Completed.
+  - Expanded `passenger_manifest_handoff_true_ending` to name the handoff timing
+    and third-car speaker payoff.
+  - Updated `tests/story-paths.test.ts` so two manifest-handoff routes assert
+    the ending still explains timing, prevents another order, and has someone
+    answering for the next person.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 306 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_manifest_handoff_true_ending` covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record.
+  - Actual CLI route reached `passenger_manifest_handoff_true_ending`, score
+    291, no remaining choices, and no remaining objectives. The transcript
+    showed the new ending text after
+    `listen_to_manifest_handoff_from_handoff` and
+    `pull_release_after_manifest_handoff_goodbye`.
+- Playtest feedback:
+  - The ending now makes the player action feel less cosmetic: starting the
+    handoff before release changes how the manifest closes.
+  - The route still reads as dense, but the final payoff now matches the
+    objective and choice labels that emphasize Mara's handoff.
+  - No crash, dead end, stale objective, score regression, or reachability issue
+    appeared in the changed route.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve one more high-frequency optional ending or simplify the
+    opened-manifest hub only if player-view evidence shows continued confusion.
+
 # Cycle 28 Opened Manifest Handoff Objective
 
 - Date: 2026-06-08
