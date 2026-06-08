@@ -76,6 +76,12 @@ You are running under the state-of-the-art **GPT-5.5 Instant** and **OpenAI Code
 - When blocked, document the blocker, choose the next best available task, and continue.
 - Keep generated files in ignored locations. Do not commit `ai-runs/`, `saves/*.json`, or transcripts unless the repository policy changes.
 
+## Audience Calibration
+
+- Treat each loop cycle like a pop quiz for a VP-level manager who is not tech-savvy.
+- Preserve technical rigor internally, but make the final status, risks, and next step understandable without assuming engineering context.
+- Lead with what changed for the player or operator, what evidence proves it, and what decision the reader should trust next.
+
 ## Required Cycle Output
 
 End your final response in this structure:

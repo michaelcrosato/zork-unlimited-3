@@ -341,6 +341,8 @@ ${message.slice(-6000)}
 - Inspect the failing loop, story, MCP server, and tests.
 - Make the smallest fix that restores a complete plan/build/health/play cycle.
 - Run \`npm run health\` and actually play the game through MCP or the CLI before finishing.
+- Treat the handoff like a pop quiz for a VP-level manager who is not tech-savvy:
+  lead with the player/operator impact, the proof, and the next trusted decision.
 
 ## Suggested Next Actions
 
@@ -464,6 +466,8 @@ ${failed.length > 0 ? "- Fix failing health checks before changing content." : "
 - Compare random and coverage summaries. Random misses point to normal-player discoverability issues.
 - Actually play one route through MCP before making story or gameplay changes.
 - Use the adaptive exploratory route to identify the next unclear objective or late-game distraction.
+- Treat the handoff like a pop quiz for a VP-level manager who is not tech-savvy:
+  lead with the player/operator impact, the proof, and the next trusted decision.
 - Prefer one focused improvement in the next commit.
 
 ## Suggested Next Actions

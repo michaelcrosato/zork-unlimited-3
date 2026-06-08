@@ -2458,3 +2458,44 @@ tests/ai-loop.test.ts`
 
 - Keep using SDK-backed MCP route probes for real playthrough evidence instead
   of raw batched stdio messages.
+
+## 2026-06-08 - VP Pop-Quiz Loop Reminder
+
+### Changes
+
+- Added an audience-calibration section to the autonomous agent contract so loop
+  agents treat each cycle like a pop quiz for a VP-level manager who is not
+  tech-savvy.
+- Added the same reminder to generated AI-loop feedback, including failure
+  reports, so the instruction appears in fresh cycle reports and prompts.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run health`
+  - `npm run ai:cycle`
+  - Generated prompt/report grep for the VP pop-quiz reminder
+- Quantitative metrics:
+  - Tests: 15 files, 279 tests passing
+  - Validation: 164 scenes, 31 endings, 164 reachable scenes
+  - Coverage self-play: 176 effective runs, 0 unfinished, all scenes visited
+  - AI cycle MCP route: reached `true_ending` with score 305
+- What worked:
+  - The generated prompt now includes both the durable audience reminder and the
+    per-cycle feedback reminder.
+  - The reminder asks agents to lead with player/operator impact, proof, and the
+    next trusted decision.
+- What felt bad/confusing:
+  - None during this prompt-only pass.
+- Bugs found:
+  - None.
+
+### Evaluation
+
+- The loop is now explicitly reminded to produce non-technical, VP-readable
+  handoffs without weakening its internal technical rigor.
+
+### Next Iteration
+
+- Keep future loop summaries short enough for a non-technical operator to scan
+  while still naming the evidence that proves the change.
