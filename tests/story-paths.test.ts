@@ -5,7 +5,7 @@ import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Choose one opened-passenger thread if desired, then pull the emergency release in the third car.";
+  "Choose one opened-passenger thread if desired, or board now and pull the emergency release.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -13113,6 +13113,7 @@ describe("demo story critical paths", () => {
       "notice_manifest_thumbprint_from_opened_doors",
       "carry_manifest_thumbprint_oath_from_opened_doors",
       "return_opened_manifest_mitten",
+      "pull_release_for_opened_manifest",
       "pause_on_opened_door_echoes",
       "check_opened_manifest_echoes",
       "board_with_passenger_morning_chorus",
@@ -13144,6 +13145,14 @@ describe("demo story critical paths", () => {
       "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
     ]);
+
+    const directReleaseState = choose(story, state, "pull_release_for_opened_manifest");
+    observation = observe(story, directReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expectIdealScore(observation.score);
 
     let countState = choose(story, state, "let_opened_passengers_finish_count");
     observation = observe(story, countState);

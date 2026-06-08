@@ -7,6 +7,64 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 81 Opened-Manifest Direct Release
+
+- Date: 2026-06-08
+- Main objective: Make the opened-passenger rescue finishable from the
+  opened-manifest hub without requiring players to find a second hub first.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 80's next step: verify the grouped hub against
+  real route clarity and tune only where the screen still makes optional
+  passenger threads feel required.
+- Why this matters: The objective already tells players the passenger threads
+  are optional, but the hub did not provide a plainly named immediate finish.
+  A direct release choice lets cautious players stop exploring and complete
+  the rescue once they decide the manifest is open enough.
+- Planned work:
+  - Update the opened-manifest objective to say players may board now or choose
+    an optional thread first.
+  - Add a `Board / release` choice that directly pulls the release for every
+    opened manifest name.
+  - Add regression coverage proving the choice is visible at the hub and
+    reaches an ideal passenger ending.
+  - Run story validation, focused tests, full health, and one actual route
+    playthrough through the new choice.
+- Risks:
+  - The new choice must not hide or remove optional passenger threads.
+  - The direct finish should feel like a confident rescue, not a shortcut that
+    invalidates richer passenger beats.
+- Status:
+  - Completed.
+  - Updated the opened-manifest objective to make the optional-thread tradeoff
+    explicit: players may choose one passenger thread or board now and pull the
+    release.
+  - Added `pull_release_for_opened_manifest`, a `Board / release` choice from
+    the opened-manifest hub to `passenger_true_ending`. It preserves the
+    existing raw opening order for Mara handoff choices while grouped transcript
+    output surfaces the direct finish under Board / release.
+  - Added regression coverage proving the new hub choice remains visible and
+    reaches an ideal passenger ending, and updated transcript coverage for the
+    new grouped label.
+  - Focused story-path, transcript, and validation checks passed.
+  - Full `npm run health` passed: format check, TypeScript, 300 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Actual CLI playthrough reached the new direct route:
+    `passenger_true_ending`, score 264, no remaining objectives.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended a tracked
+    observation. Long-run health stayed stable with random ideal-ending rate
+    78%, random unfinished runs 0, and coverage completeness intact.
+- Playtest feedback:
+  - The direct release wording reads as an intentional rescue finish rather
+    than an escape hatch. It reduces the sense that all passenger threads are a
+    checklist while leaving the richer branches available.
+  - No bugs found on the direct route.
+- Next step:
+  - Improve normal-play discovery for the lunch-tin branch surfaced by the
+    latest evidence cycle: `passenger_lunch_tin_intercom`,
+    `passenger_lunch_tin_roll_call`, `passenger_lunch_tin_roster_proof`, and
+    `passenger_lunch_tin_true_ending`.
+
 # Cycle 80 Story-Authored Choice Groups
 
 - Date: 2026-06-08

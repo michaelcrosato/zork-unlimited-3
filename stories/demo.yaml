@@ -96,7 +96,7 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
-  - text: Choose one opened-passenger thread if desired, then pull the emergency release in the third car.
+  - text: Choose one opened-passenger thread if desired, or board now and pull the emergency release.
     requires:
       all:
         - flag: freed_mara
@@ -1706,6 +1706,10 @@ scenes:
           set:
             returned_lost_mitten: true
             helped_passengers_gather: true
+      - id: pull_release_for_opened_manifest
+        label: Board now and pull the emergency release for every opened name
+        choiceGroup: Board / release
+        to: passenger_true_ending
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
         choiceGroup: Door echoes / threshold
