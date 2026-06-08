@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 22 Direct Answered-Boarding Release
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players finish the answered-passenger
+  boarding route directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 22 random evidence is healthy overall, but
+  `passenger_answered_boarding_true_ending` remains under-sampled compared
+  with nearby answered, handoff, and roll-call passenger endings.
+- Why this matters: The answered-passenger route is a clean payoff for the
+  theme that the passengers can carry their own names into morning. A normal
+  player should be able to choose that finish without first finding the
+  two-step boarding beat.
+- Planned work:
+  - Add one direct Counts / answers choice from `passengers_released` to the
+    answered-boarding true ending.
+  - Keep the existing answered boarding, checked-answer, intercom, and
+    Mara-handoff routes intact.
+  - Update the opened-manifest objective so player-facing guidance names the
+    direct answered-passenger release.
+  - Add regression coverage for choice visibility, ordering, flags, and the
+    resulting ideal ending.
+  - Run focused tests, full health, an actual CLI route, and the evidence
+    cycle.
+- Risks:
+  - The opened-passenger hub is broad, so the new action must stay inside
+    Counts / answers and not blur with Mara's separate opened-door handoff.
+  - Random play may still distribute across many ideal passenger endings, but
+    the direct route should be visible and validated.
+- Status:
+  - Completed and ready for final commit/push.
+  - Added `pull_release_with_answered_passengers` from `passengers_released`
+    to `passenger_answered_boarding_true_ending`.
+  - The choice lives in Counts / answers after the existing answered-boarding
+    setup and before the checked-answer variant.
+  - The choice sets the answered-name flags without marking the richer checked,
+    intercom, gathered-passenger, or Mara-handoff variants.
+  - Updated the opened-manifest objective to name letting answered passengers
+    board and pulling the release.
+  - Added regression coverage for choice visibility, menu placement, label,
+    choice group, flags, and the resulting ideal ending.
+  - Focused answered-passenger tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered passengers"`.
+  - Full `npm run health` passed: format check, TypeScript, 326 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through the new choice reached
+    `passenger_answered_boarding_true_ending`, score 281, with objectives
+    cleared.
+  - `npm run ai:cycle` was rerun with `AI_LOOP_EVIDENCE_ONLY=1` and completed,
+    writing ignored `ai-runs/` artifacts plus the tracked cycle observation.
+    The random 100-run evidence reached `passenger_answered_boarding_true_ending`
+    twice, kept ideal-ending rate at 78%, and kept coverage complete.
+- Playtest feedback:
+  - The new label reads as the direct finish to the answered-passenger beat
+    rather than a generic emergency-release shortcut.
+  - The ending payoff is coherent: the passengers carry their own names into
+    morning, and the route does not need Mara to repeat the list.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_counted_true_ending`, `passenger_manifest_thumbprint_true_ending`,
+    or `passenger_lunch_tin_true_ending`.
+
 # Cycle 21 Direct Final Roll Call
 
 - Date: 2026-06-08

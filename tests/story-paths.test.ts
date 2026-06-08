@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -10805,6 +10805,63 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest players release as answered passengers board", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    const directChoice = observation.choices.find(
+      (choice) => choice.id === "pull_release_with_answered_passengers"
+    );
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
+    expect(directChoice?.label).toBe("Let the answered passengers board, then pull the release");
+    expect(directChoice?.choiceGroup).toBe("Counts / answers");
+    expect(choiceIds.indexOf("board_with_answered_passengers")).toBeLessThan(
+      choiceIds.indexOf("pull_release_with_answered_passengers")
+    );
+    expect(choiceIds.indexOf("pull_release_with_answered_passengers")).toBeLessThan(
+      choiceIds.indexOf("board_and_check_answered_passengers")
+    );
+
+    state = choose(story, state, "pull_release_with_answered_passengers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("answered names can fade");
+    expect(observation.scene.text).toContain("carry it into morning themselves");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expectIdealScore(observation.score);
+  });
+
   it("lets answer listeners gather passengers directly into a broad boarding beat", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -14498,6 +14555,7 @@ describe("demo story critical paths", () => {
       "let_opened_passengers_answer_final_roll_call",
       "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
+      "pull_release_with_answered_passengers",
       "board_and_check_answered_passengers",
       "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
