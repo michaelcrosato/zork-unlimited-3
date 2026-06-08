@@ -4,6 +4,42 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Mara Sign-off Morning Bridge
+
+### Current Plan
+
+- Main objective: Let Mara's opened-manifest sign-off flow into the passenger
+  morning chorus without adding another ending or receipt gate.
+- Why this matters: Players who ask Mara to tell the opened passengers they
+  were held, not late, now get a natural follow-up that shows what those
+  passengers are trying to return to.
+
+### Work Completed
+
+- Added `listen_for_morning_after_mara_signoff` from
+  `passenger_mara_signoff` to `passenger_morning_chorus`.
+- Preserved the existing thumbprint, answer, gather, return, cross, and board
+  choices from the sign-off scene.
+- Updated the Mara sign-off regression test to cover the new bridge and prove
+  it can continue to `passenger_true_ending`.
+
+### Playtest Notes
+
+- `npm test -- -t "Mara sign-off|morning chorus"` passed with 10 relevant
+  tests.
+- `npm run cyoa -- validate stories/demo.yaml --json` passed with 176
+  reachable scenes, 31 endings, and no warnings.
+- `npm run health` passed with 294 tests, clean validation, and coverage still
+  visiting every scene with `unfinished: 0`.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+  tracked observation record; true-ending rate stayed 78%, unfinished runs
+  stayed 0, and best score stayed 399.
+- CLI playthrough reached `passenger_true_ending` through
+  `listen_for_morning_after_mara_signoff` and the confirmed morning-stop
+  release at score 282 with no remaining objectives.
+- The bridge made Mara's sign-off feel more like story momentum: her "not late,
+  held" line now leads directly into the passengers naming ordinary mornings.
+
 ## 2026-06-08 - Threshold Clearance Discovery
 
 ### Current Plan

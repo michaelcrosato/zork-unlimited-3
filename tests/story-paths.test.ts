@@ -14514,11 +14514,31 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "notice_manifest_thumbprint_after_mara_signoff",
       "listen_to_answers_after_mara_signoff",
+      "listen_for_morning_after_mara_signoff",
       "gather_after_mara_signoff",
       "return_from_passenger_mara_signoff",
       "cross_after_passenger_mara_signoff",
       "board_after_passenger_mara_signoff"
     ]);
+
+    let morningState = choose(story, state, "listen_for_morning_after_mara_signoff");
+    observation = observe(story, morningState);
+
+    expect(observation.scene.id).toBe("passenger_morning_chorus");
+    expect(observation.scene.text).toContain("somewhere to arrive");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "board_after_passenger_morning_chorus"
+    );
+
+    morningState = choose(story, morningState, "board_after_passenger_morning_chorus");
+    morningState = choose(story, morningState, "pull_release_after_morning_chorus_boarding");
+    observation = observe(story, morningState);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     const answeredState = choose(story, state, "listen_to_answers_after_mara_signoff");
     observation = observe(story, answeredState);

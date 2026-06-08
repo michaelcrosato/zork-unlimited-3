@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 77 Mara Sign-off Morning Bridge
+
+- Date: 2026-06-08
+- Main objective: Let Mara's opened-manifest sign-off flow into the passenger
+  morning chorus without adding another ending or receipt gate.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence: validation and random/coverage
+  play are stable, and the recent cycles added enough final confirmation beats
+  that the next improvement should deepen an existing route instead.
+- Why this matters: Players who ask Mara to tell the opened passengers they
+  were held, not late, now get a natural way to hear what those passengers are
+  trying to return to. It makes the sign-off feel like story momentum rather
+  than another hub stop before boarding.
+- Planned work:
+  - Add a one-time choice from `passenger_mara_signoff` into
+    `passenger_morning_chorus`.
+  - Preserve the existing thumbprint, answer, gather, return, cross, and board
+    routes from Mara's sign-off.
+  - Cover the bridge with a story-path regression test.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the new route.
+- Risks:
+  - The sign-off scene already has several options, so the new bridge must read
+    as a clear emotional continuation rather than more menu clutter.
+  - Routing into an existing chorus should not accidentally mark passenger
+    gathering or Mara's goodbye flags too early.
+- Status:
+  - Completed.
+  - Added `listen_for_morning_after_mara_signoff`, which routes from
+    `passenger_mara_signoff` to `passenger_morning_chorus` and sets only
+    `heard_passenger_morning_chorus`.
+  - Updated the Mara sign-off path test to prove the old choice set is
+    preserved with the new bridge, and that the bridge can continue to
+    `passenger_true_ending`.
+  - Focused checks passed:
+    `npm test -- -t "Mara sign-off|morning chorus"` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage still had `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+    tracked cycle observation; long-run metrics stayed stable with true-ending
+    rate 78%, unfinished random runs 0, and best score 399.
+  - Actual CLI route reached `passenger_true_ending` through
+    `listen_for_morning_after_mara_signoff`,
+    `board_after_passenger_morning_chorus`,
+    `confirm_morning_stops_before_release`, and
+    `pull_release_after_confirmed_morning_stops` with score 282, no objectives,
+    inventory `badge, fuse, lantern, map, token`, and
+    `heard_passenger_mara_signoff`, `heard_passenger_morning_chorus`,
+    `heard_passenger_morning_boarding`, and `confirmed_morning_stops` set.
+- Playtest feedback:
+  - The route gives Mara's sign-off a stronger emotional handoff: after she
+    tells passengers they were held rather than late, the player can hear the
+    ordinary mornings waiting for them.
+  - The path felt clearer than adding another final proof beat because it
+    forwards the player toward an existing boarding payoff.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise review the large opened-manifest hub for option grouping or
+    transcript clarity so players can scan late-game choices more easily.
+
 # Cycle 76 Manifest Thumbprint Receipt Discovery
 
 - Date: 2026-06-08
