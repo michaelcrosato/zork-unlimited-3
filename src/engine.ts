@@ -26,6 +26,7 @@ export interface Observation {
   choices: Array<{
     id: string;
     label: string;
+    choiceGroup?: string;
     to: string;
   }>;
   state: {
@@ -64,6 +65,7 @@ export interface PlayerObservation {
   choices: Array<{
     index: number;
     label: string;
+    choiceGroup?: string;
   }>;
   score: {
     score: number;
@@ -116,6 +118,7 @@ export function observe(story: Story, state: GameState): Observation {
       .map((choice) => ({
         id: choice.id,
         label: choice.label,
+        ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {}),
         to: choice.to
       })),
     state: {
@@ -147,7 +150,8 @@ export function observePlayer(
     },
     choices: raw.choices.map((choice, index) => ({
       index,
-      label: choice.label
+      label: choice.label,
+      ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {})
     })),
     score: {
       score: raw.score.score,

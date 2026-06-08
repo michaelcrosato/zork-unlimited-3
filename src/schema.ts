@@ -30,6 +30,7 @@ export type Effects = z.infer<typeof EffectsSchema>;
 export const ChoiceSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
+  choiceGroup: z.string().min(1).optional(),
   to: z.string().min(1),
   requires: ConditionSchema.optional(),
   effects: EffectsSchema.optional()

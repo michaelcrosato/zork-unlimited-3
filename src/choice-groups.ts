@@ -1,4 +1,9 @@
-export interface ChoiceDisplayGroup<T extends { label: string }> {
+interface ChoiceDisplayItem {
+  label: string;
+  choiceGroup?: string;
+}
+
+export interface ChoiceDisplayGroup<T extends ChoiceDisplayItem> {
   label?: string;
   choices: T[];
 }
@@ -7,8 +12,12 @@ const MIN_GROUPED_CHOICE_COUNT = 8;
 
 const GROUP_ORDER = [
   "Board / release",
+  "Mara and manifest",
   "Mara",
   "Counts / answers",
+  "Passenger gathering",
+  "Door echoes / threshold",
+  "Morning / keepsakes",
   "Keepsakes / memories",
   "Passenger threads",
   "Return",
@@ -16,10 +25,14 @@ const GROUP_ORDER = [
   "Other"
 ];
 
-export function groupChoicesForDisplay<T extends { label: string }>(
+export function groupChoicesForDisplay<T extends ChoiceDisplayItem>(
   choices: T[]
 ): ChoiceDisplayGroup<T>[] {
   if (choices.length < MIN_GROUPED_CHOICE_COUNT) return [{ choices }];
+
+  if (choices.some((choice) => choice.choiceGroup)) {
+    return groupByChoiceGroup(choices);
+  }
 
   const grouped = new Map<string, T[]>();
   for (const choice of choices) {
@@ -33,6 +46,36 @@ export function groupChoicesForDisplay<T extends { label: string }>(
     label,
     choices: grouped.get(label) ?? []
   }));
+}
+
+function groupByChoiceGroup<T extends ChoiceDisplayItem>(choices: T[]): ChoiceDisplayGroup<T>[] {
+  const grouped = new Map<string, { choices: T[]; firstIndex: number }>();
+
+  choices.forEach((choice, index) => {
+    const label = choice.choiceGroup ?? classifyChoiceLabel(choice.label);
+    const group = grouped.get(label) ?? { choices: [], firstIndex: index };
+    group.choices.push(choice);
+    grouped.set(label, group);
+  });
+
+  if (grouped.size <= 1) return [{ choices }];
+
+  return [...grouped.entries()]
+    .sort(([leftLabel, left], [rightLabel, right]) => {
+      const leftOrder = groupOrder(leftLabel);
+      const rightOrder = groupOrder(rightLabel);
+      if (leftOrder !== rightOrder) return leftOrder - rightOrder;
+      return left.firstIndex - right.firstIndex;
+    })
+    .map(([label, group]) => ({
+      label,
+      choices: group.choices
+    }));
+}
+
+function groupOrder(label: string): number {
+  const index = GROUP_ORDER.indexOf(label);
+  return index === -1 ? Number.MAX_SAFE_INTEGER : index;
 }
 
 function classifyChoiceLabel(label: string): string {

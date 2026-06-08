@@ -7,6 +7,66 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 80 Story-Authored Choice Groups
+
+- Date: 2026-06-08
+- Main objective: Let story data provide player-facing section labels for long
+  choice menus, starting with the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 79's next step: the grouping display works, but
+  heuristic labels can still be broader than the story beat they describe.
+- Why this matters: Blind players and transcript reviewers should see the
+  opened-manifest routes as understandable rescue threads, not as a generic
+  bucket of passenger options. Story-authored labels make the hub easier to
+  skim while preserving every legal choice.
+- Planned work:
+  - Add optional display-only choice group metadata to the story schema and
+    player-facing observations.
+  - Prefer story-authored choice groups when rendering long blind-player
+    screens and final transcripts.
+  - Annotate the opened-manifest hub with player-facing groups such as
+    Board / release, Mara and manifest, Counts / answers, Passenger gathering,
+    Door echoes / threshold, and Morning / keepsakes.
+  - Add regression tests for explicit group rendering and the opened-manifest
+    transcript.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the grouped hub.
+- Risks:
+  - Choice groups must remain display-only and must not change choice order,
+    choice ids, destinations, flags, or ending reachability.
+  - The labels must not leak internal route metadata into blind-play output.
+- Status:
+  - Completed.
+  - Added optional `choiceGroup` metadata to choices and carried it through raw
+    observations, player observations, masked blind-player output, and
+    transcript rendering without exposing internal ids.
+  - Updated long-menu grouping to prefer story-authored labels while preserving
+    heuristic grouping for unannotated stories and short-menu no-group output.
+  - Annotated the opened-manifest hub with six player-facing groups:
+    Board / release, Mara and manifest, Counts / answers, Passenger gathering,
+    Door echoes / threshold, and Morning / keepsakes.
+  - Added regression tests proving explicit groups render in blind output
+    without leaking ids and that the opened-manifest transcript shows the new
+    story-authored groups.
+  - Full `npm run health` passed: format check, TypeScript, 300 tests, story
+    validation with zero warnings, and coverage playtest with `unfinished: 0`
+    and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended a tracked
+    observation; long-run signals stayed stable with true-ending rate 78%,
+    unfinished random runs 0, and best score 399.
+- Playtest feedback:
+  - Actual CLI route reached the opened-manifest hub, confirmed the transcript
+    now shows the six story-authored sections, then continued through the
+    passenger morning route to `passenger_true_ending` with score 275.
+  - The hub reads more like a set of rescue intentions than a flat list of
+    optional branches. The next blind-play digest should decide whether the
+    Board / release section needs a more explicit one-step finish choice.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise run a blind session against the annotated hub and tune the group
+    labels only if players still misread the optional passenger threads as a
+    checklist.
+
 # Cycle 79 Blind Choice Grouping
 
 - Date: 2026-06-08

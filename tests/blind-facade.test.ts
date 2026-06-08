@@ -105,4 +105,78 @@ describe("blind facade", () => {
     expect(rendered).not.toContain("board_now");
     expect(rendered).not.toContain("listen_doors");
   });
+
+  it("prefers story-authored choice groups for long player-facing lists", () => {
+    const observation = sampleObservation();
+    observation.choices = [
+      {
+        id: "finish_now",
+        label: "Board and pull the emergency release",
+        choiceGroup: "Finish the rescue",
+        to: "end"
+      },
+      {
+        id: "check_manifest",
+        label: "Check the opened manifest one last time",
+        choiceGroup: "Manifest checks",
+        to: "manifest"
+      },
+      {
+        id: "read_count",
+        label: "Read the count aloud",
+        choiceGroup: "Manifest checks",
+        to: "count"
+      },
+      {
+        id: "listen_morning",
+        label: "Listen for morning memories",
+        choiceGroup: "Passenger memories",
+        to: "morning"
+      },
+      {
+        id: "return_keepsake",
+        label: "Return a keepsake",
+        choiceGroup: "Passenger memories",
+        to: "keepsake"
+      },
+      {
+        id: "hold_threshold",
+        label: "Hold the third-car threshold",
+        choiceGroup: "Finish the rescue",
+        to: "threshold"
+      },
+      {
+        id: "watch_mara",
+        label: "Watch Mara make the handoff",
+        choiceGroup: "Mara's handoff",
+        to: "mara"
+      },
+      {
+        id: "wait",
+        label: "Wait beside the booth",
+        choiceGroup: "Other",
+        to: "wait"
+      }
+    ];
+
+    const { masked, choiceIds } = maskObservation(observation);
+    const rendered = renderMaskedScene(masked);
+
+    expect(choiceIds).toEqual([
+      "finish_now",
+      "check_manifest",
+      "read_count",
+      "listen_morning",
+      "return_keepsake",
+      "hold_threshold",
+      "watch_mara",
+      "wait"
+    ]);
+    expect(rendered).toContain("  Finish the rescue:\n    0. Board and pull");
+    expect(rendered).toContain("    5. Hold the third-car threshold");
+    expect(rendered).toContain("  Manifest checks:\n    1. Check the opened manifest");
+    expect(rendered).toContain("  Passenger memories:\n    3. Listen for morning memories");
+    expect(rendered).not.toContain("finish_now");
+    expect(rendered).not.toContain("check_manifest");
+  });
 });

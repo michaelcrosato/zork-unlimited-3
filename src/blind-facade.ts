@@ -15,6 +15,7 @@ import { groupChoicesForDisplay } from "./choice-groups.js";
 export interface MaskedChoice {
   index: number;
   label: string;
+  choiceGroup?: string;
 }
 
 export interface MaskedScene {
@@ -73,7 +74,8 @@ function playerObservationFromRaw(
     },
     choices: observation.choices.map((choice, index) => ({
       index,
-      label: choice.label
+      label: choice.label,
+      ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {})
     })),
     score: {
       score: observation.score.score,
@@ -99,7 +101,8 @@ function playerToMaskedScene(observation: PlayerObservation): MaskedScene {
     ending: observation.scene.ending,
     choices: observation.choices.map((choice) => ({
       index: choice.index,
-      label: choice.label
+      label: choice.label,
+      ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {})
     })),
     score: observation.score.score,
     scoreDelta: observation.score.delta,

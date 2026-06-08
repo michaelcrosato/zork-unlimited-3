@@ -1532,6 +1532,7 @@ scenes:
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
+        choiceGroup: Mara and manifest
         to: mara_manifest_handoff
         requires:
           notFlag: saw_mara_manifest_handoff
@@ -1540,6 +1541,7 @@ scenes:
             saw_mara_manifest_handoff: true
       - id: carry_mara_handoff_as_doors_open
         label: Carry Mara's opened-door handoff to the third car
+        choiceGroup: Mara and manifest
         to: mara_manifest_handoff
         requires:
           all:
@@ -1553,6 +1555,7 @@ scenes:
             saw_mara_manifest_handoff: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off before the opened passengers board
+        choiceGroup: Mara and manifest
         to: passenger_mara_signoff
         requires:
           all:
@@ -1564,6 +1567,7 @@ scenes:
             heard_passenger_mara_signoff: true
       - id: listen_to_passenger_morning_chorus
         label: Listen for what the opened passengers remember about morning
+        choiceGroup: Morning / keepsakes
         to: passenger_morning_chorus
         requires:
           notFlag: heard_passenger_morning_chorus
@@ -1572,6 +1576,7 @@ scenes:
             heard_passenger_morning_chorus: true
       - id: review_open_manifest_count
         label: Review the opened count so every passenger checks in
+        choiceGroup: Counts / answers
         to: passenger_manifest_count
         requires:
           notFlag: reviewed_open_manifest_count
@@ -1580,6 +1585,7 @@ scenes:
             reviewed_open_manifest_count: true
       - id: board_with_completed_opened_count
         label: Board after the opened passengers finish the count together
+        choiceGroup: Counts / answers
         to: passenger_counted_chorus
         requires:
           all:
@@ -1593,6 +1599,7 @@ scenes:
             passengers_finished_reviewed_count: true
       - id: board_with_opened_manifest_reviewed_count
         label: Review Mara's opened count before carrying it to the speaker
+        choiceGroup: Counts / answers
         to: passenger_manifest_count
         requires:
           all:
@@ -1605,6 +1612,7 @@ scenes:
             reviewed_open_manifest_count: true
       - id: help_opened_passengers_gather
         label: Help the opened passengers gather by helping one another board
+        choiceGroup: Passenger gathering
         to: passenger_gathered_boarding
         requires:
           notFlag: helped_passengers_gather
@@ -1613,6 +1621,7 @@ scenes:
             helped_passengers_gather: true
       - id: ask_conductor_punch_from_opened_manifest
         label: Ask the old conductor to punch a clear path for the opened passengers
+        choiceGroup: Passenger gathering
         to: passenger_conductor_punch_memory
         requires:
           all:
@@ -1625,6 +1634,7 @@ scenes:
             heard_conductor_punch_memory: true
       - id: check_lunch_tin_count_from_opened_manifest
         label: Check the lunch-tin worker's passenger count before boarding
+        choiceGroup: Counts / answers
         to: passenger_lunch_tin_check
         requires:
           all:
@@ -1638,6 +1648,7 @@ scenes:
             heard_gathered_passengers: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
+        choiceGroup: Door echoes / threshold
         to: passenger_threshold_boarding
         requires:
           notFlag: held_passenger_threshold
@@ -1646,6 +1657,7 @@ scenes:
             held_passenger_threshold: true
       - id: listen_to_opened_threshold_from_manifest
         label: Let Mara talk you through holding the opened threshold
+        choiceGroup: Door echoes / threshold
         to: passenger_threshold_intercom
         requires:
           all:
@@ -1657,6 +1669,7 @@ scenes:
             heard_mara_goodbye: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint
         requires:
           all:
@@ -1670,6 +1683,7 @@ scenes:
             saw_mara_manifest_handoff: true
       - id: carry_manifest_thumbprint_oath_from_opened_doors
         label: Carry Mara's torn thumbprint oath straight to the third-car speaker
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -1684,6 +1698,7 @@ scenes:
             heard_mara_goodbye: true
       - id: return_opened_manifest_mitten
         label: Return the opened manifest's lost mitten to the child
+        choiceGroup: Morning / keepsakes
         to: passenger_mitten_memory
         requires:
           notFlag: returned_lost_mitten
@@ -1693,6 +1708,7 @@ scenes:
             helped_passengers_gather: true
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
+        choiceGroup: Door echoes / threshold
         to: opened_manifest_echoes
         requires:
           all:
@@ -1705,6 +1721,7 @@ scenes:
             heard_passenger_echoes: true
       - id: check_opened_manifest_echoes
         label: Check the familiar door-echoes against the opened passengers
+        choiceGroup: Door echoes / threshold
         to: passenger_echoed_check
         requires:
           all:
@@ -1720,6 +1737,7 @@ scenes:
             checked_echoed_passengers: true
       - id: board_with_passenger_morning_chorus
         label: Board with the passengers' remembered mornings in the speaker
+        choiceGroup: Board / release
         to: passenger_morning_intercom
         requires:
           all:
@@ -1736,6 +1754,7 @@ scenes:
             heard_passenger_morning_boarding: true
       - id: follow_lunch_tin_latch
         label: Follow the lunch-tin latch toward the third car
+        choiceGroup: Morning / keepsakes
         to: passenger_farewell
         requires:
           notFlag: helped_passengers_gather
@@ -1745,6 +1764,7 @@ scenes:
             steadied_lunch_tin_worker: true
       - id: listen_to_lunch_tin_latch_from_opened_manifest
         label: Listen as the lunch-tin latch keeps time on the speaker
+        choiceGroup: Morning / keepsakes
         to: passenger_lunch_tin_intercom
         requires:
           all:
@@ -1757,6 +1777,7 @@ scenes:
             heard_gathered_passengers: true
       - id: study_opened_newspaper_transfer
         label: Study the newspaper transfer column before the opened passengers board
+        choiceGroup: Morning / keepsakes
         to: passenger_newspaper_transfer
         requires:
           notFlag: studied_newspaper_transfer
@@ -1767,6 +1788,7 @@ scenes:
             restored_newspaper_transfer: true
       - id: call_lunch_tin_roster_from_opened_manifest
         label: Read the lunch-tin worker's roster for the opened passengers
+        choiceGroup: Counts / answers
         to: passenger_lunch_tin_roster
         requires:
           all:
@@ -1780,6 +1802,7 @@ scenes:
             read_lunch_tin_roster: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
+        choiceGroup: Door echoes / threshold
         to: opened_manifest_echoes
         requires:
           all:
@@ -1792,6 +1815,7 @@ scenes:
             heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
         label: Follow the newspaper fold in the opened door-echoes
+        choiceGroup: Door echoes / threshold
         to: opened_manifest_echoes
         requires:
           all:
@@ -1805,6 +1829,7 @@ scenes:
             followed_opened_newspaper_fold: true
       - id: board_with_opened_manifest_echoes
         label: Follow the opened door-echoes and check who answers
+        choiceGroup: Door echoes / threshold
         to: opened_manifest_echoes
         requires:
           all:
@@ -1818,6 +1843,7 @@ scenes:
             heard_passenger_echoes: true
       - id: ready_opened_manifest_for_mara
         label: Ready every opened manifest name on the third car
+        choiceGroup: Counts / answers
         to: opened_manifest_echoes
         requires:
           all:
@@ -1832,6 +1858,7 @@ scenes:
             heard_passenger_echoes: true
       - id: ask_conductor_to_read_opened_count
         label: Ask the conductor to read Mara's opened count clear
+        choiceGroup: Counts / answers
         to: passenger_conductor_count_roll_call
         requires:
           all:
@@ -1847,6 +1874,7 @@ scenes:
             heard_final_roll_call: true
       - id: ask_conductor_to_punch_opened_transfer
         label: Ask the conductor to punch the opened manifest transfer
+        choiceGroup: Morning / keepsakes
         to: passenger_conductor_transfer
         requires:
           all:
@@ -1859,6 +1887,7 @@ scenes:
             punched_conductor_transfer: true
       - id: pass_opened_transfer_to_mara
         label: Let the child carry the punched transfer to Mara's speaker
+        choiceGroup: Morning / keepsakes
         to: passenger_conductor_transfer_handoff
         requires:
           all:
@@ -1873,6 +1902,7 @@ scenes:
             punched_transfer_carried_forward: true
       - id: press_opened_transfer_to_speaker
         label: Press the opened manifest transfer to Mara's speaker grille
+        choiceGroup: Morning / keepsakes
         to: passenger_conductor_transfer_proof
         requires:
           all:
@@ -1888,6 +1918,7 @@ scenes:
             pressed_transfer_to_speaker: true
       - id: carry_mara_manifest_handoff_from_opened_doors
         label: Carry Mara's opened-door handoff into the third car
+        choiceGroup: Mara and manifest
         to: mara_manifest_handoff_intercom
         requires:
           all:
@@ -1901,6 +1932,7 @@ scenes:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
         label: Listen as the opened passengers finish the count together
+        choiceGroup: Counts / answers
         to: passenger_counted_chorus
         requires:
           notFlag: passengers_finished_reviewed_count
@@ -1911,6 +1943,7 @@ scenes:
             shared_count_release_ready: true
       - id: board_after_listening_opened_manifest_echoes
         label: Board with the listened door-echoes leading the way
+        choiceGroup: Board / release
         to: passenger_echoed_boarding
         requires:
           all:
@@ -1924,6 +1957,7 @@ scenes:
             echoed_manifest_boarded: true
       - id: check_opened_manifest_blank_row
         label: Check the blank row in the opened manifest
+        choiceGroup: Counts / answers
         to: passenger_missing_count
         requires:
           notFlag: checked_missing_passenger_count
@@ -1933,6 +1967,7 @@ scenes:
             checked_missing_passenger_count: true
       - id: match_opened_manifest_keepsakes
         label: Match the opened manifest keepsakes to their owners
+        choiceGroup: Morning / keepsakes
         to: passenger_keepsake_handoff
         requires:
           notFlag: helped_passengers_gather
@@ -1942,6 +1977,7 @@ scenes:
             helped_passengers_gather: true
       - id: check_opened_manifest_keepsakes
         label: Check the opened manifest keepsakes before boarding
+        choiceGroup: Morning / keepsakes
         to: passenger_keepsake_check
         requires:
           all:
@@ -1954,6 +1990,7 @@ scenes:
             helped_passengers_gather: true
       - id: carry_morning_chorus_from_opened_manifest
         label: Carry the remembered mornings into the third car
+        choiceGroup: Board / release
         to: passenger_morning_intercom
         requires:
           all:
@@ -1969,6 +2006,7 @@ scenes:
             heard_passenger_morning_boarding: true
       - id: ask_mara_to_read_opened_manifest
         label: Ask Mara to read the opened manifest over the third-car speaker
+        choiceGroup: Mara and manifest
         to: mara_manifest_intercom
         requires:
           all:
@@ -1981,6 +2019,7 @@ scenes:
             heard_mara_goodbye: true
       - id: listen_as_opened_passengers_gather
         label: Listen as the opened passengers gather themselves
+        choiceGroup: Passenger gathering
         to: passenger_gathered_intercom
         requires:
           all:
@@ -1992,6 +2031,7 @@ scenes:
             heard_gathered_passengers: true
       - id: make_room_from_opened_manifest
         label: Make room in the third car as the opened passengers board
+        choiceGroup: Board / release
         to: passenger_room_boarding
         requires:
           all:
@@ -2003,6 +2043,7 @@ scenes:
             made_room_for_passengers: true
       - id: pass_shared_release_from_opened_manifest
         label: Pass the release hand to hand as the opened passengers make room
+        choiceGroup: Board / release
         to: passenger_room_release
         requires:
           all:
@@ -2016,6 +2057,7 @@ scenes:
             shared_release_reached: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint
         requires:
           all:
@@ -2026,6 +2068,7 @@ scenes:
             read_manifest_thumbprint: true
       - id: carry_manifest_thumbprint_from_opened_doors
         label: Carry Mara's thumbprint oath to the third car
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2037,6 +2080,7 @@ scenes:
             heard_mara_goodbye: true
       - id: listen_to_passenger_answers
         label: Listen as the passengers answer their names
+        choiceGroup: Counts / answers
         to: passenger_answers
         requires:
           notFlag: heard_passenger_answers
@@ -2045,6 +2089,7 @@ scenes:
             heard_passenger_answers: true
       - id: ask_mara_to_handoff_opened_roll_call
         label: Ask Mara to hand the roll call to the opened passengers
+        choiceGroup: Counts / answers
         to: passenger_answered_handoff_roll_call
         requires:
           all:
@@ -2058,6 +2103,7 @@ scenes:
             heard_answered_passengers: true
       - id: let_opened_manifest_names_answer_once
         label: Let the opened manifest names answer once
+        choiceGroup: Counts / answers
         to: passenger_manifest_answers
         requires:
           all:
@@ -2070,6 +2116,7 @@ scenes:
             heard_mara_goodbye: true
       - id: board_with_opened_handoff_answers
         label: Board as Mara hands the roll call to the passengers
+        choiceGroup: Counts / answers
         to: passenger_answered_handoff_roll_call
         requires:
           all:
@@ -2082,6 +2129,7 @@ scenes:
             heard_answered_passengers: true
       - id: board_with_answered_passengers
         label: Let the opened passengers carry their own names
+        choiceGroup: Counts / answers
         to: passenger_answered_boarding
         requires:
           all:
@@ -2093,6 +2141,7 @@ scenes:
             heard_answered_passengers: true
       - id: board_and_check_answered_passengers
         label: Board and check each answered name against a face
+        choiceGroup: Counts / answers
         to: passenger_answered_check
         requires:
           all:
@@ -2108,6 +2157,7 @@ scenes:
             checked_answered_passengers: true
       - id: board_and_confirm_opened_manifest_ready
         label: Board and confirm every manifest passenger is aboard
+        choiceGroup: Counts / answers
         to: opened_manifest_echoes
         requires:
           all:
@@ -2126,6 +2176,7 @@ scenes:
             heard_passenger_echoes: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
+        choiceGroup: Board / release
         to: passenger_platform
 
   passenger_morning_chorus:

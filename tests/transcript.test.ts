@@ -115,13 +115,15 @@ describe("transcript rendering", () => {
     expect(transcript).toContain("Scene: passengers_released (in progress)");
     expect(transcript).toContain("Available choices:");
     expect(transcript).toContain(
-      "Board / release:\n- Board after the opened passengers finish the count together"
+      "Board / release:\n- Board with the passengers' remembered mornings in the speaker"
     );
-    expect(transcript).toContain("Mara:\n- Watch Mara call the opened doors");
+    expect(transcript).toContain("Mara and manifest:\n- Watch Mara call the opened doors");
     expect(transcript).toContain("Counts / answers:\n- Review the opened count");
-    expect(transcript).toContain("Passenger threads:");
+    expect(transcript).toContain("Passenger gathering:");
     expect(transcript).toContain(
       "- Help the opened passengers gather by helping one another board"
     );
+    expect(transcript).toContain("Door echoes / threshold:");
+    expect(transcript).toContain("Morning / keepsakes:");
   });
 });
