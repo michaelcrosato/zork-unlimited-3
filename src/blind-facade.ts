@@ -43,21 +43,29 @@ export interface MaskOptions {
   includeObjectives?: boolean;
 }
 
+interface PrivateChoice {
+  id: string;
+  label: string;
+  choiceGroup?: string;
+}
+
 export function maskObservation(observation: Observation, options: MaskOptions = {}): MaskedView {
   const player = playerObservationFromRaw(observation, options);
-  return {
-    masked: playerToMaskedScene(player),
-    choiceIds: observation.choices.map((choice) => choice.id)
-  };
+  return maskPlayerObservation(
+    player,
+    observation.choices.map((choice) => choice.id)
+  );
 }
 
 export function maskPlayerObservation(
   observation: PlayerObservation,
   choiceIds: string[]
 ): MaskedView {
+  const orderedChoices = orderPlayerChoicesForDisplay(observation, choiceIds);
+
   return {
-    masked: playerToMaskedScene(observation),
-    choiceIds: [...choiceIds]
+    masked: playerToMaskedScene(observation, orderedChoices),
+    choiceIds: orderedChoices.map((choice) => choice.id)
   };
 }
 
@@ -95,12 +103,35 @@ function playerObservationFromRaw(
   return player;
 }
 
-function playerToMaskedScene(observation: PlayerObservation): MaskedScene {
+function orderPlayerChoicesForDisplay(
+  observation: PlayerObservation,
+  choiceIds: string[]
+): PrivateChoice[] {
+  const privateChoices = observation.choices.map((choice, fallbackIndex) => {
+    const id = choiceIds[choice.index] ?? choiceIds[fallbackIndex];
+    if (!id) {
+      throw new Error(`Missing private choice id for visible choice ${choice.index}`);
+    }
+
+    return {
+      id,
+      label: choice.label,
+      ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {})
+    };
+  });
+
+  return groupChoicesForDisplay(privateChoices).flatMap((group) => group.choices);
+}
+
+function playerToMaskedScene(
+  observation: PlayerObservation,
+  orderedChoices: PrivateChoice[]
+): MaskedScene {
   const masked: MaskedScene = {
     text: observation.scene.text,
     ending: observation.scene.ending,
-    choices: observation.choices.map((choice) => ({
-      index: choice.index,
+    choices: orderedChoices.map((choice, index) => ({
+      index,
       label: choice.label,
       ...(choice.choiceGroup ? { choiceGroup: choice.choiceGroup } : {})
     })),

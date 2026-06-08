@@ -77,7 +77,10 @@ function groupByChoiceGroup<T extends ChoiceDisplayItem>(choices: T[]): ChoiceDi
 
 function groupOrder(label: string): number {
   const index = GROUP_ORDER.indexOf(label);
-  return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+  if (index !== -1) return index;
+
+  const otherIndex = GROUP_ORDER.indexOf("Other");
+  return otherIndex === -1 ? Number.MAX_SAFE_INTEGER : otherIndex - 0.5;
 }
 
 function classifyChoiceLabel(label: string): string {

@@ -94,14 +94,15 @@ describe("blind facade", () => {
       "review_count",
       "return_mitten",
       "listen_doors",
-      "search_bench",
       "return_booth",
+      "search_bench",
       "wait"
     ]);
     expect(rendered).toContain("  Board / release:\n    0. Board the third car");
     expect(rendered).toContain("  Mara:\n    1. Watch Mara call the opened doors");
     expect(rendered).toContain("  Counts / answers:\n    2. Review the opened count");
-    expect(rendered).toContain("  Return:\n    6. Return to the signal booth");
+    expect(rendered).toContain("  Return:\n    5. Return to the signal booth");
+    expect(rendered).toContain("  Investigate:\n    6. Search the bench beside the platform");
     expect(rendered).not.toContain("board_now");
     expect(rendered).not.toContain("listen_doors");
   });
@@ -164,18 +165,19 @@ describe("blind facade", () => {
 
     expect(choiceIds).toEqual([
       "finish_now",
+      "hold_threshold",
       "check_manifest",
       "read_count",
       "listen_morning",
       "return_keepsake",
-      "hold_threshold",
       "watch_mara",
       "wait"
     ]);
     expect(rendered).toContain("  Finish the rescue:\n    0. Board and pull");
-    expect(rendered).toContain("    5. Hold the third-car threshold");
-    expect(rendered).toContain("  Manifest checks:\n    1. Check the opened manifest");
-    expect(rendered).toContain("  Passenger memories:\n    3. Listen for morning memories");
+    expect(rendered).toContain("    1. Hold the third-car threshold");
+    expect(rendered).toContain("  Manifest checks:\n    2. Check the opened manifest");
+    expect(rendered).toContain("  Passenger memories:\n    4. Listen for morning memories");
+    expect(rendered).toContain("  Other:\n    7. Wait beside the booth");
     expect(rendered).not.toContain("finish_now");
     expect(rendered).not.toContain("check_manifest");
   });

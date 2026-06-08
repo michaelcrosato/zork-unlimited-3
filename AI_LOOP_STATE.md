@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 25 Player-View Choice Numbering
+
+- Date: 2026-06-08
+- Main objective: Make grouped blind/player-view choice lists easier to use by
+  numbering choices in the same order they are rendered on screen.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the active loop evidence: core story coverage is
+  healthy, the opened-manifest hub is intentionally large, and the next
+  improvement should reduce player/operator confusion without changing story
+  reachability.
+- Why this matters: The opened-manifest screen uses sorted choice groups to
+  make a large menu readable, but the blind player view previously kept raw
+  YAML choice numbers. That could show choices as `0, 1, 15, 18, 37, ...`,
+  making model and human playtest decisions harder to audit.
+- Planned work:
+  - Reorder masked choices into the same group order used by the renderer.
+  - Renumber visible choices from zero in displayed order.
+  - Keep the private choice-id map aligned to those visible numbers so blind
+    playtest choices still drive the correct engine choice.
+  - Keep generic `Other` groups after custom story-authored groups.
+  - Add regression coverage for display-order numbering and private id mapping.
+- Risks:
+  - This improves player-view usability and blind-playtest reliability; it does
+    not change the raw engine observation order or story routes.
+  - Any external script that incorrectly assumed masked choice numbers were raw
+    YAML positions must now use the returned `choiceIds` map, which is the
+    documented private orchestrator path.
+- Status:
+  - Completed.
+  - `maskObservation` and `maskPlayerObservation` now flatten choices by the
+    rendered group order, assign display-order indices, and return `choiceIds`
+    in that same order.
+  - `choice-groups` now keeps unknown/custom story-authored groups ahead of the
+    generic `Other` bucket.
+  - Updated blind facade tests to assert visible numbering and hidden id mapping
+    stay aligned after grouping.
+  - Focused check passed: `npx vitest run tests/blind-facade.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 305 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    stopped before nested agent execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI/player-view route confirmed the opened-manifest screen now shows
+    contiguous grouped choices: `0` and `1` for `Finish Mara's handoff`, then
+    `2` onward for `Board / release`.
+  - Targeted visible-number play reached
+    `passenger_manifest_handoff_true_ending`, score 280, with no remaining
+    choices.
+- Playtest feedback:
+  - The crowded opened-manifest hub is still content-heavy, but its grouped
+    player-view menu now reads like a normal numbered list.
+  - The private mapping selected the correct route: visible `2` on the
+    handoff scene pulled `pull_release_during_mara_manifest_handoff`.
+  - No crash, dead end, unreachable scene, or stale objective appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving opened-manifest hub readability by reducing
+    duplicate-feeling route labels or strengthening the most important group
+    headers.
+
 # Cycle 24 Opened Manifest Handoff Choice Lane
 
 - Date: 2026-06-08
