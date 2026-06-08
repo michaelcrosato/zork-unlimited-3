@@ -115,6 +115,14 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
     anomalies.push({ severity: "hard", reason: "dirty-baseline auto-commit refusal detected" });
   }
 
+  if (
+    /AI agent command failed|Agent command exited \d+; refusing to commit|postAgentStatus":"failed/i.test(
+      combinedLogs
+    )
+  ) {
+    anomalies.push({ severity: "hard", reason: "agent command or post-agent automation failed" });
+  }
+
   return anomalies;
 }
 

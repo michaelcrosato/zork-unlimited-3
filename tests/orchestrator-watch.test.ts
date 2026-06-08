@@ -95,4 +95,17 @@ describe("orchestrator anomaly classification", () => {
       reason: "repeated push failures detected (2)"
     });
   });
+
+  it("flags failed agent commands from recent logs", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          loopLogTail: "AI agent command failed with exit code 2."
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "agent command or post-agent automation failed"
+    });
+  });
 });

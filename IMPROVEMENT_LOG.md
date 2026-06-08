@@ -2546,3 +2546,44 @@ tests/ai-loop.test.ts`
 
 - Relaunch the loops with the detached `setsid` pattern, then restart monitoring
   from the 60-second cadence.
+
+## 2026-06-08 - Noninteractive Codex Launch Correction
+
+### Changes
+
+- Corrected the default `loop.sh` Codex command so `--ask-for-approval never`
+  is passed as a top-level Codex flag before `exec`.
+- Kept `--search` enabled in the default nested Codex command so loop agents can
+  use current web context when their tasks warrant it.
+- Extended `orchestrator:watch` to flag failed AI agent commands and failed
+  post-agent automation as hard anomalies.
+
+### Playtest Notes
+
+- What was tested:
+  - `codex --search --ask-for-approval never exec --help`
+  - `npm test -- tests/orchestrator-watch.test.ts`
+  - `npm run health`
+- Quantitative metrics:
+  - Tests: 16 files, 285 tests passing
+  - Validation: 164 scenes, 31 endings, 164 reachable scenes
+  - Coverage self-play: 176 effective runs, 0 unfinished, all scenes visited
+- What worked:
+  - The corrected Codex command parses successfully.
+  - The monitor now catches `AI agent command failed` log lines as hard
+    anomalies.
+- What felt bad/confusing:
+  - The earlier launch put `--ask-for-approval` after `exec`, which Codex
+    rejected as an unexpected exec argument.
+- Bugs found:
+  - The monitor did not initially classify agent command failures as hard
+    anomalies.
+
+### Evaluation
+
+- The loop launch command now matches noninteractive Codex flag placement and
+  the monitor can catch the same failure if it recurs.
+
+### Next Iteration
+
+- Relaunch from a clean tree and restart the staged monitoring schedule.
