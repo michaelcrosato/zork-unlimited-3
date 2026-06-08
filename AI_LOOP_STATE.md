@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 18 Thumbprint Receipt Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional "confirm Mara's thumbprint oath reaches
+  every door" route feel acknowledged instead of resolving into the generic
+  Mara true ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: validation, coverage, and
+  ideal-ending rates are healthy; focused payoff on explicit care branches
+  remains the best next increment.
+- Why this matters: The player can wait before pulling the release to confirm
+  that Mara's torn-thumbprint oath has been witnessed by every door. That
+  deliberate patience should visibly change the ending.
+- Planned work:
+  - Route `pull_release_after_thumbprint_receipt` to a new ideal ending.
+  - Preserve the faster `pull_release_after_thumbprint_goodbye` route to
+    `true_ending`.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off the oath receipt without duplicating the
+    existing core Mara ending.
+- Status:
+  - Completed.
+  - Added `mara_thumbprint_receipt_true_ending` with ideal Mara / Core
+    metadata.
+  - Changed only `pull_release_after_thumbprint_receipt` to land on the new
+    ending; the faster `pull_release_after_thumbprint_goodbye` route still
+    lands on `true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed thumbprint
+    receipt path reaches the new ending and includes the witnessed-oath /
+    open-doors payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 190 reachable scenes / 45 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `mara_thumbprint_receipt_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached `mara_thumbprint_receipt_true_ending`, score
+    292, with badge, fuse, lantern, map, and token in inventory, no remaining
+    objectives, and `confirmed_mara_thumbprint_receipt: true`.
+- Playtest feedback:
+  - The extra thumbprint oath confirmation now lands better: the ending
+    explicitly says every door heard the promise and that the oath belongs to
+    the open doors.
+  - The faster thumbprint ending remains useful for momentum, so the branch now
+    distinguishes "pull after hearing Mara's thumbprint memory" from "wait
+    until every door receives the oath."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose mechanical difference is clear but whose ending acknowledgment is
+    thin.
+
 # Cycle 99 Last Dispatch Receipt Payoff
 
 - Date: 2026-06-08

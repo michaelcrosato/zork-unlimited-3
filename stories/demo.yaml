@@ -4582,7 +4582,7 @@ scenes:
     choices:
       - id: pull_release_after_thumbprint_receipt
         label: Pull the release after every door receives the oath
-        to: true_ending
+        to: mara_thumbprint_receipt_true_ending
 
   mara_handoff_intercom:
     routeImportance: optional
@@ -6383,6 +6383,23 @@ scenes:
       twist into another order. Mara signs off over a record that already
       received her correctly, and the doors stay open because the dispatch
       finally arrived.
+    choices: []
+
+  mara_thumbprint_receipt_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
+    text: >
+      The release opens every door at once after Mara's torn-thumbprint oath
+      has come back witnessed, received, and ready. The mark that pinned her to
+      the last ledger line no longer looks like a signature the tunnel can
+      demand again; it moves through each car as proof that every door heard
+      the promise and chose morning. Passengers step into rain-bright air while
+      the latch that tried to close around Mara clicks harmlessly behind them.
+      Her voice thanks you from the speaker, then lets the line fall silent
+      because the oath finally belongs to the open doors.
     choices: []
 
   passenger_true_ending:

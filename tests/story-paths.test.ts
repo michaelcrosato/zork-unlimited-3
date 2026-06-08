@@ -11381,7 +11381,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("lets thumbprint players confirm Mara's oath reaches every door", async () => {
+  it("gives Mara's confirmed thumbprint oath receipt its own ending payoff", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -11425,8 +11425,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_thumbprint_receipt");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_thumbprint_receipt_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("torn-thumbprint oath");
+    expect(observation.scene.text).toContain("every door heard the promise");
+    expect(observation.scene.text).toContain("the oath finally belongs to the open doors");
     expectIdealScore(observation.score);
   });
 
