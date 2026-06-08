@@ -117,6 +117,19 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
     });
   }
 
+  const unexpectedMainLoopExitCount = countUnexpectedMainLoopExits(combinedLogs);
+  if (unexpectedMainLoopExitCount >= 2) {
+    anomalies.push({
+      severity: "hard",
+      reason: `repeated unexpected main loop exits detected (${unexpectedMainLoopExitCount})`
+    });
+  } else if (unexpectedMainLoopExitCount === 1) {
+    anomalies.push({
+      severity: "soft",
+      reason: "one recovered unexpected main loop exit detected"
+    });
+  }
+
   if (
     /agent authentication failure|status 76|401 Unauthorized|authentication (?:failed|required)/i.test(
       combinedLogs
@@ -233,6 +246,17 @@ function sameCommitPrefix(left: string, right: string): boolean {
 
 function countMatches(text: string, pattern: RegExp): number {
   return [...text.matchAll(pattern)].length;
+}
+
+function countUnexpectedMainLoopExits(text: string): number {
+  const expectedRestartStatus = 75;
+  const normalStatus = 0;
+  return [...text.matchAll(/main ai loop exited with status (-?\d+)/gi)]
+    .map((match) => Number(match[1]))
+    .filter(
+      (status) =>
+        Number.isInteger(status) && status !== normalStatus && status !== expectedRestartStatus
+    ).length;
 }
 
 function readPid(path: string): number | undefined {

@@ -96,6 +96,45 @@ describe("orchestrator anomaly classification", () => {
     });
   });
 
+  it("warns about one recovered unexpected main loop exit", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          loopLogTail:
+            "[2026-06-08T14:23:53.756Z] main ai loop exited with status -1\n[2026-06-08T14:23:53.770Z] retrying in 60 seconds"
+        })
+      )
+    ).toContainEqual({
+      severity: "soft",
+      reason: "one recovered unexpected main loop exit detected"
+    });
+  });
+
+  it("flags repeated unexpected main loop exits as a hard anomaly", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          loopLogTail:
+            "main ai loop exited with status -1\nretrying in 60 seconds\nmain ai loop exited with status 2"
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "repeated unexpected main loop exits detected (2)"
+    });
+  });
+
+  it("ignores normal exits and intentional runtime restarts", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          loopLogTail:
+            "main ai loop exited with status 75\nrestarting after runtime change\nmain ai loop exited with status 0"
+        })
+      )
+    ).toEqual([]);
+  });
+
   it("flags failed agent commands from recent logs", () => {
     expect(
       classifyAnomalies(
