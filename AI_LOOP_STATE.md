@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 21 Direct Final Roll Call
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players enter the final passenger roll
+  call directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 21 evidence is healthy overall, but normal random play still
+  under-samples final roll-call variants compared with nearby passenger
+  endings.
+- Why this matters: The final roll call is one of the cleanest passenger-core
+  payoffs: the passengers stop being names held by the line and become people
+  witnessing one another. A normal player should see that payoff in the
+  Counts / answers cluster without first discovering the gathered-passenger
+  intercom or boarding detour.
+- Planned work:
+  - Add a direct opened-manifest choice into the existing final roll-call
+    scene.
+  - Keep the existing gathered boarding, gathered intercom, answered handoff,
+    manifest-answer, and checked-answer routes intact.
+  - Update the opened-manifest objective so player-facing guidance names the
+    final passenger roll call.
+  - Add regression coverage for choice visibility, ordering, flags, the
+    direct roll-call ending, and the checked-answer ending.
+  - Run focused tests, full health, an actual CLI route, and the evidence
+    cycle.
+- Risks:
+  - The opened-manifest hub is broad, so the new action must stay inside
+    Counts / answers and not blur with Mara's separate handoff route.
+  - Random play may still distribute across many passenger endings, but the
+    coverage signal should show the roll-call endings remain reachable.
+- Status:
+  - Completed and ready for final commit/push.
+  - Added `let_opened_passengers_answer_final_roll_call` from
+    `passengers_released` to `passenger_roll_call_epilogue`.
+  - The choice sets the answered-name, gathered-passenger, and final-roll-call
+    flags without pre-confirming the checked-answer variant.
+  - Updated the opened-manifest objective to mention hearing or confirming the
+    passengers' final roll call.
+  - Added regression coverage for menu placement, choice group, label, flags,
+    `passenger_roll_call_true_ending`, and
+    `passenger_roll_call_checked_true_ending`.
+  - Focused roll-call tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "final passenger roll call|answered handoff thresholds|opened-manifest count"`.
+  - Full `npm run health` passed: format check, TypeScript, 325 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`. Coverage reached both
+    `passenger_roll_call_true_ending` and
+    `passenger_roll_call_checked_true_ending` twice.
+  - Actual CLI route through the new choice reached
+    `passenger_roll_call_checked_true_ending`, score 303, with objectives
+    cleared.
+- Playtest feedback:
+  - The new label reads naturally beside the answered-handoff and manifest
+    answer choices.
+  - Confirming each answer before release gives the route a clear last action
+    instead of feeling like another generic emergency-release button.
+  - No invalid choice, stale objective, unreachable scene, unfinished run, or
+    ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_answered_boarding_true_ending`,
+    `passenger_manifest_thumbprint_true_ending`, or
+    `passenger_threshold_boarding`.
+
 # Cycle 20 Direct Lunch-Tin Release
 
 - Date: 2026-06-08

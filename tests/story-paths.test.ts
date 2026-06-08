@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -14495,6 +14495,7 @@ describe("demo story critical paths", () => {
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
       "confirm_opened_answered_handoff_thresholds",
+      "let_opened_passengers_answer_final_roll_call",
       "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
       "board_and_check_answered_passengers",
@@ -15468,6 +15469,98 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest players hear the final passenger roll call directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    const finalRollCallChoice = observation.choices.find(
+      (choice) => choice.id === "let_opened_passengers_answer_final_roll_call"
+    );
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
+    expect(finalRollCallChoice?.label).toBe("Let the opened passengers answer the final roll call");
+    expect(finalRollCallChoice?.choiceGroup).toBe("Counts / answers");
+    expect(choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")).toBeLessThan(
+      choiceIds.indexOf("let_opened_passengers_answer_final_roll_call")
+    );
+    expect(choiceIds.indexOf("let_opened_passengers_answer_final_roll_call")).toBeLessThan(
+      choiceIds.indexOf("let_opened_manifest_names_answer_once")
+    );
+
+    state = choose(story, state, "let_opened_passengers_answer_final_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.scene.text).toContain("who belongs to the morning");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_roll_call_answers).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_final_roll_call",
+      "confirm_roll_call_answers_before_release"
+    ]);
+
+    const rollCallState = state;
+
+    observation = observe(
+      story,
+      choose(story, rollCallState, "pull_release_after_final_roll_call")
+    );
+
+    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("passengers' own roll call");
+    expectIdealScore(observation.score);
+
+    state = choose(story, rollCallState, "confirm_roll_call_answers_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_answer_check");
+    expect(observation.state.flags.confirmed_roll_call_answers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_roll_call_answers"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, state, "pull_release_after_confirmed_roll_call_answers")
+    );
+
+    expect(observation.scene.id).toBe("passenger_roll_call_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("every answer has been witnessed");
+    expectIdealScore(observation.score);
+  });
+
   it("confirms answered handoff thresholds directly from the opened passenger hubs", async () => {
     const story = await loadStory("stories/demo.yaml");
     const basePath = [
@@ -15504,6 +15597,9 @@ describe("demo story critical paths", () => {
       choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")
     );
     expect(choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")).toBeLessThan(
+      choiceIds.indexOf("let_opened_passengers_answer_final_roll_call")
+    );
+    expect(choiceIds.indexOf("let_opened_passengers_answer_final_roll_call")).toBeLessThan(
       choiceIds.indexOf("let_opened_manifest_names_answer_once")
     );
 

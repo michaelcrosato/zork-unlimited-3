@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2377,6 +2377,22 @@ scenes:
             heard_answered_passengers: true
             heard_mara_goodbye: true
             confirmed_answered_handoff_thresholds: true
+      - id: let_opened_passengers_answer_final_roll_call
+        label: Let the opened passengers answer the final roll call
+        choiceGroup: Counts / answers
+        to: passenger_roll_call_epilogue
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: let_opened_manifest_names_answer_once
         label: Let the opened manifest names answer once
         choiceGroup: Counts / answers
