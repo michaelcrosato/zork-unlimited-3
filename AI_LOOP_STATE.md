@@ -7,6 +7,64 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 66 Echoed-Seat Receipt Confirmation
+
+- Date: 2026-06-08
+- Main objective: Add an optional final receipt to the opened-passenger echo
+  route without removing the direct release path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window, and current evidence says the core game is stable. Random play
+  already reaches `passenger_echoed_true_ending`, but the echo branch could go
+  from "the line hears them leaving" straight to the ending without one last
+  proof that each old door sound now belongs to a passenger actually aboard.
+- Planned work:
+  - Preserve `pull_release_after_echoed_manifest_goodbye` as the first direct
+    release choice from `passenger_echoed_manifest_intercom`.
+  - Add a focused `passenger_echoed_seat_receipt` scene.
+  - Set `confirmed_echoed_manifest_seats`, `checked_echoed_passengers`, and
+    `echoed_manifest_boarded` for regression and future playtest visibility.
+  - Update echo-route regressions for direct release and the new optional
+    receipt.
+  - Run focused tests, validation, full health, evidence-only cycle, and an
+    actual CLI playthrough through the new beat.
+- Risks:
+  - Another late optional check can slow the ending if it reads as required.
+  - Echo routes can reach the intercom before the boarding pause, so the new
+    receipt must safely account for boarding itself.
+- Status:
+  - Completed.
+  - Added `confirm_echoed_manifest_seats` to
+    `passenger_echoed_manifest_intercom`, keeping the existing direct release
+    choice ahead of the optional receipt.
+  - Added `passenger_echoed_seat_receipt`, where the thermos cap, newspaper
+    fold, and mitten knock settle into visible passengers aboard the third car.
+  - Added a focused regression for the optional receipt and updated exact
+    choice-order assertions for existing echo routes.
+  - Focused echo regression passed: `npm test -- -t "echo"` with 11 relevant
+    tests green.
+  - Story validation passed with 170 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 291 tests, story
+    validation, and coverage playtest. Coverage visited
+    `passenger_echoed_seat_receipt`, had `unfinished: 0`, and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed, wrote ignored
+    `ai-runs` reports, and appended one tracked cycle observation. Long-run
+    signals stayed stable: ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, and the MCP route reached `true_ending` with score 305.
+  - Actual CLI route reached `passenger_echoed_true_ending` with score 281, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_echoed_manifest_seats` set.
+- Playtest feedback:
+  - The new receipt makes the echo branch clearer: the sounds are no longer
+    spooky clues or repeated tunnel noise; they are visible passengers seated
+    and ready to leave.
+  - The direct release remains available immediately from the intercom, so the
+    added beat is a payoff for cautious players rather than a new requirement.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding small optional payoff beats only where common
+    routes still lack a concrete final confirmation.
+
 # Cycle 65 Morning-Stop Confirmation
 
 - Date: 2026-06-08

@@ -4660,6 +4660,31 @@ scenes:
       - id: pull_release_after_echoed_manifest_goodbye
         label: Pull the release while the opened doors answer
         to: passenger_echoed_true_ending
+      - id: confirm_echoed_manifest_seats
+        label: Confirm every familiar echo has a passenger aboard
+        to: passenger_echoed_seat_receipt
+        requires:
+          notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            confirmed_echoed_manifest_seats: true
+            checked_echoed_passengers: true
+            echoed_manifest_boarded: true
+
+  passenger_echoed_seat_receipt:
+    routeImportance: optional
+    text: >
+      You hold the release and let each familiar sound find an ordinary place
+      inside the third car. The thermos cap clicks under the worker's thumb
+      instead of behind a stamped door. The newspaper fold rustles from a lap,
+      not from the other side of glass. The mittened knock taps the rail twice,
+      and this time everyone can see the child making the count. Mara lets the
+      receipt move through the speaker without reading over it. "Every echo is
+      aboard," she says. "Now let them leave as passengers."
+    choices:
+      - id: pull_release_after_echoed_seat_receipt
+        label: Pull the release after every echo is aboard
+        to: passenger_echoed_true_ending
 
   passenger_threshold_intercom:
     routeImportance: optional
