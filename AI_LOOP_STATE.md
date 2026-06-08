@@ -7,6 +7,80 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 47 Direct Answered-Handoff Checks
+
+- Date: 2026-06-08
+- Main objective: Make the checked answered-handoff payoff easier to choose
+  from the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current Cycle 15 evidence is healthy overall, but normal random play
+  still under-samples `passenger_answered_handoff_check` compared with broader
+  answered-passenger and passenger-release routes.
+- Why this matters: The opened manifest already tells players that passengers
+  can answer their own names. A careful player should be able to ask Mara to
+  hand off the roll call and verify every answered threshold directly from the
+  visible late hubs, without first finding the nested roll-call/intercom route.
+- Planned work:
+  - Add a direct answered-handoff threshold confirmation from
+    `passengers_released`.
+  - Add the same direct confirmation from `passenger_platform`.
+  - Preserve the slower answered-passenger boarding, handoff, and intercom
+    routes.
+  - Add regression coverage for both direct confirmations.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new confirmation.
+- Risks:
+  - The opened-passenger menus are already broad, so the new labels need to
+    read as a deliberate roll-call safety check rather than another generic
+    boarding option.
+  - Random play may still under-sample this ending because many ideal passenger
+    endings compete from the same hubs.
+- Status:
+  - Completed.
+  - Added `confirm_opened_answered_handoff_thresholds`, routing
+    `passengers_released` directly to `passenger_answered_handoff_check` while
+    setting `saw_mara_manifest_handoff`, `heard_passenger_answers`,
+    `heard_answered_passengers`, `heard_mara_goodbye`, and
+    `confirmed_answered_handoff_thresholds`.
+  - Added `confirm_platform_answered_handoff_thresholds` from
+    `passenger_platform` with the same confirmation flags.
+  - Updated the opened-manifest objective so the player-facing goal explicitly
+    includes confirming that the answered handoff crosses.
+  - Preserved the slower answered-passenger boarding, handoff, intercom, and
+    receipt routes.
+  - Added regression coverage for both direct checked answered-handoff routes
+    and updated affected menu-order snapshots.
+  - Focused answered-handoff regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered handoff|opened passenger hubs|manifest-specific platform beat|lost-mitten passenger beat|Mara hand the opened manifest roll call"`
+    with 6 matching tests and 230 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 320 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `npm run ai:cycle` produced a complete evidence report and wrote the
+    current cycle observation. The random ideal-ending rate stayed at 78%,
+    unfinished runs stayed at 0, coverage still visited all scenes, best score
+    was 399, and the MCP smoke route reached `true_ending` at score 305. The
+    command process did not exit before the 10-minute shell timeout, so the
+    orphaned local runner was stopped after evidence was written.
+  - Actual CLI route reached `passenger_answered_handoff_true_ending`, score
+    292, no remaining objectives, through
+    `confirm_opened_answered_handoff_thresholds`.
+- Playtest feedback:
+  - The new opened-manifest label reads like a deliberate safety check after
+    the manifest already says passengers are answering Mara's count.
+  - The confirmation scene pays off the label clearly: each passenger touches
+    the threshold before passing the answer along, then the ending shows the
+    roll call becoming a crowd movement instead of Mara carrying the list
+    alone.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect remaining low-frequency misses around
+    `passenger_lunch_tin_intercom`, `passenger_lunch_tin_true_ending`,
+    `passenger_roll_call_answer_check`, and manifest thumbprint receipt
+    visibility.
+
 # Cycle 46 Direct Conductor-Clearance Checks
 
 - Date: 2026-06-08

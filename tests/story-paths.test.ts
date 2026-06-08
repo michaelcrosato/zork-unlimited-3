@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -11058,11 +11058,11 @@ describe("demo story critical paths", () => {
       "ask_lunch_tin_worker_to_set_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
+      "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "confirm_platform_keepsake_owners",
-      "help_passengers_gather",
-      "board_third_car_with_passengers"
+      "help_passengers_gather"
     ]);
 
     state = choose(story, state, "return_lost_mitten");
@@ -14160,6 +14160,7 @@ describe("demo story critical paths", () => {
       "confirm_shared_release_from_opened_manifest",
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
+      "confirm_opened_answered_handoff_thresholds",
       "let_opened_manifest_names_answer_once",
       "board_with_answered_passengers",
       "board_and_check_answered_passengers",
@@ -14443,11 +14444,11 @@ describe("demo story critical paths", () => {
       "ask_lunch_tin_worker_to_set_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
+      "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "confirm_platform_keepsake_owners",
-      "help_passengers_gather",
-      "board_third_car_with_passengers"
+      "help_passengers_gather"
     ]);
 
     state = choose(story, state, "help_passengers_gather");
@@ -15126,6 +15127,102 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "pull_release_after_answered_handoff_intercom");
     observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("confirms answered handoff thresholds directly from the opened passenger hubs", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    const basePath = [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ];
+
+    let openedState = initialState(story);
+    for (const choiceId of basePath) {
+      openedState = choose(story, openedState, choiceId);
+    }
+
+    let observation = observe(story, openedState);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).toContain("confirm_opened_answered_handoff_thresholds");
+    expect(choiceIds.indexOf("ask_mara_to_handoff_opened_roll_call")).toBeLessThan(
+      choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")
+    );
+    expect(choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")).toBeLessThan(
+      choiceIds.indexOf("let_opened_manifest_names_answer_once")
+    );
+
+    openedState = choose(story, openedState, "confirm_opened_answered_handoff_thresholds");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_check");
+    expect(observation.scene.text).toContain("threshold before passing it");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_answered_handoff_thresholds).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_answered_handoff"
+    ]);
+
+    openedState = choose(story, openedState, "pull_release_after_confirmed_answered_handoff");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    let platformState = initialState(story);
+    for (const choiceId of [...basePath, "board_after_releasing_passengers"]) {
+      platformState = choose(story, platformState, choiceId);
+    }
+
+    observation = observe(story, platformState);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds).toContain("confirm_platform_answered_handoff_thresholds");
+    expect(choiceIds.indexOf("confirm_platform_conductor_clearance")).toBeLessThan(
+      choiceIds.indexOf("confirm_platform_answered_handoff_thresholds")
+    );
+    expect(choiceIds.indexOf("confirm_platform_answered_handoff_thresholds")).toBeLessThan(
+      choiceIds.indexOf("return_lost_mitten")
+    );
+
+    platformState = choose(story, platformState, "confirm_platform_answered_handoff_thresholds");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_check");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_answered_handoff_thresholds).toBe(true);
+
+    platformState = choose(story, platformState, "pull_release_after_confirmed_answered_handoff");
+    observation = observe(story, platformState);
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);

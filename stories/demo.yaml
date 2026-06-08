@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2287,6 +2287,24 @@ scenes:
             saw_mara_manifest_handoff: true
             heard_passenger_answers: true
             heard_answered_passengers: true
+      - id: confirm_opened_answered_handoff_thresholds
+        label: Ask Mara to hand off the roll call and confirm every answer crosses
+        choiceGroup: Counts / answers
+        to: passenger_answered_handoff_check
+        requires:
+          all:
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_answered_handoff_thresholds
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+            heard_mara_goodbye: true
+            confirmed_answered_handoff_thresholds: true
       - id: let_opened_manifest_names_answer_once
         label: Let the opened manifest names answer once
         choiceGroup: Counts / answers
@@ -3199,6 +3217,22 @@ scenes:
             heard_conductor_clearance: true
             heard_final_roll_call: true
             confirmed_conductor_clearance: true
+      - id: confirm_platform_answered_handoff_thresholds
+        label: Ask Mara to hand off the answered names and check each threshold
+        to: passenger_answered_handoff_check
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_answered_handoff_thresholds
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+            heard_mara_goodbye: true
+            confirmed_answered_handoff_thresholds: true
       - id: return_lost_mitten
         label: Return the lost mitten to the child
         to: passenger_mitten_memory
