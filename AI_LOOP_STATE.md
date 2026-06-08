@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 96 Conductor Clearance Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional conductor-clearance confirmation route feel
+  acknowledged instead of resolving into the same broader conductor ending as
+  the faster clear-signal pull.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: guidance, validation, and
+  ideal-ending rates are healthy; focused payoff on explicit care branches
+  remains the highest-value next increment.
+- Why this matters: The player can wait after the conductor's final clear call
+  and confirm that the signal reaches every door before pulling the emergency
+  release. That deliberate patience should visibly change the ending.
+- Planned work:
+  - Route `pull_release_after_confirmed_conductor_clearance` to a new ideal
+    ending.
+  - Preserve the faster conductor clear-signal routes to
+    `passenger_conductor_true_ending`.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off conductor clearance without duplicating the
+    existing conductor transfer or generic conductor endings.
+- Status:
+  - Completed.
+  - Added `passenger_conductor_clearance_checked_true_ending` with ideal
+    Passengers / Roll call metadata.
+  - Changed only `pull_release_after_confirmed_conductor_clearance` to land on
+    the new ending; faster conductor routes still land on
+    `passenger_conductor_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed conductor
+    clearance path reaches the new ending and includes the threshold / human
+    voice payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 186 reachable scenes / 41 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_conductor_clearance_checked_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached
+    `passenger_conductor_clearance_checked_true_ending`, score 318, with badge,
+    fuse, lantern, map, and token in inventory, no remaining objectives, and
+    `confirmed_conductor_clearance: true`.
+- Playtest feedback:
+  - The extra conductor-clearance confirmation now lands better: the ending
+    explicitly says the signal answered from each threshold and every door
+    belonged to a human voice.
+  - The faster conductor clear-signal ending remains useful for momentum, so
+    the branch now distinguishes "trust the conductor's call" from "wait until
+    every door has answered clear."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose mechanical difference is clear but whose ending acknowledgment is
+    thin.
+
 # Cycle 95 Shared Release Receipt Payoff
 
 - Date: 2026-06-08

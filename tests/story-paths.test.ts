@@ -8748,8 +8748,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_conductor_clearance");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
-    expect(observation.scene.text).toContain("conductor's clear signal");
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_checked_true_ending");
+    expect(observation.scene.text).toContain("answered from each threshold");
+    expect(observation.scene.text).toContain("every door to belong to a human voice");
     expectIdealScore(observation.score);
 
     state = choose(story, answeredState, "ask_conductor_from_answers");

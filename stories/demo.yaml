@@ -5421,7 +5421,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_conductor_clearance
         label: Pull the release after every door answers clear
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_clearance_checked_true_ending
 
   passenger_conductor_count_roll_call:
     routeImportance: optional
@@ -6664,6 +6664,22 @@ scenes:
       repeat his call down the platform until every open door sounds like work
       finished well, and Mara lets another worker's voice be the last one the
       line obeys.
+    choices: []
+
+  passenger_conductor_clearance_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
+    text: >
+      The release opens every door at once after the conductor's clear signal
+      has answered from each threshold. He does not raise the punch as an order
+      this time. He lowers it after the child, the newspaper woman, and the
+      lunch-tin worker each call themselves through in turn. Mara lets the
+      speaker stay quiet long enough for every door to belong to a human voice,
+      and when the sign goes blank, nothing unfinished is left for the line to
+      count.
     choices: []
 
   passenger_conductor_transfer_true_ending:
