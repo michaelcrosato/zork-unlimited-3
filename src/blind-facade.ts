@@ -1,4 +1,5 @@
 import type { Observation, PlayerObservation } from "./engine.js";
+import { groupChoicesForDisplay } from "./choice-groups.js";
 
 /**
  * A masked view of a scene that is safe to show a *blind* playtester.
@@ -140,8 +141,13 @@ export function renderMaskedScene(masked: MaskedScene): string {
     lines.push("[THE STORY HAS ENDED]");
   } else {
     lines.push("Choices:");
-    for (const choice of masked.choices) {
-      lines.push(`  ${choice.index}. ${choice.label}`);
+    const groups = groupChoicesForDisplay(masked.choices);
+    for (const group of groups) {
+      if (group.label) lines.push(`  ${group.label}:`);
+      const indent = group.label ? "    " : "  ";
+      for (const choice of group.choices) {
+        lines.push(`${indent}${choice.index}. ${choice.label}`);
+      }
     }
   }
   return lines.join("\n");

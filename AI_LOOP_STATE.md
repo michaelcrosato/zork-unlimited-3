@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 79 Blind Choice Grouping
+
+- Date: 2026-06-08
+- Main objective: Make long player-facing choice menus easier to scan in blind
+  playtests and route transcripts without changing legal choices or story
+  routing.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle follows the live loop signal from Cycle 78: the
+  opened-manifest hub is stable, but its 45 choices remain hard to scan even
+  after the objective copy became clearer.
+- Why this matters: Blind playtest prompts and transcripts are how the loop
+  detects pacing and objective problems. Grouping long visible menus gives
+  players and model testers a clearer screen while preserving every optional
+  passenger thread.
+- Planned work:
+  - Add a small display-only grouping helper for long choice lists.
+  - Render grouped sections in masked blind-player screens and final
+    transcripts while keeping choice numbers, ids, destinations, and legality
+    unchanged.
+  - Add regression tests that grouping appears only for long menus and never
+    leaks internal ids in blind output.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the opened-manifest hub.
+- Risks:
+  - Group labels must be player-facing summaries, not hidden route metadata.
+  - Reformatting transcripts should not break choice selection or obscure the
+    direct boarding/release path.
+- Status:
+  - Completed.
+  - Added a display-only `groupChoicesForDisplay` helper that groups long menus
+    into player-facing sections such as Board / release, Mara, Counts /
+    answers, Keepsakes / memories, Passenger threads, Return, Investigate, and
+    Other.
+  - Rendered those groups in blind-player screens and final-state transcripts.
+    The engine still keeps the same legal choices and numeric choice indexes,
+    and blind output still hides internal ids and destinations.
+  - Added regression coverage for grouped blind output and for the actual
+    opened-manifest hub transcript.
+  - Focused checks passed for the blind-facade and transcript tests, plus
+    story validation.
+  - Full `npm run health` passed: format check, TypeScript, 299 tests, story
+    validation, and coverage playtest. Coverage still had `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+    tracked cycle observation; long-run metrics stayed stable with
+    true-ending rate 78%, unfinished random runs 0, and best score 399.
+- Playtest feedback:
+  - Actual CLI route reached the opened-manifest hub, confirmed the transcript
+    now shows grouped sections for Board / release, Mara, Counts / answers,
+    and Passenger threads, then continued through the passenger morning chorus
+    to `passenger_true_ending` with score 275 and no final objectives.
+  - The grouped hub was easier to skim because the direct boarding/release
+    options and optional passenger threads no longer appeared as one flat
+    45-choice wall.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise consider making the grouped section labels story-data-driven if
+    future blind sessions show the heuristic labels are too broad.
+
 # Cycle 78 Opened Manifest Objective Clarity
 
 - Date: 2026-06-08

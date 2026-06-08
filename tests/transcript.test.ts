@@ -84,4 +84,44 @@ describe("transcript rendering", () => {
     expect(transcript).toContain("Objectives:\n- none");
     expect(transcript).toContain("Available choices:\n- none");
   });
+
+  it("groups long final-state choice lists for route critique", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    const transcript = renderTranscript(story, state);
+
+    expect(transcript).toContain("Scene: passengers_released (in progress)");
+    expect(transcript).toContain("Available choices:");
+    expect(transcript).toContain(
+      "Board / release:\n- Board after the opened passengers finish the count together"
+    );
+    expect(transcript).toContain("Mara:\n- Watch Mara call the opened doors");
+    expect(transcript).toContain("Counts / answers:\n- Review the opened count");
+    expect(transcript).toContain("Passenger threads:");
+    expect(transcript).toContain(
+      "- Help the opened passengers gather by helping one another board"
+    );
+  });
 });

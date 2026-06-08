@@ -71,4 +71,38 @@ describe("blind facade", () => {
     expect(rendered).not.toContain("open_door");
     expect(rendered).not.toContain("hidden_vault");
   });
+
+  it("groups long player-facing choice lists without leaking ids", () => {
+    const observation = sampleObservation();
+    observation.choices = [
+      { id: "board_now", label: "Board the third car and pull the emergency release", to: "end" },
+      { id: "watch_mara", label: "Watch Mara call the opened doors", to: "mara" },
+      { id: "review_count", label: "Review the opened count", to: "count" },
+      { id: "return_mitten", label: "Return the lost mitten to the child", to: "mitten" },
+      { id: "listen_doors", label: "Listen to the passenger door echoes", to: "echoes" },
+      { id: "search_bench", label: "Search the bench beside the platform", to: "bench" },
+      { id: "return_booth", label: "Return to the signal booth", to: "booth" },
+      { id: "wait", label: "Wait where you are", to: "wait" }
+    ];
+
+    const { masked, choiceIds } = maskObservation(observation);
+    const rendered = renderMaskedScene(masked);
+
+    expect(choiceIds).toEqual([
+      "board_now",
+      "watch_mara",
+      "review_count",
+      "return_mitten",
+      "listen_doors",
+      "search_bench",
+      "return_booth",
+      "wait"
+    ]);
+    expect(rendered).toContain("  Board / release:\n    0. Board the third car");
+    expect(rendered).toContain("  Mara:\n    1. Watch Mara call the opened doors");
+    expect(rendered).toContain("  Counts / answers:\n    2. Review the opened count");
+    expect(rendered).toContain("  Return:\n    6. Return to the signal booth");
+    expect(rendered).not.toContain("board_now");
+    expect(rendered).not.toContain("listen_doors");
+  });
 });

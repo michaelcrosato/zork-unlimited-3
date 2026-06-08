@@ -1,5 +1,6 @@
 import { GameState, Story } from "./schema.js";
 import { observe } from "./engine.js";
+import { groupChoicesForDisplay } from "./choice-groups.js";
 
 export function renderTranscript(story: Story, state: GameState): string {
   const lines = [`# ${story.title}`, ""];
@@ -44,8 +45,12 @@ export function renderTranscript(story: Story, state: GameState): string {
   lines.push("");
   lines.push("Available choices:");
   if (observation.choices.length > 0) {
-    for (const choice of observation.choices) {
-      lines.push(`- ${choice.label} (${choice.id} -> ${choice.to})`);
+    const groups = groupChoicesForDisplay(observation.choices);
+    for (const group of groups) {
+      if (group.label) lines.push(`${group.label}:`);
+      for (const choice of group.choices) {
+        lines.push(`- ${choice.label} (${choice.id} -> ${choice.to})`);
+      }
     }
   } else {
     lines.push("- none");
