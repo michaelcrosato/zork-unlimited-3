@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
+  - text: Start Mara's opened-door handoff, carry it straight to the third-car speaker, pull the release if the handoff or thumbprint oath is already moving, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2116,6 +2116,20 @@ scenes:
             - flag: saw_mara_manifest_handoff
             - flag: read_manifest_thumbprint
             - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: pull_release_with_manifest_thumbprint_oath
+        label: Pull the release with Mara's thumbprint oath already moving
+        choiceGroup: Mara and manifest
+        to: passenger_manifest_thumbprint_true_ending
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
         effects:
           set:
             heard_mara_goodbye: true

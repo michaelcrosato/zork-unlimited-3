@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 35 Manifest Thumbprint Direct Release
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_manifest_thumbprint_true_ending` after players have already found
+  Mara's manifest thumbprint and returned to the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named the manifest handoff/thumbprint endings
+  as low-frequency normal-play discovery targets; Cycles 33 and 34 already
+  addressed the direct handoff and thumbprint-speaker shortcuts.
+- Why this matters: The player could notice the thumbprint, back out to the
+  opened doors, and still had to choose another "carry to speaker" step before
+  the release. The new direct release choice makes the obvious rescue action
+  available once the oath is already moving.
+- Planned work:
+  - Add a direct release choice from `passengers_released` to
+    `passenger_manifest_thumbprint_true_ending` when the manifest handoff has
+    been seen and the thumbprint oath is known.
+  - Update the opened-manifest objective so it tells players that an already
+    moving handoff or thumbprint oath can be released immediately.
+  - Add focused regression coverage for the touch-return-direct-release path
+    while preserving the existing speaker route.
+  - Run focused checks, full health, an evidence cycle, and one actual route
+    through the new direct choice.
+- Risks:
+  - This adds another option to an already large hub, so it must stay grouped
+    under "Mara and manifest" and only appear after the player has earned that
+    context.
+  - Uniform random play may still under-sample a single optional ending in the
+    broad opened-manifest hub.
+- Status:
+  - Completed.
+  - Added `pull_release_with_manifest_thumbprint_oath`, gated behind
+    `saw_mara_manifest_handoff`, `read_manifest_thumbprint`, and no prior
+    goodbye/passenger-gathering branch.
+  - Updated the opened-manifest objective copy to mention pulling the release
+    when the handoff or thumbprint oath is already moving.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 225
+    passing tests, and `npm run cyoa -- validate stories/demo.yaml --json` with
+    191 reachable scenes / 46 endings and no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 309 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Random sample passed:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+    ended all 250 runs, kept all scenes visited, and still covered
+    `passenger_manifest_thumbprint_true_ending` twice.
+  - Actual CLI route reached `passenger_manifest_thumbprint_true_ending`, score
+    303, with no remaining choices and no remaining objectives after choosing
+    `pull_release_with_manifest_thumbprint_oath`.
+- Playtest feedback:
+  - The new release choice appears exactly when the player has already watched
+    Mara's handoff, touched the manifest thumbprint, and returned to the opened
+    doors.
+  - The route now matches the moment-to-moment fiction: once the thumbprint
+    oath is already moving, pulling the release feels like the next beat rather
+    than another hidden speaker detour.
+  - No crash, dead end, stale objective, reachability issue, or score
+    regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect remaining low-frequency ideal endings for places where a
+    player-facing clue is not yet paired with a direct action.
+
 # Cycle 34 Manifest Thumbprint Handoff Shortcut Clarity
 
 - Date: 2026-06-08

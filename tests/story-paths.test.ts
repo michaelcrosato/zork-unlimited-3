@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
+  "Start Mara's opened-door handoff, carry it straight to the third-car speaker, pull the release if the handoff or thumbprint oath is already moving, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -8088,6 +8088,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_manifest_thumbprint_from_opened_doors"
     );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_with_manifest_thumbprint_oath"
+    );
+
+    let directReleaseObservation = observe(
+      story,
+      choose(story, state, "pull_release_with_manifest_thumbprint_oath")
+    );
+
+    expect(directReleaseObservation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(directReleaseObservation.scene.ending).toBe(true);
+    expect(directReleaseObservation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(directReleaseObservation.scene.text).toContain("walks through with the crowd");
+    expectIdealScore(directReleaseObservation.score);
 
     state = choose(story, state, "carry_manifest_thumbprint_from_opened_doors");
     observation = observe(story, state);
