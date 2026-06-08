@@ -4486,7 +4486,7 @@ scenes:
     choices:
       - id: pull_release_after_badge_proof_receipt
         label: Pull the release after every door receives the proof
-        to: true_ending
+        to: mara_badge_proof_receipt_true_ending
 
   mara_last_dispatch_intercom:
     routeImportance: main
@@ -6301,6 +6301,23 @@ scenes:
       against the release handle like proof that can finally rest. Her voice
       thanks you from the speaker, close enough to sound alive, then lets the
       line fall silent behind everyone it used to keep.
+    choices: []
+
+  mara_badge_proof_receipt_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
+    text: >
+      The release opens every door at once after Mara's badge proof has already
+      come back received. The old number does not vanish from the signal ledger
+      as a denied credential; it moves door by door as clearance, then as a
+      name, then as a warm mark against the handle in your hand. Passengers
+      step into rain-bright morning while each car answers the same finished
+      proof in its own voice. Mara thanks the line for hearing her correctly at
+      last, then lets the speaker fall silent because nothing is waiting to be
+      proved again.
     choices: []
 
   mara_handoff_true_ending:

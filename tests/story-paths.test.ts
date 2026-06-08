@@ -3338,8 +3338,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_badge_proof_receipt");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.id).toBe("mara_badge_proof_receipt_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("come back received");
+    expect(observation.scene.text).toContain("nothing is waiting to be proved again");
     expectIdealScore(observation.score);
   });
 

@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 87 Badge-Proof Receipt Ending Payoff
+
+- Date: 2026-06-08
+- Main objective: Give Mara's optional badge-proof receipt its own ending
+  payoff instead of folding it back into the generic core true ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 86's next step and the current evidence signal:
+  core guidance, coverage, and normal completion are healthy, making focused
+  late-game story depth the best use of this cycle.
+- Why this matters: The player can already take extra care to confirm that
+  Mara's badge proof reaches every door. A distinct ending makes that care
+  visible and reinforces the story's proof theme: the badge number stops being
+  a denied credential and becomes clearance for every car.
+- Planned work:
+  - Route `pull_release_after_badge_proof_receipt` to a new ideal ending.
+  - Preserve the faster badge-proof release route on the existing
+    `true_ending`.
+  - Update regression coverage and ideal-ending counting helpers.
+  - Run focused tests, full health, one exact CLI playthrough, and the standard
+    evidence cycle.
+- Risks:
+  - Adding an ending increases coverage surface, so validation and coverage
+    playtest must prove the new terminal scene is reachable and does not strand
+    the route.
+  - The new ending should read like payoff for confirming the receipt, not as a
+    duplicate of the baseline Mara ending.
+- Status:
+  - Completed.
+  - Added `mara_badge_proof_receipt_true_ending` with ideal Mara / Core
+    metadata.
+  - Changed only `pull_release_after_badge_proof_receipt` to land on the new
+    ending; the direct badge-proof release still lands on `true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the receipt route reaches the
+    new ending and carries receipt-specific text.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused checks passed for the story-path and playtest regressions, plus
+    story validation.
+  - Actual CLI playthrough through `listen_to_badge_proof_intercom` ->
+    `confirm_badge_proof_receipt` ->
+    `pull_release_after_badge_proof_receipt` reached
+    `mara_badge_proof_receipt_true_ending`, score 291, with no remaining
+    objectives.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 178 reachable scenes / 33 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation; it stopped before nested agent execution because
+    `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The branch now lands better: confirming the proof receipt no longer
+    disappears into the generic ending, and the final text names the proof
+    changing from credential to clearance.
+  - The faster direct badge-proof release remains available for players who do
+    not want an extra confirmation beat.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to high-signal optional
+    confirmation beats whose endings still do not acknowledge the player's
+    extra care.
+
 # Cycle 86 Conductor Stop-Checked Transfer Payoff
 
 - Date: 2026-06-08
