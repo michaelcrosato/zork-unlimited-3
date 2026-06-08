@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -3635,6 +3635,15 @@ scenes:
       through the speaker until the check is finished, then says, "Now they
       are not just open. They are accounted for."
     choices:
+      - id: confirm_checked_keepsake_owners_before_boarding
+        label: Hold the release and confirm every keepsake owner
+        to: passenger_keepsake_owner_check
+        requires:
+          notFlag: confirmed_keepsake_owners
+        effects:
+          set:
+            confirmed_keepsake_owners: true
+            heard_gathered_passengers: true
       - id: carry_checked_keepsakes_to_speaker
         label: Carry the checked keepsakes to the third-car speaker
         to: passenger_keepsake_intercom
@@ -6125,6 +6134,14 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+      - id: confirm_keepsake_owners_from_intercom
+        label: Confirm each keepsake owner before pulling the release
+        to: passenger_keepsake_owner_check
+        requires:
+          notFlag: confirmed_keepsake_owners
+        effects:
+          set:
+            confirmed_keepsake_owners: true
       - id: pull_release_after_keepsake_intercom
         label: Pull the release while the keepsakes hold the names steady
         to: passenger_keepsake_true_ending

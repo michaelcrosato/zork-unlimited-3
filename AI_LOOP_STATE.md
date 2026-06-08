@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 38 Keepsake Owner Direct Checks
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_keepsake_owner_checked_true_ending`.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence and the previous state pointed to optional
+  passenger branches where the setup was visible but the highest-quality payoff
+  was still one submenu deeper.
+- Why this matters: Players who already checked the opened manifest keepsakes
+  had enough evidence to confirm the owners, but the owner-checked ending was
+  reachable only after routing through the matched-keepsake roll call. The new
+  choices let the player act on the check at the moment the story says the
+  ordinary proofs are accounted for.
+- Planned work:
+  - Add a direct owner-confirmation choice from `passenger_keepsake_check`.
+  - Add a matching owner-confirmation choice from `passenger_keepsake_intercom`.
+  - Update the opened-manifest objective copy so keepsake owner checks are a
+    visible optional thread.
+  - Add regression coverage for both direct routes while keeping the older
+    roll-call and standard keepsake endings intact.
+  - Run focused checks, full health, evidence collection, and one actual CLI
+    playthrough through the new shortcut.
+- Risks:
+  - The opened-manifest hub is already broad, so the new prompt must not crowd
+    out the existing boarding, handoff, and lunch-tin routes.
+  - Uniform random play may still under-sample this ending because many ideal
+    passenger endings compete in the same region.
+- Status:
+  - Completed.
+  - Added `confirm_checked_keepsake_owners_before_boarding`, routing checked
+    keepsake players directly to `passenger_keepsake_owner_check` and setting
+    `confirmed_keepsake_owners`.
+  - Added `confirm_keepsake_owners_from_intercom`, routing speaker-side
+    keepsake players to the same owner-check scene before release.
+  - Updated the opened-manifest objective text to name the keepsake owner check
+    alongside the lunch-tin roster proof.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 226
+    passing tests, and `npm run cyoa -- validate stories/demo.yaml --json` with
+    191 reachable scenes / 46 endings and no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 310 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Random sample passed:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+    ended all 250 runs and reached
+    `passenger_keepsake_owner_checked_true_ending` three times.
+  - Actual CLI route reached `passenger_keepsake_owner_checked_true_ending`,
+    score 295, no remaining objectives, after choosing
+    `confirm_checked_keepsake_owners_before_boarding` directly from the checked
+    keepsake scene.
+- Playtest feedback:
+  - The new choice appears at the exact moment the text says the keepsakes have
+    the right hands, so the owner-confirmation payoff no longer feels hidden
+    behind an extra roll-call detour.
+  - The final scene pays off the route clearly: every ordinary proof names its
+    owner back before the doors open.
+  - No crash, stale objective, unreachable scene, unfinished playtest, or score
+    issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings where
+    the story already gives a clue but the payoff remains one step too hidden.
+
 # Cycle 37 Remembered Morning Stop Shortcut
 
 - Date: 2026-06-08

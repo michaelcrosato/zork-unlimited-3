@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -10776,11 +10776,28 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They are accounted for");
     expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_keepsake_owners_before_boarding",
       "carry_checked_keepsakes_to_speaker",
       "lead_checked_keepsakes_to_third_car"
     ]);
 
-    state = choose(story, state, "carry_checked_keepsakes_to_speaker");
+    const checkedKeepsakeState = state;
+
+    state = choose(story, checkedKeepsakeState, "confirm_checked_keepsake_owners_before_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_check");
+    expect(observation.state.flags.confirmed_keepsake_owners).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, checkedKeepsakeState, "carry_checked_keepsakes_to_speaker");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_intercom");
@@ -10878,6 +10895,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_keepsake_roll_call",
+      "confirm_keepsake_owners_from_intercom",
       "pull_release_after_keepsake_intercom"
     ]);
 
@@ -10975,10 +10993,26 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "hear_final_keepsake_roll_call",
+      "confirm_keepsake_owners_from_intercom",
       "pull_release_after_keepsake_intercom"
     ]);
 
-    state = choose(story, state, "pull_release_after_keepsake_intercom");
+    const keepsakeIntercomState = state;
+
+    state = choose(story, keepsakeIntercomState, "confirm_keepsake_owners_from_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_check");
+    expect(observation.state.flags.confirmed_keepsake_owners).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, keepsakeIntercomState, "pull_release_after_keepsake_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
@@ -14196,6 +14230,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_keepsake_owners_before_boarding",
       "carry_checked_keepsakes_to_speaker",
       "lead_checked_keepsakes_to_third_car"
     ]);
