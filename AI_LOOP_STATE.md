@@ -7,6 +7,66 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 30 Late HOME Failure Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the dispatch-specific false-HOME loss explain why the
+  player failed after hearing useful route clues.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. The supplied cycle evidence and current state show the
+  `passenger_manifest_handoff_true_ending` target has already been improved,
+  while suspicious route samples still include late losses to the false HOME
+  sign after the player has seen strong guidance.
+- Why this matters: A bad ending after a long exploratory route should teach the
+  player what went wrong. This pass keeps the trap intact, but makes clear that
+  the player had the map, token clue, proof line, and ledger route and chose the
+  false sign over the real instructions.
+- Planned work:
+  - Revise `lost_after_dispatch_ending` with clearer cause-and-effect feedback.
+  - Keep route behavior, metadata, choice ordering, score rules, and ending
+    count unchanged.
+  - Add focused regression assertions for the new failure-feedback language.
+  - Run focused tests, full health, evidence collection, and a real CLI route
+    through the changed ending.
+- Risks:
+  - This improves failure clarity, not ideal-ending frequency.
+  - The false-HOME branch is already recovery-rich, so adding more route changes
+    would risk diluting the trap.
+- Status:
+  - Completed.
+  - Revised `lost_after_dispatch_ending` so the failure now explains that the
+    player had the token clue, proof line, ledger route, and map but let the
+    false HOME sign answer louder than the real instructions.
+  - Updated `tests/story-paths.test.ts` to assert the dispatch-specific HOME
+    loss preserves both the old map-falls-unread warning and the new
+    cause-and-effect feedback.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 306 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `lost_after_dispatch_ending` covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked cycle observation.
+  - Actual CLI route reached `lost_after_dispatch_ending`, score 50, with no
+    remaining choices and no remaining objectives after
+    `listen_for_mara_under_home_warning` ->
+    `step_into_false_home_after_dispatch`.
+- Playtest feedback:
+  - The failure is still clearly a bad ending, but it now teaches the player
+    that the route was available and the mistake was trusting the false HOME
+    sign over Mara's dispatch.
+  - The route remains fair because the preceding screens still offer recovery
+    to `good_ending`, service-room recovery, and the true route.
+  - No crash, dead end, stale objective, score regression, or reachability
+    issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving thin but reachable ending payoffs without
+    adding more branches to already-dense hubs.
+
 # Cycle 29 Manifest Handoff Ending Payoff
 
 - Date: 2026-06-08

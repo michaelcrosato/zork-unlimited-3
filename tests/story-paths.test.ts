@@ -2490,6 +2490,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.let_home_drown_mara).toBe(true);
     expect(observation.scene.text).toContain("Mara is still speaking");
     expect(observation.scene.text).toContain("clock token, fuse, badge, ledger");
+    expect(observation.scene.text).toContain("The route was already in your hands");
+    expect(observation.scene.text).toContain("the false sign answer louder than the real one");
   });
 
   it("lets the first HOME sign warning carry Mara's dispatch back into the true route", async () => {
@@ -2746,6 +2748,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_home_sign_dispatch).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");
     expect(observation.scene.text).toContain("clock token, fuse, badge, ledger");
+    expect(observation.scene.text).toContain("The route was already in your hands");
+    expect(observation.scene.text).toContain("the false sign answer louder than the real one");
 
     state = initialState(story);
     for (const choiceId of [
