@@ -96,7 +96,7 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
-  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving."
+  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving."
     requires:
       all:
         - flag: freed_mara
@@ -2634,6 +2634,21 @@ scenes:
             - any:
                 - flag: read_mara_thumbprint
                 - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            heard_mara_goodbye: true
+      - id: carry_darkened_manifest_thumbprint_to_speaker
+        label: Carry the darkened thumbprint oath straight to the third-car speaker
+        choiceGroup: Mara and manifest
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
             - notFlag: heard_mara_goodbye
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather

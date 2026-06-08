@@ -7,6 +7,77 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 34 Manifest Thumbprint Handoff Shortcut Clarity
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_manifest_thumbprint_true_ending` from the opened-manifest handoff
+  scene.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_manifest_thumbprint_true_ending`
+  as a low-frequency normal-play discovery target, and Cycle 33 had already
+  addressed the neighboring manifest-handoff shortcut.
+- Why this matters: The handoff prose already tells players Mara's torn
+  thumbprint has darkened like a route marker, but players who had not inspected
+  a thumbprint still had to take a slower touch detour before reaching the
+  third-car speaker payoff. The new direct choice makes the route marker
+  actionable at the moment the player sees it.
+- Planned work:
+  - Add a direct handoff choice from `mara_manifest_handoff` to
+    `mara_manifest_thumbprint_intercom` for players who have not already read a
+    thumbprint.
+  - Update the active objective copy so it names the darkened thumbprint oath as
+    a valid way to finish Mara's opened-door handoff.
+  - Preserve the existing slower `touch_mara_manifest_thumbprint` route.
+  - Add focused route and blind-player-view regression coverage.
+  - Run focused checks, full health, evidence collection, random sampling, and
+    one actual CLI route through the new choice.
+- Risks:
+  - This improves player clarity at the handoff menu, but uniform random play
+    still under-samples individual endings in the large opened-manifest hub.
+  - The new choice adds one more option to a broad menu, so grouping/order tests
+    must keep the player view readable.
+- Status:
+  - Completed.
+  - Added `carry_darkened_manifest_thumbprint_to_speaker`, which routes directly
+    from `mara_manifest_handoff` to `mara_manifest_thumbprint_intercom` and sets
+    `read_manifest_thumbprint` plus `heard_mara_goodbye`.
+  - Updated the manifest-handoff objective to tell players they can carry the
+    darkened thumbprint oath to the speaker.
+  - Kept `touch_mara_manifest_thumbprint` available for players who want the
+    slower sensory beat.
+  - Added regression coverage for the direct route and updated the masked
+    player-view grouping assertions so blind playtesters see the new action in
+    the `Mara and manifest` group.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 225
+    passing tests, and `npm run cyoa -- validate stories/demo.yaml --json` with
+    191 reachable scenes / 46 endings and no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 309 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Random sample passed:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+    ended all 250 runs, kept all scenes visited, and still covered
+    `passenger_manifest_thumbprint_true_ending` twice.
+  - Actual CLI route reached `passenger_manifest_thumbprint_true_ending`, score
+    305, with no remaining choices and no remaining objectives after choosing
+    `carry_darkened_manifest_thumbprint_to_speaker`.
+- Playtest feedback:
+  - The new action matches the immediately preceding prose: the thumbprint is
+    described as a route marker, and the next menu now lets the player carry
+    that marker straight to the third-car speaker.
+  - The route feels less like a hidden optional lore detour and more like a
+    legitimate finish to Mara's opened-door handoff.
+  - No crash, dead end, stale objective, reachability issue, or score regression
+    appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect remaining low-frequency ideal endings for places where a
+    player-facing clue is not yet paired with a direct action.
+
 # Cycle 33 Manifest Handoff Shortcut Clarity
 
 - Date: 2026-06-08

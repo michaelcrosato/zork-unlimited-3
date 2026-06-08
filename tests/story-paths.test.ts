@@ -6,7 +6,7 @@ import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
-  "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving.";
+  "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Start Mara's opened-door handoff, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
@@ -5580,6 +5580,7 @@ describe("demo story critical paths", () => {
       "confirm_manifest_handoff_doors_from_handoff",
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
+      "carry_darkened_manifest_thumbprint_to_speaker",
       "ask_mara_signoff_after_manifest_handoff",
       "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
@@ -5606,6 +5607,9 @@ describe("demo story critical paths", () => {
       observation.choices.map((choice) => [choice.id, choice.choiceGroup])
     );
     expect(handoffGroups.get("ask_mara_signoff_after_manifest_handoff")).toBe("Mara and manifest");
+    expect(handoffGroups.get("carry_darkened_manifest_thumbprint_to_speaker")).toBe(
+      "Mara and manifest"
+    );
     expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
       "Morning / keepsakes"
     );
@@ -5627,6 +5631,7 @@ describe("demo story critical paths", () => {
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
+      "carry_darkened_manifest_thumbprint_to_speaker",
       "ask_mara_signoff_after_manifest_handoff",
       "touch_mara_manifest_thumbprint",
       "finish_count_after_mara_manifest_handoff",
@@ -5638,16 +5643,17 @@ describe("demo story critical paths", () => {
     ]);
     expect(rendered).toContain("  Finish Mara's handoff:\n    0. Listen through");
     expect(rendered).toContain("  Board / release:\n    4. Make room in the third car");
-    expect(rendered).toContain("  Mara and manifest:\n    5. Ask Mara to sign off");
+    expect(rendered).toContain("  Mara and manifest:\n    5. Carry the darkened thumbprint");
+    expect(rendered).toContain("    6. Ask Mara to sign off");
     expect(rendered).toContain(
-      "  Manifest count:\n    7. Let the opened passengers finish Mara's count together"
+      "  Manifest count:\n    8. Let the opened passengers finish Mara's count together"
     );
     expect(rendered).toContain(
-      "  Counts / answers:\n    8. Keep listening as the opened passengers answer Mara"
+      "  Counts / answers:\n    9. Keep listening as the opened passengers answer Mara"
     );
-    expect(rendered).toContain("  Door echoes / threshold:\n    10. Hold the third-car threshold");
-    expect(rendered).toContain("  Morning / keepsakes:\n    11. Ask Mara what morning means");
-    expect(rendered).toContain("  Return:\n    12. Return to the opened manifest doors");
+    expect(rendered).toContain("  Door echoes / threshold:\n    11. Hold the third-car threshold");
+    expect(rendered).toContain("  Morning / keepsakes:\n    12. Ask Mara what morning means");
+    expect(rendered).toContain("  Return:\n    13. Return to the opened manifest doors");
     expect(rendered).not.toContain("  Other:");
 
     state = choose(story, state, "return_from_mara_manifest_handoff");
@@ -7811,6 +7817,64 @@ describe("demo story critical paths", () => {
       "confirm_manifest_thumbprint_receipt",
       "pull_release_after_manifest_thumbprint_goodbye"
     ]);
+  });
+
+  it("lets handoff players carry the darkened manifest thumbprint straight to the speaker", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
+    expect(observation.state.flags.read_mara_thumbprint).not.toBe(true);
+    expect(observation.state.flags.read_manifest_thumbprint).not.toBe(true);
+    expect(choiceIds).toContain("carry_darkened_manifest_thumbprint_to_speaker");
+    expect(choiceIds).toContain("touch_mara_manifest_thumbprint");
+
+    state = choose(story, state, "carry_darkened_manifest_thumbprint_to_speaker");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt",
+      "pull_release_after_manifest_thumbprint_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expectIdealScore(observation.score);
   });
 
   it("lets thumbprint-first players recognize Mara's manifest oath during handoff", async () => {
