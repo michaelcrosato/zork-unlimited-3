@@ -5046,7 +5046,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_morning_stops
         label: Pull the release after the remembered stops answer
-        to: passenger_true_ending
+        to: passenger_morning_stop_checked_true_ending
 
   passenger_answered_handoff_roll_call:
     routeImportance: optional
@@ -6363,6 +6363,24 @@ scenes:
       umbrellas lifting into rain-bright morning while strangers step aside for
       one another. Mara's voice thanks each passenger by name, then lets the
       speaker go quiet over an empty aisle that finally belongs to no one.
+    choices: []
+
+  passenger_morning_stop_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once after the remembered stops answer in
+      full. HOME breaks apart for good: Warden Street for the newspaper woman,
+      Bellweather Yard for the lunch-tin worker, Ash Steps for the child with
+      both mittens, and smaller streets for passengers whose names had almost
+      become numbers. Mara does not read the list as proof. She lets the
+      passengers read it back as ordinary errands, kitchens, time clocks,
+      radiators, and doors that were waiting in rain-bright morning. When the
+      last stop clears, the sign goes blank without taking anyone's route with
+      it.
     choices: []
 
   passenger_answered_true_ending:

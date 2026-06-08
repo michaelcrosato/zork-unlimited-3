@@ -14438,8 +14438,10 @@ describe("demo story critical paths", () => {
     confirmedState = choose(story, confirmedState, "pull_release_after_confirmed_morning_stops");
     observation = observe(story, confirmedState);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Bellweather Yard");
+    expect(observation.scene.text).toContain("the remembered stops answer in full");
     expectIdealScore(observation.score);
   });
 

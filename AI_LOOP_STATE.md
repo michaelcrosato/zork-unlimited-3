@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 89 Morning Stop-Checked Payoff
+
+- Date: 2026-06-08
+- Main objective: Give the passengers' optional remembered-stop confirmation
+  its own ending payoff instead of folding it back into the generic passenger
+  rescue ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current long-run signal: core completion and
+  coverage are healthy, making focused payoff for already-playable optional
+  care the highest-value next improvement.
+- Why this matters: Players who pause after the morning chorus to confirm the
+  destination sign's named stops should see the ending acknowledge that care.
+  The route now makes the difference between "everyone escaped" and "everyone
+  got a real place back" visible.
+- Planned work:
+  - Route `pull_release_after_confirmed_morning_stops` to a new ideal ending.
+  - Preserve the faster morning-chorus release on the existing
+    `passenger_true_ending`.
+  - Update regression coverage and ideal-ending counting helpers.
+  - Run focused tests, full health, one exact CLI or MCP playthrough, and the
+    standard evidence cycle where available.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so
+    validation and coverage playtest must prove the route is terminal and does
+    not strand exploration.
+  - The new ending must read like payoff for stop confirmation, not a duplicate
+    of the generic passenger ending.
+- Status:
+  - Completed.
+  - Added `passenger_morning_stop_checked_true_ending` with ideal Passengers /
+    Core metadata.
+  - Changed only `pull_release_after_confirmed_morning_stops` to land on the
+    new ending; the direct morning-chorus release still lands on
+    `passenger_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed-stop route
+    reaches the new ending and includes named-stop payoff text.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` and story validation.
+  - Actual CLI playthrough through `confirm_morning_stops_before_release` ->
+    `pull_release_after_confirmed_morning_stops` reached
+    `passenger_morning_stop_checked_true_ending`, score 275, with no remaining
+    objectives.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 180 reachable scenes / 35 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation; it stopped before nested agent execution because
+    `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The branch now lands better: confirming the remembered morning stops no
+    longer disappears into the generic passenger ending, and the final text
+    gives Warden Street, Bellweather Yard, Ash Steps, and smaller routes back
+    to the passengers.
+  - The faster morning-chorus release remains available for players who want
+    momentum without the additional confirmation beat.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose endings still do not acknowledge the player's extra care.
+
 # Cycle 88 Newspaper Stop-Checked Payoff
 
 - Date: 2026-06-08
