@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 72 Thumbprint Oath Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional final receipt to Mara's torn-thumbprint route
+  while preserving the direct release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing complete coverage,
+  stable ideal-ending rates, and room for compact late-route story polish.
+- Why this matters: The thumbprint route explains why Mara stayed last, but it
+  went straight from her oath to the release. Cautious players now get proof
+  that the oath reached every door before they pull, matching nearby Mara proof
+  beats without making the check mandatory.
+- Planned work:
+  - Keep `pull_release_after_thumbprint_goodbye` as the direct release path.
+  - Add one optional thumbprint-oath receipt scene from
+    `mara_thumbprint_intercom`.
+  - Update thumbprint-route regression coverage for direct and confirmed paths.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual playthrough through the new beat.
+- Risks:
+  - Another optional proof beat can feel repetitive if it reads like a required
+    objective.
+  - The scene should stay focused on Mara's oath rather than becoming another
+    generic all-doors receipt.
+- Status:
+  - Completed.
+  - Added `confirm_thumbprint_oath_receipt` and `mara_thumbprint_receipt`.
+  - Added focused regression coverage proving the receipt path reaches
+    `true_ending`.
+  - Focused thumbprint tests passed:
+    `npm test -- -t thumbprint` with 17 relevant tests green.
+  - Story validation passed with 174 reachable scenes, 31 endings, and no
+    warnings.
+  - Full `npm run health` passed: format check, TypeScript, 293 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `mara_thumbprint_receipt`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. It wrote ignored
+    `ai-runs` artifacts and appended a tracked cycle observation; long-run
+    signals stayed stable with ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, and MCP route `true_ending` at score 305.
+  - Actual CLI route reached `true_ending` through
+    `confirm_thumbprint_oath_receipt` and
+    `pull_release_after_thumbprint_receipt` with score 292, no objectives,
+    inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_mara_thumbprint_receipt` set.
+- Playtest feedback:
+  - The receipt makes Mara's torn thumbprint feel less like lore and more like
+    proof that every door received her final oath.
+  - The direct release remains available before the receipt, so decisive
+    players are not forced into another check.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect another compact late-route asymmetry where one optional
+    proof beat improves payoff without adding new route complexity.
+
 # Cycle 71 Threshold Clearance Receipt
 
 - Date: 2026-06-08

@@ -4457,6 +4457,29 @@ scenes:
       - id: pull_release_after_thumbprint_goodbye
         label: Pull the release for every door Mara held open
         to: true_ending
+      - id: confirm_thumbprint_oath_receipt
+        label: Confirm Mara's thumbprint oath reaches every door
+        to: mara_thumbprint_receipt
+        requires:
+          notFlag: confirmed_mara_thumbprint_receipt
+        effects:
+          set:
+            confirmed_mara_thumbprint_receipt: true
+
+  mara_thumbprint_receipt:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm while Mara's torn-thumbprint oath
+      travels down the train. The first door answers with a dispatcher's
+      promise, the second with rain on the threshold, and the third with the
+      small click of a latch refusing to close. The mark that once pinned Mara
+      to the final line comes back as a receipt from every door she kept open:
+      witnessed, received, ready. "Now," Mara says, and the word does not sound
+      like duty anymore.
+    choices:
+      - id: pull_release_after_thumbprint_receipt
+        label: Pull the release after every door receives the oath
+        to: true_ending
 
   mara_handoff_intercom:
     routeImportance: optional

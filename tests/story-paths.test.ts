@@ -11096,10 +11096,60 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_mara_to_carry_thumbprint_to_far_door",
-      "pull_release_after_thumbprint_goodbye"
+      "pull_release_after_thumbprint_goodbye",
+      "confirm_thumbprint_oath_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_thumbprint_goodbye");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets thumbprint players confirm Mara's oath reaches every door", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "inspect_badge_back",
+      "return_from_badge_memory",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "listen_to_mara_thumbprint_intercom",
+      "confirm_thumbprint_oath_receipt"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_thumbprint_receipt");
+    expect(observation.scene.text).toContain("torn-thumbprint oath");
+    expect(observation.scene.text).toContain("witnessed, received, ready");
+    expect(observation.state.flags.confirmed_mara_thumbprint_receipt).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_thumbprint_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_thumbprint_receipt");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
@@ -11201,7 +11251,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_mara_to_carry_thumbprint_to_far_door",
-      "pull_release_after_thumbprint_goodbye"
+      "pull_release_after_thumbprint_goodbye",
+      "confirm_thumbprint_oath_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_thumbprint_goodbye");
@@ -11260,7 +11311,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the torn thumbprint memory");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_mara_to_carry_thumbprint_to_far_door",
-      "pull_release_after_thumbprint_goodbye"
+      "pull_release_after_thumbprint_goodbye",
+      "confirm_thumbprint_oath_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_thumbprint_goodbye");
