@@ -11224,8 +11224,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_roll_call_answers");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(observation.scene.id).toBe("passenger_roll_call_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("every answer has been witnessed");
+    expect(observation.scene.text).toContain("no echo is left without a face");
     expectIdealScore(observation.score);
   });
 
@@ -13619,8 +13621,10 @@ describe("demo story critical paths", () => {
       choose(story, checkedRollCallState, "pull_release_after_confirmed_roll_call_answers")
     );
 
-    expect(checkedRollCallEnding.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(checkedRollCallEnding.scene.id).toBe("passenger_roll_call_checked_true_ending");
     expect(checkedRollCallEnding.scene.ending).toBe(true);
+    expect(checkedRollCallEnding.scene.text).toContain("every answer has been witnessed");
+    expect(checkedRollCallEnding.scene.text).toContain("no echo is left without a face");
     expectIdealScore(checkedRollCallEnding.score);
 
     state = choose(story, state, "listen_to_gathered_passengers_from_boarding");

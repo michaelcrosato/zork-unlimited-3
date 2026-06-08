@@ -6020,7 +6020,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_roll_call_answers
         label: Pull the release after every answer is witnessed
-        to: passenger_roll_call_true_ending
+        to: passenger_roll_call_checked_true_ending
 
   gate_warning:
     routeImportance: optional
@@ -6548,6 +6548,24 @@ scenes:
       transfer, conductor calling clear, lunch-tin worker counting no one twice.
       By the time the last door opens, the manifest has become a chorus the
       line can hear but cannot hold.
+    choices: []
+
+  passenger_roll_call_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once only after every answer has been
+      witnessed by someone standing beside it. Mara offers the first name, but
+      the passengers refuse to let any voice cross alone: the newspaper woman
+      repeats the conductor's stop with him, the conductor calls the lunch-tin
+      worker clear, and the child lifts both hands toward the person who
+      returned his mitten. By the time rain-bright morning reaches the aisle,
+      the manifest is no longer a roll call of names the line can claim. It is
+      a chain of people proving one another present, answer by answer, until no
+      echo is left without a face.
     choices: []
 
   passenger_lunch_tin_true_ending:

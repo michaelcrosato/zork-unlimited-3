@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 92 Witnessed Roll-Call Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional roll-call answer confirmation route feel
+  acknowledged instead of resolving into the same ending as the faster roll-call
+  release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current long-run signal: route guidance,
+  coverage, and ideal-ending rates are healthy; invest in focused payoff on
+  already-playable optional care branches.
+- Why this matters: The player can pause after the gathered passengers finish
+  Mara's roll call and confirm that every answer belongs to someone present.
+  That extra care should visibly matter at the ending.
+- Planned work:
+  - Route `pull_release_after_confirmed_roll_call_answers` to a new ideal
+    ending.
+  - Preserve the faster `passenger_roll_call_true_ending` route for players who
+    release immediately after the final roll call.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off witnessed answers without duplicating the
+    existing roll-call chorus ending.
+- Status:
+  - Completed.
+  - Added `passenger_roll_call_checked_true_ending` with ideal Passengers /
+    Core metadata.
+  - Changed only the confirmed roll-call release to land on the new ending;
+    the direct final roll-call release still lands on
+    `passenger_roll_call_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed route reaches
+    the new ending and includes the witnessed-answer payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 182 reachable scenes / 37 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_roll_call_checked_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    stopped before nested agent execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached `passenger_roll_call_checked_true_ending`,
+    score 340, with badge, fuse, lantern, map, and token in inventory and no
+    remaining objectives.
+- Playtest feedback:
+  - The extra confirmation now lands better: the ending explicitly turns the
+    player's witness check into people proving one another present, answer by
+    answer.
+  - The direct roll-call ending remains a useful faster payoff, so the branch
+    now clearly distinguishes "the crowd answers" from "every answer is
+    witnessed by someone beside it."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional care branches whose
+    mechanical difference is clear but whose ending acknowledgment is thin.
+
 # Cycle 91 Paired-Mitten Confirmation Payoff
 
 - Date: 2026-06-08
