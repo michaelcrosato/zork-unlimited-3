@@ -6613,53 +6613,58 @@ describe("demo story critical paths", () => {
     expect(observation.choices[4]?.label).toBe(
       "Listen for what the opened passengers remember about morning"
     );
-    expect(choiceIds[5]).toBe("review_open_manifest_count");
+    expect(choiceIds[5]).toBe("confirm_opened_manifest_morning_stops");
     expect(observation.choices[5]?.label).toBe(
+      "Confirm the opened passengers' remembered stops before boarding"
+    );
+    expect(observation.choices[5]?.choiceGroup).toBe("Morning / keepsakes");
+    expect(choiceIds[6]).toBe("review_open_manifest_count");
+    expect(observation.choices[6]?.label).toBe(
       "Review the opened count so every passenger checks in"
     );
-    expect(choiceIds[6]).toBe("board_with_completed_opened_count");
-    expect(observation.choices[6]?.label).toBe(
+    expect(choiceIds[7]).toBe("board_with_completed_opened_count");
+    expect(observation.choices[7]?.label).toBe(
       "Board after the opened passengers finish the count together"
     );
-    expect(choiceIds[7]).toBe("board_with_opened_manifest_reviewed_count");
-    expect(observation.choices[7]?.label).toBe(
+    expect(choiceIds[8]).toBe("board_with_opened_manifest_reviewed_count");
+    expect(observation.choices[8]?.label).toBe(
       "Review Mara's opened count before carrying it to the speaker"
     );
-    expect(choiceIds[8]).toBe("help_opened_passengers_gather");
-    expect(observation.choices[8]?.label).toBe(
+    expect(choiceIds[9]).toBe("help_opened_passengers_gather");
+    expect(observation.choices[9]?.label).toBe(
       "Help the opened passengers gather by helping one another board"
     );
-    expect(choiceIds[9]).toBe("ask_conductor_punch_from_opened_manifest");
-    expect(observation.choices[9]?.label).toBe(
+    expect(choiceIds[10]).toBe("ask_conductor_punch_from_opened_manifest");
+    expect(observation.choices[10]?.label).toBe(
       "Ask the old conductor to punch a clear path for the opened passengers"
     );
-    expect(choiceIds[10]).toBe("check_lunch_tin_count_from_opened_manifest");
-    expect(observation.choices[10]?.label).toBe(
+    expect(choiceIds[11]).toBe("check_lunch_tin_count_from_opened_manifest");
+    expect(observation.choices[11]?.label).toBe(
       "Check the lunch-tin worker's passenger count before boarding"
     );
-    expect(observation.choices[10]?.choiceGroup).toBe("Lunch tin / shift count");
-    expect(choiceIds[11]).toBe("hold_opened_manifest_threshold");
-    expect(observation.choices[11]?.label).toBe(
+    expect(observation.choices[11]?.choiceGroup).toBe("Lunch tin / shift count");
+    expect(choiceIds[12]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[12]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[12]).toBe("hold_and_confirm_opened_manifest_threshold");
-    expect(observation.choices[12]?.label).toBe(
+    expect(choiceIds[13]).toBe("hold_and_confirm_opened_manifest_threshold");
+    expect(observation.choices[13]?.label).toBe(
       "Hold the threshold and confirm every opened passenger clears it"
     );
-    expect(choiceIds[13]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[13]?.label).toBe(
+    expect(choiceIds[14]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[14]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[14]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[14]?.label).toBe(
+    expect(choiceIds[15]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[15]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(choiceIds[15]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[15]?.label).toBe(
+    expect(choiceIds[16]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[16]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[16]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[16]?.label).toBe(
+    expect(choiceIds[17]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[17]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
@@ -14002,6 +14007,7 @@ describe("demo story critical paths", () => {
       "pull_release_as_mara_calls_opened_doors",
       "ask_mara_to_sign_off_opened_manifest",
       "listen_to_passenger_morning_chorus",
+      "confirm_opened_manifest_morning_stops",
       "review_open_manifest_count",
       "board_with_completed_opened_count",
       "board_with_opened_manifest_reviewed_count",
@@ -15361,6 +15367,95 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "pull_release_after_confirmed_morning_stops");
     observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Bellweather Yard");
+    expectIdealScore(observation.score);
+  });
+
+  it("confirms remembered morning stops directly from the opened passenger hubs", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    const basePath = [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ];
+
+    let openedState = initialState(story);
+    for (const choiceId of basePath) {
+      openedState = choose(story, openedState, choiceId);
+    }
+
+    let observation = observe(story, openedState);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).toContain("confirm_opened_manifest_morning_stops");
+    expect(choiceIds.indexOf("listen_to_passenger_morning_chorus")).toBeLessThan(
+      choiceIds.indexOf("confirm_opened_manifest_morning_stops")
+    );
+    expect(choiceIds.indexOf("confirm_opened_manifest_morning_stops")).toBeLessThan(
+      choiceIds.indexOf("review_open_manifest_count")
+    );
+
+    openedState = choose(story, openedState, "confirm_opened_manifest_morning_stops");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_check");
+    expect(observation.scene.text).toContain("Warden Street");
+    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_morning_stops"
+    ]);
+
+    openedState = choose(story, openedState, "pull_release_after_confirmed_morning_stops");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    let platformState = initialState(story);
+    for (const choiceId of [...basePath, "board_after_releasing_passengers"]) {
+      platformState = choose(story, platformState, choiceId);
+    }
+
+    observation = observe(story, platformState);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds).toContain("confirm_platform_morning_stops");
+    expect(choiceIds.indexOf("listen_for_platform_morning_chorus")).toBeLessThan(
+      choiceIds.indexOf("confirm_platform_morning_stops")
+    );
+
+    platformState = choose(story, platformState, "confirm_platform_morning_stops");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_check");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+
+    platformState = choose(story, platformState, "pull_release_after_confirmed_morning_stops");
+    observation = observe(story, platformState);
 
     expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
     expect(observation.scene.ending).toBe(true);

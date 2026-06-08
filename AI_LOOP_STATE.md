@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 45 Direct Morning-Stop Checks
+
+- Date: 2026-06-08
+- Main objective: Make the checked remembered-morning-stops payoff easier to
+  choose from the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current Cycle 13 evidence is healthy overall, but random normal play
+  still treats `passenger_morning_stop_check` and
+  `passenger_morning_stop_checked_true_ending` as low-frequency optional
+  payoffs compared with broader passenger releases.
+- Why this matters: The opened manifest already tells players the passengers
+  remember kitchens, clocks, raincoats, and real streets. A careful player
+  should be able to verify those stops directly from the late hubs, without
+  first discovering the two-step chorus route.
+- Planned work:
+  - Add a direct checked morning-stop confirmation from `passengers_released`.
+  - Add the same direct confirmation from `passenger_platform`.
+  - Preserve the slower morning chorus, sign-off, intercom, and return routes.
+  - Add regression coverage for both direct confirmations.
+  - Run focused tests, full health, evidence collection, and one actual route
+    through the new confirmation.
+- Risks:
+  - The opened-passenger menus are broad, so the new labels need to read as
+    deliberate stop confirmation rather than generic boarding noise.
+  - Random play may still under-sample the checked ending because many ideal
+    passenger endings compete from the same hubs.
+- Status:
+  - Completed.
+  - Added `confirm_opened_manifest_morning_stops`, routing
+    `passengers_released` directly to `passenger_morning_stop_check` while
+    setting `heard_passenger_morning_chorus`,
+    `heard_passenger_morning_boarding`, and `confirmed_morning_stops`.
+  - Added `confirm_platform_morning_stops` from `passenger_platform` with the
+    same morning-stop confirmation flags.
+  - Preserved all existing slower morning chorus, sign-off, intercom, return,
+    platform, and release routes.
+  - Added regression coverage for both direct checked morning-stop routes and
+    updated exact opened-manifest menu expectations.
+  - Focused morning regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning stop|morning chorus|opened passenger hubs|opened manifest choices|passenger platform"`
+    with 13 matching tests and 221 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 318 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached
+    `passenger_morning_stop_checked_true_ending`, score 265, no remaining
+    objectives, through `confirm_opened_manifest_morning_stops`.
+  - Evidence-only `npm run ai:cycle` passed its health gates. Its random sample
+    reached `passenger_morning_stop_checked_true_ending` 4/100 runs, kept the
+    random ideal-ending rate at 78%, kept non-ideal pressure at bad 3%, lost
+    3%, escape 8%, and coverage still visited all scenes.
+- Playtest feedback:
+  - The new opened-manifest label reads like a careful version of the existing
+    morning route, not a detached lore detour.
+  - The payoff is clear: the stop-check scene shows HOME breaking into real
+    streets before the ending says the release opens after those stops answer.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect current random misses around conductor clearance,
+    threshold confirmation, and remaining lunch-tin base-route visibility.
+
 # Cycle 44 Direct Shared-Release Receipt
 
 - Date: 2026-06-08

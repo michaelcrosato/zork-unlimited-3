@@ -1608,6 +1608,25 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: confirm_opened_manifest_morning_stops
+        label: Confirm the opened passengers' remembered stops before boarding
+        choiceGroup: Morning / keepsakes
+        to: passenger_morning_stop_check
+        requires:
+          all:
+            - notFlag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_morning_boarding
+            - notFlag: confirmed_morning_stops
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_passenger_morning_chorus: true
+            heard_passenger_morning_boarding: true
+            confirmed_morning_stops: true
       - id: review_open_manifest_count
         label: Review the opened count so every passenger checks in
         choiceGroup: Manifest count
@@ -3331,6 +3350,20 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: confirm_platform_morning_stops
+        label: Confirm the passengers' remembered stops before boarding
+        to: passenger_morning_stop_check
+        requires:
+          all:
+            - notFlag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_morning_stops
+        effects:
+          set:
+            heard_passenger_morning_chorus: true
+            heard_passenger_morning_boarding: true
+            confirmed_morning_stops: true
       - id: ask_mara_finish_manifest_from_platform
         label: Ask Mara to finish the opened manifest count before you board
         to: mara_manifest_intercom
