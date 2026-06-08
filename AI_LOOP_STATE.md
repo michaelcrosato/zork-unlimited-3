@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 32 Early Escape Payoff Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the early escape ending family explain what the player
+  successfully escaped from and what rescue work remained unfinished.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current evidence shows core route health is strong, while random
+  play still reaches escape endings more often than most individual failure
+  endings.
+- Why this matters: Escape should remain a valid non-ideal outcome, but it
+  should teach the next attempt. The revised endings now state that getting
+  back to Warden Street is real, while the rescue route still needed the map,
+  fuse, badge proof, clock token, ledger, and a return to Mara's line.
+- Planned work:
+  - Revise `escape_ending`, `warned_escape_ending`, and
+    `warned_lit_escape_ending` payoff text without changing route behavior.
+  - Add focused regression assertions for the new feedback language.
+  - Run focused checks, full health, evidence collection, and a real CLI route
+    through one changed ending.
+- Risks:
+  - This improves clarity and emotional payoff, not ideal-ending frequency.
+  - The ending text is intentionally general because the same ending can be
+    reached with different partial inventories.
+- Status:
+  - Completed.
+  - `escape_ending` now frames escape as real mercy while spelling out that
+    none of the rescue pieces reached the ledger.
+  - `warned_escape_ending` now clarifies that Mara's signal-key clue was the
+    first honest clue and that the fuse, badge proof, and map still had work to
+    do.
+  - `warned_lit_escape_ending` now names the late missing steps after the fuse:
+    no clock token, no ledger proof, and an untrusted marked route.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 307 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and all three escape endings
+    covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked cycle observation. `AI_AGENT_CMD` was unset, so it
+    stopped after evidence/prompt generation as expected in this shell.
+  - Actual CLI route reached `warned_lit_escape_ending`, score 101, with no
+    remaining choices and no remaining objectives after restoring platform
+    light, hearing Mara at the stairwell, looking back, and leaving anyway.
+- Playtest feedback:
+  - The route now reads as a meaningful escape rather than a vague stop: the
+    player survived, but the text clearly says which rescue obligations were
+    left unresolved.
+  - The revised ending preserves player agency because it does not shame the
+    escape choice; it simply gives the next run a concrete checklist.
+  - No crash, dead end, stale objective, reachability issue, or score
+    regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving high-traffic non-ideal payoffs or thin ending
+    variants that can teach the next run without adding branch density.
+
 # Cycle 31 Generic False-HOME Failure Clarity
 
 - Date: 2026-06-08

@@ -12159,10 +12159,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("warned_lit_escape_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("restoring light to Platform 13");
-    expect(observation.scene.text).toContain(
-      "one thing you refused to fetch from the stopped clock"
-    );
-    expect(observation.scene.text).toContain("a route you almost finished");
+    expect(observation.scene.text).toContain("fuse has done its work");
+    expect(observation.scene.text).toContain("booth still has no clock token");
+    expect(observation.scene.text).toContain("ledger still has no proof");
+    expect(observation.scene.text).toContain("rescue route you almost finished");
   });
 
   it("returns unlit stairwell listeners to Platform 13 after token recovery", async () => {
@@ -12257,9 +12257,11 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("escape is real enough to feel like mercy");
     expect(observation.scene.text).toContain("desk map");
     expect(observation.scene.text).toContain("locker fuse and badge");
     expect(observation.scene.text).toContain("clock token");
+    expect(observation.scene.text).toContain("none of them reached the ledger");
 
     state = initialState(story);
 
@@ -12296,7 +12298,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("warned_lit_escape_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("restoring light to Platform 13");
-    expect(observation.scene.text).toContain("a route you almost finished");
+    expect(observation.scene.text).toContain("fuse has done its work");
+    expect(observation.scene.text).toContain("rescue route you almost finished");
 
     state = initialState(story);
 
@@ -12396,6 +12399,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("warned_escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("fuse, badge proof, and marked map");
+    expect(observation.scene.text).toContain("one return trip after the first honest clue");
     expect(observation.scene.text).toContain("unfinished route");
 
     state = initialState(story);
@@ -12415,7 +12420,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("route you now know how to start");
+    expect(observation.scene.text).toContain("rescue route you now know how to start");
+    expect(observation.scene.text).toContain("none of them reached the ledger");
   });
 
   it("adds a one-time dark platform glance before early unlit escape", async () => {
@@ -12474,6 +12480,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's speaker");
+    expect(observation.scene.text).toContain("none of them reached the ledger");
   });
 
   it("routes ledger-warning players directly to the stopped clock for the token", async () => {
@@ -12947,6 +12954,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("desk map");
     expect(observation.scene.text).toContain("clock token");
+    expect(observation.scene.text).toContain("rescue route you now know how to start");
   });
 
   it("lets wavering escape players return toward the stopped clock", async () => {

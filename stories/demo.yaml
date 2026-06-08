@@ -7069,11 +7069,13 @@ scenes:
     endingGroup: Early escape
     text: >
       You run before the train can choose you. Dawn finds you on Warden Street
-      with rain in your shoes, but the underpass has already arranged the
-      pieces you left behind: the desk map, the locker fuse and badge, the clock
-      token, and Mara's speaker waiting above the train. Someone else may hear
-      her tomorrow night. They will be following a route you now know how to
-      start.
+      with rain in your shoes, and for a few breaths escape is real enough to
+      feel like mercy. Then the route you left unfinished arranges itself behind
+      you: the desk map, the locker fuse and badge, the clock token, and Mara's
+      speaker waiting above the train. Some answers may be in your pockets and
+      some may still be behind you, but none of them reached the ledger. Someone
+      else may hear her tomorrow night. They will be following a rescue route
+      you now know how to start.
     choices: []
 
   warned_escape_ending:
@@ -7084,10 +7086,12 @@ scenes:
     text: >
       You leave after hearing Mara name the signal key, so dawn has sharper
       edges when it finds you on Warden Street. The stopped clock behind you is
-      still holding the token, the platform lights still wait for a booth to
-      open, and her voice follows the rain down the stairs until traffic covers
-      it. Someone else may answer tomorrow, but they will inherit the same
-      unfinished route you understood well enough to abandon.
+      still holding the token; the fuse, badge proof, and marked map still have
+      work to do; and her voice follows the rain down the stairs until traffic
+      covers it. The line did not ask you to be fearless. It asked for one
+      return trip after the first honest clue. Someone else may answer tomorrow,
+      but they will inherit the same unfinished route you understood well enough
+      to abandon.
     choices: []
 
   warned_lit_escape_ending:
@@ -7098,11 +7102,11 @@ scenes:
     text: >
       You leave after restoring light to Platform 13 and hearing Mara name the
       signal key, so dawn does not feel like innocence when it finds you on
-      Warden Street. Behind you, the lit tiles, open access plate, and badge
-      proof wait for the one thing you refused to fetch from the stopped clock.
-      Mara's voice follows the rain up the stairs until traffic covers it.
-      Someone else may answer tomorrow, but they will inherit a route you
-      almost finished.
+      Warden Street. Behind you, the fuse has done its work, but the booth still
+      has no clock token, the ledger still has no proof, and the marked route
+      still has not been trusted. Mara's voice follows the rain up the stairs
+      until traffic covers it. Someone else may answer tomorrow, but they will
+      inherit a rescue route you almost finished.
     choices: []
 
   lost_ending:
