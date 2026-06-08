@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 86 Conductor Stop-Checked Transfer Payoff
+
+- Date: 2026-06-08
+- Main objective: Give the conductor's optional transfer stop-check its own
+  ending payoff instead of folding it back into the generic punched-transfer
+  ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 85's next step and the current evidence signal:
+  core guidance and coverage are healthy, making a focused late-game story-depth
+  improvement the highest-value next move.
+- Why this matters: The player can already take the extra care to check every
+  passenger's stop through the conductor's punched transfer. A distinct ending
+  makes that care visible, reinforcing that the passengers are not merely
+  released from the tunnel but are headed toward specific lives beyond it.
+- Planned work:
+  - Route `pull_release_after_transfer_stop_check` to a new ideal ending.
+  - Keep the unverified punched-transfer release routes on the existing
+    `passenger_conductor_transfer_true_ending`.
+  - Update regression tests for both stop-check entry paths.
+  - Run focused tests, full health, one exact CLI playthrough, and the standard
+    evidence cycle.
+- Risks:
+  - Adding an ending increases coverage surface, so validation and coverage
+    playtest must prove the scene is reachable and does not strand the route.
+  - The new ending must read like payoff for verification, not a redundant
+    retelling of the generic conductor transfer ending.
+- Status:
+  - Completed.
+  - Added `passenger_conductor_transfer_stop_checked_true_ending` with ideal
+    Passengers / Roll call metadata.
+  - Changed only `pull_release_after_transfer_stop_check` to land on the new
+    ending; direct transfer, transfer proof, handoff, and counted transfer
+    releases still use their prior endings.
+  - Updated `tests/story-paths.test.ts` for both proof-first and handoff-first
+    routes into the stop-check ending.
+  - Updated `tests/playtest.test.ts` so the metadata-free ideal-ending helper
+    includes the new `_true_ending` variant.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Actual CLI playthrough through `press_punched_transfer_to_speaker` ->
+    `check_punched_transfer_stops` -> `pull_release_after_transfer_stop_check`
+    reached `passenger_conductor_transfer_stop_checked_true_ending`, score 324,
+    with no remaining objectives.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 177 reachable scenes / 32 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation; it stopped before nested agent execution because `AI_AGENT_CMD`
+    is not set in this environment.
+- Playtest feedback:
+  - The branch now lands better: the stop-check scene names each passenger's
+    destination, and the ending confirms that the doors open toward those
+    specific stops.
+  - The route still feels optional and does not block the faster conductor
+    transfer release for players who want momentum.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to late-game optional proof checks
+    where the player takes extra care and the current ending text does not yet
+    acknowledge it.
+
 # Cycle 85 Lunch-Tin Checked Discovery
 
 - Date: 2026-06-08

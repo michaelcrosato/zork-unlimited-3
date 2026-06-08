@@ -5363,7 +5363,7 @@ scenes:
     choices:
       - id: pull_release_after_transfer_stop_check
         label: Pull the release after every transfer stop answers
-        to: passenger_conductor_transfer_true_ending
+        to: passenger_conductor_transfer_stop_checked_true_ending
 
   passenger_conductor_roll_call:
     routeImportance: supporting
@@ -6593,6 +6593,22 @@ scenes:
       it points through the open doors to whatever stop each passenger still
       meant to reach. No one asks where the ticket is valid anymore. Morning
       has already accepted the change.
+    choices: []
+
+  passenger_conductor_transfer_stop_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Roll call
+    text: >
+      The release opens every door at once after the punched transfer has
+      answered every stop. The star-cut ticket passes down the aisle one more
+      time, no longer proof that a passenger paid, but proof that each
+      passenger still has somewhere past the tunnel to step toward: Warden
+      Street, the factory bell, the stairs after morning transfer, Mara's
+      rain-bright platform. The conductor lowers his punch only after the last
+      name crosses through a door that knows where it is going.
     choices: []
 
   passenger_conductor_count_true_ending:

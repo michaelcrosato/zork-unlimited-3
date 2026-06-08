@@ -8899,8 +8899,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_transfer_stop_check");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
-    expect(observation.scene.text).toContain("Morning has already accepted the change");
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_stop_checked_true_ending");
+    expect(observation.scene.text).toContain("answered every stop");
+    expect(observation.scene.text).toContain("door that knows where it is going");
     expectIdealScore(observation.score);
 
     state = choose(story, conductorTransferState, "pass_punched_transfer_to_child");
@@ -8951,8 +8952,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_transfer_stop_check");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_conductor_transfer_true_ending");
-    expect(observation.scene.text).toContain("punched transfer");
+    expect(observation.scene.id).toBe("passenger_conductor_transfer_stop_checked_true_ending");
+    expect(observation.scene.text).toContain("star-cut ticket");
+    expect(observation.scene.text).toContain("rain-bright platform");
     expectIdealScore(observation.score);
 
     state = choose(story, transferHandoffState, "pull_release_after_transfer_handoff");
