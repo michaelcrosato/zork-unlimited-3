@@ -47,6 +47,8 @@ describe("AI loop restart detection", () => {
     expect(shouldCommitCycleObservation("committed", true)).toBe(false);
     expect(shouldCommitCycleObservation("failed", true)).toBe(false);
     expect(shouldCommitCycleObservation("pushed", false)).toBe(false);
+    expect(shouldCommitCycleObservation("clean", true, [])).toBe(false);
+    expect(shouldCommitCycleObservation("clean", true, ["stories/demo.yaml"])).toBe(true);
   });
 
   it("quotes shell arguments for the active platform", () => {

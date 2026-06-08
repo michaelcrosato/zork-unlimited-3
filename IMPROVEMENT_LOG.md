@@ -2643,6 +2643,9 @@ tests/ai-loop.test.ts`
   kill fresh wrapper launches.
 - Made AI loop shell quoting Windows-aware so post-agent git commands and
   changed-file collection work under `cmd.exe`.
+- Updated cycle-observation auto-commit logic so self-pushed agent changes with
+  `postAgentStatus: clean` do not leave `cycles.jsonl` dirty for the next
+  baseline.
 - Recovered the interrupted agent's lunch-tin roster proof beat and kept the
   direct release route available.
 
@@ -2672,6 +2675,9 @@ tests/ai-loop.test.ts`
   - Windows `npm run health` broke when the test fake agent depended on `sh`.
   - Windows shell quoting corrupted `changedFiles` in cycle observations and
     would have undermined post-agent git commands.
+  - Self-pushed nested-agent changes left the new cycle-observation row dirty
+    because the loop only committed observation rows when the status was
+    `pushed`.
 
 ### Evaluation
 

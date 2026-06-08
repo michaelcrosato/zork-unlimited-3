@@ -190,7 +190,7 @@ async function main(): Promise<void> {
           ? mcpPlayObservation(postAgentResult.mcpPlay)
           : artifacts.observation.mcpRoute
       });
-      if (shouldCommitCycleObservation(postAgentResult.status, autoPush)) {
+      if (shouldCommitCycleObservation(postAgentResult.status, autoPush, changedPaths)) {
         const observationCommitResult = await commitCycleObservation(cycle);
         if (observationCommitResult.status === "failed") {
           console.error(`Failed to commit cycle observation: ${observationCommitResult.reason}`);
@@ -223,9 +223,13 @@ async function main(): Promise<void> {
 
 export function shouldCommitCycleObservation(
   postAgentStatus: PostAgentResult["status"],
-  autoPushEnabled: boolean
+  autoPushEnabled: boolean,
+  changedFiles: string[] = []
 ): boolean {
-  return postAgentStatus === "pushed" && autoPushEnabled;
+  return (
+    autoPushEnabled &&
+    (postAgentStatus === "pushed" || (postAgentStatus === "clean" && changedFiles.length > 0))
+  );
 }
 
 async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
