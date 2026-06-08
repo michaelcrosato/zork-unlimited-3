@@ -144,9 +144,9 @@ describe("playtest strategies", () => {
     expect(report.summary.bestScoreRuns).toBeGreaterThan(0);
   }, 120000);
 
-  it("seeded random demo play discovers optional receipt beats", async () => {
+  it("broader seeded random demo play discovers optional receipt beats", async () => {
     const story = await loadStory("stories/demo.yaml");
-    const report = runRandomPlaytests(story, 100, 60, "random");
+    const report = runRandomPlaytests(story, 250, 60, "random");
 
     expect(report.summary.unfinished).toBe(0);
     expect(report.summary.visitedScenes).toContain("passenger_echoed_check");

@@ -7,6 +7,75 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 36 Opened Manifest First-Time Handoff Release
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_manifest_handoff_true_ending` from the first opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. The current random evidence kept `passenger_manifest_handoff_true_ending`
+  at the weakest targeted manifest frequency, 1/250, even after the neighboring
+  handoff and thumbprint shortcuts were added.
+- Why this matters: First-time players at the opened-manifest hub could watch
+  Mara call the doors or carry the handoff to the third-car speaker, but the
+  direct release payoff was easier to see only after another scene or after
+  backing out. The new choice makes the most literal rescue beat available
+  when the hub first presents Mara's opened-door handoff.
+- Planned work:
+  - Add a direct first-time release choice from `passengers_released` to
+    `passenger_manifest_handoff_true_ending`.
+  - Keep the choice grouped under "Finish Mara's handoff" and gate it away
+    from thumbprint, passenger-answer, and passenger-gathering branches.
+  - Update the opened-manifest objective so the player is explicitly told they
+    can let Mara call the doors and pull the release.
+  - Add regression coverage for the direct route and menu ordering.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new choice.
+- Risks:
+  - The opened-manifest hub is broad, so another valid choice can shift seeded
+    random paths. The receipt coverage test now uses the broader 250-run sample
+    that still reaches the optional receipt scenes.
+  - Uniform random play may still under-sample individual ideal endings because
+    many endings compete in the same hub.
+- Status:
+  - Completed.
+  - Added `pull_release_as_mara_calls_opened_doors`, which sets
+    `saw_mara_manifest_handoff` and `heard_mara_goodbye` before ending at
+    `passenger_manifest_handoff_true_ending`.
+  - Updated the opened-manifest objective copy to mention letting Mara call the
+    doors and pulling the release.
+  - Added route coverage for the new direct ending path and updated exact menu
+    order assertions for the first opened-manifest hub.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 225
+    passing tests, `npx vitest run tests/playtest.test.ts` with 7 passing tests,
+    and `npm run cyoa -- validate stories/demo.yaml --json` with 191 reachable
+    scenes / 46 endings and no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 309 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Random sample passed:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+    ended all 250 runs, kept all scenes visited, and improved
+    `passenger_manifest_handoff_true_ending` from 1/250 to 3/250.
+  - Actual CLI route reached `passenger_manifest_handoff_true_ending`, score
+    279, after choosing `pull_release_as_mara_calls_opened_doors` directly from
+    `passengers_released`.
+- Playtest feedback:
+  - The new action is visible at the exact moment the hub describes Mara
+    holding the line steady for the opened passengers.
+  - The route feels like a natural release beat instead of a hidden follow-up
+    behind another intercom scene.
+  - No crash, stale objective, unreachable scene, unfinished playtest, or score
+    regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect the remaining low-frequency ideal endings, especially
+    optional passenger branches such as lunch tin or keepsake owner checks, for
+    places where visible setup still lacks a direct payoff.
+
 # Cycle 35 Manifest Thumbprint Direct Release
 
 - Date: 2026-06-08
