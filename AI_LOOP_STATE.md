@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 24 Direct Shared Count Release
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players finish the shared passenger-count
+  route directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 24 evidence is broadly healthy, but the normal 100-run random
+  sample still missed `passenger_counted_true_ending` while coverage could
+  reach it.
+- Why this matters: The shared count is a strong passenger-manifest payoff: the
+  group stops being a total held by the line and becomes people keeping track of
+  one another. A normal player should be able to choose that finish from the
+  opened-manifest hub without first finding the two-step chorus beat.
+- Planned work:
+  - Add one direct Manifest count choice from `passengers_released` to
+    `passenger_counted_true_ending`.
+  - Keep the existing counted chorus, reviewed-count, blank-row, conductor, and
+    platform variants intact.
+  - Update opened-manifest objective text so player-facing guidance names
+    finishing the shared passenger count and pulling the release.
+  - Add regression coverage for visibility, menu placement, choice group, flags,
+    and the resulting ideal ending.
+  - Run focused tests, full health, an actual CLI route, and the evidence cycle.
+- Risks:
+  - The opened-manifest hub is broad, so the direct action must sit beside the
+    existing shared-count route and not hide the more detailed chorus scene.
+  - A single 100-run random sample may still miss the ending because the hub now
+    has many valid ideal finishes.
+- Status:
+  - Completed and ready for final commit/push.
+  - Added `pull_release_after_opened_shared_count` from `passengers_released` to
+    `passenger_counted_true_ending`.
+  - The choice lives in the Manifest count group immediately after
+    `let_opened_passengers_finish_count`.
+  - The choice sets `reviewed_open_manifest_count`,
+    `passengers_finished_reviewed_count`, and `shared_count_release_ready`
+    without marking the reviewed-count shortcut or answered-passenger branch.
+  - Updated opened-manifest objective text to mention finishing the shared
+    passenger count and pulling the release.
+  - Added regression coverage for choice visibility, label, choice group,
+    ordering, flags, cleared objectives, and ideal ending scoring.
+  - Focused story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "shared passenger count|shared count directly|manifest-specific platform beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 328 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through the new choice reached
+    `passenger_counted_true_ending`, score 269, ideal-ending award present, and
+    objectives cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Random 100-run
+    evidence stayed at `ended: 100`, `unfinished: 0`, ideal-ending rate 78%,
+    and best score 412; coverage stayed complete.
+- Playtest feedback:
+  - The new label reads as the direct finish to the shared-count beat, not as a
+    generic emergency-release shortcut.
+  - The ending payoff is coherent: the count dissolves into passengers watching
+    one another step into morning.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such as
+    `passenger_answered_check`, `passenger_room_boarding`, or
+    `passenger_threshold_boarding`.
+
 # Cycle 23 Direct Manifest-Thumbprint Release
 
 - Date: 2026-06-08

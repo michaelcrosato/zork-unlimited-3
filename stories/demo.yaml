@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2132,6 +2132,17 @@ scenes:
         label: Listen as the opened passengers finish the count together
         choiceGroup: Manifest count
         to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
+            shared_count_release_ready: true
+      - id: pull_release_after_opened_shared_count
+        label: Let the opened passengers finish the count, then pull the release
+        choiceGroup: Manifest count
+        to: passenger_counted_true_ending
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:

@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6802,6 +6802,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("study_opened_newspaper_transfer");
     expect(choiceIds).toContain("ask_conductor_punch_from_opened_manifest");
     expect(choiceIds).toContain("let_opened_passengers_finish_count");
+    expect(choiceIds).toContain("pull_release_after_opened_shared_count");
     expect(choiceIds).toContain("listen_to_passenger_answers");
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
@@ -7189,6 +7190,66 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened manifest players pull after the shared passenger count", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+    const directCountRelease = observation.choices.find(
+      (choice) => choice.id === "pull_release_after_opened_shared_count"
+    );
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(directCountRelease?.label).toBe(
+      "Let the opened passengers finish the count, then pull the release"
+    );
+    expect(directCountRelease?.choiceGroup).toBe("Manifest count");
+    expect(choiceIds.indexOf("pull_release_after_opened_shared_count")).toBe(
+      choiceIds.indexOf("let_opened_passengers_finish_count") + 1
+    );
+    expect(choiceIds.indexOf("pull_release_after_opened_shared_count")).toBeLessThan(
+      choiceIds.indexOf("check_opened_manifest_blank_row")
+    );
+
+    state = choose(story, state, "pull_release_after_opened_shared_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the reviewed count falls apart");
+    expect(observation.scene.text).toContain("a crowd, not a total");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.state.flags.reviewed_count_release_ready).toBeUndefined();
+    expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
+    expect(observation.objectives).toEqual([]);
     expectIdealScore(observation.score);
   });
 
@@ -14602,6 +14663,7 @@ describe("demo story critical paths", () => {
       "pass_opened_transfer_to_mara",
       "press_opened_transfer_to_speaker",
       "let_opened_passengers_finish_count",
+      "pull_release_after_opened_shared_count",
       "check_opened_manifest_blank_row",
       "match_opened_manifest_keepsakes",
       "check_opened_manifest_keepsakes",
