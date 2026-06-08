@@ -5578,17 +5578,6 @@ scenes:
       behind the word passenger. Nobody is only a number now, and the release
       under the first seat feels less like an escape than the end of a shift.
     choices:
-      - id: pull_release_after_checked_lunch_tin_count
-        label: Start the release after every passenger answers the count
-        to: passenger_lunch_tin_checked_true_ending
-      - id: let_lunch_tin_worker_count_himself
-        label: Let the lunch-tin worker count himself last
-        to: passenger_lunch_tin_self_count
-        requires:
-          notFlag: counted_lunch_tin_worker_self
-        effects:
-          set:
-            counted_lunch_tin_worker_self: true
       - id: carry_checked_lunch_tin_count_to_speaker
         label: Carry the checked lunch-tin count to Mara's speaker
         to: passenger_lunch_tin_intercom
@@ -5601,6 +5590,17 @@ scenes:
           set:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
+      - id: let_lunch_tin_worker_count_himself
+        label: Let the lunch-tin worker count himself last
+        to: passenger_lunch_tin_self_count
+        requires:
+          notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            counted_lunch_tin_worker_self: true
+      - id: pull_release_after_checked_lunch_tin_count
+        label: Start the release after every passenger answers the count
+        to: passenger_lunch_tin_checked_true_ending
 
   passenger_lunch_tin_self_count:
     routeImportance: optional
@@ -5687,8 +5687,8 @@ scenes:
           set:
             confirmed_lunch_tin_roster_proof: true
       - id: pull_release_after_lunch_tin_roll_call
-        label: Pull the release after the roster clocks everyone out
-        to: passenger_lunch_tin_roster_true_ending
+        label: Pull the release on the worker's completed count
+        to: passenger_lunch_tin_true_ending
 
   passenger_lunch_tin_roster_proof:
     routeImportance: optional

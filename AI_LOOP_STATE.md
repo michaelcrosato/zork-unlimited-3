@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 84 Lunch-Tin Roll-Call Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the remaining lunch-tin intercom, roll-call, and base
+  lunch-tin ending show up in normal play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 83's next step and the current random-play
+  evidence: `passenger_lunch_tin_intercom`,
+  `passenger_lunch_tin_roll_call`, and `passenger_lunch_tin_true_ending` were
+  reachable by coverage but absent from the 100-run random smoke.
+- Why this matters: The lunch-tin worker route is one of the clearest
+  ordinary-life payoffs. If players jump from a checked count directly to an
+  ending, they miss Mara hearing the count become a real roll call.
+- Planned work:
+  - Put the checked lunch-tin count's speaker and roll-call continuations
+    before the immediate checked-count release.
+  - Let the direct lunch-tin roll-call release use the base lunch-tin ending,
+    while the proof-confirmation route keeps the roster-specific ending.
+  - Update regression coverage for the new choice order and ending split.
+  - Run focused tests, full health, evidence generation, and one actual route
+    playthrough through the changed branch.
+- Risks:
+  - The checked-count ending is still reachable and covered, but it is now the
+    remaining lunch-tin scene absent from the 100-run random smoke.
+  - The direct roll-call release must read like a complete lunch-tin count, not
+    like it bypasses the roster-proof payoff.
+- Status:
+  - Completed.
+  - Reordered `passenger_lunch_tin_check` so players first carry the checked
+    count to Mara's speaker or turn it into the final roster call before the
+    direct checked-count release.
+  - Changed `pull_release_after_lunch_tin_roll_call` to land on
+    `passenger_lunch_tin_true_ending`; confirming roster proof still lands on
+    `passenger_lunch_tin_roster_true_ending`.
+  - Updated `tests/story-paths.test.ts` to lock the new checked-count order and
+    the split between direct roll-call release and proof-confirmed roster
+    release.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts`,
+    `npm run cyoa -- validate stories/demo.yaml --json`, and a 100-run random
+    smoke.
+  - Random smoke now visits the original misses:
+    `passenger_lunch_tin_intercom`, `passenger_lunch_tin_roll_call`, and
+    `passenger_lunch_tin_true_ending`; remaining random miss is
+    `passenger_lunch_tin_checked_true_ending`.
+  - Actual CLI playthrough through `let_lunch_tin_count_become_roll_call` ->
+    `pull_release_after_lunch_tin_roll_call` reached
+    `passenger_lunch_tin_true_ending`, score 313, with no remaining objectives.
+  - Full `npm run health` passed: format check, TypeScript, 300 tests, story
+    validation with 176 reachable scenes, and coverage playtest with
+    `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation and appended one tracked observation; it stopped before nested
+    agent execution because `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The changed route feels clearer: the checked count naturally becomes
+    something Mara and the passengers can hear before the release.
+  - The base lunch-tin ending text fits the direct roll-call release because it
+    already names the completed count and the row of clocked-out names.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise restore normal-play discovery for
+    `passenger_lunch_tin_checked_true_ending` without hiding the intercom,
+    roll-call, or base lunch-tin ending again.
+
 # Cycle 83 Lunch-Tin Roster Proof
 
 - Date: 2026-06-08
