@@ -13,7 +13,8 @@ import {
   requiresLoopRestart,
   restartRequestedExitCode,
   shellQuote,
-  shouldCommitCycleObservation
+  shouldCommitCycleObservation,
+  shouldStopAfterEvidenceCycle
 } from "../src/ai-loop.js";
 import type { Story } from "../src/schema.js";
 
@@ -49,6 +50,11 @@ describe("AI loop restart detection", () => {
     expect(shouldCommitCycleObservation("pushed", false)).toBe(false);
     expect(shouldCommitCycleObservation("clean", true, [])).toBe(false);
     expect(shouldCommitCycleObservation("clean", true, ["stories/demo.yaml"])).toBe(true);
+  });
+
+  it("stops evidence-only cycles after writing one prompt", () => {
+    expect(shouldStopAfterEvidenceCycle(undefined)).toBe(true);
+    expect(shouldStopAfterEvidenceCycle("codex exec -")).toBe(false);
   });
 
   it("quotes shell arguments for the active platform", () => {

@@ -214,6 +214,9 @@ async function main(): Promise<void> {
         changedFiles: await getChangedPathsSince(artifacts.observation.gitCommit)
       });
       console.log("AI_AGENT_CMD is not set; cycle stopped after evidence and prompt generation.");
+      if (shouldStopAfterEvidenceCycle(agentCommand)) {
+        stopped = true;
+      }
     }
 
     if (once || cycle >= maxCycles || stopped) break;
@@ -230,6 +233,10 @@ export function shouldCommitCycleObservation(
     autoPushEnabled &&
     (postAgentStatus === "pushed" || (postAgentStatus === "clean" && changedFiles.length > 0))
   );
+}
+
+export function shouldStopAfterEvidenceCycle(agentCommandValue: string | undefined): boolean {
+  return agentCommandValue === undefined;
 }
 
 async function runCycleWithRecovery(cycle: number): Promise<CycleArtifacts> {
