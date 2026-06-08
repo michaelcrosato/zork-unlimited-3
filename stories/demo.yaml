@@ -1685,6 +1685,23 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
+      - id: confirm_opened_conductor_clearance
+        label: Ask the conductor to clear every opened door before boarding
+        choiceGroup: Passenger gathering
+        to: passenger_conductor_clearance_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: punched_conductor_transfer
+            - notFlag: confirmed_conductor_clearance
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
+            confirmed_conductor_clearance: true
       - id: check_lunch_tin_count_from_opened_manifest
         label: Check the lunch-tin worker's passenger count before boarding
         choiceGroup: Lunch tin / shift count
@@ -3165,6 +3182,23 @@ scenes:
           set:
             helped_passengers_gather: true
             conductor_cleared_platform: true
+      - id: confirm_platform_conductor_clearance
+        label: Ask the conductor to clear every platform door before boarding
+        to: passenger_conductor_clearance_check
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: punched_conductor_transfer
+            - notFlag: confirmed_conductor_clearance
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
+            confirmed_conductor_clearance: true
       - id: return_lost_mitten
         label: Return the lost mitten to the child
         to: passenger_mitten_memory

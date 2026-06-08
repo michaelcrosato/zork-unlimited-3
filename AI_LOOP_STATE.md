@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 46 Direct Conductor-Clearance Checks
+
+- Date: 2026-06-08
+- Main objective: Make the checked conductor-clearance payoff easier to choose
+  from the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current Cycle 14 evidence is healthy overall, but normal random play
+  still under-samples `passenger_conductor_clearance_check` and
+  `passenger_conductor_clearance_checked_true_ending` compared with broader
+  passenger releases and conductor transfer variants.
+- Why this matters: The opened manifest already foregrounds the old
+  conductor's punch and clear signal. A careful player should be able to ask
+  him to clear every opened door directly from the visible late hubs, without
+  first discovering the punch-memory, intercom, or roll-call submenu chain.
+- Planned work:
+  - Add a direct conductor-clearance confirmation from `passengers_released`.
+  - Add the same direct confirmation from `passenger_platform`.
+  - Preserve the slower conductor punch-memory, signal, transfer, roll-call,
+    and reviewed-count routes.
+  - Add regression coverage for both direct confirmations.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new confirmation.
+- Risks:
+  - The opened-passenger menus are broad, so the new labels need to read as a
+    deliberate clear-signal confirmation rather than generic gathering noise.
+  - Random play may still under-sample this ending because many ideal passenger
+    endings compete from the same hubs.
+- Status:
+  - Completed.
+  - Added `confirm_opened_conductor_clearance`, routing `passengers_released`
+    directly to `passenger_conductor_clearance_check` while setting
+    `helped_passengers_gather`, `conductor_cleared_platform`,
+    `heard_conductor_clearance`, `heard_final_roll_call`, and
+    `confirmed_conductor_clearance`.
+  - Added `confirm_platform_conductor_clearance` from `passenger_platform` with
+    the same confirmation flags.
+  - Added focused regression coverage for both direct checked conductor routes
+    and updated affected menu-order snapshots.
+  - Focused conductor regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "conductor clearance|conductor clear|opened passenger hubs|opened manifest choices|lost-mitten passenger beat|helped passenger ending"`
+    with 5 matching tests and 230 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 319 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached
+    `passenger_conductor_clearance_checked_true_ending`, score 284, no
+    remaining objectives, through `confirm_opened_conductor_clearance`.
+  - Evidence-only `npm run ai:cycle` passed its health gates. Its random sample
+    reached `passenger_conductor_clearance_checked_true_ending` 2/100 runs,
+    its MCP random sample reached it 5/250 runs, the ideal-ending rate stayed
+    at 78%, coverage still visited all scenes, and the adaptive route finished
+    at `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The new opened-manifest label reads like a deliberate clear-signal check,
+    not like a generic passenger-gathering shortcut.
+  - The payoff is clear: the check scene shows the child, newspaper woman, and
+    lunch-tin worker answering from the bright side before the ending says the
+    signal answered from each threshold.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect current low-frequency misses around
+    `passenger_answered_handoff_check`, lunch-tin self-count/intercom, and
+    manifest thumbprint receipt visibility.
+
 # Cycle 45 Direct Morning-Stop Checks
 
 - Date: 2026-06-08
