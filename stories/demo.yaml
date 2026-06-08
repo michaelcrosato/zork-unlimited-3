@@ -4779,6 +4779,29 @@ scenes:
       - id: pull_release_after_answered_handoff_intercom
         label: Pull the release while Mara's handoff holds
         to: passenger_answered_handoff_true_ending
+      - id: confirm_answered_handoff_thresholds
+        label: Confirm every answered name has crossed the threshold
+        to: passenger_answered_handoff_check
+        requires:
+          notFlag: confirmed_answered_handoff_thresholds
+        effects:
+          set:
+            confirmed_answered_handoff_thresholds: true
+
+  passenger_answered_handoff_check:
+    routeImportance: optional
+    text: >
+      You hold the release while Mara gives the roll call one last careful
+      shape. She offers a name, and the passenger who answers touches the
+      threshold before passing it to the person behind them. The child answers
+      for himself and then waits for the newspaper woman. The conductor calls
+      the lunch-tin worker clear before lowering his punch. By the final name,
+      the handoff is no longer a voice moving down a list. It is a line of
+      people making sure every answer has crossed into rain.
+    choices:
+      - id: pull_release_after_confirmed_answered_handoff
+        label: Pull the release after every answered name crosses
+        to: passenger_answered_handoff_true_ending
 
   passenger_answered_intercom:
     routeImportance: optional

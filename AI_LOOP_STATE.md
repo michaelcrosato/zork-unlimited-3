@@ -1,3 +1,63 @@
+# Cycle 61 Answered-Handoff Threshold Confirmation
+
+- Date: 2026-06-08
+- Main objective: Add an optional final threshold confirmation to the
+  answered-passenger handoff route.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and random play reaches answered-passenger
+  roll-call endings. The handoff route already showed Mara passing the count
+  to the passengers, but it moved directly from intercom to release without a
+  final physical check that each answer had crossed the threshold.
+- Planned work:
+  - Add a focused `passenger_answered_handoff_check` scene after
+    `passenger_answered_handoff_intercom`.
+  - Keep `pull_release_after_answered_handoff_intercom` as the first direct
+    choice so existing direct routes stay fast.
+  - Set `confirmed_answered_handoff_thresholds` for regression and playtest
+    visibility.
+  - Update answered-handoff story-path regressions for both direct release and
+    the new confirmation route.
+  - Run focused tests, validation, full health, and an actual CLI route through
+    the new beat.
+- Risks:
+  - Another late optional choice can slow the climax if it reads as required.
+  - The answered-handoff intercom is reached from several manifest handoff
+    routes, so exact-choice regressions needed careful updates.
+- Status:
+  - Completed.
+  - Added `confirm_answered_handoff_thresholds` to
+    `passenger_answered_handoff_intercom`, preserving the existing direct
+    release as the first choice.
+  - Added `passenger_answered_handoff_check`, which sets
+    `confirmed_answered_handoff_thresholds` and resolves to
+    `passenger_answered_handoff_true_ending`.
+  - Updated answered-handoff regressions for direct release and the new
+    confirmation path.
+  - Focused manifest-handoff regression passed:
+    `npm test -- -t "manifest handoff"`.
+  - Story validation passed with 165 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 285 tests, story
+    validation, and coverage playtest with all 165 scenes visited. Coverage
+    visited `passenger_answered_handoff_check`, had `unfinished: 0`, and
+    `unvisitedScenes: []`.
+- Playtest feedback:
+  - Actual CLI play followed opened manifest -> answered handoff roll call ->
+    answered handoff intercom -> threshold confirmation ->
+    `passenger_answered_handoff_true_ending`.
+  - The new beat reads as a concrete final safety check: Mara offers each name,
+    the answering passenger touches the threshold, and passengers pass the
+    handoff to whoever is behind them.
+  - The route ended with score 305, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and
+    `confirmed_answered_handoff_thresholds` set.
+- Commit status:
+  - Commit/push was attempted after green checks, but this sandbox could not
+    create `.git/index.lock` because `.git` is mounted read-only.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue tightening high-traffic passenger payoffs without adding
+    mandatory late-route friction.
+
 # Cycle 60 Returned-Mitten Door Confirmation
 
 - Date: 2026-06-07

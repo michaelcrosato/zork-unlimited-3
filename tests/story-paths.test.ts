@@ -5672,10 +5672,29 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_handoff_intercom"
+      "pull_release_after_answered_handoff_intercom",
+      "confirm_answered_handoff_thresholds"
     ]);
 
+    const intercomState = state;
     state = choose(story, state, "pull_release_after_answered_handoff_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, intercomState, "confirm_answered_handoff_thresholds");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_handoff_check");
+    expect(observation.scene.text).toContain("every answer has crossed into rain");
+    expect(observation.state.flags.confirmed_answered_handoff_thresholds).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_answered_handoff"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_answered_handoff");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
@@ -5891,7 +5910,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_intercom");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_handoff_intercom"
+      "pull_release_after_answered_handoff_intercom",
+      "confirm_answered_handoff_thresholds"
     ]);
 
     state = choose(story, state, "pull_release_after_answered_handoff_intercom");
@@ -9651,7 +9671,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They can answer for themselves now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_handoff_intercom"
+      "pull_release_after_answered_handoff_intercom",
+      "confirm_answered_handoff_thresholds"
     ]);
 
     state = choose(story, state, "pull_release_after_answered_handoff_intercom");
