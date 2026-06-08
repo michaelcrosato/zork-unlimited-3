@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 98 Manifest Handoff Door Check Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional manifest handoff door-confirmation route
+  feel acknowledged instead of resolving into the same broader manifest handoff
+  ending as the faster pull.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: guidance, validation, and
+  ideal-ending rates are healthy; focused payoff on explicit care branches
+  remains the highest-value next increment.
+- Why this matters: The player can wait after Mara starts handing off the
+  opened manifest and confirm that every stamped door has someone moving
+  through it. That deliberate patience should visibly change the ending.
+- Planned work:
+  - Route `pull_release_after_manifest_handoff_door_check` to a new ideal
+    ending.
+  - Preserve the faster `pull_release_after_manifest_handoff_goodbye` route to
+    `passenger_manifest_handoff_true_ending`.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off the door-by-door manifest handoff without
+    duplicating the existing broad manifest handoff ending.
+- Status:
+  - Completed.
+  - Added `passenger_manifest_handoff_door_checked_true_ending` with ideal
+    Passengers / Manifest metadata.
+  - Changed only `pull_release_after_manifest_handoff_door_check` to land on
+    the new ending; the faster
+    `pull_release_after_manifest_handoff_goodbye` route still lands on
+    `passenger_manifest_handoff_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed manifest
+    handoff path reaches the new ending and includes the living-hand /
+    no-one-left-behind payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 188 reachable scenes / 43 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_manifest_handoff_door_checked_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached
+    `passenger_manifest_handoff_door_checked_true_ending`, score 297, with
+    badge, fuse, lantern, map, and token in inventory, no remaining objectives,
+    and `confirmed_manifest_handoff_doors: true`.
+- Playtest feedback:
+  - The extra manifest handoff confirmation now lands better: the ending
+    explicitly says every stamped threshold has a living hand on it and that
+    the list cannot close around anyone left behind.
+  - The faster manifest handoff ending remains useful for momentum, so the
+    branch now distinguishes "pull while Mara is mid-handoff" from "wait until
+    every manifest door has someone moving through it."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose mechanical difference is clear but whose ending acknowledgment is
+    thin.
+
 # Cycle 97 Mara Handoff Door Check Payoff
 
 - Date: 2026-06-08

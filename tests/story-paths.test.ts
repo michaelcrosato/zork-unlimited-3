@@ -5775,8 +5775,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_manifest_handoff_door_check");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_door_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("every stamped threshold has a living hand on it");
+    expect(observation.scene.text).toContain("the list cannot close around anyone left behind");
     expectIdealScore(observation.score);
   });
 

@@ -4672,7 +4672,7 @@ scenes:
     choices:
       - id: pull_release_after_manifest_handoff_door_check
         label: Pull the release after every manifest handoff is moving
-        to: passenger_manifest_handoff_true_ending
+        to: passenger_manifest_handoff_door_checked_true_ending
 
   mara_manifest_thumbprint_intercom:
     routeImportance: optional
@@ -6508,6 +6508,23 @@ scenes:
       conductor to lunch-tin worker, stranger to stranger until the manifest is
       no longer a duty in one voice. Mara lets the final page close only after
       every answer has become movement.
+    choices: []
+
+  passenger_manifest_handoff_door_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
+    text: >
+      The release opens every door at once after every stamped threshold has a
+      living hand on it. Mara does not have to carry the manifest alone or
+      finish it mid-call; the newspaper woman is already guiding the child, the
+      conductor is already steadying the lunch-tin worker, and strangers are
+      passing names forward as people instead of entries. Because you waited
+      until the handoff was moving at each door, the list cannot close around
+      anyone left behind. Mara lets the last page go in rain-bright morning,
+      and every open threshold answers with a person crossing through it.
     choices: []
 
   passenger_manifest_thumbprint_true_ending:
