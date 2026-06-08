@@ -9416,9 +9416,11 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("without asking Mara to prove them twice");
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_intercom"
+      "pull_release_after_answered_intercom",
+      "confirm_answered_passenger_receipt"
     ]);
 
+    const answeredIntercomState = state;
     state = choose(story, state, "pull_release_after_answered_intercom");
     observation = observe(story, state);
 
@@ -9426,6 +9428,25 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the answered passengers do not");
     expect(observation.scene.text).toContain("their own voices carry the last name");
+    expectIdealScore(observation.score);
+
+    state = choose(story, answeredIntercomState, "confirm_answered_passenger_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_receipt");
+    expect(observation.scene.text).toContain("ordinary proof");
+    expect(observation.scene.text).toContain("no blank place left");
+    expect(observation.state.flags.confirmed_answered_passenger_receipt).toBe(true);
+    expect(observation.state.flags.checked_answered_passengers).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_answered_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -9466,7 +9487,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_answered_intercom"
+      "pull_release_after_answered_intercom",
+      "confirm_answered_passenger_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_answered_intercom");

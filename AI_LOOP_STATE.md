@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 69 Answered-Passenger Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional final receipt to the non-handoff
+  answered-passenger intercom route while preserving the direct release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing healthy core guidance
+  and room for richer late-route story depth.
+- Why this matters: The handoff version of the answered route already lets
+  players verify that every answered name crossed the threshold. The
+  non-handoff intercom currently goes straight from "they heard themselves" to
+  the release, so cautious players do not get the same final proof.
+- Planned work:
+  - Keep `pull_release_after_answered_intercom` as the first direct release
+    choice.
+  - Add one optional receipt scene from `passenger_answered_intercom`.
+  - Gate the receipt so it does not duplicate earlier answered-passenger
+    checks.
+  - Update answered-route regression coverage for both direct and receipt
+    paths.
+  - Run focused tests, validation, full health, and an actual CLI playthrough.
+- Risks:
+  - Another optional check can make the late game feel repetitive if it reads
+    as required.
+  - The receipt should deepen proof without changing ending classification,
+    route importance, or current healthy coverage.
+- Status:
+  - Completed.
+  - Added `confirm_answered_passenger_receipt` from
+    `passenger_answered_intercom` while keeping
+    `pull_release_after_answered_intercom` as the first direct release choice.
+  - Added `passenger_answered_receipt`, a one-step optional proof scene that
+    confirms each answered passenger has a human place to land before the
+    release.
+  - Gated the receipt behind `notFlag: checked_answered_passengers`, so players
+    who already checked the answered passengers do not see a duplicate proof.
+  - Updated `tests/story-paths.test.ts` to prove checked players still see only
+    the direct release, unverified players see both choices, and the receipt
+    path reaches `passenger_answered_true_ending`.
+  - Focused answered-route tests passed:
+    `npm test -- -t "answered passengers"` with 6 relevant tests green.
+  - Full `npm run health` passed: format check, TypeScript, 292 tests, story
+    validation, and coverage playtest. Validation now reports 171 reachable
+    scenes and 31 endings; coverage had `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Long-run signals
+    stayed stable: random ideal-ending rate 78%, unfinished random runs 0, best
+    score 399, MCP route reached `true_ending` with score 305, and adaptive
+    exploratory MCP route reached `passenger_lunch_tin_checked_true_ending`.
+  - Actual CLI route reached `passenger_answered_true_ending` through
+    `confirm_answered_passenger_receipt` and
+    `pull_release_after_answered_receipt` with score 299, no objectives,
+    inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_answered_passenger_receipt` set.
+- Playtest feedback:
+  - The added receipt gives cautious players a satisfying proof beat without
+    making the final action mandatory.
+  - The direct release remains first and still reads cleanly for decisive
+    players.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding compact optional payoff beats only where a route
+    has clear asymmetry with neighboring routes.
+
 # Cycle 68 Ready-Manifest Direct Release
 
 - Date: 2026-06-08

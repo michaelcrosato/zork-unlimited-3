@@ -4922,6 +4922,32 @@ scenes:
       - id: pull_release_after_answered_intercom
         label: Pull the release while the answered names hold
         to: passenger_answered_true_ending
+      - id: confirm_answered_passenger_receipt
+        label: Confirm each answered passenger before pulling the release
+        to: passenger_answered_receipt
+        requires:
+          all:
+            - notFlag: confirmed_answered_passenger_receipt
+            - notFlag: checked_answered_passengers
+        effects:
+          set:
+            confirmed_answered_passenger_receipt: true
+            checked_answered_passengers: true
+
+  passenger_answered_receipt:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm and look for ordinary proof instead
+      of another roll call. The child raises both hands from the rail and says
+      his own name once. The newspaper woman tucks Warden Street inside her
+      coat, then nods to the person beside her. The old conductor calls the
+      aisle clear only after every answer has somewhere human to land. Mara
+      does not repeat the list. The speaker catches their voices carrying it
+      for her, and the line has no blank place left to take hold.
+    choices:
+      - id: pull_release_after_answered_receipt
+        label: Pull the release after every answered passenger is witnessed
+        to: passenger_answered_true_ending
 
   passenger_conductor_intercom:
     routeImportance: supporting
