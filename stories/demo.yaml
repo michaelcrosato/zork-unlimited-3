@@ -4792,6 +4792,28 @@ scenes:
       - id: pull_release_after_morning_chorus_boarding
         label: Pull the release while the morning chorus points home
         to: passenger_true_ending
+      - id: confirm_morning_stops_before_release
+        label: Confirm the remembered stops before pulling the release
+        to: passenger_morning_stop_check
+        requires:
+          notFlag: confirmed_morning_stops
+        effects:
+          set:
+            confirmed_morning_stops: true
+
+  passenger_morning_stop_check:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm and let the destination sign finish
+      changing. HOME breaks into a row of real stops: Warden Street, Bellweather
+      Yard, Ash Steps, all the places the passengers named from kitchens,
+      clocks, radiators, and back doors. The chorus does not fade when the sign
+      answers. It grows quieter, steadier, like people reading the way home
+      without needing the tunnel to say it for them.
+    choices:
+      - id: pull_release_after_confirmed_morning_stops
+        label: Pull the release after the remembered stops answer
+        to: passenger_true_ending
 
   passenger_answered_handoff_roll_call:
     routeImportance: optional

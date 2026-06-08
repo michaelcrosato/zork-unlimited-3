@@ -7,6 +7,64 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 65 Morning-Stop Confirmation
+
+- Date: 2026-06-08
+- Main objective: Add an optional final confirmation to the passenger morning
+  chorus route without slowing the direct release path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence says the core route is healthy and suggests adding
+  story depth; the morning chorus is a broad passenger payoff, but its third-car
+  intercom moved straight to release while more specific passenger routes
+  already let players verify the final proof before pulling the handle.
+- Planned work:
+  - Keep `pull_release_after_morning_chorus_boarding` as the first direct
+    release choice.
+  - Add a focused `passenger_morning_stop_check` scene after
+    `passenger_morning_intercom`.
+  - Set `confirmed_morning_stops` for regression and playtest visibility.
+  - Update morning chorus regressions for direct release and the optional stop
+    check.
+  - Run focused tests, validation, full health, and an actual route through the
+    new beat.
+- Risks:
+  - Another late optional check can slow the climax if it reads as required.
+  - The morning chorus is reachable from several opened-manifest routes, so the
+    new choice must preserve the existing direct release path and choice order.
+- Status:
+  - Completed.
+  - Added `confirm_morning_stops_before_release` to
+    `passenger_morning_intercom`, preserving
+    `pull_release_after_morning_chorus_boarding` as the first direct release
+    choice.
+  - Added `passenger_morning_stop_check`, where the destination sign breaks
+    HOME into real stops and sets `confirmed_morning_stops`.
+  - Updated morning chorus regressions for direct release and the new optional
+    stop-confirmation route.
+  - Focused morning chorus regression passed:
+    `npm test -- -t "morning chorus"` with 8 relevant tests green.
+  - Story validation passed with 169 reachable scenes and no warnings.
+  - Coverage playtest visited `passenger_morning_stop_check`, had
+    `unfinished: 0`, and `unvisitedScenes: []`.
+  - Full `npm run health` passed: format check, TypeScript, 290 tests, story
+    validation, and coverage playtest.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus one tracked cycle observation. Long-run metrics were
+    unchanged: ideal-ending rate 78%, unfinished random runs 0, best score 399,
+    and the MCP route reached `true_ending` with score 305.
+  - Actual CLI route reached `passenger_true_ending` with score 275, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_morning_stops` set.
+- Playtest feedback:
+  - The new stop check reads as a useful final confirmation that the passengers'
+    ordinary morning memories have become destinations instead of ledger proof.
+  - The direct release remains available first from the intercom, so the added
+    beat is optional and does not slow the main passenger ending.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding small confirmation or payoff beats only where a
+    common route has a concrete missing moment.
+
 # Cycle 64 Badge-Proof Receipt Confirmation
 
 - Date: 2026-06-08
