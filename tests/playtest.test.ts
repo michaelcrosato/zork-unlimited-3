@@ -193,6 +193,7 @@ function trueEndingCount(endings: Record<string, number>): number {
     (endings.passenger_conductor_count_true_ending ?? 0) +
     (endings.passenger_keepsake_true_ending ?? 0) +
     (endings.passenger_newspaper_true_ending ?? 0) +
+    (endings.passenger_newspaper_stop_checked_true_ending ?? 0) +
     (endings.passenger_mitten_true_ending ?? 0)
   );
 }

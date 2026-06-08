@@ -5908,7 +5908,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_newspaper_stops
         label: Pull the release after every named stop answers
-        to: passenger_newspaper_true_ending
+        to: passenger_newspaper_stop_checked_true_ending
 
   passenger_keepsake_intercom:
     routeImportance: optional
@@ -6676,6 +6676,25 @@ scenes:
       fold tomorrow's route into her coat and step through. The ink does not
       fade when the tunnel lets go. It dries in the open air like a schedule
       that can finally be kept by everyone who read it together.
+    choices: []
+
+  passenger_newspaper_stop_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
+    text: >
+      The release opens every door at once after every named stop has answered
+      in a human voice. The newspaper woman's transfer column does not fill by
+      itself this time. The child points to the school awning, the lunch-tin
+      worker marks the factory siding, and the old conductor calls each
+      destination clear before anyone crosses. Warden Street stays printed at
+      the top of the route, but it no longer has to stand for everyone. Smaller
+      streets shine beside it on the destination sign, each one held long
+      enough for its passenger to step into rain-bright morning and know where
+      the door has opened. When the woman folds the paper, the checked stops
+      stay dark in the ink like promises the line can no longer erase.
     choices: []
 
   passenger_mitten_true_ending:

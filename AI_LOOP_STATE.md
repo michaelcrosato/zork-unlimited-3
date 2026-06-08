@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 88 Newspaper Stop-Checked Payoff
+
+- Date: 2026-06-08
+- Main objective: Give the newspaper woman's optional named-stop confirmation
+  its own ending payoff instead of folding it back into the generic newspaper
+  ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current evidence signal: the adaptive exploratory
+  route ended on the newspaper branch, random play reaches it often, and the
+  optional stop-check beat was already playable but under-acknowledged.
+- Why this matters: Players who take the extra step to confirm every passenger's
+  destination should see that care reflected in the ending. The route now
+  emphasizes that the passengers are not just released from HOME; each person
+  gets a named street back.
+- Planned work:
+  - Route `pull_release_after_confirmed_newspaper_stops` to a new ideal ending.
+  - Preserve the faster newspaper release and departure-board release on the
+    existing `passenger_newspaper_true_ending`.
+  - Update regression coverage and ideal-ending counting helpers.
+  - Run focused tests, full health, one exact CLI playthrough, and the standard
+    evidence cycle.
+- Risks:
+  - Adding an ending increases coverage surface, so validation and coverage
+    playtest must prove the new terminal scene is reachable and does not strand
+    the route.
+  - The new ending must read like payoff for stop confirmation, not a duplicate
+    of the generic newspaper ending.
+- Status:
+  - Completed.
+  - Added `passenger_newspaper_stop_checked_true_ending` with ideal Passengers /
+    Keepsakes metadata.
+  - Changed only `pull_release_after_confirmed_newspaper_stops` to land on the
+    new ending; direct newspaper intercom, departure-board, and roll-call
+    releases still use `passenger_newspaper_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the stop-check route reaches
+    the new ending and includes stop-confirmation payoff text.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` and story validation.
+  - Actual CLI playthrough through `read_restored_transfer_into_roll_call` ->
+    `confirm_newspaper_stops_before_release` ->
+    `pull_release_after_confirmed_newspaper_stops` reached
+    `passenger_newspaper_stop_checked_true_ending`, score 316, with no
+    remaining objectives.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 179 reachable scenes / 34 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation; it stopped before nested agent execution because
+    `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The branch now lands better: checking stops no longer disappears into the
+    generic newspaper ending, and the final text confirms each passenger's
+    specific destination before release.
+  - The faster newspaper route remains available for players who want momentum
+    without the additional confirmation beat.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose endings still do not acknowledge the player's extra care, especially
+    routes seen often in random or adaptive play.
+
 # Cycle 87 Badge-Proof Receipt Ending Payoff
 
 - Date: 2026-06-08

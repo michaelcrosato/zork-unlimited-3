@@ -1850,7 +1850,9 @@ describe("demo story critical paths", () => {
       choose(story, stopCheckState, "pull_release_after_confirmed_newspaper_stops")
     );
 
-    expect(observation.scene.id).toBe("passenger_newspaper_true_ending");
+    expect(observation.scene.id).toBe("passenger_newspaper_stop_checked_true_ending");
+    expect(observation.scene.text).toContain("after every named stop has answered");
+    expect(observation.scene.text).toContain("checked stops stay dark in the ink");
     expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
