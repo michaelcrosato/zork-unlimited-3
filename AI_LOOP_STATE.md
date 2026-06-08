@@ -7,6 +7,78 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 29 Opened-Manifest Room Beat
+
+- Date: 2026-06-08
+- Main objective: Make the generic opened-manifest passenger release include
+  the existing room-making speaker beat before the final pull.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 29 evidence is green overall, but the 100-run random sample
+  still missed optional room-making scenes such as `passenger_room_boarding`
+  and `passenger_room_intercom` while coverage could reach them.
+- Why this matters: A normal player choosing the plain "board now" passenger
+  release should still feel the core passenger theme: the rescue works because
+  people make room for one another, not because the protagonist alone pulls a
+  handle.
+- Planned work:
+  - Route `pull_release_for_opened_manifest` through
+    `passenger_room_intercom` instead of jumping directly to
+    `passenger_true_ending`.
+  - Update the menu label and transcript expectation so the route clearly
+    promises room-making before the release.
+  - Update regression coverage for the two-step room-speaker-to-release flow.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This adds one extra click to the broadest opened-passenger release route,
+    so the room-making speaker beat must feel like payoff rather than delay.
+  - This is a normal-play clarity pass; random play may still miss some
+    optional room branches because the opened-manifest hub is intentionally
+    wide.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_for_opened_manifest` now routes to
+    `passenger_room_intercom` instead of jumping directly to
+    `passenger_true_ending`.
+  - The generic opened-manifest release label now says the player will make
+    room around the emergency release.
+  - Once `made_room_for_passengers` is set, the objective narrows from the
+    long opened-manifest hub prompt to: "Pull the emergency release while the
+    opened passengers hold room for one another."
+  - Focused route and transcript tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened manifest|room|manifest-specific platform"`
+    and `npx vitest run tests/transcript.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through `pull_release_for_opened_manifest` now stops at
+    `passenger_room_intercom`, shows the narrowed room-release objective, then
+    reaches `passenger_true_ending`, score 283, with objectives cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Evidence stayed
+    green: health passed, random play had `ended: 100` / `unfinished: 0`,
+    coverage stayed complete, MCP play reached `true_ending`, and the adaptive
+    route ended at `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The changed route reads better than the old direct jump because Mara's
+    speaker frames the passenger ending around space, shared movement, and the
+    car holding everyone before the release.
+  - The extra click felt purposeful in the CLI route because the available
+    choices were concrete: pass the release through the car or pull while the
+    car holds everyone.
+  - Manual play initially exposed a stale long objective on the focused room
+    scene; this cycle fixed it with a short room-release objective and a
+    regression assertion.
+  - The evidence cycle's 100-run random sample still missed
+    `passenger_room_boarding` and `passenger_room_intercom`, so this should be
+    treated as a quality/normal-play pass rather than a proven random-frequency
+    improvement.
+  - No invalid choice, stale ending objective, unreachable scene, unfinished
+    playtest, or ending classification issue appeared after the fix.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue reducing opened-manifest hub density or improve
+    visibility for remaining random misses such as `passenger_gathered_*`,
+    `passenger_farewell`, or `mara_manifest_thumbprint_receipt_true_ending`.
+
 # Cycle 28 Lunch-Tin Speaker Beat
 
 - Date: 2026-06-08

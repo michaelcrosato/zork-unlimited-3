@@ -115,7 +115,7 @@ describe("transcript rendering", () => {
     expect(transcript).toContain("Scene: passengers_released (in progress)");
     expect(transcript).toContain("Available choices:");
     expect(transcript).toContain(
-      "Board / release:\n- Board now and pull the emergency release for every opened name"
+      "Board / release:\n- Board now and make room around the emergency release"
     );
     expect(transcript).toContain("Finish Mara's handoff:\n- Watch Mara call the opened doors");
     expect(transcript).toContain("- Carry Mara's opened-door handoff to the third car");

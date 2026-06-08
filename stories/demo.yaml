@@ -111,12 +111,19 @@ objectives:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
+        - notFlag: made_room_for_passengers
         - any:
             - notFlag: saw_mara_manifest_handoff
             - flag: heard_passenger_answers
             - flag: helped_passengers_gather
             - flag: read_mara_thumbprint
             - flag: read_manifest_thumbprint
+  - text: Pull the emergency release while the opened passengers hold room for one another.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: made_room_for_passengers
   - text: Pull the emergency release in the third car.
     requires:
       all:
@@ -1864,9 +1871,13 @@ scenes:
             returned_lost_mitten: true
             helped_passengers_gather: true
       - id: pull_release_for_opened_manifest
-        label: Board now and pull the emergency release for every opened name
+        label: Board now and make room around the emergency release
         choiceGroup: Board / release
-        to: passenger_true_ending
+        to: passenger_room_intercom
+        effects:
+          set:
+            made_room_for_passengers: true
+            heard_mara_goodbye: true
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
         choiceGroup: Door echoes / threshold

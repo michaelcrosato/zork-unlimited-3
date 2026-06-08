@@ -5,6 +5,8 @@ import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
+const ROOM_RELEASE_OBJECTIVE =
+  "Pull the emergency release while the opened passengers hold room for one another.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
@@ -14815,6 +14817,24 @@ describe("demo story critical paths", () => {
 
     const directReleaseState = choose(story, state, "pull_release_for_opened_manifest");
     observation = observe(story, directReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.scene.ending).toBe(false);
+    expect(observation.scene.text).toContain("people making room for one another");
+    expect(observation.scene.text).toContain("Proof that there is enough space");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_intercom",
+      "pull_release_after_making_room"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, directReleaseState, "pull_release_after_making_room")
+    );
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
