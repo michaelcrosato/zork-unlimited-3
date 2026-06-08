@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -14520,6 +14520,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_after_passenger_morning_chorus",
+      "board_and_confirm_morning_stops_after_chorus",
       "let_morning_chorus_answer_names",
       "let_mara_handoff_morning_names",
       "listen_for_echoes_inside_morning_chorus",
@@ -14575,6 +14576,9 @@ describe("demo story critical paths", () => {
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_morning_chorus_from_opened_manifest"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "confirm_morning_stops_from_opened_manifest"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "board_after_releasing_passengers"
@@ -14740,6 +14744,55 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("confirms remembered morning stops from the opened manifest hub", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "return_from_passenger_morning_chorus",
+      "confirm_morning_stops_from_opened_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_check");
+    expect(observation.scene.text).toContain("Warden Street");
+    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_morning_stops"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_morning_stops");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Bellweather Yard");
+    expectIdealScore(observation.score);
+  });
+
   it("pays off the passenger morning chorus before the release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -14804,6 +14857,47 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Bellweather Yard");
     expect(observation.scene.text).toContain("the remembered stops answer in full");
+    expectIdealScore(observation.score);
+
+    let directConfirmedState = initialState(story);
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_to_passenger_morning_chorus",
+      "board_and_confirm_morning_stops_after_chorus"
+    ]) {
+      directConfirmedState = choose(story, directConfirmedState, choiceId);
+    }
+
+    observation = observe(story, directConfirmedState);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_check");
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+
+    directConfirmedState = choose(
+      story,
+      directConfirmedState,
+      "pull_release_after_confirmed_morning_stops"
+    );
+    observation = observe(story, directConfirmedState);
+
+    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 

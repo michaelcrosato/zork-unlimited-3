@@ -7,6 +7,79 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 37 Remembered Morning Stop Shortcut
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_morning_stop_checked_true_ending` after players hear the opened
+  passengers remember morning.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_morning_intercom`,
+  `passenger_morning_stop_check`, and
+  `passenger_morning_stop_checked_true_ending` as normal-play discovery targets,
+  with random sampling still finding that ending only rarely.
+- Why this matters: The story already teaches that the passengers remember
+  real streets and ordinary morning stops, but the checked ending required
+  boarding first and then choosing a second confirm action. The new choices let
+  players act on that clue from the chorus scene or from the opened-manifest hub
+  after returning.
+- Planned work:
+  - Add a direct stop-confirmation choice from `passenger_morning_chorus` to
+    `passenger_morning_stop_check`.
+  - Add a matching hub choice from `passengers_released` after the morning
+    chorus has been heard.
+  - Update the opened-manifest objective so the player is explicitly told that
+    confirming remembered morning stops is a valid path.
+  - Add regression coverage for both direct routes.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new choice.
+- Risks:
+  - The opened-manifest hub is already broad, so the new action must stay gated
+    behind `heard_passenger_morning_chorus`.
+  - Uniform random play may still under-sample this optional ending because many
+    ideal passenger endings compete in the same region.
+- Status:
+  - Completed.
+  - Added `board_and_confirm_morning_stops_after_chorus` and
+    `confirm_morning_stops_from_opened_manifest`, both routing to the existing
+    `passenger_morning_stop_check` scene and setting the same confirmation
+    flags the longer path sets.
+  - Updated the opened-manifest objective copy and route tests.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 226
+    passing tests, and `npm run cyoa -- validate stories/demo.yaml --json` with
+    191 reachable scenes / 46 endings and no errors or warnings.
+  - Focused playtest regression passed:
+    `npx vitest run tests/playtest.test.ts` with 7 passing tests. The seeded
+    random receipt sample now uses 500 runs because the broader hub menu shifted
+    the previous 250-run path away from `passenger_echoed_seat_receipt`.
+  - Full `npm run health` passed: format check, TypeScript, 310 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Random sample passed:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`
+    ended all 250 runs and reached `passenger_morning_stop_checked_true_ending`
+    twice. The same deterministic 500-run sample used by the regression test
+    ended all 500 runs, visited every scene, and reached the ending five times.
+  - Actual CLI route reached `passenger_morning_stop_checked_true_ending`, score
+    271, no remaining objectives, after choosing
+    `board_and_confirm_morning_stops_after_chorus` directly from the morning
+    chorus.
+- Playtest feedback:
+  - The new action appears immediately after the text says the passengers have
+    real streets and ordinary mornings to reach, so the checked-stop payoff no
+    longer feels hidden behind a generic boarding step.
+  - The final scene cleanly pays off the concrete stop names: Warden Street,
+    Bellweather Yard, and Ash Steps.
+  - No crash, stale objective, unreachable scene, unfinished run, or score
+    issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings where
+    a clue is present but the payoff remains one step too hidden.
+
 # Cycle 36 Opened Manifest First-Time Handoff Release
 
 - Date: 2026-06-08

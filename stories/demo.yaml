@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2061,6 +2061,24 @@ scenes:
         effects:
           set:
             heard_passenger_morning_boarding: true
+      - id: confirm_morning_stops_from_opened_manifest
+        label: Board and confirm the remembered stops before pulling the release
+        choiceGroup: Board / release
+        to: passenger_morning_stop_check
+        requires:
+          all:
+            - flag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_morning_boarding
+            - notFlag: confirmed_morning_stops
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
+            confirmed_morning_stops: true
       - id: ask_mara_to_read_opened_manifest
         label: Ask Mara to read the opened manifest over the third-car speaker
         choiceGroup: Mara and manifest
@@ -2265,6 +2283,15 @@ scenes:
         effects:
           set:
             heard_passenger_morning_boarding: true
+      - id: board_and_confirm_morning_stops_after_chorus
+        label: Board and confirm the remembered stops before the release
+        to: passenger_morning_stop_check
+        requires:
+          notFlag: confirmed_morning_stops
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
+            confirmed_morning_stops: true
       - id: let_morning_chorus_answer_names
         label: Let the morning chorus answer Mara's roll call
         to: passenger_answers
