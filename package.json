@@ -20,7 +20,8 @@
     "playtest": "node --import tsx src/cli.ts playtest stories/demo.yaml --runs 50",
     "playtest:session": "node --import tsx src/blind-playtester.ts",
     "playtest:consolidate": "node --import tsx src/consolidate-feedback.ts",
-    "playtest:loop": "bash playtest_loop.sh"
+    "playtest:loop": "bash playtest_loop.sh",
+    "orchestrator:watch": "node --import tsx src/orchestrator-watch.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
