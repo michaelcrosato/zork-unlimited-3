@@ -10779,8 +10779,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("ordinary proof has named its owner back");
+    expect(observation.scene.text).toContain("belongs with them");
     expectIdealScore(observation.score);
   });
 

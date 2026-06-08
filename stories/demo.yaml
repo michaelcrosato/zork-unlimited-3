@@ -5968,7 +5968,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_keepsake_owners
         label: Pull the release after every keepsake finds its owner
-        to: passenger_keepsake_true_ending
+        to: passenger_keepsake_owner_checked_true_ending
 
   passenger_roll_call_epilogue:
     routeImportance: optional
@@ -6693,6 +6693,25 @@ scenes:
       daylight, and the rain-dark umbrellas open only after every initial has
       cleared the doors. Mara reads the final name, then lets the ordinary
       things answer back.
+    choices: []
+
+  passenger_keepsake_owner_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
+    text: >
+      The release opens every door at once only after each ordinary proof has
+      named its owner back. The lunch tin leaves under the hand that knows its
+      dent, the newspaper follows folded to a stop the woman can say without
+      looking, and the umbrellas go last, initial by initial, no handle crossing
+      the threshold until a passenger claims it aloud. Mara repeats "All
+      ordinary proof accounted for" through the speaker, and the phrase moves
+      down the car like a handoff. By the time the last mittened child steps
+      into morning, the manifest has stopped being a list of things the station
+      kept. It is a ledger of people who can point to one another and say: this
+      belongs with them.
     choices: []
 
   passenger_newspaper_true_ending:
