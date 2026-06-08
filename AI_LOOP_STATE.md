@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 43 Direct Lunch-Tin Roster Proof
+
+- Date: 2026-06-08
+- Main objective: Make the lunch-tin roster-proof payoff easier to choose from
+  the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence is healthy overall, but lunch-tin boarding,
+  intercom, roll-call, roster, and true-ending scenes remain low-frequency in
+  normal random/player-like routes compared with broader passenger endings.
+- Why this matters: The opened manifest already foregrounds the lunch tin as a
+  human proof that the line is counting workers instead of tickets. A careful
+  player should be able to read the worker's roster and confirm each proof
+  directly from the visible opened-passenger hubs, without needing to discover
+  the roster-proof receipt through multiple nested lunch-tin choices.
+- Planned work:
+  - Add a direct roster-proof confirmation from `passengers_released`.
+  - Add the same direct confirmation from `passenger_platform`.
+  - Preserve all slower lunch-tin count, boarding, intercom, roll-call, and
+    roster routes.
+  - Add regression coverage for both direct routes.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new direct proof.
+- Risks:
+  - The opened-passenger menus are already broad, so the new labels need to
+    read as deliberate careful checks rather than generic menu noise.
+  - Random play may still under-sample the branch because many ideal passenger
+    endings compete in the same hub.
+- Status:
+  - Completed.
+  - Added `confirm_opened_lunch_tin_roster_proof`, routing
+    `passengers_released` directly to `passenger_lunch_tin_roster_proof` while
+    setting the lunch-tin pace, roster, roll-call, gathered-passenger, and
+    proof-confirmation flags.
+  - Added `confirm_platform_lunch_tin_roster_proof` from
+    `passenger_platform` with the same proof flags.
+  - Preserved all existing slower lunch-tin boarding, count, intercom,
+    self-count, roll-call, and roster routes.
+  - Added regression tests for both direct roster-proof routes and updated
+    exact menu-order expectations.
+  - Focused lunch-tin/platform regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin|conductor to gather|lost-mitten|manifest-specific platform"`
+    with 16 matching tests and 215 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 315 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_roster_true_ending`, score
+    288, no remaining objectives, through
+    `confirm_opened_lunch_tin_roster_proof`.
+  - Evidence-only `npm run ai:cycle` passed its health gates and random sample
+    reached `passenger_lunch_tin_roster_true_ending` 4/100 runs with the
+    ideal-ending rate still 78%, non-ideal pressure unchanged, and all coverage
+    scenes visited. Its sampled best score was lower than the prior random max,
+    but average score remained essentially stable.
+- Playtest feedback:
+  - The direct proof reads as a careful lunch-tin action at the hub where the
+    opened manifest already names the tin latch.
+  - The payoff is clear: players see the roster-proof scene before the release,
+    then the ending explicitly closes the worker's overtime.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger routes.
+    Current evidence now points more toward morning-stop, passenger room, and
+    remaining lunch-tin boarding/self-count discoverability.
+
 # Cycle 42 Direct Keepsake Owner Checks
 
 - Date: 2026-06-08

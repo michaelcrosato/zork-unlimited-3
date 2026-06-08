@@ -9541,6 +9541,7 @@ describe("demo story critical paths", () => {
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "confirm_platform_lunch_tin_roster_proof",
       "ask_conductor_to_call_platform_clear",
       "return_lost_mitten",
       "match_manifest_keepsakes",
@@ -10611,6 +10612,118 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened-manifest players confirm the lunch-tin roster proof directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const openedChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(openedChoiceIds).toContain("confirm_opened_lunch_tin_roster_proof");
+    expect(openedChoiceIds.indexOf("confirm_opened_lunch_tin_roster_proof")).toBeGreaterThan(
+      openedChoiceIds.indexOf("call_lunch_tin_roster_from_opened_manifest")
+    );
+
+    state = choose(story, state, "confirm_opened_lunch_tin_roster_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.scene.text).toContain("All time cards closed");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_lunch_tin_roster_proof).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_lunch_tin_roster"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("after the roster clocks everyone out");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets platform explorers confirm the lunch-tin roster proof directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const platformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(platformChoiceIds).toContain("confirm_platform_lunch_tin_roster_proof");
+    expect(platformChoiceIds.indexOf("confirm_platform_lunch_tin_roster_proof")).toBeGreaterThan(
+      platformChoiceIds.indexOf("ask_lunch_tin_worker_to_set_pace")
+    );
+
+    state = choose(story, state, "confirm_platform_lunch_tin_roster_proof");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.scene.text).toContain("All time cards closed");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_lunch_tin_roster_proof).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("time card waits on the seat");
+    expectIdealScore(observation.score);
+  });
+
   it("acknowledges Mara's handoff when those passengers answer before boarding", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -10714,10 +10827,11 @@ describe("demo story critical paths", () => {
     expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(passengerPlatformChoiceIds.slice(0, 8)).toEqual([
+    expect(passengerPlatformChoiceIds.slice(0, 9)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "confirm_platform_lunch_tin_roster_proof",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "confirm_platform_keepsake_owners",
@@ -13797,6 +13911,7 @@ describe("demo story critical paths", () => {
       "listen_to_lunch_tin_latch_from_opened_manifest",
       "study_opened_newspaper_transfer",
       "call_lunch_tin_roster_from_opened_manifest",
+      "confirm_opened_lunch_tin_roster_proof",
       "listen_to_opened_manifest_echoes",
       "follow_opened_manifest_echoes",
       "board_with_opened_manifest_echoes",
@@ -14093,10 +14208,11 @@ describe("demo story critical paths", () => {
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(manifestPlatformChoiceIds.slice(0, 8)).toEqual([
+    expect(manifestPlatformChoiceIds.slice(0, 9)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "confirm_platform_lunch_tin_roster_proof",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "confirm_platform_keepsake_owners",

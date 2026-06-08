@@ -1855,6 +1855,23 @@ scenes:
             set_lunch_tin_pace: true
             heard_gathered_passengers: true
             read_lunch_tin_roster: true
+      - id: confirm_opened_lunch_tin_roster_proof
+        label: Read the lunch-tin roster and confirm every proof
+        choiceGroup: Lunch tin / shift count
+        to: passenger_lunch_tin_roster_proof
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_lunch_tin_roster_proof
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            heard_gathered_passengers: true
+            read_lunch_tin_roster: true
+            heard_final_roll_call: true
+            confirmed_lunch_tin_roster_proof: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
         choiceGroup: Door echoes / threshold
@@ -3086,6 +3103,22 @@ scenes:
             helped_passengers_gather: true
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
+      - id: confirm_platform_lunch_tin_roster_proof
+        label: Read the lunch-tin roster and confirm every proof before boarding
+        to: passenger_lunch_tin_roster_proof
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_lunch_tin_roster_proof
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            heard_gathered_passengers: true
+            read_lunch_tin_roster: true
+            heard_final_roll_call: true
+            confirmed_lunch_tin_roster_proof: true
       - id: ask_conductor_to_call_platform_clear
         label: Ask the old conductor to call the platform clear
         to: passenger_conductor_signal
