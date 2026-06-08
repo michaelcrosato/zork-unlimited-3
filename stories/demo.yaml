@@ -5362,6 +5362,31 @@ scenes:
       - id: pull_release_after_lunch_tin_roll_call
         label: Pull the release after the roster clocks everyone out
         to: passenger_lunch_tin_roster_true_ending
+      - id: confirm_lunch_tin_roster_proof_before_release
+        label: Confirm each roster proof before pulling the release
+        to: passenger_lunch_tin_roster_proof
+        requires:
+          notFlag: confirmed_lunch_tin_roster_proof
+        effects:
+          set:
+            confirmed_lunch_tin_roster_proof: true
+
+  passenger_lunch_tin_roster_proof:
+    routeImportance: optional
+    text: >
+      You hold the release while the roster makes one last circuit through the
+      third car. The child presses both mittens beside his name, the newspaper
+      woman folds her transfer over the stop she will step toward, and the old
+      conductor punches the margin beside Dispatcher Vale instead of punching
+      another ticket. The worker waits until every ordinary proof has touched
+      paper, then writes his own clock-out mark under the others. Mara lets the
+      speaker carry the sound of his pencil and says, "All time cards closed."
+      The tin shuts once, not to count anyone again, but to show the shift is
+      finished.
+    choices:
+      - id: pull_release_after_confirmed_lunch_tin_roster
+        label: Pull the release after every roster proof is closed
+        to: passenger_lunch_tin_roster_true_ending
 
   passenger_mitten_intercom:
     routeImportance: optional

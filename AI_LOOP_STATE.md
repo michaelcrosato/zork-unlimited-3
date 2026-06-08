@@ -7,6 +7,51 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 63 Lunch-Tin Roster Proof Confirmation
+
+- Date: 2026-06-08
+- Main objective: Finish and verify an optional final roster-proof beat for the
+  lunch-tin passenger route, while preserving the direct release path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence is green and random play reaches lunch-tin passenger
+  endings, but the roster branch can move from final roll call straight to
+  release without letting the player witness each proof closing on the page.
+  The existing dirty work also includes a Windows-safe shell quoting fix for the
+  autonomous loop's commit/push commands.
+- Planned work:
+  - Keep `pull_release_after_lunch_tin_roll_call` as the first direct release
+    choice.
+  - Add or verify `passenger_lunch_tin_roster_proof`, setting
+    `confirmed_lunch_tin_roster_proof` for regression and playtest visibility.
+  - Confirm route regressions cover both direct release and the optional proof.
+  - Verify `shellQuote` handles Windows loop commit/push arguments.
+  - Run focused tests, validation, full health, and an actual route through the
+    new beat.
+- Risks:
+  - Another late optional check can slow the climax if it reads as mandatory.
+  - The lunch-tin roll call is reachable from several passenger routes, so the
+    new choice must not break direct endings or route coverage.
+- Status:
+  - Completed.
+  - Added `confirm_lunch_tin_roster_proof_before_release` to
+    `passenger_lunch_tin_roll_call`, preserving the existing direct release as
+    the first choice.
+  - Added `passenger_lunch_tin_roster_proof`, which sets
+    `confirmed_lunch_tin_roster_proof` and resolves to
+    `passenger_lunch_tin_roster_true_ending`.
+  - Updated lunch-tin roster regressions for both direct release and the new
+    proof route.
+  - Fixed Windows loop command quoting so post-agent git commands and
+    changed-file collection use `cmd.exe`-compatible quotes.
+  - Full `npm run health` passed: format check, TypeScript, 289 tests, story
+    validation, and coverage playtest with all 167 scenes visited.
+  - Actual CLI route reached `passenger_lunch_tin_roster_true_ending` with
+    score 322, no objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_lunch_tin_roster_proof` set.
+- Next step:
+  - Relaunch the AFK loop from a clean tree and restart the staged monitor
+    schedule.
+
 # Cycle 62 Mara Last-Dispatch Receipt Confirmation
 
 - Date: 2026-06-08

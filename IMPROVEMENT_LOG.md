@@ -2632,3 +2632,53 @@ tests/ai-loop.test.ts`
 
 - Commit the recovered changes, relaunch from a clean tree, and restart the
   staged monitor schedule again.
+
+## 2026-06-08 - Windows AFK Relaunch Recovery
+
+### Changes
+
+- Made the blind-playtester fake agent test use a Node helper instead of `sh`,
+  restoring Windows health checks.
+- Updated `orchestrator:watch` so pre-launch cycle-observation failures do not
+  kill fresh wrapper launches.
+- Made AI loop shell quoting Windows-aware so post-agent git commands and
+  changed-file collection work under `cmd.exe`.
+- Recovered the interrupted agent's lunch-tin roster proof beat and kept the
+  direct release route available.
+
+### Playtest Notes
+
+- What was tested:
+  - `npx vitest run tests/blind-playtester.test.ts`
+  - `npx vitest run tests/orchestrator-watch.test.ts`
+  - `npx vitest run tests/ai-loop.test.ts`
+  - `npm run health`
+  - CLI route through `passenger_lunch_tin_roster_proof`
+- Quantitative metrics:
+  - Tests: 16 files, 289 tests passing
+  - Validation: 167 scenes, 31 endings, 167 reachable scenes
+  - Coverage self-play: 179 effective runs, 0 unfinished, all scenes visited
+  - Lunch-tin proof route: reached `passenger_lunch_tin_roster_true_ending`
+    with score 322 and `confirmed_lunch_tin_roster_proof`
+- What worked:
+  - The new lunch-tin beat gives the roster route a final physical proof check:
+    each passenger's proof touches the page before the release is pulled.
+  - The monitor no longer mistakes old failed observations for fresh launch
+    anomalies.
+- What felt bad/confusing:
+  - A foreground probe left a stale Codex process alive, creating a dirty
+    baseline risk for the relaunched loop.
+- Bugs found:
+  - Windows `npm run health` broke when the test fake agent depended on `sh`.
+  - Windows shell quoting corrupted `changedFiles` in cycle observations and
+    would have undermined post-agent git commands.
+
+### Evaluation
+
+- The recovered game change is small, covered, and playable. The process fixes
+  make the Windows AFK loop safer to launch and monitor.
+
+### Next Iteration
+
+- Relaunch from a clean tree, restart the staged monitoring schedule, and watch
+  the next cycle through post-agent verification and push.

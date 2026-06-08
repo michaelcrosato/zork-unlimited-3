@@ -12,6 +12,7 @@ import {
   parsePorcelainPaths,
   requiresLoopRestart,
   restartRequestedExitCode,
+  shellQuote,
   shouldCommitCycleObservation
 } from "../src/ai-loop.js";
 import type { Story } from "../src/schema.js";
@@ -46,6 +47,18 @@ describe("AI loop restart detection", () => {
     expect(shouldCommitCycleObservation("committed", true)).toBe(false);
     expect(shouldCommitCycleObservation("failed", true)).toBe(false);
     expect(shouldCommitCycleObservation("pushed", false)).toBe(false);
+  });
+
+  it("quotes shell arguments for the active platform", () => {
+    expect(shellQuote("AI loop cycle 1 autonomous improvement", "win32")).toBe(
+      '"AI loop cycle 1 autonomous improvement"'
+    );
+    expect(shellQuote("6bd533592d96e4b7371228c3032098dd790b2427", "win32")).toBe(
+      '"6bd533592d96e4b7371228c3032098dd790b2427"'
+    );
+    expect(shellQuote("AI loop cycle 1 autonomous improvement", "linux")).toBe(
+      "'AI loop cycle 1 autonomous improvement'"
+    );
   });
 
   it("does not require a restart for ordinary story, docs, or test changes", () => {
