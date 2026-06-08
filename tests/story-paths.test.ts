@@ -6,9 +6,9 @@ import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
-  "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
+  "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6752,13 +6752,18 @@ describe("demo story critical paths", () => {
     expect(observation.choices[20]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[21]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
+    expect(choiceIds[21]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     expect(observation.choices[21]?.label).toBe(
-      "Confirm Mara's thumbprint oath reaches the opened passengers"
+      "Pull the release as Mara's thumbprint oath moves through the opened names"
     );
     expect(observation.choices[21]?.choiceGroup).toBe("Mara and manifest");
-    expect(choiceIds[22]).toBe("return_opened_manifest_mitten");
+    expect(choiceIds[22]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
     expect(observation.choices[22]?.label).toBe(
+      "Confirm Mara's thumbprint oath reaches the opened passengers"
+    );
+    expect(observation.choices[22]?.choiceGroup).toBe("Mara and manifest");
+    expect(choiceIds[23]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[23]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
@@ -8628,6 +8633,63 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("walks through with the crowd");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened-manifest players release directly with Mara's thumbprint oath", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).toContain("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
+    expect(
+      choiceIds.indexOf("pull_release_with_manifest_thumbprint_oath_from_opened_doors")
+    ).toBeGreaterThan(choiceIds.indexOf("carry_manifest_thumbprint_oath_from_opened_doors"));
+    expect(
+      choiceIds.indexOf("pull_release_with_manifest_thumbprint_oath_from_opened_doors")
+    ).toBeLessThan(choiceIds.indexOf("confirm_manifest_thumbprint_receipt_from_opened_doors"));
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "pull_release_with_manifest_thumbprint_oath_from_opened_doors"
+      )?.choiceGroup
+    ).toBe("Mara and manifest");
+
+    state = choose(story, state, "pull_release_with_manifest_thumbprint_oath_from_opened_doors");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBeUndefined();
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
     expect(observation.scene.text).toContain("walks through with the crowd");
     expectIdealScore(observation.score);
   });
@@ -14519,6 +14581,7 @@ describe("demo story critical paths", () => {
       "listen_to_opened_threshold_from_manifest",
       "notice_manifest_thumbprint_from_opened_doors",
       "carry_manifest_thumbprint_oath_from_opened_doors",
+      "pull_release_with_manifest_thumbprint_oath_from_opened_doors",
       "confirm_manifest_thumbprint_receipt_from_opened_doors",
       "return_opened_manifest_mitten",
       "pull_release_for_opened_manifest",

@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 23 Direct Manifest-Thumbprint Release
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players finish Mara's thumbprint-oath
+  passenger route directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 23 evidence was healthy overall, but
+  `passenger_manifest_thumbprint_true_ending` remained a normal-play miss in
+  random samples while coverage could reach it.
+- Why this matters: Mara's torn thumbprint is a clear story clue that her oath
+  can move with the passengers instead of trapping her as the last dispatcher.
+  A normal player should be able to trust that clue and pull the release
+  without first entering a two-step intercom or receipt variant.
+- Planned work:
+  - Add one direct Mara-and-manifest choice from `passengers_released` to
+    `passenger_manifest_thumbprint_true_ending`.
+  - Keep the existing notice, carry-to-speaker, receipt-confirmation, and
+    handoff-thumbprint routes intact.
+  - Update opened-manifest objective text so player-facing guidance names
+    pulling with the thumbprint oath.
+  - Add regression coverage for visibility, menu placement, choice group,
+    flags, and the resulting ideal ending.
+  - Run focused tests, full health, an actual CLI route, and the evidence
+    cycle.
+- Risks:
+  - The opened-manifest hub is broad, so the direct action must stay grouped
+    with Mara-and-manifest choices and not hide the richer receipt variant.
+  - Random play may still distribute across many passenger endings, but the
+    route should now appear naturally in normal sampling.
+- Status:
+  - Completed and ready for final commit/push.
+  - Added `pull_release_with_manifest_thumbprint_oath_from_opened_doors` from
+    `passengers_released` to `passenger_manifest_thumbprint_true_ending`.
+  - The choice lives in Mara and manifest between carrying the oath to the
+    speaker and confirming the passenger receipt.
+  - The choice sets `read_manifest_thumbprint`, `saw_mara_manifest_handoff`,
+    and `heard_mara_goodbye` without marking the richer receipt variant.
+  - Updated the opened-manifest and manifest-handoff objectives to mention
+    pulling with the thumbprint oath.
+  - Added regression coverage for choice visibility, ordering, choice group,
+    flags, and the resulting ideal ending.
+  - Focused story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-manifest count|manifest-specific platform beat|manifest thumbprint|thumbprint oath"`.
+  - Full `npm run health` passed: format check, TypeScript, 327 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through the new choice reached
+    `passenger_manifest_thumbprint_true_ending`, score 289, with objectives
+    cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Its random 100-run
+    evidence reached `passenger_manifest_thumbprint_true_ending` once, kept
+    ideal-ending rate at 78%, and kept coverage complete.
+- Playtest feedback:
+  - The new label reads as trusting Mara's thumbprint oath, not as a generic
+    release shortcut.
+  - The ending payoff is coherent: Mara walks through with the crowd and the
+    oath becomes unnecessary instead of remaining one dispatcher's burden.
+  - No invalid choice, stale objective, unreachable scene, unfinished
+    playtest, or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_counted_true_ending`, `passenger_threshold_boarding`, or
+    `passenger_room_boarding`.
+
 # Cycle 22 Direct Answered-Boarding Release
 
 - Date: 2026-06-08

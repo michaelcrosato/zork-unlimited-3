@@ -96,7 +96,7 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
-  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving."
+  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving."
     requires:
       all:
         - flag: freed_mara
@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1812,6 +1812,21 @@ scenes:
         label: Carry Mara's torn thumbprint oath straight to the third-car speaker
         choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
+      - id: pull_release_with_manifest_thumbprint_oath_from_opened_doors
+        label: Pull the release as Mara's thumbprint oath moves through the opened names
+        choiceGroup: Mara and manifest
+        to: passenger_manifest_thumbprint_true_ending
         requires:
           all:
             - notFlag: read_manifest_thumbprint
