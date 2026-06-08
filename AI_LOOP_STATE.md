@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 75 Threshold Clearance Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the passenger threshold clearance receipt easier to
+  find during normal play without adding another ending or removing faster
+  release paths.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence: seeded random play missed
+  `passenger_threshold_clearance_check` while coverage could find it.
+- Why this matters: Players who choose to hold the third-car threshold are
+  making a careful, passenger-centered choice. They should be able to confirm
+  everyone cleared the doorway before pulling the release, and normal playtest
+  evidence should see that beat.
+- Planned work:
+  - Add a direct optional clearance confirmation from
+    `passenger_threshold_boarding`.
+  - Keep the direct release routes available.
+  - Move the threshold-intercom confirmation ahead of the immediate pull so
+    seeded normal play sees the proof beat.
+  - Update threshold regression coverage.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the threshold clearance route.
+- Risks:
+  - Putting a confirmation before a release can make optional caution feel
+    required if overused.
+  - The threshold route should stay about shared physical space, not another
+    manifest count.
+- Status:
+  - Completed.
+  - Added `confirm_threshold_clearance_from_boarding`, which sends careful
+    threshold play directly to `passenger_threshold_clearance_check` and sets
+    `confirmed_threshold_clearance`.
+  - Reordered `passenger_threshold_intercom` so
+    `confirm_threshold_clearance_before_release` appears before the immediate
+    release while `pull_release_after_threshold_manifest` remains available.
+  - Updated focused threshold tests to cover the new direct confirmation and
+    the existing intercom confirmation.
+  - Focused threshold tests passed: `npm test -- -t "threshold"` with 2
+    relevant tests green.
+  - Story validation passed with 176 reachable scenes, 31 endings, and no
+    warnings.
+  - Seeded random playtest now visits `passenger_threshold_clearance_check` in
+    100 runs; the remaining random miss is the separate
+    `mara_manifest_thumbprint_receipt`.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `passenger_threshold_clearance_check`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` artifacts plus the tracked observation record.
+  - Actual CLI route reached `passenger_true_ending` through
+    `confirm_threshold_clearance_from_boarding` and
+    `pull_release_after_confirmed_threshold_clearance` with score 271, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_threshold_clearance` set.
+- Playtest feedback:
+  - The threshold route now makes the passenger-centered action concrete: the
+    player sees the last shoulder clear before opening every door.
+  - The direct release remains available, but the proof beat is much easier
+    for cautious players and seeded normal play to see.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise address the remaining random-discovery miss,
+    `mara_manifest_thumbprint_receipt`, only if it can be improved without
+    making late-route receipts feel mandatory.
+
 # Cycle 74 Shared Room Release Receipt
 
 - Date: 2026-06-08

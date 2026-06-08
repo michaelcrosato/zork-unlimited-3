@@ -3043,6 +3043,15 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: confirm_threshold_clearance_from_boarding
+        label: Confirm the threshold is clear before reaching the release
+        to: passenger_threshold_clearance_check
+        requires:
+          notFlag: confirmed_threshold_clearance
+        effects:
+          set:
+            confirmed_threshold_clearance: true
+            heard_mara_goodbye: true
       - id: reach_release_after_threshold_boarding
         label: Reach the release after the last passenger clears the threshold
         to: train_car
@@ -4756,9 +4765,6 @@ scenes:
       behind them. "That is enough proof," Mara says. "Pull the release before
       the threshold remembers how to close."
     choices:
-      - id: pull_release_after_threshold_manifest
-        label: Pull the release while the threshold stays open
-        to: passenger_true_ending
       - id: confirm_threshold_clearance_before_release
         label: Confirm every passenger clears the threshold before release
         to: passenger_threshold_clearance_check
@@ -4767,6 +4773,9 @@ scenes:
         effects:
           set:
             confirmed_threshold_clearance: true
+      - id: pull_release_after_threshold_manifest
+        label: Pull the release while the threshold stays open
+        to: passenger_true_ending
 
   passenger_threshold_clearance_check:
     routeImportance: optional

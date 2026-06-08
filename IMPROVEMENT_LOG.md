@@ -4,6 +4,45 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Threshold Clearance Discovery
+
+### Current Plan
+
+- Main objective: Make the passenger threshold clearance receipt easier to
+  discover during normal play.
+- Why this matters: Players who hold the third-car threshold are choosing a
+  careful passenger-rescue route. The game should let them confirm everyone
+  cleared the doorway before pulling the release, and the normal playtest
+  sample should see that beat.
+
+### Work Completed
+
+- Added `confirm_threshold_clearance_from_boarding` from
+  `passenger_threshold_boarding` to the existing
+  `passenger_threshold_clearance_check`.
+- Reordered `passenger_threshold_intercom` so the clearance confirmation is
+  offered before the immediate release while the direct release remains
+  available.
+- Updated threshold regression coverage for the new direct confirmation path.
+
+### Playtest Notes
+
+- `npm test -- -t "threshold"` passed with 2 relevant tests.
+- `npm run cyoa -- validate stories/demo.yaml --json` passed with 176
+  reachable scenes, 31 endings, and no warnings.
+- Seeded random playtest now visits `passenger_threshold_clearance_check` in
+  100 runs; the remaining random miss is the separate
+  `mara_manifest_thumbprint_receipt`.
+- `npm run health` passed with 294 tests, clean validation, and coverage
+  visiting every scene.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+  tracked observation record.
+- CLI playthrough reached `passenger_true_ending` through
+  `confirm_threshold_clearance_from_boarding` at score 271 with no remaining
+  objectives.
+- The route now proves the last passenger cleared the doorway before the
+  release, making the threshold choice feel less abstract.
+
 ## 2026-06-08 - Shared Room Release Receipt
 
 ### Current Plan
