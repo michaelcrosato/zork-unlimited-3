@@ -58,6 +58,8 @@ if [[ -n "${AI_PLAYTEST_WORKTREE:-}" && "${AI_PLAYTEST_IN_WORKTREE:-0}" != "1" ]
     mkdir -p "$(dirname "$worktree_path")"
     git worktree add --detach "$worktree_path" HEAD
   fi
+  git -C "$worktree_path" fetch origin "$launch_branch" || true
+  git -C "$worktree_path" checkout --detach "origin/$launch_branch" || true
   echo "Switching blind playtest loop to isolated worktree: $worktree_path"
   exec env \
     AI_PLAYTEST_IN_WORKTREE=1 \
@@ -78,7 +80,30 @@ delay_s=$((DELAY_MS / 1000))
 [[ "$delay_s" -lt 1 ]] && delay_s=1
 
 mkdir -p ai-runs/playtest playtest-feedback
-export AI_PLAYTEST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+SYNC_SECONDS="${AI_PLAYTEST_SYNC_SECONDS:-60}"
+last_sync=0
+
+sync_from_origin() {
+  local branch
+  local now
+  branch="${AI_PLAYTEST_PUSH_BRANCH:-main}"
+  now=$(date +%s)
+  if [[ $((now - last_sync)) -lt "$SYNC_SECONDS" ]]; then
+    export AI_PLAYTEST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+    return 0
+  fi
+  last_sync=$now
+
+  git fetch origin "$branch" || true
+  if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+    echo "[sync] tracked files are dirty; keeping current checkout"
+  else
+    git checkout --detach "origin/$branch" || true
+  fi
+  export AI_PLAYTEST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+}
+
+sync_from_origin
 
 echo "Starting parallel blind playtesting loop."
 echo "Personas: ${PERSONAS[*]}"
@@ -121,6 +146,7 @@ last_consolidate=$(date +%s)
 i=0
 
 while true; do
+  sync_from_origin
   persona="${PERSONAS[$((i % ${#PERSONAS[@]}))]}"
 
   if [[ "${#CMDS[@]}" -gt 0 && -n "${CMDS[0]}" ]]; then

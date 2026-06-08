@@ -154,4 +154,56 @@ describe("orchestrator anomaly classification", () => {
       )
     ).toEqual([]);
   });
+
+  it("flags post-launch blind playtest sessions from a stale commit", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          now: new Date("2026-06-08T00:06:00.000Z"),
+          expectedPlaytestCommit: "abcdef1",
+          expectedPlaytestCommitTimeMs: new Date("2026-06-08T00:00:00.000Z").getTime(),
+          latestPlaytestSession: {
+            ts: "2026-06-08T00:03:00.000Z",
+            commit: "1234567",
+            run_id: "pt-stale"
+          }
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "blind playtest session pt-stale used stale commit 1234567; expected abcdef1"
+    });
+  });
+
+  it("ignores pre-launch blind playtest sessions from a stale commit", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          expectedPlaytestCommit: "abcdef1",
+          expectedPlaytestCommitTimeMs: new Date("2026-06-08T00:00:00.000Z").getTime(),
+          latestPlaytestSession: {
+            ts: "2026-06-07T23:59:59.000Z",
+            commit: "1234567",
+            run_id: "pt-old"
+          }
+        })
+      )
+    ).toEqual([]);
+  });
+
+  it("allows a short catch-up window after main advances", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          expectedPlaytestCommit: "abcdef1",
+          expectedPlaytestCommitTimeMs: new Date("2026-06-08T00:00:30.000Z").getTime(),
+          latestPlaytestSession: {
+            ts: "2026-06-08T00:01:00.000Z",
+            commit: "1234567",
+            run_id: "pt-catching-up"
+          }
+        })
+      )
+    ).toEqual([]);
+  });
 });

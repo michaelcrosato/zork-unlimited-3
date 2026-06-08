@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import process from "node:process";
@@ -23,6 +24,9 @@ export interface WatchSnapshot {
   playtestAlive: boolean;
   latestArtifact?: FileStamp;
   latestObservation?: string;
+  expectedPlaytestCommit?: string;
+  expectedPlaytestCommitTimeMs?: number;
+  latestPlaytestSession?: PlaytestSessionLike;
   loopLogTail: string;
   playtestLogTail: string;
 }
@@ -43,6 +47,12 @@ interface CycleObservationLike {
     ok?: boolean;
   };
   postAgentStatus?: string;
+}
+
+interface PlaytestSessionLike {
+  ts?: string;
+  commit?: string;
+  run_id?: string;
 }
 
 export function monitorCadence(elapsedMs: number): WatchCadence {
@@ -146,6 +156,25 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
     });
   }
 
+  const postLaunchPlaytestSession = isPostLaunchPlaytestSession(
+    snapshot.latestPlaytestSession,
+    snapshot.startedAt
+  );
+  if (
+    snapshot.expectedPlaytestCommit &&
+    postLaunchPlaytestSession?.commit &&
+    !sameCommitPrefix(postLaunchPlaytestSession.commit, snapshot.expectedPlaytestCommit)
+  ) {
+    const sessionTime = parseTime(postLaunchPlaytestSession.ts);
+    const expectedTime = snapshot.expectedPlaytestCommitTimeMs ?? snapshot.startedAt.getTime();
+    if (sessionTime === undefined || sessionTime >= expectedTime + 2 * minute) {
+      anomalies.push({
+        severity: "hard",
+        reason: `blind playtest session ${postLaunchPlaytestSession.run_id ?? "unknown"} used stale commit ${postLaunchPlaytestSession.commit}; expected ${snapshot.expectedPlaytestCommit}`
+      });
+    }
+  }
+
   return anomalies;
 }
 
@@ -167,6 +196,39 @@ function parseLatestObservation(line: string | undefined): CycleObservationLike 
   } catch {
     return undefined;
   }
+}
+
+function isPostLaunchPlaytestSession(
+  session: PlaytestSessionLike | undefined,
+  startedAt: Date
+): PlaytestSessionLike | undefined {
+  if (!session) return undefined;
+  if (!session.ts) return session;
+  const parsed = new Date(session.ts);
+  if (Number.isNaN(parsed.getTime())) return session;
+  return parsed.getTime() >= startedAt.getTime() ? session : undefined;
+}
+
+function parseLatestPlaytestSession(line: string | undefined): PlaytestSessionLike | undefined {
+  if (!line) return undefined;
+  try {
+    return JSON.parse(line) as PlaytestSessionLike;
+  } catch {
+    return undefined;
+  }
+}
+
+function parseTime(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.getTime();
+}
+
+function sameCommitPrefix(left: string, right: string): boolean {
+  const a = left.trim();
+  const b = right.trim();
+  if (!a || !b) return false;
+  return a.startsWith(b) || b.startsWith(a);
 }
 
 function countMatches(text: string, pattern: RegExp): number {
@@ -237,6 +299,38 @@ function latestObservationLine(): string | undefined {
   }
 }
 
+function latestPlaytestSessionLine(): string | undefined {
+  const explicitPath = process.env.AI_PLAYTEST_FEEDBACK_FILE;
+  const worktreePath = process.env.AI_PLAYTEST_WORKTREE;
+  const path =
+    explicitPath ?? (worktreePath ? join(worktreePath, "playtest-feedback", "sessions.jsonl") : "");
+  if (!path) return undefined;
+  try {
+    const lines = readFileSync(path, "utf8").trim().split(/\r?\n/);
+    return lines.at(-1);
+  } catch {
+    return undefined;
+  }
+}
+
+function readGit(args: string[]): string | undefined {
+  try {
+    return execFileSync("git", args, {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    }).trim();
+  } catch {
+    return undefined;
+  }
+}
+
+function expectedPlaytestCommitTimeMs(): number | undefined {
+  const raw = readGit(["log", "-1", "--format=%ct"]);
+  if (!raw) return undefined;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed * 1000 : undefined;
+}
+
 function readStartedAt(runDir: string): Date {
   const raw = readTail(join(runDir, "launched-at.txt"), 200).trim();
   const parsed = raw ? new Date(raw) : new Date();
@@ -256,6 +350,9 @@ function takeSnapshot(runDir: string): WatchSnapshot {
     playtestAlive: processAlive(playtestPid),
     latestArtifact: latestCycleArtifact(),
     latestObservation: latestObservationLine(),
+    expectedPlaytestCommit: readGit(["rev-parse", "--short", "HEAD"]),
+    expectedPlaytestCommitTimeMs: expectedPlaytestCommitTimeMs(),
+    latestPlaytestSession: parseLatestPlaytestSession(latestPlaytestSessionLine()),
     loopLogTail: readTail(join(runDir, "loop.log")),
     playtestLogTail: readTail(join(runDir, "playtest-loop.log"))
   };
@@ -276,12 +373,18 @@ function renderSnapshot(snapshot: WatchSnapshot, anomalies: Anomaly[]): string {
   const soft = anomalies.filter((item) => item.severity === "soft");
   const status = hard.length > 0 ? "ANOMALY" : soft.length > 0 ? "WATCH" : "OK";
   const reasons = anomalies.length > 0 ? anomalies.map((item) => item.reason).join("; ") : "none";
+  const playtestSession = snapshot.latestPlaytestSession
+    ? `${snapshot.latestPlaytestSession.commit ?? "unknown"}@${
+        snapshot.latestPlaytestSession.ts ?? "unknown"
+      }`
+    : "none";
   return [
     `[${snapshot.now.toISOString()}] ${status}`,
     `stage=${cadence.stage}`,
     `next=${formatAge(cadence.delayMs)}`,
     `main=${snapshot.loopAlive ? "alive" : "dead"}`,
     `blind=${snapshot.playtestAlive ? "alive" : "dead"}`,
+    `playtestSession=${playtestSession}`,
     `latestArtifact=${artifact}`,
     `anomalies=${reasons}`
   ].join(" | ");
