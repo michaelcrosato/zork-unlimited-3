@@ -7,6 +7,84 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 21 Manifest Handoff Door-Check Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the checked opened-manifest handoff payoff easier to
+  find in normal play by surfacing the door-confirmation route before the
+  player pulls the release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 21 evidence: random play missed
+  `mara_manifest_handoff_intercom`,
+  `passenger_manifest_handoff_door_check`, and
+  `passenger_manifest_handoff_door_checked_true_ending` while coverage reached
+  them.
+- Why this matters: A player who watches Mara hand opened manifest names
+  forward should see a clear, careful escalation: listen to the handoff, confirm
+  every opened door has someone moving through it, then pull the release. The
+  checked ending should not depend on noticing a late hidden branch.
+- Planned work:
+  - Add visible hand-counting prose to `mara_manifest_handoff`.
+  - Promote the generic handoff flow to lead through
+    `mara_manifest_handoff_intercom`, then present door confirmation before the
+    immediate release.
+  - Keep the direct release and direct door-confirmation routes reachable.
+  - Add regression coverage for the new first-screen confirmation route and the
+    existing checked ending.
+  - Run focused tests, full health, evidence gathering, and an actual CLI route
+    through the changed path.
+- Risks:
+  - Reordering choices can move deterministic random coverage from one optional
+    variant to another, so tests must keep the simpler handoff ending covered.
+  - Thumbprint-informed players should continue seeing the prior
+    thumbprint-specific choices, not the generic handoff replacement.
+- Status:
+  - Completed.
+  - Updated `mara_manifest_handoff` text with a visible hand-counting clue
+    before the release.
+  - Reordered generic handoff choices so normal players first listen through
+    `mara_manifest_handoff_intercom`, then see the door-confirmation action
+    before the immediate release.
+  - Added `confirm_manifest_handoff_doors_from_handoff` as a direct careful
+    route to the existing `passenger_manifest_handoff_door_check`.
+  - Reworded `mara_manifest_handoff_intercom` so it supports checking doors
+    before pulling, instead of only urging an immediate release.
+  - Kept thumbprint-informed players on the thumbprint-specific choices and
+    added a regression assertion that the generic door-check shortcut is hidden
+    from that route.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts` with 224
+    tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 302 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Random 100-run summary now visits `mara_manifest_handoff_intercom`,
+    `passenger_manifest_handoff_door_check`, and
+    `passenger_manifest_handoff_door_checked_true_ending`; the simpler
+    `passenger_manifest_handoff_true_ending` remains reachable and covered by
+    regression tests but was not sampled in that deterministic 100-run set.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record, then stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough followed the final route through
+    `listen_to_manifest_handoff_from_handoff`,
+    `confirm_manifest_handoff_doors`, and
+    `pull_release_after_manifest_handoff_door_check`, reaching
+    `passenger_manifest_handoff_door_checked_true_ending`, score 292, with no
+    remaining objectives.
+- Playtest feedback:
+  - The changed route reads more naturally as an escalation: Mara calls doors,
+    the player listens, the intercom explicitly permits counting doors, and the
+    checked ending pays off waiting until every threshold has a living hand.
+  - The direct handoff screen also exposes a careful confirmation action, so
+    players who do not enter the intercom still have a visible path to the
+    checked payoff.
+  - No crash, dead end, or objective residue appeared in the actual CLI route.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue polishing optional passenger-manifest branches where
+    random evidence misses coverage-reachable endings.
+
 # Cycle 20 Manifest Thumbprint Handoff Discovery
 
 - Date: 2026-06-08

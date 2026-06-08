@@ -5563,9 +5563,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("steadiness can be handed from name to name");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_manifest_handoff_from_handoff",
+      "confirm_manifest_handoff_doors_from_handoff",
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
-      "listen_to_manifest_handoff_from_handoff",
       "ask_mara_signoff_after_manifest_handoff",
       "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
@@ -5676,12 +5677,14 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain(
       "asking for room as plainly as it asks for the release"
     );
+    expect(observation.scene.text).toContain("where you can count it before you pull");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_manifest_handoff_from_handoff",
+      "confirm_manifest_handoff_doors_from_handoff",
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
-      "listen_to_manifest_handoff_from_handoff",
       "ask_mara_signoff_after_manifest_handoff",
       "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
@@ -5693,6 +5696,30 @@ describe("demo story critical paths", () => {
       "return_from_mara_manifest_handoff"
     ]);
 
+    const directDoorState = choose(story, state, "confirm_manifest_handoff_doors_from_handoff");
+    let directDoorObservation = observe(story, directDoorState);
+
+    expect(directDoorObservation.scene.id).toBe("passenger_manifest_handoff_door_check");
+    expect(directDoorObservation.scene.text).toContain("count by doors instead of page numbers");
+    expect(directDoorObservation.state.flags.confirmed_manifest_handoff_doors).toBe(true);
+    expect(directDoorObservation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_handoff_door_check"
+    ]);
+
+    directDoorObservation = observe(
+      story,
+      choose(story, directDoorState, "pull_release_after_manifest_handoff_door_check")
+    );
+
+    expect(directDoorObservation.scene.id).toBe(
+      "passenger_manifest_handoff_door_checked_true_ending"
+    );
+    expect(directDoorObservation.scene.ending).toBe(true);
+    expect(directDoorObservation.scene.text).toContain(
+      "every stamped threshold has a living hand on it"
+    );
+    expectIdealScore(directDoorObservation.score);
+
     state = choose(story, state, "board_after_mara_manifest_handoff");
     observation = observe(story, state);
 
@@ -5701,8 +5728,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye",
-      "confirm_manifest_handoff_doors"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -5757,8 +5784,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye",
-      "confirm_manifest_handoff_doors"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
     state = choose(story, state, "confirm_manifest_handoff_doors");
@@ -6125,8 +6152,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_answered_passengers).toBeUndefined();
     expect(observation.scene.text).toContain("called every stamped door");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye",
-      "confirm_manifest_handoff_doors"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -7451,8 +7478,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("called every stamped door");
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye",
-      "confirm_manifest_handoff_doors"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -7510,8 +7537,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_handoff_goodbye",
-      "confirm_manifest_handoff_doors"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
@@ -7687,6 +7714,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).not.toContain("pull_release_during_mara_manifest_handoff");
     expect(choiceIds).not.toContain("board_after_mara_manifest_handoff");
     expect(choiceIds).not.toContain("listen_to_manifest_handoff_from_handoff");
+    expect(choiceIds).not.toContain("confirm_manifest_handoff_doors_from_handoff");
 
     const pulledState = choose(
       story,

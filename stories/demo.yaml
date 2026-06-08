@@ -2509,8 +2509,34 @@ scenes:
       torn thumbprint beside it has darkened like a route marker, and the
       speaker is full of people breathing with her instead of waiting for her.
       The third car answers with crowded shuffles, asking for room as plainly
-      as it asks for the release.
+      as it asks for the release. Near the nearest manifest door, a hand waits
+      where you can count it before you pull.
     choices:
+      - id: listen_to_manifest_handoff_from_handoff
+        label: Listen through the third-car speaker as Mara hands the names forward
+        to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
+        effects:
+          set:
+            heard_mara_goodbye: true
+      - id: confirm_manifest_handoff_doors_from_handoff
+        label: Confirm every opened manifest door has a hand on it
+        to: passenger_manifest_handoff_door_check
+        requires:
+          all:
+            - notFlag: confirmed_manifest_handoff_doors
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
+        effects:
+          set:
+            confirmed_manifest_handoff_doors: true
       - id: pull_release_during_mara_manifest_thumbprint_handoff
         label: Pull the release while Mara carries the thumbprint oath through the opened names
         to: passenger_manifest_thumbprint_true_ending
@@ -2575,17 +2601,6 @@ scenes:
         effects:
           set:
             read_manifest_thumbprint: true
-            heard_mara_goodbye: true
-      - id: listen_to_manifest_handoff_from_handoff
-        label: Listen through the third-car speaker as Mara hands the names forward
-        to: mara_manifest_handoff_intercom
-        requires:
-          all:
-            - notFlag: heard_mara_goodbye
-            - notFlag: read_mara_thumbprint
-            - notFlag: read_manifest_thumbprint
-        effects:
-          set:
             heard_mara_goodbye: true
       - id: ask_mara_signoff_after_manifest_handoff
         label: Ask Mara to sign off before anyone boards alone
@@ -4701,12 +4716,10 @@ scenes:
       The speaker stays open after Mara has called every stamped door. You can
       hear the care in the pauses she leaves between names: long enough for
       breath, short enough that the line cannot teach anyone to wait again.
-      "They are not entries anymore," she says. "They are almost through. Pull
-      the release while they still sound like people."
+      "They are not entries anymore," she says. "They are almost through. If
+      you need proof, count doors now; then pull while they still sound like
+      people."
     choices:
-      - id: pull_release_after_manifest_handoff_goodbye
-        label: Pull the release while Mara holds the manifest open
-        to: passenger_manifest_handoff_true_ending
       - id: confirm_manifest_handoff_doors
         label: Confirm every manifest door has someone moving through it
         to: passenger_manifest_handoff_door_check
@@ -4715,6 +4728,9 @@ scenes:
         effects:
           set:
             confirmed_manifest_handoff_doors: true
+      - id: pull_release_after_manifest_handoff_goodbye
+        label: Pull the release while Mara holds the manifest open
+        to: passenger_manifest_handoff_true_ending
 
   passenger_manifest_handoff_door_check:
     routeImportance: optional
