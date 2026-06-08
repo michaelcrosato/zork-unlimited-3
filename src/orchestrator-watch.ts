@@ -38,6 +38,7 @@ export interface Anomaly {
 }
 
 interface CycleObservationLike {
+  timestamp?: string;
   mcpRoute?: {
     ok?: boolean;
   };
@@ -131,13 +132,14 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
   }
 
   const observation = parseLatestObservation(snapshot.latestObservation);
-  if (observation?.mcpRoute?.ok === false) {
+  const postLaunchObservation = isPostLaunchObservation(observation, snapshot.startedAt);
+  if (postLaunchObservation?.mcpRoute?.ok === false) {
     anomalies.push({
       severity: "hard",
       reason: "latest cycle observation reports MCP route failure"
     });
   }
-  if (observation?.postAgentStatus === "failed") {
+  if (postLaunchObservation?.postAgentStatus === "failed") {
     anomalies.push({
       severity: "hard",
       reason: "latest cycle observation reports failed post-agent automation"
@@ -145,6 +147,17 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
   }
 
   return anomalies;
+}
+
+function isPostLaunchObservation(
+  observation: CycleObservationLike | undefined,
+  startedAt: Date
+): CycleObservationLike | undefined {
+  if (!observation) return undefined;
+  if (!observation.timestamp) return observation;
+  const parsed = new Date(observation.timestamp);
+  if (Number.isNaN(parsed.getTime())) return observation;
+  return parsed.getTime() >= startedAt.getTime() ? observation : undefined;
 }
 
 function parseLatestObservation(line: string | undefined): CycleObservationLike | undefined {

@@ -114,6 +114,7 @@ describe("orchestrator anomaly classification", () => {
       classifyAnomalies(
         snapshot({
           latestObservation: JSON.stringify({
+            timestamp: "2026-06-08T00:01:00.000Z",
             mcpRoute: { ok: false }
           })
         })
@@ -129,6 +130,7 @@ describe("orchestrator anomaly classification", () => {
       classifyAnomalies(
         snapshot({
           latestObservation: JSON.stringify({
+            timestamp: "2026-06-08T00:01:00.000Z",
             postAgentStatus: "failed"
           })
         })
@@ -137,5 +139,19 @@ describe("orchestrator anomaly classification", () => {
       severity: "hard",
       reason: "latest cycle observation reports failed post-agent automation"
     });
+  });
+
+  it("ignores pre-launch cycle observation failures", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          latestObservation: JSON.stringify({
+            timestamp: "2026-06-07T23:59:59.000Z",
+            mcpRoute: { ok: false },
+            postAgentStatus: "failed"
+          })
+        })
+      )
+    ).toEqual([]);
   });
 });
