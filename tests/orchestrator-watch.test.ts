@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   classifyAnomalies,
   isLoopCycleArtifactName,
+  loopCycleArtifactNamesFromLog,
   monitorCadence,
   type WatchSnapshot
 } from "../src/orchestrator-watch.js";
@@ -51,6 +52,22 @@ describe("orchestrator artifact detection", () => {
     expect(isLoopCycleArtifactName("cycle-2026-06-08T15-40-26-681Z-post-agent.md")).toBe(true);
     expect(isLoopCycleArtifactName("cycle-30-home-loss-transcript.md")).toBe(false);
     expect(isLoopCycleArtifactName("cycle-before-launch.md")).toBe(false);
+  });
+
+  it("only counts artifacts referenced by wrapper-owned write lines", () => {
+    const logText = [
+      "Wrote ai-runs/cycle-2026-06-08T15-52-36-098Z.md",
+      "Wrote ai-runs/cycle-2026-06-08T15-52-36-098Z-prompt.md",
+      "nested output: Wrote ai-runs/cycle-2026-06-08T16-10-06-697Z-prompt.md",
+      "Wrote ai-runs/cycle-30-home-loss-transcript.md",
+      "Wrote ai-runs\\cycle-2026-06-08T15-52-36-098Z-post-agent.md"
+    ].join("\n");
+
+    expect(loopCycleArtifactNamesFromLog(logText)).toEqual([
+      "cycle-2026-06-08T15-52-36-098Z.md",
+      "cycle-2026-06-08T15-52-36-098Z-prompt.md",
+      "cycle-2026-06-08T15-52-36-098Z-post-agent.md"
+    ]);
   });
 });
 

@@ -46,6 +46,17 @@ export function isLoopCycleArtifactName(name: string): boolean {
   return loopCycleArtifactPattern.test(name);
 }
 
+export function loopCycleArtifactNamesFromLog(logText: string): string[] {
+  const names: string[] = [];
+  for (const line of logText.split(/\r?\n/)) {
+    const match = line.match(/^Wrote\s+ai-runs[\\/](\S+\.md)\s*$/);
+    if (match && isLoopCycleArtifactName(match[1])) {
+      names.push(match[1]);
+    }
+  }
+  return names;
+}
+
 interface CycleObservationLike {
   timestamp?: string;
   mcpRoute?: {
@@ -293,10 +304,11 @@ function readTail(path: string, maxChars = 12_000): string {
   }
 }
 
-function latestCycleArtifact(): FileStamp | undefined {
+function latestCycleArtifact(loopLogTail: string): FileStamp | undefined {
   if (!existsSync("ai-runs")) return undefined;
+  const names = new Set(loopCycleArtifactNamesFromLog(loopLogTail));
   const files = readdirSync("ai-runs", { withFileTypes: true })
-    .filter((entry) => entry.isFile() && isLoopCycleArtifactName(entry.name))
+    .filter((entry) => entry.isFile() && names.has(entry.name))
     .map((entry) => {
       const path = join("ai-runs", entry.name);
       return { path, mtimeMs: statMtime(path) };
@@ -369,6 +381,7 @@ function readStartedAt(runDir: string): Date {
 function takeSnapshot(runDir: string): WatchSnapshot {
   const loopPid = readPid(join(runDir, "loop.pid"));
   const playtestPid = readPid(join(runDir, "playtest-loop.pid"));
+  const loopLogTail = readTail(join(runDir, "loop.log"), 100_000);
   return {
     now: new Date(),
     startedAt: readStartedAt(runDir),
@@ -377,12 +390,12 @@ function takeSnapshot(runDir: string): WatchSnapshot {
     playtestPid,
     loopAlive: processAlive(loopPid),
     playtestAlive: processAlive(playtestPid),
-    latestArtifact: latestCycleArtifact(),
+    latestArtifact: latestCycleArtifact(loopLogTail),
     latestObservation: latestObservationLine(),
     expectedPlaytestCommit: readGit(["rev-parse", "--short", "HEAD"]),
     expectedPlaytestCommitTimeMs: expectedPlaytestCommitTimeMs(),
     latestPlaytestSession: parseLatestPlaytestSession(latestPlaytestSessionLine()),
-    loopLogTail: readTail(join(runDir, "loop.log")),
+    loopLogTail,
     playtestLogTail: readTail(join(runDir, "playtest-loop.log"))
   };
 }
