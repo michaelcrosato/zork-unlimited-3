@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 24 Opened Manifest Handoff Choice Lane
+
+- Date: 2026-06-08
+- Main objective: Make `passenger_manifest_handoff_true_ending` easier to
+  choose on long opened-manifest screens by giving Mara's active handoff its own
+  first-class choice group.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 24 evidence: coverage can reach every scene,
+  but normal/random samples still make the simple manifest handoff route lower
+  visibility than the surrounding optional passenger threads.
+- Why this matters: On the opened-manifest hub, players see many valid
+  passenger branches at once. The key handoff route should read as a clear
+  finishing lane instead of being mixed into generic Mara or release groups.
+- Planned work:
+  - Add a player-facing `Finish Mara's handoff` choice group that sorts before
+    generic release and optional branch groups.
+  - Tag the initial, returned-hub, handoff-scene, and platform handoff choices
+    that directly continue the simple Mara manifest handoff.
+  - Update transcript and route tests so the player-facing grouping stays
+    protected.
+  - Run focused tests, full health, evidence gathering, and an actual CLI
+    playthrough through the changed route.
+- Risks:
+  - This improves player-facing screen organization, not deterministic random
+    choice logic.
+  - The new group must stay narrow so stronger thumbprint, passenger-answer,
+    and gathering branches do not get mislabeled as the simple handoff route.
+- Status:
+  - Completed.
+  - Added `Finish Mara's handoff` to the choice-group display order ahead of
+    `Board / release`.
+  - Retagged the simple opened-door handoff choices at `passengers_released`,
+    `mara_manifest_handoff`, the returned opened-manifest hub, and the
+    passenger platform continuation.
+  - Updated transcript expectations and story-path assertions for the new
+    player-facing lane.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts tests/transcript.test.ts tests/blind-facade.test.ts`
+    and `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 302 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record.
+  - Actual CLI playthrough inspected the opened-manifest hub and confirmed the
+    first two choices are grouped under `Finish Mara's handoff`; after returning
+    from Mara's call, the direct carry and release choices are also grouped
+    there. The route reached `passenger_manifest_handoff_true_ending`, score
+    296, with no remaining choices.
+- Playtest feedback:
+  - The handoff route is now visually separated from the broader optional
+    passenger menu, which should help no-hints blind players recognize it as a
+    coherent lane.
+  - The route still feels choice-heavy, but the key continuation and direct
+    release are no longer buried under generic grouping.
+  - No crash, dead end, unreachable scene, or stale objective appeared in the
+    changed route.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue reducing opened-manifest hub crowding around the
+    highest-value passenger-release payoffs without adding new branches.
+
 # Cycle 23 Opened Manifest Handoff Objective
 
 - Date: 2026-06-08

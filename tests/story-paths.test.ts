@@ -5579,6 +5579,16 @@ describe("demo story critical paths", () => {
       "board_with_mara_answered_handoff",
       "return_from_mara_manifest_handoff"
     ]);
+    expect(
+      observation.choices
+        .filter((choice) => choice.choiceGroup === "Finish Mara's handoff")
+        .map((choice) => choice.id)
+    ).toEqual([
+      "listen_to_manifest_handoff_from_handoff",
+      "confirm_manifest_handoff_doors_from_handoff",
+      "pull_release_during_mara_manifest_handoff",
+      "board_after_mara_manifest_handoff"
+    ]);
 
     state = choose(story, state, "return_from_mara_manifest_handoff");
     observation = observe(story, state);
@@ -6268,8 +6278,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(choiceIds[0]).toBe("watch_mara_open_manifest");
+    expect(observation.choices[0]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[1]).toBe("carry_mara_handoff_as_doors_open");
     expect(observation.choices[1]?.label).toBe("Carry Mara's opened-door handoff to the third car");
+    expect(observation.choices[1]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[2]).toBe("ask_mara_to_sign_off_opened_manifest");
     expect(observation.choices[2]?.label).toBe(
       "Ask Mara to sign off before the opened passengers board"
@@ -13438,6 +13450,14 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_with_seen_manifest_handoff"
     );
+    expect(
+      observation.choices
+        .filter((choice) => choice.choiceGroup === "Finish Mara's handoff")
+        .map((choice) => choice.id)
+    ).toEqual([
+      "carry_mara_manifest_handoff_from_opened_doors",
+      "pull_release_with_seen_manifest_handoff"
+    ]);
 
     const intercomHandoffState = choose(
       story,

@@ -11,6 +11,7 @@ export interface ChoiceDisplayGroup<T extends ChoiceDisplayItem> {
 const MIN_GROUPED_CHOICE_COUNT = 8;
 
 const GROUP_ORDER = [
+  "Finish Mara's handoff",
   "Board / release",
   "Mara and manifest",
   "Mara",

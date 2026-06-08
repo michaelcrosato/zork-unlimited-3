@@ -117,7 +117,8 @@ describe("transcript rendering", () => {
     expect(transcript).toContain(
       "Board / release:\n- Board now and pull the emergency release for every opened name"
     );
-    expect(transcript).toContain("Mara and manifest:\n- Watch Mara call the opened doors");
+    expect(transcript).toContain("Finish Mara's handoff:\n- Watch Mara call the opened doors");
+    expect(transcript).toContain("- Carry Mara's opened-door handoff to the third car");
     expect(transcript).toContain("Counts / answers:\n- Review the opened count");
     expect(transcript).toContain(
       "Lunch tin / shift count:\n- Check the lunch-tin worker's passenger count before boarding"

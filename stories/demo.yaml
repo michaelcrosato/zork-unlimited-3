@@ -1549,7 +1549,7 @@ scenes:
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
-        choiceGroup: Mara and manifest
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff
         requires:
           notFlag: saw_mara_manifest_handoff
@@ -1558,7 +1558,7 @@ scenes:
             saw_mara_manifest_handoff: true
       - id: carry_mara_handoff_as_doors_open
         label: Carry Mara's opened-door handoff to the third car
-        choiceGroup: Mara and manifest
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff
         requires:
           all:
@@ -1943,7 +1943,7 @@ scenes:
             pressed_transfer_to_speaker: true
       - id: carry_mara_manifest_handoff_from_opened_doors
         label: Carry Mara's opened-door handoff into the third car
-        choiceGroup: Mara and manifest
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff_intercom
         requires:
           all:
@@ -1957,7 +1957,7 @@ scenes:
             heard_mara_goodbye: true
       - id: pull_release_with_seen_manifest_handoff
         label: Pull the release with Mara's opened-door handoff already moving
-        choiceGroup: Board / release
+        choiceGroup: Finish Mara's handoff
         to: passenger_manifest_handoff_true_ending
         requires:
           all:
@@ -2545,6 +2545,7 @@ scenes:
     choices:
       - id: listen_to_manifest_handoff_from_handoff
         label: Listen through the third-car speaker as Mara hands the names forward
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff_intercom
         requires:
           all:
@@ -2556,6 +2557,7 @@ scenes:
             heard_mara_goodbye: true
       - id: confirm_manifest_handoff_doors_from_handoff
         label: Confirm every opened manifest door has a hand on it
+        choiceGroup: Finish Mara's handoff
         to: passenger_manifest_handoff_door_check
         requires:
           all:
@@ -2585,6 +2587,7 @@ scenes:
             heard_mara_goodbye: true
       - id: pull_release_during_mara_manifest_handoff
         label: Pull the release while Mara is still handing names forward
+        choiceGroup: Finish Mara's handoff
         to: passenger_manifest_handoff_true_ending
         requires:
           all:
@@ -2610,6 +2613,7 @@ scenes:
             heard_mara_goodbye: true
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff_intercom
         requires:
           all:
@@ -3083,6 +3087,7 @@ scenes:
             heard_mara_goodbye: true
       - id: board_with_mara_manifest_handoff_from_platform
         label: Board while Mara's opened-door handoff holds
+        choiceGroup: Finish Mara's handoff
         to: mara_manifest_handoff_intercom
         requires:
           all:
