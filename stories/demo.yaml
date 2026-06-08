@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
+  - text: Start Mara's opened-door handoff, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1559,7 +1559,7 @@ scenes:
       - id: carry_mara_handoff_as_doors_open
         label: Carry Mara's opened-door handoff to the third car
         choiceGroup: Finish Mara's handoff
-        to: mara_manifest_handoff
+        to: mara_manifest_handoff_intercom
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
@@ -1570,6 +1570,7 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off before the opened passengers board
         choiceGroup: Mara and manifest

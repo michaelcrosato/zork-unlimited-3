@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
+  "Start Mara's opened-door handoff, carry it straight to the third-car speaker, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -5744,31 +5744,17 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "carry_mara_handoff_as_doors_open");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_manifest_handoff");
-    expect(observation.scene.text).toContain("steadiness can be handed from name to name");
-    expect(observation.scene.text).toContain(
-      "asking for room as plainly as it asks for the release"
-    );
-    expect(observation.scene.text).toContain("where you can count it before you pull");
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
-    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_manifest_handoff_from_handoff",
-      "confirm_manifest_handoff_doors_from_handoff",
-      "pull_release_during_mara_manifest_handoff",
-      "board_after_mara_manifest_handoff",
-      "ask_mara_signoff_after_manifest_handoff",
-      "ask_mara_about_morning_after_manifest_handoff",
-      "make_room_after_mara_manifest_handoff",
-      "hold_threshold_after_mara_manifest_handoff",
-      "finish_count_after_mara_manifest_handoff",
-      "touch_mara_manifest_thumbprint",
-      "continue_manifest_handoff_roll_call",
-      "board_with_mara_answered_handoff",
-      "return_from_mara_manifest_handoff"
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
     ]);
 
-    const directDoorState = choose(story, state, "confirm_manifest_handoff_doors_from_handoff");
+    const directDoorState = choose(story, state, "confirm_manifest_handoff_doors");
     let directDoorObservation = observe(story, directDoorState);
 
     expect(directDoorObservation.scene.id).toBe("passenger_manifest_handoff_door_check");
@@ -5791,18 +5777,6 @@ describe("demo story critical paths", () => {
       "every stamped threshold has a living hand on it"
     );
     expectIdealScore(directDoorObservation.score);
-
-    state = choose(story, state, "board_after_mara_manifest_handoff");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
-    expect(observation.scene.text).toContain("called every stamped door");
-    expect(observation.scene.text).toContain("they still sound like people");
-    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "confirm_manifest_handoff_doors",
-      "pull_release_after_manifest_handoff_goodbye"
-    ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
     observation = observe(story, state);

@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 33 Manifest Handoff Shortcut Clarity
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_manifest_handoff_true_ending` by making the opened-manifest
+  "carry the handoff to the third car" choice actually advance to the
+  third-car speaker.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence specifically suggests improving discovery for
+  `passenger_manifest_handoff_true_ending`, which random play reached only 2
+  times in the 250-run MCP sample.
+- Why this matters: The player-facing label already promises a direct handoff
+  into the third car, but the route currently inserts another setup scene with
+  many optional branches. Letting the carry choice land at the speaker should
+  make the intended release/door-check decision easier to notice without
+  deleting the slower "watch Mara call the opened doors" path.
+- Planned work:
+  - Route `carry_mara_handoff_as_doors_open` directly to
+    `mara_manifest_handoff_intercom`.
+  - Mark the intercom beat as heard on that shortcut so objectives and flags
+    match the player-visible scene.
+  - Update focused path tests and the opened-manifest objective text.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the changed handoff shortcut.
+- Risks:
+  - This improves clarity and route discoverability, but random uniform play
+    may still under-sample a single optional ending in a large branch hub.
+  - The slower setup beat must remain reachable through
+    `watch_mara_open_manifest` so story depth is not lost.
+- Status:
+  - Completed.
+  - `carry_mara_handoff_as_doors_open` now goes directly to
+    `mara_manifest_handoff_intercom` and sets both
+    `saw_mara_manifest_handoff` and `heard_mara_goodbye`.
+  - The opened-manifest objective now tells players they can carry the handoff
+    straight to the third-car speaker.
+  - The slower setup route remains available through `watch_mara_open_manifest`,
+    preserving the full `mara_manifest_handoff` scene and its optional branches.
+  - Focused checks passed: `npm test -- tests/story-paths.test.ts` ran the
+    Vitest suite with 308 passing tests, and
+    `npm run cyoa -- validate stories/demo.yaml --json` reported 191 reachable
+    scenes / 46 endings with no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 308 tests, story
+    validation, and coverage playtest with `unfinished: 0`,
+    `unvisitedScenes: []`, and `passenger_manifest_handoff_true_ending`
+    covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored `ai-runs/`
+    reports and appended one tracked cycle observation.
+  - Actual CLI route reached `passenger_manifest_handoff_true_ending`, score
+    289, by choosing `carry_mara_handoff_as_doors_open` and then
+    `pull_release_after_manifest_handoff_goodbye`; final observation had no
+    remaining choices and no remaining objectives.
+- Playtest feedback:
+  - The shortcut now matches the label: choosing to carry Mara's opened-door
+    handoff to the third car immediately presents the two useful next actions,
+    count doors or pull while the handoff is moving.
+  - The route feels less buried because it skips the 13-choice setup hub for
+    players who already chose the direct carry option.
+  - No crash, dead end, stale objective, reachability issue, or score
+    regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect another low-frequency ideal ending whose player-facing
+    label promises a direct action but still routes through a broad optional
+    hub.
+
 # Cycle 32 Early Escape Payoff Clarity
 
 - Date: 2026-06-08
