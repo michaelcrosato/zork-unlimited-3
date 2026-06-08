@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 28 Lunch-Tin Speaker Beat
+
+- Date: 2026-06-08
+- Main objective: Make the opened-manifest lunch-tin release route carry its
+  character beat to Mara's third-car speaker before the ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 28 evidence is healthy overall, but the 100-run random sample
+  still missed `passenger_lunch_tin_true_ending` while coverage and larger MCP
+  samples could reach it.
+- Why this matters: The lunch-tin worker route is one of the clearest passenger
+  payoffs because it turns counting from a ledger mechanism into an ordinary
+  shift rhythm. A normal player who chooses the opened-manifest lunch-tin
+  release should hear that rhythm on the speaker before the ending resolves.
+- Planned work:
+  - Route the opened-manifest lunch-tin release intent through
+    `passenger_lunch_tin_intercom` instead of jumping directly to the ending.
+  - Update the objective and menu label so the player understands the speaker
+    step is intentional.
+  - Update regression coverage for the two-step speaker-to-release flow.
+  - Run focused tests, full health, an actual route, and the evidence cycle.
+- Risks:
+  - This adds one extra click for the direct lunch-tin release route, so the
+    intercom beat must feel like payoff rather than friction.
+  - Random play may still miss individual optional endings because the
+    opened-manifest hub is intentionally broad.
+- Status:
+  - Completed and ready for commit/push.
+  - The opened-manifest lunch-tin release intent now routes to
+    `passenger_lunch_tin_intercom`, then uses the existing
+    `pull_release_after_lunch_tin_intercom` choice to reach
+    `passenger_lunch_tin_true_ending`.
+  - The opened-manifest objective and menu label now tell players to carry the
+    lunch-tin count to the speaker before pulling the release.
+  - Focused lunch-tin route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin count"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through `pull_release_on_opened_lunch_tin_count` now stops
+    at `passenger_lunch_tin_intercom`, then reaches
+    `passenger_lunch_tin_true_ending`, score 311, with objectives cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Evidence stayed
+    green: health passed, random play had `ended: 100` / `unfinished: 0`,
+    coverage stayed complete, MCP play reached `true_ending`, and the adaptive
+    route ended at `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The changed route reads better as a player sequence: the opened-manifest
+    lunch-tin choice now produces Mara's speaker line about the worker's
+    never-ending shift before the release resolves.
+  - The extra click felt purposeful in the CLI route because the intercom scene
+    explicitly tells the player to pull while the passengers move together.
+  - The 100-run random sample still missed `passenger_lunch_tin_true_ending`,
+    so this should be treated as a quality/discoverability pass rather than a
+    proven frequency improvement.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise reduce opened-manifest hub density or improve visibility for
+    remaining random misses such as `passenger_room_boarding`,
+    `passenger_gathered_boarding`, or `mara_manifest_thumbprint_receipt_true_ending`.
+
 # Cycle 27 Remembered Morning Speaker Beat
 
 - Date: 2026-06-08
