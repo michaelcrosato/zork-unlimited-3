@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1685,6 +1685,21 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
+      - id: pull_release_on_opened_conductor_signal
+        label: Follow the conductor's clear signal and pull the release
+        choiceGroup: Passenger gathering
+        to: passenger_conductor_true_ending
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: punched_conductor_transfer
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: confirm_opened_conductor_clearance
         label: Ask the conductor to clear every opened door before boarding
         choiceGroup: Passenger gathering

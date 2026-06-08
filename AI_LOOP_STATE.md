@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 49 Direct Conductor Signal
+
+- Date: 2026-06-08
+- Main objective: Make the simple conductor clear-signal payoff easier to pick
+  directly from the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Fresh random evidence remains healthy overall, but
+  `passenger_conductor_true_ending` still appears as a normal-play miss while
+  nearby checked and transfer conductor endings are easier to find.
+- Why this matters: The opened passenger rescue already tells players the old
+  conductor can steady the platform. A normal player should be able to trust
+  that clear signal and pull the release without first finding the punch-memory
+  detour or the checked-clearance variant.
+- Planned work:
+  - Add a direct opened-manifest choice for following the conductor's clear
+    signal and pulling the release.
+  - Keep the existing punch-memory, checked-clearance, counted, and transfer
+    conductor routes intact.
+  - Update the opened-manifest objective so the player-facing goal says
+    "follow or confirm" the conductor signal.
+  - Add regression coverage for direct conductor-signal visibility and payoff.
+  - Run focused checks, full health, evidence gathering, and one actual CLI
+    route through the new conductor signal.
+- Risks:
+  - The opened-manifest hub is broad, so the new label must read like a clear
+    conductor payoff rather than another generic passenger-gathering command.
+  - Random play may still under-sample this ending because many ideal endings
+    compete in the same hub.
+- Status:
+  - Completed.
+  - Added `pull_release_on_opened_conductor_signal` from `passengers_released`
+    to `passenger_conductor_true_ending`, setting the passenger-gathering and
+    conductor-clearance flags expected by the ending.
+  - Updated the opened-manifest objective to name following or confirming the
+    conductor's clear signal.
+  - Preserved the existing conductor punch-memory, checked-clearance, counted,
+    and transfer routes.
+  - Added regression assertions for the new hub choice, menu ordering, flags,
+    ending text, and ideal-ending score.
+  - Focused conductor/menu tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "conductor clearance directly|optional opened-manifest count|opened manifest keeps the recovery objectives"`.
+  - Full `npm run health` passed: format check, TypeScript, 321 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_conductor_true_ending`, score 283, via
+    `pull_release_on_opened_conductor_signal`; objectives were cleared.
+  - `npm run ai:cycle` completed in evidence-only mode and wrote ignored
+    `ai-runs/` artifacts.
+- Playtest feedback:
+  - The new label is concrete: it names the conductor's clear signal and the
+    release action in one choice.
+  - The route lands immediately in the intended ideal ending and the score
+    awards communicate the player helped the passengers gather.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining low-frequency random
+    misses around manifest thumbprint receipt, passenger farewell, or mitten
+    memory.
+
 # Cycle 48 Direct Lunch-Tin Pace
 
 - Date: 2026-06-08
