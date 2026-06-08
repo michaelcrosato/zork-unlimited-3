@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
+  "Start Mara's opened-door handoff, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);

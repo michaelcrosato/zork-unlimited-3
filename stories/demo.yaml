@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
+  - text: Start Mara's opened-door handoff, board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara

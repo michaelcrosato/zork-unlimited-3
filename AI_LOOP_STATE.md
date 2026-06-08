@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 28 Opened Manifest Handoff Objective
+
+- Date: 2026-06-08
+- Main objective: Make Mara's opened-door handoff visible in the first
+  opened-manifest objective before the player has already chosen that route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the supplied loop evidence: health is green, all
+  scenes are reachable, but `passenger_manifest_handoff_true_ending` remains a
+  normal-play discoverability target.
+- Why this matters: The opened-manifest hub already puts Mara's handoff choices
+  first, but the objective only mentioned boarding or optional passenger
+  threads. A normal player should see the handoff named as a valid primary next
+  step before they scan the large menu.
+- Planned work:
+  - Update the opened-manifest objective to explicitly start with Mara's
+    opened-door handoff.
+  - Keep route behavior, choice ordering, and ending distribution unchanged.
+  - Update the existing regression constant that protects the objective text.
+  - Run focused tests, full health, evidence collection, and an actual CLI
+    route through the changed screen.
+- Risks:
+  - This improves player guidance, not random-choice probability directly.
+  - The opened-manifest hub remains intentionally broad, so future blind-play
+    feedback may still call for menu or route simplification.
+- Status:
+  - Completed.
+  - Changed the opened-manifest objective to:
+    "Start Mara's opened-door handoff, board now, or choose an optional
+    opened-passenger thread such as the lunch-tin count or roster proof."
+  - Updated `tests/story-paths.test.ts` so the objective wording remains
+    covered by the existing opened-manifest route test.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 305 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_manifest_handoff_true_ending` covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI route reached the changed `passengers_released` screen, showed
+    the new objective, confirmed the first two choices are grouped under
+    `Finish Mara's handoff`, then reached
+    `passenger_manifest_handoff_true_ending`, score 285, with no remaining
+    objectives.
+- Playtest feedback:
+  - The opened-manifest hub now tells the player up front that starting Mara's
+    handoff is one of the intended main actions.
+  - The route still feels dense because the hub offers many optional passenger
+    threads, but the objective and first choice group now agree.
+  - No crash, dead end, unreachable scene, stale objective, or score issue
+    appeared in the changed route.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise keep improving readability around the opened-manifest hub only if
+    blind/player-view evidence shows continued confusion.
+
 # Cycle 27 Early Escape Replay Guidance
 
 - Date: 2026-06-08
