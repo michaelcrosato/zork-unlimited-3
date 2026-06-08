@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1870,9 +1870,9 @@ scenes:
             heard_passenger_echoes: true
             followed_opened_newspaper_fold: true
       - id: board_with_opened_manifest_echoes
-        label: Follow the opened door-echoes and check who answers
+        label: Board with the opened door-echoes leading the way
         choiceGroup: Door echoes / threshold
-        to: opened_manifest_echoes
+        to: passenger_echoed_boarding
         requires:
           all:
             - notFlag: heard_passenger_echoes
@@ -1883,6 +1883,7 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
+            echoed_manifest_boarded: true
       - id: ready_opened_manifest_for_mara
         label: Ready every opened manifest name on the third car
         choiceGroup: Manifest count
@@ -3241,6 +3242,19 @@ scenes:
         effects:
           set:
             checked_echoed_passengers: true
+      - id: seat_echoed_passengers_before_release
+        label: Seat every familiar echo before touching the release
+        to: passenger_echoed_seat_receipt
+        requires:
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            checked_echoed_passengers: true
+            confirmed_echoed_manifest_seats: true
+            echoed_manifest_boarded: true
+            heard_mara_goodbye: true
       - id: listen_to_echoed_manifest_from_boarding
         label: Listen as the boarded echoes answer Mara
         to: passenger_echoed_manifest_intercom
@@ -3294,13 +3308,12 @@ scenes:
         label: Confirm the checked echoes have seats aboard
         to: passenger_echoed_seat_receipt
         requires:
-          all:
-            - flag: heard_mara_goodbye
-            - notFlag: confirmed_echoed_manifest_seats
+          notFlag: confirmed_echoed_manifest_seats
         effects:
           set:
             confirmed_echoed_manifest_seats: true
             echoed_manifest_boarded: true
+            heard_mara_goodbye: true
       - id: reach_release_after_checked_echoes
         label: Reach the release once every familiar echo is aboard
         to: train_car

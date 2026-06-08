@@ -7,6 +7,76 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 39 Door-Echo Seat Receipt Shortcut
+
+- Date: 2026-06-08
+- Main objective: Improve normal-play discovery for
+  `passenger_echoed_seat_receipt` and the door-echo boarding payoff.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence showed a healthy overall ideal-ending rate, but
+  the MCP random sample still missed `passenger_echoed_boarding` and
+  `passenger_echoed_seat_receipt`, even though coverage could find them.
+- Why this matters: Players who already checked the familiar door-echoes had
+  enough information to seat those passengers, but the receipt was hidden
+  behind an extra speaker detour. The shortcut lets the player act when the
+  scene already says every echo has become a person aboard the third car.
+- Planned work:
+  - Let checked door-echoes confirm seats directly from
+    `passenger_echoed_check`.
+  - Add a direct seat-confirmation choice from `passenger_echoed_boarding`.
+  - Make the existing opened-manifest "board with door-echoes" choice actually
+    board into `passenger_echoed_boarding`.
+  - Update the opened-manifest objective so door-echo seat checks are visible.
+  - Add regression coverage for the direct checked-echo and boarding routes.
+  - Run focused checks, full health, evidence collection, and one actual route
+    through the new shortcut.
+- Risks:
+  - The opened-manifest hub is broad, so wording must not make the door-echo
+    route look mandatory.
+  - Random play may still under-sample the branch because many ideal passenger
+    endings compete in the same area.
+- Status:
+  - Completed.
+  - Updated `board_with_opened_manifest_echoes` so the opened-manifest hub now
+    reaches `passenger_echoed_boarding` directly and sets
+    `echoed_manifest_boarded`.
+  - Added `seat_echoed_passengers_before_release`, routing boarded echo players
+    directly to `passenger_echoed_seat_receipt`.
+  - Relaxed `confirm_checked_echoed_manifest_seats` so checked echoes can
+    confirm seats without first taking a speaker detour; choosing it now also
+    marks Mara's speaker receipt as heard.
+  - Updated the opened-manifest objective to name the door-echo seat check.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` with 227
+    passing tests, and `npm run cyoa -- validate stories/demo.yaml --json` with
+    191 reachable scenes / 46 endings and no errors or warnings.
+  - Full `npm run health` passed: format check, TypeScript, 311 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Random sample passed at the project's broader receipt gate:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 500 --strategy random --summary --json`
+    ended all 500 runs and visited both `passenger_echoed_boarding` and
+    `passenger_echoed_seat_receipt`. The smaller deterministic 250-run sample
+    still under-sampled those scenes.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`; it wrote ignored
+    `ai-runs/` reports and appended one tracked cycle observation.
+  - Actual CLI route reached `passenger_echoed_true_ending`, score 274, no
+    remaining objectives, after choosing `board_with_opened_manifest_echoes`,
+    `seat_echoed_passengers_before_release`, and
+    `pull_release_after_echoed_seat_receipt`.
+- Playtest feedback:
+  - The hub label now does what it says: boarding with the opened door-echoes
+    immediately produces the quiet third-car boarding scene.
+  - The new receipt action is visible before the release and pays off with
+    concrete passenger seating details: thermos cap, newspaper fold, and
+    mitten knock all become ordinary aboard sounds.
+  - No crash, stale objective, unreachable scene, unfinished run, or score
+    regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings whose
+    setup is visible but whose strongest payoff is still one step too hidden.
+
 # Cycle 38 Keepsake Owner Direct Checks
 
 - Date: 2026-06-08
