@@ -4492,6 +4492,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("You do not pull the release alone");
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_shared_release_after_making_room",
+      "confirm_shared_room_release"
+    ]);
+
+    const sharedRoomReleaseState = state;
 
     state = choose(story, state, "pull_shared_release_after_making_room");
     observation = observe(story, state);
@@ -4500,6 +4506,25 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
     expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
+    expectIdealScore(observation.score);
+
+    state = choose(story, sharedRoomReleaseState, "confirm_shared_room_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release_receipt");
+    expect(observation.scene.text).toContain("the back row");
+    expect(observation.scene.text).toContain("No hand is left out");
+    expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_shared_room_release"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
     expectIdealScore(observation.score);
 
     state = choose(story, roomState, "ask_conductor_to_clear_room_made");
@@ -4728,7 +4753,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.shared_release_reached).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_shared_release_after_making_room"
+      "pull_shared_release_after_making_room",
+      "confirm_shared_room_release"
     ]);
 
     state = choose(story, state, "pull_shared_release_after_making_room");

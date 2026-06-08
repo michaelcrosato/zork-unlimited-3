@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 74 Shared Room Release Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional final receipt to the shared room-making
+  release while preserving the direct passenger release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing complete coverage,
+  stable ideal-ending rates, and room for compact late-route story polish.
+- Why this matters: The make-room route already lets players turn the crowded
+  third car into ordinary shared space, but the shared handle went straight to
+  release. Cautious players now get proof that the release reached the back row
+  before pulling, without slowing decisive players.
+- Planned work:
+  - Keep `pull_shared_release_after_making_room` as the first direct release
+    path.
+  - Add one optional shared-room receipt from `passenger_room_release`.
+  - Update room-making regression coverage for direct and confirmed paths.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the new beat.
+- Risks:
+  - Another optional receipt can feel repetitive if it reads like a required
+    delay.
+  - The scene must stay about shared space and shared agency, not another
+    manifest count or door-proof check.
+- Status:
+  - Completed.
+  - Added `confirm_shared_room_release` and
+    `passenger_room_release_receipt`.
+  - Kept the direct shared-release pull first, so existing decisive play still
+    reaches `passenger_true_ending` immediately.
+  - Added focused regression coverage proving the receipt path reaches
+    `passenger_true_ending` and sets `confirmed_shared_room_release`.
+  - Focused room-making tests passed:
+    `npm test -- -t "room"` with 14 relevant tests green.
+  - Story validation passed with 176 reachable scenes, 31 endings, and no
+    warnings.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `passenger_room_release_receipt`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. It wrote ignored
+    `ai-runs` artifacts and appended a tracked cycle observation; long-run
+    signals stayed stable with ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, and MCP route `true_ending` at score 305.
+  - Actual CLI route reached `passenger_true_ending` through
+    `confirm_shared_room_release` and
+    `pull_release_after_confirmed_shared_room_release` with score 272, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_shared_room_release` set.
+- Playtest feedback:
+  - The receipt makes the make-room route's promise concrete: the handle does
+    not just move through the front of the crowd, it reaches the back row.
+  - The direct release remains first and still works, so the added beat reads
+    as optional caution rather than a mandatory delay.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect whether optional late-route receipts are becoming too
+    dense and shift toward either blind-feedback fixes or higher-level report
+    quality.
+
 # Cycle 73 Manifest Thumbprint Receipt
 
 - Date: 2026-06-08

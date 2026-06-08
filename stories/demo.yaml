@@ -4817,6 +4817,29 @@ scenes:
       - id: pull_shared_release_after_making_room
         label: Pull together once every hand has found the release
         to: passenger_true_ending
+      - id: confirm_shared_room_release
+        label: Confirm the shared release reaches the back of the car
+        to: passenger_room_release_receipt
+        requires:
+          notFlag: confirmed_shared_room_release
+        effects:
+          set:
+            confirmed_shared_room_release: true
+
+  passenger_room_release_receipt:
+    routeImportance: optional
+    text: >
+      You keep the handle still for one breath and let the shared motion travel
+      the full length of the car. The newspaper woman passes the brace to the
+      lunch-tin worker, the worker clears a space for the old conductor, and the
+      conductor waits until the mittened child can feel the handle answer back.
+      No hand is left out, and no one has to push forward alone. Mara hears the
+      room settle around the release and says, "Received by the back row. Pull
+      together."
+    choices:
+      - id: pull_release_after_confirmed_shared_room_release
+        label: Pull together after the release reaches every hand
+        to: passenger_true_ending
 
   passenger_counted_manifest_intercom:
     routeImportance: optional

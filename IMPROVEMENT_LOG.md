@@ -4,6 +4,35 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Shared Room Release Receipt
+
+### Current Plan
+
+- Main objective: Add an optional receipt to the shared room-making release
+  while preserving the direct pull.
+- Why this matters: Players who make space in the third car can now confirm
+  the release reached the back row before pulling, making the route's shared
+  agency more concrete without forcing another step.
+
+### Work Completed
+
+- Added `passenger_room_release_receipt` from `passenger_room_release`.
+- Kept `pull_shared_release_after_making_room` as the first direct ending
+  choice.
+- Added regression coverage for the direct and confirmed shared-release paths.
+
+### Playtest Notes
+
+- `npm test -- -t "room"` passed with 14 relevant tests.
+- `npm run health` passed with 294 tests, clean validation, 176 reachable
+  scenes, and coverage visiting every scene including the new receipt.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed with stable long-run
+  metrics: ideal-ending rate 78%, unfinished runs 0, best score 399.
+- CLI playthrough reached `passenger_true_ending` through
+  `confirm_shared_room_release` at score 272 with no remaining objectives.
+- The new beat reads as optional confirmation that no one in the crowded car is
+  left out of the shared release.
+
 ## 2026-06-08 - Manifest Thumbprint Receipt
 
 ### Current Plan
