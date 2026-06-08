@@ -4335,9 +4335,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("threshold has been cleared passenger by passenger");
+    expect(observation.scene.text).toContain("HOME cannot close around a leftover name");
     expectIdealScore(observation.score);
 
     state = initialState(story);
@@ -4376,9 +4377,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("threshold has been cleared passenger by passenger");
+    expect(observation.scene.text).toContain("Threshold clear");
     expectIdealScore(observation.score);
 
     state = initialState(story);

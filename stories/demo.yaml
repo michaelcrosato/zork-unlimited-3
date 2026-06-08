@@ -4884,7 +4884,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_threshold_clearance
         label: Pull the release after the threshold is clear
-        to: passenger_true_ending
+        to: passenger_threshold_checked_true_ending
 
   passenger_room_intercom:
     routeImportance: optional
@@ -6364,6 +6364,22 @@ scenes:
       umbrellas lifting into rain-bright morning while strangers step aside for
       one another. Mara's voice thanks each passenger by name, then lets the
       speaker go quiet over an empty aisle that finally belongs to no one.
+    choices: []
+
+  passenger_threshold_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once after the threshold has been cleared
+      passenger by passenger. The newspaper woman steps through with her bundle
+      flat, the lunch-tin worker holds back until the child has both mittens on
+      the rail, and the conductor keeps one boot in the doorway until every
+      shoulder is past the line. Because you waited for the crossing itself,
+      HOME cannot close around a leftover name. Mara says "Threshold clear" one
+      more time, and the open doors make it true.
     choices: []
 
   passenger_morning_stop_checked_true_ending:
