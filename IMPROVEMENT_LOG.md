@@ -2407,3 +2407,54 @@ tests/ai-loop.test.ts`
 
 - Continue improving true-ending discoverability while keeping the passenger
   branch's late-game choice surface easy to scan.
+
+## 2026-06-08 - Codex MCP Startup Recovery
+
+### Changes
+
+- Installed locked npm dependencies in the local checkout so `node --import tsx`
+  can launch the TypeScript MCP server.
+- Pinned the repo-local Codex MCP server `cwd` to
+  `/home/micha/dev/zork-unlimited-3` instead of `.` so client startup resolves
+  `tsx` and `src/mcp.ts` from the intended project root.
+
+### Playtest Notes
+
+- What was tested:
+  - Direct stdio `initialize` and `tools/list` probe through
+    `node --import tsx src/mcp.ts`
+  - `npm run health`
+  - `npm run ai:cycle`
+  - Manual sequential MCP route using `start_game`, `get_scene`,
+    `choose_option`, `get_score`, and `get_transcript`
+- Quantitative metrics:
+  - Tests: 15 files, 279 tests passing
+  - Validation: 164 scenes, 31 endings, 164 reachable scenes
+  - Coverage self-play: 176 effective runs, 0 unfinished, all scenes visited
+  - AI cycle MCP route: reached `true_ending` with score 305
+  - Manual MCP route: reached `true_ending` with score 305 and no remaining
+    objectives
+- What worked:
+  - The patched config starts the MCP server from the same root as the passing
+    repo-local stdio probe.
+  - MCP tool discovery returned all expected tools, including `start_game`,
+    `choose_option`, `get_score`, `get_transcript`, and `run_playtest`.
+  - The Mara true-ending route stayed clear from notice to clock, service room,
+    signal ledger, release, boarding, and final emergency handle.
+- What felt bad/confusing:
+  - Raw JSON-RPC `tools/call` messages sent as one pipe can be processed out of
+    order by the server, so route probes should use the SDK client or another
+    sequential caller.
+- Bugs found:
+  - Codex MCP startup was brittle when `cwd = "."` was not resolved to the repo
+    root; pinning the absolute cwd removes that ambiguity for this checkout.
+
+### Evaluation
+
+- MCP startup and actual tool calls are green in this checkout after dependency
+  installation and the config fix.
+
+### Next Iteration
+
+- Keep using SDK-backed MCP route probes for real playthrough evidence instead
+  of raw batched stdio messages.
