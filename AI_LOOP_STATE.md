@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 71 Threshold Clearance Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional final confirmation to the passenger
+  threshold route while preserving the direct release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing complete coverage,
+  stable ideal-ending rates, and room for compact late-route story polish.
+- Why this matters: The threshold route asks players to keep the third-car
+  doorway open for everyone, but the intercom payoff went straight to the
+  release. Cautious players now get a final "everyone cleared the doorway"
+  receipt without slowing decisive players.
+- Planned work:
+  - Keep `pull_release_after_threshold_manifest` as the first direct release
+    choice.
+  - Add one optional threshold-clearance scene from
+    `passenger_threshold_intercom`.
+  - Update threshold-route regression coverage for direct and confirmed paths.
+  - Run focused tests, validation, full health, and an actual playthrough
+    through the new beat.
+- Risks:
+  - Another optional check can feel repetitive if the wording sounds like a
+    required extra task.
+  - The route should still read as a shared doorway/space payoff rather than
+    another manifest-count route.
+- Status:
+  - Completed.
+  - Added `confirm_threshold_clearance_before_release` from
+    `passenger_threshold_intercom` while keeping
+    `pull_release_after_threshold_manifest` first.
+  - Added `passenger_threshold_clearance_check`, a one-step optional scene
+    where the threshold proves every passenger has cleared the doorway before
+    the release.
+  - Updated `tests/story-paths.test.ts` to prove the threshold intercom exposes
+    both direct and confirmed paths, and that the confirmed path reaches
+    `passenger_true_ending`.
+  - Focused threshold tests passed:
+    `npm test -- -t threshold` with 2 relevant tests green.
+  - Story validation passed with 173 reachable scenes, 31 endings, and no
+    warnings.
+  - Full `npm run health` passed: format check, TypeScript, 292 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited
+    `passenger_threshold_clearance_check`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. It wrote ignored
+    `ai-runs` reports and appended a tracked cycle observation; long-run
+    signals stayed stable with ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, and MCP route `true_ending` at score 305.
+  - Actual CLI route reached `passenger_true_ending` through
+    `confirm_threshold_clearance_before_release` and
+    `pull_release_after_confirmed_threshold_clearance` with score 277, no
+    remaining choices, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_threshold_clearance` set.
+- Playtest feedback:
+  - The new receipt makes the threshold route's promise concrete: the doorway
+    is not just open, every passenger has actually cleared it.
+  - The direct release remains first and still works, so the added beat reads
+    as optional caution rather than a mandatory delay.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect another compact late-route asymmetry where a direct
+    action or optional proof beat improves payoff without adding route
+    complexity.
+
 # Cycle 70 Conductor Clearance Receipt
 
 - Date: 2026-06-08

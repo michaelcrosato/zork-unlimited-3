@@ -4713,6 +4713,29 @@ scenes:
       - id: pull_release_after_threshold_manifest
         label: Pull the release while the threshold stays open
         to: passenger_true_ending
+      - id: confirm_threshold_clearance_before_release
+        label: Confirm every passenger clears the threshold before release
+        to: passenger_threshold_clearance_check
+        requires:
+          notFlag: confirmed_threshold_clearance
+        effects:
+          set:
+            confirmed_threshold_clearance: true
+
+  passenger_threshold_clearance_check:
+    routeImportance: optional
+    text: >
+      You keep one hand off the release while the threshold makes one last
+      count without numbers. Newspaper first, lunch tin next, the child with
+      both mittened hands on the rail, then the old conductor holding the door
+      until the last shoulder is clear. No one has to answer to the ledger.
+      They answer by leaving enough room for the person behind them. Mara lets
+      the footsteps reach the speaker, then says, "Threshold clear. Now let it
+      stay open."
+    choices:
+      - id: pull_release_after_confirmed_threshold_clearance
+        label: Pull the release after the threshold is clear
+        to: passenger_true_ending
 
   passenger_room_intercom:
     routeImportance: optional

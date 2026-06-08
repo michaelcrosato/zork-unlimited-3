@@ -4265,6 +4265,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("threshold you held");
     expect(observation.scene.text).toContain("each cleared inch becoming an invitation");
     expect(observation.scene.text).toContain("before the threshold remembers how to close");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_threshold_manifest",
+      "confirm_threshold_clearance_before_release"
+    ]);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
     observation = observe(story, state);
@@ -4306,7 +4310,18 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
-    state = choose(story, state, "pull_release_after_threshold_manifest");
+    state = choose(story, state, "confirm_threshold_clearance_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_clearance_check");
+    expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
+    expect(observation.scene.text).toContain("Threshold clear");
+    expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_threshold_clearance"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
