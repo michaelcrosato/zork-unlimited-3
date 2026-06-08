@@ -3272,13 +3272,70 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("made it an answer");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_badge_proof_goodbye"
+      "pull_release_after_badge_proof_goodbye",
+      "confirm_badge_proof_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_badge_proof_goodbye");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("true_ending");
+    expectIdealScore(observation.score);
+  });
+
+  it("adds an optional badge-proof receipt before Mara's core ending", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "inspect_notice_back",
+      "take_lantern_after_notice_back",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "tune_radio",
+      "note_radio_route",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "mark_mara_clear_from_ledger",
+      "board_after_clearing_mara",
+      "listen_to_badge_proof_intercom"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_badge_proof_intercom");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_badge_proof_goodbye",
+      "confirm_badge_proof_receipt"
+    ]);
+
+    state = choose(story, state, "confirm_badge_proof_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_badge_proof_receipt");
+    expect(observation.scene.text).toContain("Received by every door");
+    expect(observation.scene.text).toContain("proof sounds finished");
+    expect(observation.state.flags.confirmed_badge_proof_receipt).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_badge_proof_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_badge_proof_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("true_ending");
+    expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -3381,7 +3438,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("made it an answer");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_badge_proof_goodbye"
+      "pull_release_after_badge_proof_goodbye",
+      "confirm_badge_proof_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_badge_proof_goodbye");
@@ -3440,7 +3498,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Badge proof required");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_badge_proof_goodbye"
+      "pull_release_after_badge_proof_goodbye",
+      "confirm_badge_proof_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_badge_proof_goodbye");
@@ -11023,7 +11082,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "ask_about_thumbprint_after_badge_proof",
-      "pull_release_after_badge_proof_goodbye"
+      "pull_release_after_badge_proof_goodbye",
+      "confirm_badge_proof_receipt"
     ]);
 
     state = choose(story, state, "ask_about_thumbprint_after_badge_proof");

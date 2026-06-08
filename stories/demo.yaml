@@ -4350,6 +4350,29 @@ scenes:
       - id: pull_release_after_badge_proof_goodbye
         label: Pull the release while the badge proof answers
         to: true_ending
+      - id: confirm_badge_proof_receipt
+        label: Confirm the badge proof reaches every door
+        to: mara_badge_proof_receipt
+        requires:
+          notFlag: confirmed_badge_proof_receipt
+        effects:
+          set:
+            confirmed_badge_proof_receipt: true
+
+  mara_badge_proof_receipt:
+    routeImportance: optional
+    text: >
+      You keep one hand on the release while Mara's badge number travels down
+      the train. The first door answers with the old proof line, but the second
+      repeats it as clearance, and the third says it like a name someone can
+      leave with. The badge warms against the handle each time the answer comes
+      back changed. Mara does not have to state the number again. "Received by
+      every door," the speaker says, and for once the proof sounds finished
+      instead of demanded.
+    choices:
+      - id: pull_release_after_badge_proof_receipt
+        label: Pull the release after every door receives the proof
+        to: true_ending
 
   mara_last_dispatch_intercom:
     routeImportance: main

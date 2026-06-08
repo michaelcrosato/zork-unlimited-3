@@ -7,6 +7,60 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 64 Badge-Proof Receipt Confirmation
+
+- Date: 2026-06-08
+- Main objective: Add an optional receipt beat to Mara's badge-proof route
+  without slowing the direct release path.
+- Why this matters: `PLAYTEST_DIGEST.md` still has no consolidated blind-play
+  window. Current evidence shows the core route is healthy, but the badge-proof
+  variant moved from Mara naming the proof line directly to the release. The
+  last-dispatch branch already had a receipt-style confirmation; this gives the
+  badge-proof branch the same final proof that every door heard her identity as
+  clearance, not as another demand.
+- Planned work:
+  - Add a focused `mara_badge_proof_receipt` scene after
+    `mara_badge_proof_intercom`.
+  - Keep `pull_release_after_badge_proof_goodbye` available as the first direct
+    release choice.
+  - Set `confirmed_badge_proof_receipt` for regression and playtest visibility.
+  - Update badge-proof regressions for direct release, thumbprint recovery, and
+    the new receipt path.
+  - Run focused tests, validation, full health, and an actual CLI route through
+    the new beat.
+- Risks:
+  - Another late optional proof can slow the climax if it reads as required.
+  - Badge-proof can combine with the thumbprint branch, so the new receipt had
+    to preserve thumbprint recovery choices.
+- Status:
+  - Completed.
+  - Added `confirm_badge_proof_receipt` to `mara_badge_proof_intercom`, keeping
+    the existing direct release as the first release choice.
+  - Added `mara_badge_proof_receipt`, where the proof line returns from each
+    door as clearance and resolves to `true_ending`.
+  - Updated badge-proof story-path regressions and added a dedicated receipt
+    test that checks `confirmed_badge_proof_receipt`.
+  - Focused badge-proof regression passed:
+    `npm test -- -t "badge-proof"`.
+  - Story validation passed with 168 reachable scenes and no warnings.
+  - Coverage playtest visited `mara_badge_proof_receipt`, had `unfinished: 0`,
+    and `unvisitedScenes: []`.
+  - Full `npm run health` passed: format check, TypeScript, 290 tests, story
+    validation, and coverage playtest.
+  - Actual CLI route reached `true_ending` with score 291, no objectives,
+    inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_badge_proof_receipt` set.
+- Playtest feedback:
+  - The new receipt reads as a useful final confirmation: the badge number
+    travels down the train and comes back as clearance before the release.
+  - The direct release remains available immediately from the badge-proof
+    intercom, so the added beat does not make the core ending mandatory or
+    harder to reach.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise keep adding small payoff beats only where a high-traffic route has
+    a concrete missing confirmation.
+
 # Cycle 63 Lunch-Tin Roster Proof Confirmation
 
 - Date: 2026-06-08
