@@ -96,7 +96,7 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
-  - text: Board now, or choose an optional opened-passenger thread such as the lunch-tin count.
+  - text: Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -5656,9 +5656,15 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
-      - id: pull_release_after_lunch_tin_roster
-        label: Pull the release after the worker clocks everyone out
-        to: passenger_lunch_tin_roster_true_ending
+      - id: confirm_lunch_tin_roster_proof_from_roster
+        label: Confirm each roster proof before pulling the release
+        to: passenger_lunch_tin_roster_proof
+        requires:
+          notFlag: confirmed_lunch_tin_roster_proof
+        effects:
+          set:
+            heard_final_roll_call: true
+            confirmed_lunch_tin_roster_proof: true
 
   passenger_lunch_tin_roll_call:
     routeImportance: optional
@@ -5672,9 +5678,6 @@ scenes:
       without keeping him. Every open door waits for the release like a time
       clock nobody has to punch again.
     choices:
-      - id: pull_release_after_lunch_tin_roll_call
-        label: Pull the release after the roster clocks everyone out
-        to: passenger_lunch_tin_roster_true_ending
       - id: confirm_lunch_tin_roster_proof_before_release
         label: Confirm each roster proof before pulling the release
         to: passenger_lunch_tin_roster_proof
@@ -5683,6 +5686,9 @@ scenes:
         effects:
           set:
             confirmed_lunch_tin_roster_proof: true
+      - id: pull_release_after_lunch_tin_roll_call
+        label: Pull the release after the roster clocks everyone out
+        to: passenger_lunch_tin_roster_true_ending
 
   passenger_lunch_tin_roster_proof:
     routeImportance: optional

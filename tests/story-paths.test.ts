@@ -5,7 +5,7 @@ import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Board now, or choose an optional opened-passenger thread such as the lunch-tin count.";
+  "Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6397,10 +6397,29 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_after_reading_lunch_tin_roster",
       "hear_roster_clock_out_roll_call",
-      "pull_release_after_lunch_tin_roster"
+      "confirm_lunch_tin_roster_proof_from_roster"
     ]);
 
-    state = choose(story, state, "hear_roster_clock_out_roll_call");
+    const openedManifestRosterState = state;
+
+    state = choose(story, openedManifestRosterState, "confirm_lunch_tin_roster_proof_from_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.state.flags.confirmed_lunch_tin_roster_proof).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_lunch_tin_roster"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, openedManifestRosterState, "hear_roster_clock_out_roll_call");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
@@ -6408,8 +6427,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call",
-      "confirm_lunch_tin_roster_proof_before_release"
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
     state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
@@ -8164,7 +8183,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_after_reading_lunch_tin_roster",
       "hear_roster_clock_out_roll_call",
-      "pull_release_after_lunch_tin_roster"
+      "confirm_lunch_tin_roster_proof_from_roster"
     ]);
 
     state = choose(story, state, "listen_after_reading_lunch_tin_roster");
@@ -8192,7 +8211,14 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "read_lunch_tin_roster_from_boarding");
     observation = observe(story, state);
 
-    state = choose(story, state, "pull_release_after_lunch_tin_roster");
+    state = choose(story, state, "confirm_lunch_tin_roster_proof_from_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.scene.text).toContain("All time cards closed");
+    expect(observation.state.flags.confirmed_lunch_tin_roster_proof).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
@@ -8272,8 +8298,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call",
-      "confirm_lunch_tin_roster_proof_before_release"
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
     state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
@@ -8318,8 +8344,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call",
-      "confirm_lunch_tin_roster_proof_before_release"
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
     state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
@@ -8371,7 +8397,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_after_reading_lunch_tin_roster",
       "hear_roster_clock_out_roll_call",
-      "pull_release_after_lunch_tin_roster"
+      "confirm_lunch_tin_roster_proof_from_roster"
     ]);
 
     state = choose(story, state, "hear_roster_clock_out_roll_call");
@@ -8383,8 +8409,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call",
-      "confirm_lunch_tin_roster_proof_before_release"
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
     state = choose(story, state, "confirm_lunch_tin_roster_proof_before_release");
@@ -8446,8 +8472,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("counted him without keeping him");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_lunch_tin_roll_call",
-      "confirm_lunch_tin_roster_proof_before_release"
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
     ]);
 
     state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
@@ -8519,7 +8545,13 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roster");
 
-    state = choose(story, state, "pull_release_after_lunch_tin_roster");
+    state = choose(story, state, "confirm_lunch_tin_roster_proof_from_roster");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.scene.text).toContain("All time cards closed");
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");

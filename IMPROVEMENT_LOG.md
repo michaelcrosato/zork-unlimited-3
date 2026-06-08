@@ -4,6 +4,50 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Lunch-Tin Roster Proof Route
+
+### Current Plan
+
+- Main objective: Make the lunch-tin roster proof show up naturally when
+  players choose the opened-manifest roster branch.
+- Why this matters: The roster is stronger when it proves each passenger has a
+  concrete morning to return to before the release, instead of jumping straight
+  to the ending.
+
+### Work Completed
+
+- Updated the opened-manifest objective to name the lunch-tin count or roster
+  proof.
+- Routed the lunch-tin roster branch through
+  `passenger_lunch_tin_roster_proof` before
+  `passenger_lunch_tin_roster_true_ending`.
+- Put proof confirmation before the direct release on the lunch-tin roll-call
+  screen.
+- Updated story-path regression coverage for the direct roster-proof route and
+  preserved roll-call release path.
+
+### Playtest Notes
+
+- `npx vitest run tests/story-paths.test.ts` passed with 222 tests.
+- `npm run cyoa -- validate stories/demo.yaml --json` passed with 176 reachable
+  scenes and no warnings.
+- A CLI playthrough through `call_lunch_tin_roster_from_opened_manifest` and
+  `confirm_lunch_tin_roster_proof_from_roster` reached
+  `passenger_lunch_tin_roster_true_ending` at score 294 with no remaining
+  objectives.
+- 100-run random play now visits `passenger_lunch_tin_roster_proof`; remaining
+  random misses are `passenger_lunch_tin_intercom`,
+  `passenger_lunch_tin_roll_call`, and `passenger_lunch_tin_true_ending`.
+- Coverage playtest stayed complete with `unfinished: 0` and
+  `unvisitedScenes: []`.
+- `npm run health` passed with format check, TypeScript, 300 tests, validation,
+  and complete coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+  generation and appended the tracked observation record; nested agent
+  execution was skipped because `AI_AGENT_CMD` is not set.
+- The branch now reads as a complete time-card payoff: roster, proof, then
+  release.
+
 ## 2026-06-08 - Mara Sign-off Morning Bridge
 
 ### Current Plan

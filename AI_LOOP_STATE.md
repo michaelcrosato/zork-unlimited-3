@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 83 Lunch-Tin Roster Proof
+
+- Date: 2026-06-08
+- Main objective: Make the lunch-tin roster proof naturally appear when
+  players choose the opened-manifest lunch-tin roster branch.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 82's next step: random play reached the
+  lunch-tin roster ending but still skipped `passenger_lunch_tin_roster_proof`.
+- Why this matters: The roster proof is the emotional payoff for the worker's
+  ordinary-life thread. If players read the roster and immediately end the
+  route, they miss the concrete proof that each passenger is returning to a
+  life outside the line.
+- Planned work:
+  - Update the opened-manifest objective to mention the lunch-tin roster proof,
+    not just the count.
+  - Route the roster branch through `passenger_lunch_tin_roster_proof` before
+    `passenger_lunch_tin_roster_true_ending`.
+  - Put the proof confirmation before immediate release on the final roll-call
+    screen.
+  - Add regression coverage for the direct roster-proof route and preserved
+    roll-call release route.
+- Risks:
+  - The roster branch now has one extra beat before its ending, so the proof
+    screen must read like payoff rather than friction.
+  - The broader lunch-tin intercom and base lunch-tin ending are still rare in
+    100-run random play and should remain a future discovery target if blind
+    feedback agrees.
+- Status:
+  - Completed.
+  - Updated `stories/demo.yaml` so the opened-manifest objective names the
+    lunch-tin count or roster proof.
+  - Replaced the roster scene's immediate ending choice with
+    `confirm_lunch_tin_roster_proof_from_roster`, which sets
+    `confirmed_lunch_tin_roster_proof` and then offers the existing proof
+    release.
+  - Reordered the roll-call scene so proof confirmation appears before the
+    direct release.
+  - Updated story-path regressions for the new roster-proof route, the
+    proof-first roll-call order, and the still-available direct roll-call
+    ending.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Actual CLI playthrough through `call_lunch_tin_roster_from_opened_manifest`
+    -> `confirm_lunch_tin_roster_proof_from_roster` reached
+    `passenger_lunch_tin_roster_true_ending`, score 294, with no remaining
+    objectives.
+  - 100-run random play now visits `passenger_lunch_tin_roster_proof`; random
+    unvisited lunch-tin scenes dropped to `passenger_lunch_tin_intercom`,
+    `passenger_lunch_tin_roll_call`, and `passenger_lunch_tin_true_ending`.
+  - Coverage playtest remains complete with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Full `npm run health` passed: format check, TypeScript, 300 tests, story
+    validation with 176 reachable scenes, and coverage playtest with
+    `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation and appended one tracked observation; it stopped before nested
+    agent execution because `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The roster proof now feels like the natural close of the time-card thread:
+    reading the roster leads to checking each ordinary proof before the release.
+  - The route is one beat longer, but the added beat explains why the roster
+    matters instead of behaving like a hidden optional receipt.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play discovery for the remaining rare lunch-tin
+    intercom/roll-call/base-ending path.
+
 # Cycle 82 Lunch-Tin Discovery
 
 - Date: 2026-06-08
