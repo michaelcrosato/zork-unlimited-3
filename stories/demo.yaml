@@ -2175,6 +2175,22 @@ scenes:
           set:
             made_room_for_passengers: true
             shared_release_reached: true
+      - id: confirm_shared_release_from_opened_manifest
+        label: Confirm the shared release reaches the back row before pulling
+        choiceGroup: Board / release
+        to: passenger_room_release_receipt
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: made_room_for_passengers
+            - notFlag: shared_release_reached
+            - notFlag: confirmed_shared_room_release
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            made_room_for_passengers: true
+            shared_release_reached: true
+            confirmed_shared_room_release: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
         choiceGroup: Mara and manifest
@@ -3261,6 +3277,24 @@ scenes:
           set:
             made_room_for_passengers: true
             heard_mara_goodbye: true
+      - id: confirm_shared_release_from_platform
+        label: Confirm the shared release reaches the back row before pulling
+        to: passenger_room_release_receipt
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: made_room_for_passengers
+            - notFlag: shared_release_reached
+            - notFlag: confirmed_shared_room_release
+            - notFlag: heard_mara_goodbye
+        effects:
+          set:
+            made_room_for_passengers: true
+            shared_release_reached: true
+            confirmed_shared_room_release: true
       - id: board_with_mara_manifest_handoff_from_platform
         label: Board while Mara's opened-door handoff holds
         choiceGroup: Finish Mara's handoff

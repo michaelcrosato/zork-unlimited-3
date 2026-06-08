@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 44 Direct Shared-Release Receipt
+
+- Date: 2026-06-08
+- Main objective: Make the checked shared-release payoff easier to choose from
+  the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall, but
+  `passenger_shared_release_checked_true_ending` has been a low-frequency
+  optional passenger payoff compared with broader passenger releases.
+- Why this matters: The opened manifest already tells players that the crowd
+  is making room around the third-car release. A careful player should be able
+  to confirm the handle reaches every hand directly from the visible late hubs,
+  without first discovering the receipt through a nested room/release submenu.
+- Planned work:
+  - Add a direct shared-release confirmation from `passengers_released`.
+  - Add the same direct confirmation from `passenger_platform`.
+  - Preserve the slower make-room, intercom, shared-release, and conductor
+    side routes.
+  - Add regression coverage for both direct routes.
+  - Run focused tests, full health, evidence collection, and one actual CLI
+    route through the new confirmation.
+- Risks:
+  - The opened-passenger menus are already broad, so the new labels need to
+    read as careful release confirmation rather than generic menu noise.
+  - Random play may still under-sample the branch because many ideal passenger
+    endings compete in the same hubs.
+- Status:
+  - Completed.
+  - Added `confirm_shared_release_from_opened_manifest`, routing
+    `passengers_released` directly to `passenger_room_release_receipt` while
+    setting `made_room_for_passengers`, `shared_release_reached`, and
+    `confirmed_shared_room_release`.
+  - Added `confirm_shared_release_from_platform` from `passenger_platform`
+    with the same receipt flags.
+  - Preserved all existing room-making, intercom, shared-release, and conductor
+    paths.
+  - Added regression tests for both direct receipt routes and updated the exact
+    opened-manifest menu snapshot.
+  - Focused shared-release regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "shared room|shared release|room release|make room"`
+    with 5 matching tests and 228 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 317 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_shared_release_checked_true_ending`,
+    score 265, no remaining objectives, through
+    `confirm_shared_release_from_opened_manifest`.
+  - Evidence-only `npm run ai:cycle` passed its health gates and random sample
+    reached `passenger_shared_release_checked_true_ending` 3/100 runs with the
+    ideal-ending rate still 78%, non-ideal pressure unchanged at bad 3%, lost
+    3%, escape 8%, and all coverage scenes visited.
+- Playtest feedback:
+  - The new hub choice reads like the careful version of "pass the release hand
+    to hand," not like a separate lore detour.
+  - The receipt payoff is clear: players see the back-row confirmation before
+    the ending says the handle answered every hand.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger routes.
+    Current evidence points at morning-stop, passenger manifest thumbprint, and
+    remaining lunch-tin check/self-count discoverability.
+
 # Cycle 43 Direct Lunch-Tin Roster Proof
 
 - Date: 2026-06-08

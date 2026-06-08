@@ -4915,6 +4915,63 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets opened manifest players confirm the shared room release directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const openedChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(openedChoiceIds).toContain("confirm_shared_release_from_opened_manifest");
+    expect(openedChoiceIds.indexOf("confirm_shared_release_from_opened_manifest")).toBeGreaterThan(
+      openedChoiceIds.indexOf("pass_shared_release_from_opened_manifest")
+    );
+
+    state = choose(story, state, "confirm_shared_release_from_opened_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release_receipt");
+    expect(observation.scene.text).toContain("the back row");
+    expect(observation.scene.text).toContain("No hand is left out");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_shared_room_release"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_shared_release_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Received by every hand");
+    expectIdealScore(observation.score);
+  });
+
   it("lets the opened passenger platform directly surface the room-making intercom", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -4967,6 +5024,60 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("lets platform explorers confirm the shared room release directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const platformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(platformChoiceIds).toContain("confirm_shared_release_from_platform");
+    expect(platformChoiceIds.indexOf("confirm_shared_release_from_platform")).toBeGreaterThan(
+      platformChoiceIds.indexOf("listen_as_passengers_make_room")
+    );
+
+    state = choose(story, state, "confirm_shared_release_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release_receipt");
+    expect(observation.scene.text).toContain("the back row");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+
+    state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_shared_release_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the handle has answered all");
     expectIdealScore(observation.score);
   });
 
@@ -13929,6 +14040,7 @@ describe("demo story critical paths", () => {
       "listen_as_opened_passengers_gather",
       "make_room_from_opened_manifest",
       "pass_shared_release_from_opened_manifest",
+      "confirm_shared_release_from_opened_manifest",
       "listen_to_passenger_answers",
       "ask_mara_to_handoff_opened_roll_call",
       "let_opened_manifest_names_answer_once",
