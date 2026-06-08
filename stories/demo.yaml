@@ -2059,6 +2059,20 @@ scenes:
             matched_manifest_keepsakes: true
             checked_matched_keepsakes: true
             helped_passengers_gather: true
+      - id: confirm_opened_manifest_keepsake_owners
+        label: Match and confirm every opened keepsake owner
+        choiceGroup: Morning / keepsakes
+        to: passenger_keepsake_owner_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_keepsake_owners
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            checked_matched_keepsakes: true
+            confirmed_keepsake_owners: true
+            helped_passengers_gather: true
       - id: carry_morning_chorus_from_opened_manifest
         label: Carry the remembered mornings into the third car
         choiceGroup: Board / release
@@ -3100,6 +3114,19 @@ scenes:
         effects:
           set:
             matched_manifest_keepsakes: true
+            helped_passengers_gather: true
+      - id: confirm_platform_keepsake_owners
+        label: Match the keepsakes and confirm every owner before boarding
+        to: passenger_keepsake_owner_check
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_keepsake_owners
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            checked_matched_keepsakes: true
+            confirmed_keepsake_owners: true
             helped_passengers_gather: true
       - id: check_lunch_tin_echo_count_from_platform
         label: Check the lunch-tin worker's echo count before boarding

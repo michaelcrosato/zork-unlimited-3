@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 42 Direct Keepsake Owner Checks
+
+- Date: 2026-06-08
+- Main objective: Make the optional keepsake-owner receipt easier to choose
+  from the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence was healthy overall, but
+  `passenger_keepsake_owner_checked_true_ending` remained a low-frequency
+  optional payoff compared with the more obvious keepsake route.
+- Why this matters: The opened manifest already shows ordinary objects proving
+  who the passengers are. A careful player should be able to match those
+  keepsakes and confirm every owner immediately from that premise, without
+  first discovering the owner receipt through an extra keepsake-check submenu.
+- Planned work:
+  - Add a direct owner-confirmation choice from `passengers_released`.
+  - Add the same direct careful-check choice from `passenger_platform`.
+  - Preserve the slower match, check, intercom, boarding, and roll-call
+    keepsake routes.
+  - Add regression coverage for both direct routes.
+  - Run focused checks, full health, evidence collection, and one actual CLI
+    route through the new shortcut.
+- Risks:
+  - The opened-manifest hub is already broad, so the new label needed to stay
+    specific enough to read as a careful keepsake action rather than another
+    generic passenger-gathering route.
+  - Random play may still under-sample the branch because many ideal passenger
+    endings compete in the same late-game menu.
+- Status:
+  - Completed.
+  - Added `confirm_opened_manifest_keepsake_owners`, routing opened-manifest
+    players directly to `passenger_keepsake_owner_check` while setting
+    `matched_manifest_keepsakes`, `checked_matched_keepsakes`,
+    `confirmed_keepsake_owners`, and `helped_passengers_gather`.
+  - Added `confirm_platform_keepsake_owners` from `passenger_platform` with
+    the same confirmation flags.
+  - Added regression tests for both direct owner-confirmation routes.
+  - Focused keepsake regression passed:
+    `npx vitest run tests/story-paths.test.ts -t keepsake` with 12 matching
+    tests and 217 skipped.
+  - Story validation passed with 191 reachable scenes / 46 endings and no
+    errors or warnings: `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 313 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`. Coverage reached
+    `passenger_keepsake_owner_checked_true_ending` twice.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`. Its random sample
+    ended 100/100 runs and reached
+    `passenger_keepsake_owner_checked_true_ending` twice.
+  - Actual CLI route reached
+    `passenger_keepsake_owner_checked_true_ending`, score 294, no remaining
+    objectives, after choosing `confirm_opened_manifest_keepsake_owners`
+    directly from `passengers_released`.
+- Playtest feedback:
+  - The new hub choice reads like the natural careful version of matching the
+    manifest keepsakes, not like a separate lore detour.
+  - The owner-check payoff is clear: every ordinary object has to be claimed by
+    a person before the release opens the doors.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    score regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings.
+    Current evidence still points at lunch-tin boarding/roster and remembered
+    morning-stop routes as normal-play discoverability candidates.
+
 # Cycle 41 Direct Threshold Clearance Checks
 
 - Date: 2026-06-08

@@ -9544,6 +9544,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_to_call_platform_clear",
       "return_lost_mitten",
       "match_manifest_keepsakes",
+      "confirm_platform_keepsake_owners",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);
@@ -10713,12 +10714,13 @@ describe("demo story critical paths", () => {
     expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(passengerPlatformChoiceIds.slice(0, 7)).toEqual([
+    expect(passengerPlatformChoiceIds.slice(0, 8)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
+      "confirm_platform_keepsake_owners",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);
@@ -13807,6 +13809,7 @@ describe("demo story critical paths", () => {
       "check_opened_manifest_blank_row",
       "match_opened_manifest_keepsakes",
       "check_opened_manifest_keepsakes",
+      "confirm_opened_manifest_keepsake_owners",
       "ask_mara_to_read_opened_manifest",
       "listen_as_opened_passengers_gather",
       "make_room_from_opened_manifest",
@@ -14090,12 +14093,13 @@ describe("demo story critical paths", () => {
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(manifestPlatformChoiceIds.slice(0, 7)).toEqual([
+    expect(manifestPlatformChoiceIds.slice(0, 8)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "return_lost_mitten",
       "match_manifest_keepsakes",
+      "confirm_platform_keepsake_owners",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);
@@ -14450,6 +14454,109 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("confirms keepsake owners directly from the opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "confirm_opened_manifest_keepsake_owners"
+    );
+
+    state = choose(story, state, "confirm_opened_manifest_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_check");
+    expect(observation.scene.text).toContain("All ordinary proof accounted for");
+    expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
+    expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
+    expect(observation.state.flags.confirmed_keepsake_owners).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_keepsake_owners"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("confirms keepsake owners directly from the passenger platform", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "confirm_platform_keepsake_owners"
+    );
+
+    state = choose(story, state, "confirm_platform_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_check");
+    expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
+    expect(observation.state.flags.checked_matched_keepsakes).toBe(true);
+    expect(observation.state.flags.confirmed_keepsake_owners).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_keepsake_owners");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_owner_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
