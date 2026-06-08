@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -4414,6 +4414,47 @@ describe("demo story critical paths", () => {
       "read_passenger_manifest",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers",
+      "hold_and_confirm_third_car_threshold"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_clearance_check");
+    expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
+    expect(observation.scene.text).toContain("Threshold clear");
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("threshold has been cleared passenger by passenger");
+    expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
       "hold_opened_manifest_threshold"
     ]) {
       state = choose(story, state, choiceId);
@@ -4442,6 +4483,45 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
     expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
+    expectIdealScore(observation.score);
+
+    state = initialState(story);
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "hold_and_confirm_opened_manifest_threshold"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_clearance_check");
+    expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Threshold clear");
     expectIdealScore(observation.score);
 
     state = initialState(story);
@@ -6451,20 +6531,24 @@ describe("demo story critical paths", () => {
     expect(observation.choices[11]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[12]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(choiceIds[12]).toBe("hold_and_confirm_opened_manifest_threshold");
     expect(observation.choices[12]?.label).toBe(
+      "Hold the threshold and confirm every opened passenger clears it"
+    );
+    expect(choiceIds[13]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[13]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[13]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[13]?.label).toBe(
+    expect(choiceIds[14]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[14]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(choiceIds[14]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[14]?.label).toBe(
+    expect(choiceIds[15]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[15]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[15]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[15]?.label).toBe(
+    expect(choiceIds[16]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[16]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
@@ -13698,6 +13782,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_punch_from_opened_manifest",
       "check_lunch_tin_count_from_opened_manifest",
       "hold_opened_manifest_threshold",
+      "hold_and_confirm_opened_manifest_threshold",
       "listen_to_opened_threshold_from_manifest",
       "notice_manifest_thumbprint_from_opened_doors",
       "carry_manifest_thumbprint_oath_from_opened_doors",

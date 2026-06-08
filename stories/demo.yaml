@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1690,6 +1690,19 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: hold_and_confirm_opened_manifest_threshold
+        label: Hold the threshold and confirm every opened passenger clears it
+        choiceGroup: Door echoes / threshold
+        to: passenger_threshold_clearance_check
+        requires:
+          all:
+            - notFlag: held_passenger_threshold
+            - notFlag: confirmed_threshold_clearance
+        effects:
+          set:
+            held_passenger_threshold: true
+            confirmed_threshold_clearance: true
+            heard_mara_goodbye: true
       - id: listen_to_opened_threshold_from_manifest
         label: Let Mara talk you through holding the opened threshold
         choiceGroup: Door echoes / threshold
@@ -3144,6 +3157,22 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
+      - id: hold_and_confirm_third_car_threshold
+        label: Hold the threshold and confirm every passenger clears it
+        to: passenger_threshold_clearance_check
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: held_passenger_threshold
+            - notFlag: confirmed_threshold_clearance
+        effects:
+          set:
+            held_passenger_threshold: true
+            confirmed_threshold_clearance: true
+            heard_mara_goodbye: true
       - id: make_room_for_passengers_in_third_car
         label: Make room inside the third car before reaching for the release
         to: passenger_room_boarding

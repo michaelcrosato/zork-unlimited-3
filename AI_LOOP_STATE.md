@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 41 Direct Threshold Clearance Checks
+
+- Date: 2026-06-08
+- Main objective: Make the optional threshold-clearance receipt easier to
+  choose from the opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence was healthy overall, but
+  `passenger_threshold_checked_true_ending` and its setup scenes remained
+  low-frequency optional passenger payoffs.
+- Why this matters: The opened manifest already tells players the crowd is
+  pausing at the third-car threshold. A careful player should be able to hold
+  that threshold and confirm everyone clears it immediately, without first
+  discovering the checked receipt through an extra nested step.
+- Planned work:
+  - Add a direct threshold-clearance choice from `passengers_released`.
+  - Add the same direct careful-check choice from `passenger_platform`.
+  - Keep the existing hold/listen/release routes available for players who
+    want the slower beat.
+  - Update the opened-manifest objective to name the threshold-clearance check.
+  - Add regression coverage for both direct routes.
+  - Run focused checks, full health, evidence collection, and one actual CLI
+    route through the new shortcut.
+- Risks:
+  - The opened-manifest hub is already broad, so another optional choice could
+    add menu noise if the label were vague.
+  - Random play may still miss the branch in small samples because many ideal
+    passenger endings compete in the same area.
+- Status:
+  - Completed.
+  - Added `hold_and_confirm_opened_manifest_threshold`, routing opened-manifest
+    players directly to `passenger_threshold_clearance_check` while setting
+    `held_passenger_threshold`, `confirmed_threshold_clearance`, and
+    `heard_mara_goodbye`.
+  - Added `hold_and_confirm_third_car_threshold` from `passenger_platform` with
+    the same confirmation flags.
+  - Updated the opened-manifest objective text to include confirming that the
+    threshold clears.
+  - Focused threshold regression passed:
+    `npx vitest run tests/story-paths.test.ts -t threshold` with 2 matching
+    tests and 225 skipped.
+  - Story validation passed with 191 reachable scenes / 46 endings and no
+    errors or warnings: `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 311 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `$env:AI_LOOP_EVIDENCE_ONLY='1'; npm run ai:cycle`. Its MCP random sample
+    ended 250/250 runs and reached `passenger_threshold_checked_true_ending`
+    5 times; coverage still visited every scene.
+  - Actual CLI route reached `passenger_threshold_checked_true_ending`, score
+    265, no remaining objectives, after choosing
+    `hold_and_confirm_opened_manifest_threshold` directly from
+    `passengers_released`.
+- Playtest feedback:
+  - The new hub choice reads like the natural careful version of "hold the
+    threshold," not a separate lore detour.
+  - The checked payoff remains clear: the ending emphasizes every shoulder
+    crossing the line before HOME can close around a leftover name.
+  - No stale objective, invalid choice, unreachable scene, unfinished run, or
+    score regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings whose
+    setup is visible but whose strongest payoff remains one step too hidden.
+
 # Cycle 40 Direct Conductor Clearance Checks
 
 - Date: 2026-06-08
