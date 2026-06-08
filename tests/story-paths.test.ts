@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -4969,6 +4969,75 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_shared_release_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Received by every hand");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets opened manifest players hear the room-making intercom directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const openedChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(openedChoiceIds).toContain("listen_to_room_from_opened_manifest");
+    expect(openedChoiceIds.indexOf("listen_to_room_from_opened_manifest")).toBeGreaterThan(
+      openedChoiceIds.indexOf("make_room_from_opened_manifest")
+    );
+    expect(openedChoiceIds.indexOf("listen_to_room_from_opened_manifest")).toBeLessThan(
+      openedChoiceIds.indexOf("pass_shared_release_from_opened_manifest")
+    );
+    expect(
+      observation.choices.find((choice) => choice.id === "listen_to_room_from_opened_manifest")
+        ?.label
+    ).toBe("Listen as the opened passengers make room around the release");
+    expect(
+      observation.choices.find((choice) => choice.id === "listen_to_room_from_opened_manifest")
+        ?.choiceGroup
+    ).toBe("Board / release");
+
+    state = choose(story, state, "listen_to_room_from_opened_manifest");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.scene.text).toContain("people making room for one another");
+    expect(observation.scene.text).toContain("Proof that there is enough space");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBeUndefined();
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_intercom",
+      "pull_release_after_making_room"
+    ]);
+
+    state = choose(story, state, "pull_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
     expectIdealScore(observation.score);
   });
 
@@ -14348,6 +14417,7 @@ describe("demo story critical paths", () => {
       "ask_mara_to_read_opened_manifest",
       "listen_as_opened_passengers_gather",
       "make_room_from_opened_manifest",
+      "listen_to_room_from_opened_manifest",
       "pass_shared_release_from_opened_manifest",
       "confirm_shared_release_from_opened_manifest",
       "listen_to_passenger_answers",

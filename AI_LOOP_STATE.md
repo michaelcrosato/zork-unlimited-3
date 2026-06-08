@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 19 Direct Shared-Room Intercom
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players hear the shared-room intercom
+  directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, and current evidence says the game is healthy overall. The next best
+  target is normal-play visibility for the shared-room passenger path noted in
+  the previous state handoff.
+- Why this matters: The shared-room thread is one of the clearest passenger
+  payoffs: the crowd escapes because people make space for one another, not
+  because one player solves the release alone. A normal player should be able
+  to hear that proof without first choosing the boarding setup step.
+- Planned work:
+  - Add a direct opened-manifest choice that routes to the room-making
+    intercom.
+  - Preserve existing direct boarding, shared release, and checked shared
+    release routes.
+  - Update the opened-manifest objective so it names making room around the
+    shared release.
+  - Add regression coverage for choice visibility, ordering, flags, intercom
+    text, and the resulting ending.
+  - Run focused tests, full health, evidence-only loop collection, and one
+    actual route through the new intercom choice.
+- Risks:
+  - The opened-manifest menu is already broad, so the new choice must stay
+    near the related room-making choices and avoid feeling like another generic
+    release command.
+  - Random play may still under-sample this route because many ideal passenger
+    endings compete from the same hub.
+- Status:
+  - Completed.
+  - Added `listen_to_room_from_opened_manifest` from `passengers_released` to
+    `passenger_room_intercom`, setting the room-making and Mara speaker flags
+    without consuming the existing shared-release path.
+  - Updated the opened-manifest objective so player-facing guidance now names
+    making room around the shared release.
+  - Preserved existing direct boarding, room-boarding, shared-release, and
+    checked shared-release routes.
+  - Added regression coverage for direct choice visibility, ordering, label,
+    group, flags, intercom text, and the resulting `passenger_true_ending`.
+  - Focused room-path tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "room-making|shared room|manifest-specific platform"`.
+  - Full `npm run health` passed: format check, TypeScript, 323 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_true_ending`, score 270, through
+    `listen_to_room_from_opened_manifest`; objectives were cleared.
+  - `npm run ai:cycle` was rerun with `AI_LOOP_EVIDENCE_ONLY=1` and completed,
+    writing ignored `ai-runs/` artifacts plus the tracked cycle observation.
+    A first non-evidence attempt timed out after spawning an agent because
+    `AI_AGENT_CMD` was set; those spawned child processes were stopped before
+    continuing.
+- Playtest feedback:
+  - The new label clearly communicates the room-making payoff and sits next to
+    the existing room/shared-release actions.
+  - The speaker beat makes the plain passenger ending feel less abrupt: Mara
+    explicitly reframes the escape as enough shared space rather than ledger
+    proof.
+  - No stale objective, invalid choice, unreachable scene, unfinished playtest,
+    or route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_manifest_thumbprint_true_ending`, `passenger_lunch_tin_true_ending`,
+    or passenger roll-call checked paths.
+
 # Cycle 18 Direct Manifest Thumbprint Receipt
 
 - Date: 2026-06-08
