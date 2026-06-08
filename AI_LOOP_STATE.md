@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 90 Core True-Ending Payoff Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the core Mara true ending more clearly explain why the
+  final release solved the station instead of only ending the immediate train
+  scene.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current long-run signal: route guidance, coverage,
+  and ideal-ending rates are healthy; the best next increment is focused payoff
+  and story clarity on already-playable routes.
+- Why this matters: The actual MCP playthrough ended at `true_ending`, making
+  that text the most visible promise the game has to keep. The ending should
+  explicitly connect the token, map, badge, and release to the station's
+  resolution so the player understands what their preparation accomplished.
+- Planned work:
+  - Revise the core `true_ending` text to pay off the signal ledger and false
+    HOME sign more concretely.
+  - Update the critical-path test to lock in the new payoff language.
+  - Run focused tests, full health, and one real CLI or MCP route through the
+    changed ending.
+- Risks:
+  - This is a text-only payoff change, so it must avoid implying new mechanics
+    or changing established ending classification.
+  - Keep the ending concise enough that it feels like closure, not a summary of
+    every branch.
+- Status:
+  - Completed.
+  - Revised the core `true_ending` to state that the signal has no names left
+    to hold and that HOME has collapsed back into paint on the sign.
+  - Updated the critical true-ending path test to assert the new payoff
+    language while preserving the existing inventory, freed-Mara flag, and
+    ideal-ending score checks.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts` with 223
+    tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 180 reachable scenes / 35 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `true_ending` through the changed core route,
+    score 278, with badge, fuse, lantern, map, and token in inventory and no
+    remaining objectives.
+- Playtest feedback:
+  - The final paragraph now better explains why the player's preparation
+    mattered: the token resolves the ledger, the map defeats the false HOME
+    route, and Mara's badge becomes resting proof instead of another lock.
+  - No route-choice or balance changes were needed; the direct release remains
+    fast and the optional last-dispatch and handoff beats remain intact.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise keep adding focused payoff to high-traffic ending branches whose
+    optional care is mechanically clear but emotionally under-acknowledged.
+
 # Cycle 89 Morning Stop-Checked Payoff
 
 - Date: 2026-06-08

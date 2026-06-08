@@ -45,7 +45,9 @@ describe("demo story critical paths", () => {
 
     expect(finalObservation.scene.id).toBe("true_ending");
     expect(finalObservation.scene.ending).toBe(true);
-    expect(finalObservation.scene.text).toContain("the map stops trembling");
+    expect(finalObservation.scene.text).toContain("the signal has no more names to hold");
+    expect(finalObservation.scene.text).toContain("HOME is only paint on a blank sign now");
+    expect(finalObservation.scene.text).toContain("The map stops trembling");
     expect(finalObservation.scene.text).toContain("Mara's badge warms");
     expect(finalObservation.scene.text).toContain("line fall silent");
     expect(finalObservation.state.inventory).toEqual(["badge", "fuse", "lantern", "map", "token"]);

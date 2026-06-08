@@ -6297,10 +6297,11 @@ scenes:
       The release opens every door at once. Names vanish from the signal ledger
       as passengers step into rain-bright morning, each one carrying a little
       of the tunnel's cold out into the rain. The token drops quiet in the
-      booth, the map stops trembling in your hand, and Mara's badge warms
-      against the release handle like proof that can finally rest. Her voice
-      thanks you from the speaker, close enough to sound alive, then lets the
-      line fall silent behind everyone it used to keep.
+      booth because the signal has no more names to hold. The map stops
+      trembling because HOME is only paint on a blank sign now, not a route.
+      Mara's badge warms against the release handle like proof that can finally
+      rest. Her voice thanks you from the speaker, close enough to sound alive,
+      then lets the line fall silent behind everyone it used to keep.
     choices: []
 
   mara_badge_proof_receipt_true_ending:
