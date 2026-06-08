@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 25 Direct Answered-Speaker Release
+
+- Date: 2026-06-08
+- Main objective: Let opened-manifest players finish the base answered-name
+  passenger route directly from the opened-passenger hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 25 evidence was broadly healthy, but the 100-run random sample
+  still missed `passenger_answered_true_ending` while coverage could reach it.
+- Why this matters: The answered-name route is the cleanest roll-call payoff:
+  passengers stop needing Mara to read them into morning and carry their own
+  names out. A normal player should be able to choose that finish from the
+  opened-manifest hub without first finding the intercom detour.
+- Planned work:
+  - Add one direct Counts / answers choice from `passengers_released` to
+    `passenger_answered_true_ending`.
+  - Keep the existing answered boarding, checked-answer, receipt, and Mara
+    handoff variants intact.
+  - Update opened-manifest objective text so player-facing guidance names
+    carrying answered names to the speaker and pulling the release.
+  - Add regression coverage for visibility, menu placement, label, choice
+    group, flags, and the resulting ideal ending.
+  - Run focused tests, full health, an actual CLI route, and the evidence
+    cycle.
+- Risks:
+  - The opened-manifest hub is broad, so the new action must stay inside
+    Counts / answers and not blur with the existing answered-boarding shortcut.
+  - A single 100-run random sample may still miss other optional passenger
+    endings because the hub now has many valid ideal finishes.
+- Status:
+  - Completed and ready for final commit/push.
+  - Added `pull_release_with_answered_names_on_speaker` from
+    `passengers_released` to `passenger_answered_true_ending`.
+  - The choice lives in Counts / answers between
+    `board_with_answered_passengers` and
+    `pull_release_with_answered_passengers`.
+  - The choice sets `heard_passenger_answers` and
+    `heard_answered_passengers` without marking checked-answer,
+    helped-passenger, Mara-handoff, or answered-boarding variants.
+  - Updated the opened-manifest objective to mention carrying answered names to
+    the speaker and pulling the release.
+  - Added regression coverage for label, choice group, menu placement, flags,
+    cleared objectives, and ideal ending scoring.
+  - Focused story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered names|answered passengers|manifest-specific platform beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through the new choice reached
+    `passenger_answered_true_ending`, score 281, with objectives cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. The random 100-run
+    evidence reached `passenger_answered_true_ending` 4 times, kept
+    `ended: 100`, `unfinished: 0`, ideal-ending rate 78%, and coverage
+    complete.
+- Playtest feedback:
+  - The new label reads as a specific answered-name speaker payoff, not a
+    generic emergency-release shortcut.
+  - The ending payoff is coherent: Mara listens while the passengers' own
+    voices carry the final name out of the line.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_room_boarding`, `passenger_threshold_boarding`,
+    `passenger_farewell`, or `passenger_lunch_tin_true_ending`.
+
 # Cycle 24 Direct Shared Count Release
 
 - Date: 2026-06-08
