@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyAnomalies,
+  isLoopCycleArtifactName,
   monitorCadence,
   type WatchSnapshot
 } from "../src/orchestrator-watch.js";
@@ -39,6 +40,17 @@ describe("orchestrator monitor cadence", () => {
       delayMs: 60 * 60_000
     });
     expect(monitorCadence(24 * 60 * 60_000)).toEqual({ stage: "complete", delayMs: 0 });
+  });
+});
+
+describe("orchestrator artifact detection", () => {
+  it("only treats timestamped loop files as cycle artifacts", () => {
+    expect(isLoopCycleArtifactName("cycle-2026-06-08T15-40-26-681Z.md")).toBe(true);
+    expect(isLoopCycleArtifactName("cycle-2026-06-08T15-40-26-681Z-prompt.md")).toBe(true);
+    expect(isLoopCycleArtifactName("cycle-2026-06-08T15-40-26-681Z-agent.md")).toBe(true);
+    expect(isLoopCycleArtifactName("cycle-2026-06-08T15-40-26-681Z-post-agent.md")).toBe(true);
+    expect(isLoopCycleArtifactName("cycle-30-home-loss-transcript.md")).toBe(false);
+    expect(isLoopCycleArtifactName("cycle-before-launch.md")).toBe(false);
   });
 });
 

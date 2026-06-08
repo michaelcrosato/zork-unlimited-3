@@ -5,7 +5,8 @@ import { join } from "node:path";
 import process from "node:process";
 
 const defaultRunDir = "ai-runs/orchestrator";
-const cycleReportPattern = /^cycle-.*\.md$/;
+const loopCycleArtifactPattern =
+  /^cycle-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z(?:-(?:prompt|agent|post-agent))?\.md$/;
 const minute = 60_000;
 const hour = 60 * minute;
 
@@ -39,6 +40,10 @@ export interface FileStamp {
 export interface Anomaly {
   severity: "hard" | "soft";
   reason: string;
+}
+
+export function isLoopCycleArtifactName(name: string): boolean {
+  return loopCycleArtifactPattern.test(name);
 }
 
 interface CycleObservationLike {
@@ -291,7 +296,7 @@ function readTail(path: string, maxChars = 12_000): string {
 function latestCycleArtifact(): FileStamp | undefined {
   if (!existsSync("ai-runs")) return undefined;
   const files = readdirSync("ai-runs", { withFileTypes: true })
-    .filter((entry) => entry.isFile() && cycleReportPattern.test(entry.name))
+    .filter((entry) => entry.isFile() && isLoopCycleArtifactName(entry.name))
     .map((entry) => {
       const path = join("ai-runs", entry.name);
       return { path, mtimeMs: statMtime(path) };
