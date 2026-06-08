@@ -2499,3 +2499,50 @@ tests/ai-loop.test.ts`
 
 - Keep future loop summaries short enough for a non-technical operator to scan
   while still naming the evidence that proves the change.
+
+## 2026-06-08 - Staged Orchestrator Monitor
+
+### Changes
+
+- Added `npm run orchestrator:watch`, a read-only monitor for the AFK
+  development and blind-playtest wrappers.
+- Encoded the requested staged cadence: every 60 seconds for the first 5
+  minutes, every 5 minutes for the next 30 minutes, every 15 minutes until the
+  60-minute checkpoint, then hourly through 24 hours.
+- Added anomaly checks for wrapper death, missing cycle artifacts after launch,
+  stale artifacts, repeated push failures, auth failures, MCP play failures, and
+  dirty-baseline refusals.
+
+### Playtest Notes
+
+- What was tested:
+  - `npm run lint`
+  - `npm test -- tests/orchestrator-watch.test.ts`
+  - `npm run orchestrator:watch -- --once`
+  - `npm run health`
+- Quantitative metrics:
+  - Tests: 16 files, 283 tests passing
+  - Validation: 164 scenes, 31 endings, 164 reachable scenes
+  - Coverage self-play: 176 effective runs, 0 unfinished, all scenes visited
+- What worked:
+  - The monitor reported dead main and blind wrapper PIDs as a hard anomaly in a
+    single VP-readable status line.
+  - A detached `setsid` launch survived the shell tool where the plain `nohup`
+    PID did not, so relaunches should use `setsid`.
+- What felt bad/confusing:
+  - Plain background `nohup ... &` looked launched but the stored wrapper PID
+    died immediately in this environment.
+- Bugs found:
+  - The orchestrator previously had no reusable way to enforce the requested
+    staged monitoring cadence or detect wrapper death.
+
+### Evaluation
+
+- The AFK run now has a reusable monitor command that matches the requested
+  operations cadence and gives a clear signal when the loop should be paused
+  and fixed.
+
+### Next Iteration
+
+- Relaunch the loops with the detached `setsid` pattern, then restart monitoring
+  from the 60-second cadence.
