@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 95 Shared Release Receipt Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional shared-release receipt route feel
+  acknowledged instead of resolving into the same broad passenger ending as the
+  faster shared pull.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: route guidance,
+  validation, and ideal-ending rates are healthy; focused payoff on explicit
+  care branches remains the highest-value next increment.
+- Why this matters: The player can pass the emergency release hand-to-hand and
+  then make one extra check that the back row has received it before pulling.
+  That deliberate patience should visibly change the ending.
+- Planned work:
+  - Route `pull_release_after_confirmed_shared_room_release` to a new ideal
+    ending.
+  - Preserve the faster shared-release route to `passenger_true_ending`.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off shared-release receipt without duplicating the
+    existing threshold-clearance or generic passenger endings.
+- Status:
+  - Completed.
+  - Added `passenger_shared_release_checked_true_ending` with ideal Passengers
+    / Core metadata.
+  - Changed only `pull_release_after_confirmed_shared_room_release` to land on
+    the new ending; the faster `pull_shared_release_after_making_room` route
+    still lands on `passenger_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed shared-release
+    path reaches the new ending and includes the every-hand payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 185 reachable scenes / 40 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_shared_release_checked_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached
+    `passenger_shared_release_checked_true_ending`, score 272, with badge,
+    fuse, lantern, map, and token in inventory, no remaining objectives, and
+    `confirmed_shared_room_release: true`.
+- Playtest feedback:
+  - The extra shared-release receipt now lands better: the ending explicitly
+    says the handle answered all the way to the back row and that no one had to
+    reach alone.
+  - The faster shared pull remains useful for momentum, so the branch now
+    distinguishes "the crowd leaves by making room" from "the player waited
+    until every hand shared the release."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose mechanical difference is clear but whose ending acknowledgment is
+    thin.
+
 # Cycle 94 Threshold Clearance Payoff
 
 - Date: 2026-06-08

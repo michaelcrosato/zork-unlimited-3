@@ -4942,7 +4942,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_shared_room_release
         label: Pull together after the release reaches every hand
-        to: passenger_true_ending
+        to: passenger_shared_release_checked_true_ending
 
   passenger_counted_manifest_intercom:
     routeImportance: optional
@@ -6380,6 +6380,23 @@ scenes:
       shoulder is past the line. Because you waited for the crossing itself,
       HOME cannot close around a leftover name. Mara says "Threshold clear" one
       more time, and the open doors make it true.
+    choices: []
+
+  passenger_shared_release_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Core
+    text: >
+      The release opens every door at once after the handle has answered all
+      the way to the back row. The newspaper woman braces the first seat, the
+      lunch-tin worker clears the aisle, the old conductor holds the last door,
+      and the mittened child keeps both hands on the shared pull until every
+      passenger has felt it move. Because no one had to reach alone, HOME cannot
+      turn the release into another test of who belongs near the front. Mara
+      says, "Received by every hand," and the crowded car becomes an empty room
+      everyone helped make.
     choices: []
 
   passenger_morning_stop_checked_true_ending:

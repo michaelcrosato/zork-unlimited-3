@@ -186,6 +186,7 @@ function trueEndingCount(endings: Record<string, number>): number {
     (endings.passenger_echoed_true_ending ?? 0) +
     (endings.passenger_morning_stop_checked_true_ending ?? 0) +
     (endings.passenger_threshold_checked_true_ending ?? 0) +
+    (endings.passenger_shared_release_checked_true_ending ?? 0) +
     (endings.passenger_helped_true_ending ?? 0) +
     (endings.passenger_roll_call_true_ending ?? 0) +
     (endings.passenger_roll_call_checked_true_ending ?? 0) +

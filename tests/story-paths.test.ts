@@ -4576,9 +4576,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.id).toBe("passenger_shared_release_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(observation.scene.text).toContain("the handle has answered all");
+    expect(observation.scene.text).toContain("Received by every hand");
     expectIdealScore(observation.score);
 
     state = choose(story, roomState, "ask_conductor_to_clear_room_made");
