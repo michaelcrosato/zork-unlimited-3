@@ -8511,14 +8511,34 @@ describe("demo story critical paths", () => {
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    const conductorRollCallState = state;
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
-    state = choose(story, state, "pull_release_after_conductor_roll_call");
+    state = choose(story, conductorRollCallState, "pull_release_after_conductor_roll_call");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorRollCallState, "confirm_conductor_clearance_before_release");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_check");
+    expect(observation.scene.text).toContain("one door at a time");
+    expect(observation.scene.text).toContain("every open door");
+    expect(observation.state.flags.confirmed_conductor_clearance).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_conductor_clearance"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_conductor_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.text).toContain("conductor's clear signal");
     expectIdealScore(observation.score);
 
     state = choose(story, answeredState, "ask_conductor_from_answers");
@@ -8579,7 +8599,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
@@ -8793,7 +8814,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("clear for Mara");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
@@ -8813,7 +8835,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
 
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
@@ -9151,7 +9174,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_conductor_roll_call");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
@@ -12992,7 +13016,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_conductor_roll_call"
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
     ]);
 
     state = initialState(story);

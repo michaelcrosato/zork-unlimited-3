@@ -5186,6 +5186,16 @@ scenes:
         to: passenger_conductor_true_ending
         requires:
           notFlag: punched_conductor_transfer
+      - id: confirm_conductor_clearance_before_release
+        label: Confirm the conductor's clear signal reaches every door
+        to: passenger_conductor_clearance_check
+        requires:
+          all:
+            - notFlag: punched_conductor_transfer
+            - notFlag: confirmed_conductor_clearance
+        effects:
+          set:
+            confirmed_conductor_clearance: true
       - id: pull_release_after_conductor_transfer
         label: Pull the release after the conductor's punched transfer
         to: passenger_conductor_transfer_true_ending
@@ -5201,6 +5211,22 @@ scenes:
         effects:
           set:
             punched_transfer_carried_forward: true
+
+  passenger_conductor_clearance_check:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm while the conductor's clear call
+      travels the car one door at a time. The child answers from the threshold
+      with both feet on the bright side of the line. The newspaper woman repeats
+      the stop she means to reach, not the one that trapped her. The lunch-tin
+      worker taps his latch once, then lets the sound pass on instead of
+      clocking him back in. Mara listens from the speaker until every open door
+      has answered clear in a human voice. "Now it is not just my signal," she
+      says. "It is theirs."
+    choices:
+      - id: pull_release_after_confirmed_conductor_clearance
+        label: Pull the release after every door answers clear
+        to: passenger_conductor_true_ending
 
   passenger_conductor_count_roll_call:
     routeImportance: optional

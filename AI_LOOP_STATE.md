@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 70 Conductor Clearance Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional final confirmation to the plain conductor
+  clear-call route while preserving the direct release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing complete coverage,
+  stable ideal-ending rates, and room for richer late-route story depth.
+- Why this matters: The conductor route already lets the old worker call the
+  platform clear, but the non-transfer version lacked the same final
+  "proof reached everyone" beat that nearby newspaper, keepsake, mitten, and
+  roll-call routes provide. Cautious players now get a final witness check
+  without forcing decisive players to wait.
+- Planned work:
+  - Keep `pull_release_after_conductor_roll_call` as the first direct release
+    choice.
+  - Add one optional confirmation scene from `passenger_conductor_roll_call`.
+  - Gate the confirmation to the plain conductor route so it does not duplicate
+    the existing punched-transfer stop check.
+  - Update conductor-route regression coverage for direct and confirmed paths.
+  - Run focused tests, validation, full health, evidence-only cycle, and an
+    actual CLI playthrough through the new beat.
+- Risks:
+  - Another late proof beat can feel repetitive if it reads as mandatory.
+  - The conductor transfer branch already has a stop check, so duplicating it
+    would blur route identity.
+- Status:
+  - Completed.
+  - Added `confirm_conductor_clearance_before_release` from
+    `passenger_conductor_roll_call` while keeping
+    `pull_release_after_conductor_roll_call` first.
+  - Added `passenger_conductor_clearance_check`, a one-step optional scene
+    where the clear call is witnessed at every open door before release.
+  - Gated the scene behind `notFlag: punched_conductor_transfer` and
+    `notFlag: confirmed_conductor_clearance`, preserving the transfer route's
+    existing stop-check payoff.
+  - Updated `tests/story-paths.test.ts` so conductor paths expect the new
+    optional confirmation and prove both direct and confirmed releases reach
+    `passenger_conductor_true_ending`.
+  - Focused conductor tests passed:
+    `npm test -- -t conductor` with 7 relevant tests green.
+  - Story validation passed with 172 reachable scenes, 31 endings, and no
+    warnings.
+  - Full `npm run health` passed: format check, TypeScript, 292 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `passenger_conductor_clearance_check`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Long-run signals
+    stayed stable: random ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, MCP route reached `true_ending` with score 305, and
+    adaptive exploratory MCP route reached
+    `passenger_lunch_tin_checked_true_ending`.
+  - Actual CLI route reached `passenger_conductor_true_ending` through
+    `confirm_conductor_clearance_before_release` and
+    `pull_release_after_confirmed_conductor_clearance` with score 316, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_conductor_clearance` set.
+- Playtest feedback:
+  - The added scene gives the conductor route a cleaner emotional receipt:
+    the signal is no longer only the old worker's permission; every door
+    answers in a human voice.
+  - The direct release remains first, so the route still moves quickly for
+    players ready to act.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue looking for compact late-route asymmetries where one
+    optional proof beat improves payoff without adding new route complexity.
+
 # Cycle 69 Answered-Passenger Receipt
 
 - Date: 2026-06-08
