@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1692,9 +1692,9 @@ scenes:
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
       - id: pull_release_on_opened_conductor_signal
-        label: Follow the conductor's clear signal and pull the release
+        label: Carry the conductor's clear signal to the third-car speaker
         choiceGroup: Passenger gathering
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_intercom
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -1705,7 +1705,6 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             heard_conductor_clearance: true
-            heard_final_roll_call: true
       - id: confirm_opened_conductor_clearance
         label: Ask the conductor to clear every opened door before boarding
         choiceGroup: Passenger gathering

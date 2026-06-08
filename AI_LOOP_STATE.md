@@ -7,6 +7,78 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 30 Conductor Clearance Speaker Pass
+
+- Date: 2026-06-08
+- Main objective: Make the opened-manifest conductor signal route pause at the
+  third-car speaker before the release, so players get a natural chance to
+  confirm every opened door answers clear.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 30 evidence is green overall, but the 100-run random sample
+  still missed `passenger_conductor_clearance_check` and
+  `passenger_conductor_clearance_checked_true_ending` while coverage and the
+  larger MCP sample could reach them.
+- Why this matters: The conductor route is strongest when the clear signal
+  becomes the passengers' own witnessed clearance, not just a direct shortcut
+  to an ending. Giving the direct opened-manifest conductor choice an intercom
+  beat preserves speed while making the safer, richer confirmation path easier
+  to notice.
+- Planned work:
+  - Route `pull_release_on_opened_conductor_signal` through
+    `passenger_conductor_intercom` instead of jumping directly to
+    `passenger_conductor_true_ending`.
+  - Update the menu label and opened-manifest objective wording so the route
+    promises the speaker handoff before release.
+  - Update regression coverage for the two-step conductor-signal-to-release
+    and conductor-signal-to-clearance paths.
+  - Run focused tests, full health, and an actual CLI/MCP playthrough.
+- Risks:
+  - This adds one extra click to the quickest conductor route, so the intercom
+    scene must read as payoff instead of friction.
+  - Random play may still miss the clearance check because the intercom offers
+    several valid conductor follow-ups.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_on_opened_conductor_signal` now routes to
+    `passenger_conductor_intercom` instead of jumping directly to
+    `passenger_conductor_true_ending`.
+  - The opened-manifest objective and conductor menu label now promise a
+    third-car speaker handoff for the conductor's clear signal.
+  - Regression coverage now checks both follow-ups from that intercom: quick
+    release to `passenger_conductor_true_ending` and explicit confirmation to
+    `passenger_conductor_clearance_checked_true_ending`.
+  - Focused conductor tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "conductor"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through the changed opened-conductor signal reached
+    `passenger_conductor_clearance_checked_true_ending`, score 304, with
+    objectives cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Evidence stayed
+    green: health passed, random play had `ended: 100` / `unfinished: 0` and
+    reached `passenger_conductor_clearance_checked_true_ending` twice,
+    coverage stayed complete, MCP play reached `true_ending`, and the
+    adaptive MCP route ended at
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The changed path reads better than the old direct jump because the
+    conductor's signal gets a speaker beat before release, then the player can
+    either trust his clear or verify every threshold.
+  - The explicit clearance route felt purposeful in CLI play: the check scene
+    names the child, newspaper woman, lunch-tin worker, and Mara's listening
+    speaker before the ending opens every door.
+  - The extra click did not leave stale objectives or block the quick conductor
+    ending; both quick release and confirmed clearance remain ideal endings.
+  - No invalid choice, unreachable scene, unfinished playtest, or ending
+    classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving normal-play visibility for remaining random
+    misses such as `passenger_gathered_*`, `passenger_farewell`,
+    `passenger_room_boarding`, or
+    `mara_manifest_thumbprint_receipt_true_ending`.
+
 # Cycle 29 Opened-Manifest Room Beat
 
 - Date: 2026-06-08
