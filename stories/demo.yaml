@@ -1526,9 +1526,10 @@ scenes:
       rhythm now that the names are people. Mara breathes through the speaker
       and says, "Third car. I can hold the line steady while they find the
       morning." When she has already called the opened doors once, the third
-      car speaker keeps a small waiting hiss for her handoff. Once the opened
-      passengers remember morning aloud, the same speaker can carry those
-      ordinary streets aboard.
+      car speaker keeps a small waiting hiss for her handoff, and the release
+      handle feels less like an interruption than the next beat. Once the
+      opened passengers remember morning aloud, the same speaker can carry
+      those ordinary streets aboard.
     choices:
       - id: watch_mara_open_manifest
         label: Watch Mara call the opened doors
@@ -1938,6 +1939,21 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: pull_release_with_seen_manifest_handoff
+        label: Pull the release with Mara's opened-door handoff already moving
+        choiceGroup: Board / release
+        to: passenger_manifest_handoff_true_ending
+        requires:
+          all:
+            - flag: saw_mara_manifest_handoff
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
         label: Listen as the opened passengers finish the count together
         choiceGroup: Counts / answers
@@ -2186,7 +2202,6 @@ scenes:
         label: Cross the platform as the passengers gather
         choiceGroup: Board / release
         to: passenger_platform
-
   passenger_morning_chorus:
     routeImportance: optional
     text: >

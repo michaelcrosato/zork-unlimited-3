@@ -5775,6 +5775,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_mara_manifest_handoff_from_opened_doors"
     );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_with_seen_manifest_handoff"
+    );
+
+    let directReleaseObservation = observe(
+      story,
+      choose(story, state, "pull_release_with_seen_manifest_handoff")
+    );
+
+    expect(directReleaseObservation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(directReleaseObservation.scene.ending).toBe(true);
+    expect(directReleaseObservation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(directReleaseObservation.scene.text).toContain("Mara is still mid-handoff");
+    expectIdealScore(directReleaseObservation.score);
 
     state = choose(story, state, "carry_mara_manifest_handoff_from_opened_doors");
     observation = observe(story, state);
@@ -13347,6 +13361,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.scene.text).toContain("every tiny stamped door");
+    expect(observation.scene.text).toContain("less like an interruption than the next beat");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(choiceIds).toEqual([

@@ -7,6 +7,77 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 22 Returned Manifest Handoff Release
+
+- Date: 2026-06-08
+- Main objective: Give players who have watched Mara's opened-manifest handoff
+  and returned to the opened-door hub a direct, legible release path to
+  `passenger_manifest_handoff_true_ending`.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 22 evidence: random play missed
+  `passenger_manifest_handoff_true_ending` while coverage reached it, and the
+  suggested next action named that ending.
+- Why this matters: A player who watches Mara begin handing opened manifest
+  names forward should not have to infer that the only basic payoff is hidden
+  behind boarding the speaker path. Returning to the opened-manifest hub now
+  keeps the handoff alive and offers a clear release action.
+- Planned work:
+  - Add a returned-hub release option gated by `saw_mara_manifest_handoff` and
+    the absence of thumbprint, passenger-answer, and gathering branches.
+  - Support that option with opened-manifest hub prose so the release feels like
+    the next beat after Mara has called the opened doors.
+  - Add regression coverage for the new route to
+    `passenger_manifest_handoff_true_ending`.
+  - Run focused tests, full health, evidence gathering, and an actual CLI route
+    through the changed path.
+- Risks:
+  - Adding an immediate first-pass release choice perturbed seeded random
+    coverage for existing receipt beats, so that broader shortcut was rejected.
+  - The deterministic 100-run random sample still misses
+    `passenger_manifest_handoff_true_ending`; this cycle improves the visible
+    player route without changing the random sampler's single generic handoff
+    run away from the checked variant.
+- Status:
+  - Completed.
+  - Added `pull_release_with_seen_manifest_handoff` from
+    `passengers_released` to the existing
+    `passenger_manifest_handoff_true_ending`.
+  - Updated `passengers_released` prose so, after Mara has called the opened
+    doors once, the release reads as the next beat of that handoff.
+  - Added regression assertions that the returned-hub choice is visible, sets
+    `heard_mara_goodbye`, reaches `passenger_manifest_handoff_true_ending`, and
+    preserves the existing checked door-confirmation route.
+  - Rejected a broader immediate hub shortcut after focused random tests showed
+    it disrupted seeded random coverage for existing optional receipt scenes.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts tests/playtest.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 302 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended a tracked cycle observation, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough followed the changed route through
+    `watch_mara_open_manifest`, `return_from_mara_manifest_handoff`, and
+    `pull_release_with_seen_manifest_handoff`, reaching
+    `passenger_manifest_handoff_true_ending`, score 286, with no remaining
+    objectives.
+- Playtest feedback:
+  - The returned-hub route now reads coherently: Mara starts the opened-door
+    handoff, the hub acknowledges that the release is no longer an
+    interruption, and the new release choice pays off the handoff directly.
+  - No crash, dead end, or objective residue appeared in the actual CLI route.
+  - The deterministic random sample remains unchanged for this ending, so the
+    next pass should either improve random-sampled discovery without disturbing
+    existing receipt coverage or wait for blind-play evidence before touching
+    this branch again.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue with a careful discoverability pass on
+    `passenger_manifest_handoff_true_ending` that preserves seeded random
+    coverage for existing optional receipt beats.
+
 # Cycle 21 Manifest Handoff Door-Check Discovery
 
 - Date: 2026-06-08
