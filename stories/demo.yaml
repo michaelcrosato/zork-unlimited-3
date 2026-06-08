@@ -4583,6 +4583,29 @@ scenes:
       - id: pull_release_after_manifest_thumbprint_goodbye
         label: Pull the release while Mara leaves with the manifest
         to: passenger_manifest_thumbprint_true_ending
+      - id: confirm_manifest_thumbprint_receipt
+        label: Confirm the thumbprint oath reaches the opened passengers
+        to: mara_manifest_thumbprint_receipt
+        requires:
+          notFlag: confirmed_manifest_thumbprint_receipt
+        effects:
+          set:
+            confirmed_manifest_thumbprint_receipt: true
+
+  mara_manifest_thumbprint_receipt:
+    routeImportance: optional
+    text: >
+      You keep the release ready and let Mara's thumb cross the page one last
+      time. The opened manifest answers in passenger order, not ledger order:
+      newspaper fold, mitten snap, lunch tin clasp, conductor's punch. Each
+      answer touches the torn print and moves on toward the threshold. By the
+      time the speaker returns to Mara, the old mark has stopped meaning last
+      dispatcher. It means witnessed, counted, walking. "Received by the
+      passengers," she says. "Now open the doors."
+    choices:
+      - id: pull_release_after_manifest_thumbprint_receipt
+        label: Pull the release after the passengers receive the oath
+        to: passenger_manifest_thumbprint_true_ending
 
   mara_manifest_intercom:
     routeImportance: optional

@@ -7449,7 +7449,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_thumbprint_goodbye"
+      "pull_release_after_manifest_thumbprint_goodbye",
+      "confirm_manifest_thumbprint_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
@@ -7459,6 +7460,55 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
     expect(observation.scene.text).toContain("walks through with the crowd");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets manifest-thumbprint players confirm the oath reaches the opened passengers", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "touch_mara_manifest_thumbprint",
+      "carry_manifest_thumbprint_to_third_car",
+      "confirm_manifest_thumbprint_receipt"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(observation.scene.text).toContain("opened manifest answers in passenger order");
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_thumbprint_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
     expectIdealScore(observation.score);
   });
 
@@ -7789,7 +7839,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("Let it mean I stayed long enough to leave");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_manifest_thumbprint_goodbye"
+      "pull_release_after_manifest_thumbprint_goodbye",
+      "confirm_manifest_thumbprint_receipt"
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");

@@ -7,6 +7,62 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 73 Manifest Thumbprint Receipt
+
+- Date: 2026-06-08
+- Main objective: Add an optional receipt to Mara's manifest-thumbprint route
+  while preserving the direct passenger release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle uses live loop evidence showing complete coverage,
+  stable ideal-ending rates, and room for compact late-route story polish.
+- Why this matters: The manifest-thumbprint route already ties Mara's old oath
+  to the opened passenger list, but it went straight from that recognition to
+  release. Cautious players now get a final proof that the passengers received
+  the oath before they pull, without forcing that proof on decisive players.
+- Planned work:
+  - Keep `pull_release_after_manifest_thumbprint_goodbye` as the first direct
+    release path.
+  - Add one optional receipt scene from `mara_manifest_thumbprint_intercom`.
+  - Update manifest-thumbprint regression coverage for direct and confirmed
+    paths.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the new beat.
+- Risks:
+  - Optional receipt beats can become repetitive if they sound mandatory.
+  - The scene must stay about the passengers receiving Mara's oath, not another
+    generic count or handoff check.
+- Status:
+  - Completed.
+  - Added `confirm_manifest_thumbprint_receipt` and
+    `mara_manifest_thumbprint_receipt`.
+  - Added focused regression coverage proving the receipt path reaches
+    `passenger_manifest_thumbprint_true_ending`.
+  - Focused manifest-thumbprint tests passed:
+    `npm test -- -t "manifest thumbprint"` with 3 relevant tests green.
+  - Story validation passed with 175 reachable scenes, 31 endings, and no
+    warnings.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0`,
+    `unvisitedScenes: []`, and visited `mara_manifest_thumbprint_receipt`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. It wrote ignored
+    `ai-runs` artifacts and appended a tracked cycle observation; long-run
+    signals stayed stable with ideal-ending rate 78%, unfinished random runs 0,
+    best score 399, and MCP route `true_ending` at score 305.
+  - Actual CLI route reached `passenger_manifest_thumbprint_true_ending`
+    through `confirm_manifest_thumbprint_receipt` and
+    `pull_release_after_manifest_thumbprint_receipt` with score 312, no
+    objectives, inventory `badge, fuse, lantern, map, token`, and
+    `confirmed_manifest_thumbprint_receipt` set.
+- Playtest feedback:
+  - The receipt makes Mara's torn thumbprint feel accepted by the opened
+    passengers, not only explained by Mara.
+  - The direct release remains first, so the added proof reads as optional
+    caution rather than another required step.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect whether any remaining late-route proof beats are
+    meaningfully asymmetric before adding more optional receipts.
+
 # Cycle 72 Thumbprint Oath Receipt
 
 - Date: 2026-06-08

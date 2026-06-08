@@ -4,6 +4,38 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Manifest Thumbprint Receipt
+
+### Current Plan
+
+- Main objective: Add an optional confirmation to Mara's
+  manifest-thumbprint route while preserving the direct release.
+- Why this matters: The route now proves the opened passengers receive Mara's
+  old oath before the doors open, making the passenger-manifest payoff more
+  concrete without slowing players who are ready to pull the release.
+
+### Work Completed
+
+- Added `mara_manifest_thumbprint_receipt` from
+  `mara_manifest_thumbprint_intercom`.
+- Kept `pull_release_after_manifest_thumbprint_goodbye` as the first direct
+  ending choice.
+- Added regression coverage for the direct and confirmed manifest-thumbprint
+  paths.
+
+### Playtest Notes
+
+- `npm test -- -t "manifest thumbprint"` passed with 3 relevant tests.
+- `npm run health` passed with 294 tests, clean validation, 175 reachable
+  scenes, and coverage visiting every scene including the new receipt.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed with stable long-run
+  metrics: ideal-ending rate 78%, unfinished runs 0, best score 399.
+- CLI playthrough reached `passenger_manifest_thumbprint_true_ending` through
+  `confirm_manifest_thumbprint_receipt` at score 312 with no remaining
+  objectives.
+- The new beat reads as optional proof that the oath reached passengers, not
+  as another mandatory objective.
+
 ## 2026-06-02 - Open-Ended Score Awards
 
 ### Current Plan
