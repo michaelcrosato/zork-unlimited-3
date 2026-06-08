@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, follow or confirm the conductor's clear signal, pull on the lunch-tin count, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -16485,6 +16485,10 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "board_with_passenger_morning_chorus"
     );
+    expect(
+      observation.choices.find((choice) => choice.id === "board_with_passenger_morning_chorus")
+        ?.choiceGroup
+    ).toBe("Morning / keepsakes");
 
     state = choose(story, state, "board_with_passenger_morning_chorus");
     observation = observe(story, state);

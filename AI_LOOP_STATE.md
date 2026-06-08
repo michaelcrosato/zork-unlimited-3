@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 26 Morning Route Menu Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the remembered-morning passenger route easier to read
+  from the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 26 evidence is broadly healthy, but random MCP play still missed
+  `passenger_morning_intercom` while coverage could reach it.
+- Why this matters: The morning route is a strong passenger payoff: the rescue
+  stops being about an abstract HOME sign and becomes ordinary real streets,
+  kitchens, clocks, radiators, and doors. A normal player should see the
+  "board with remembered mornings" option as part of that thread, not as a
+  generic late boarding action.
+- Planned work:
+  - Move `board_with_passenger_morning_chorus` into the
+    `Morning / keepsakes` display group without changing its destination or
+    flags.
+  - Update opened-manifest objective text so hints mention carrying remembered
+    mornings to the speaker.
+  - Strengthen regression coverage for the choice group.
+  - Run focused tests, full health, an actual route, and the evidence cycle.
+- Risks:
+  - This is a UX/discoverability improvement, so it may not materially change
+    uniform random coverage by itself.
+  - The opened-manifest hub is already dense; any future work should reduce
+    noise or improve blind-player grouping before adding more parallel options.
+- Status:
+  - Completed and ready for commit/push.
+  - Moved `board_with_passenger_morning_chorus` from `Board / release` to
+    `Morning / keepsakes`; destination, requirements, and flags are unchanged.
+  - Updated opened-manifest objective text to mention carrying remembered
+    mornings to the speaker.
+  - Added regression coverage that the direct morning-boarding choice remains
+    visible from `passengers_released` and is grouped under
+    `Morning / keepsakes`.
+  - Focused morning-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning chorus|remembered morning|opened manifest hub"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through `board_with_passenger_morning_chorus` reached
+    `passenger_morning_intercom`, then `passenger_morning_stop_checked_true_ending`,
+    score 269, with the ideal-ending award present.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Evidence stayed green:
+    health passed, random play had `ended: 100` / `unfinished: 0`, coverage
+    stayed complete, MCP play reached `true_ending`, and the adaptive route
+    ended at `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The direct morning boarding label now belongs to the same displayed topic as
+    the listen/confirm morning options, which makes the route read as one
+    coherent thread in the blind-player grouped menu.
+  - The route payoff is clear: the third-car speaker carries ordinary remembered
+    mornings, then the stop check turns HOME into real streets before release.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise invest in reducing opened-manifest menu density or improving
+    visibility for remaining random misses such as `passenger_lunch_tin_true_ending`,
+    `passenger_roll_call_checked_true_ending`, or
+    `mara_manifest_thumbprint_receipt_true_ending`.
+
 # Cycle 25 Direct Answered-Speaker Release
 
 - Date: 2026-06-08
