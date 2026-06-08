@@ -4597,6 +4597,9 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: pull_release_with_ready_manifest
+        label: Pull the release with every kept name aboard
+        to: passenger_manifest_true_ending
 
   passenger_manifest_answers:
     routeImportance: optional

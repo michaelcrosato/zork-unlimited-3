@@ -4909,6 +4909,21 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Every kept name is aboard");
     expect(observation.state.flags.heard_manifest_ready).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_finish_ready_manifest",
+      "pull_release_with_ready_manifest"
+    ]);
+
+    const openedDoorDirectReleaseState = choose(
+      story,
+      openedDoorReadyState,
+      "pull_release_with_ready_manifest"
+    );
+    observation = observe(story, openedDoorDirectReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     openedDoorReadyState = choose(
       story,
@@ -4986,8 +5001,16 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_manifest_ready).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_finish_ready_manifest"
+      "listen_to_mara_finish_ready_manifest",
+      "pull_release_with_ready_manifest"
     ]);
+
+    const readyDirectReleaseState = choose(story, readyState, "pull_release_with_ready_manifest");
+    observation = observe(story, readyDirectReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     readyState = choose(story, readyState, "listen_to_mara_finish_ready_manifest");
     observation = observe(story, readyState);
@@ -6303,8 +6326,16 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_manifest_ready).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_finish_ready_manifest"
+      "listen_to_mara_finish_ready_manifest",
+      "pull_release_with_ready_manifest"
     ]);
+
+    const directReadyReleaseState = choose(story, state, "pull_release_with_ready_manifest");
+    observation = observe(story, directReadyReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "listen_to_mara_finish_ready_manifest");
     observation = observe(story, state);

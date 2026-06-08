@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 68 Ready-Manifest Direct Release
+
+- Date: 2026-06-08
+- Main objective: Let ready-manifest players pull the release as soon as every
+  kept passenger is confirmed aboard, without forcing Mara's optional final
+  count first.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle used live loop evidence and the adaptive MCP route that
+  ended at `passenger_manifest_true_ending`.
+- Why this matters: The manifest route already made the right goal clear, but
+  `passenger_manifest_ready_intercom` had only one follow-up. Players who had
+  done the work to confirm every kept passenger was aboard still had to take
+  one more intercom beat before acting.
+- Planned work:
+  - Add a direct release choice from `passenger_manifest_ready_intercom`.
+  - Keep `listen_to_mara_finish_ready_manifest` first as the richer optional
+    count.
+  - Update opened-manifest regressions so both the direct release and optional
+    Mara count stay valid.
+  - Run focused manifest tests, validation, full health, evidence-only cycle,
+    and an actual CLI playthrough through the new choice.
+- Risks:
+  - The ending text still has Mara reading the manifest as the release opens,
+    so blind feedback should watch whether the direct path feels immediate
+    rather than abrupt.
+  - This is a usability/content polish change, not a new route, so long-run
+    metrics should stay stable rather than improve dramatically.
+- Status:
+  - Completed.
+  - Added `pull_release_with_ready_manifest` from
+    `passenger_manifest_ready_intercom` to `passenger_manifest_true_ending`.
+  - Preserved `listen_to_mara_finish_ready_manifest` as the first choice for
+    players who want Mara's final count before pulling the release.
+  - Updated `tests/story-paths.test.ts` to prove the ready-manifest intercom
+    exposes both choices and that direct release reaches an ideal ending.
+  - Focused manifest tests passed: `npm test -- -t manifest` with 70 relevant
+    tests green.
+  - Story validation passed with 170 reachable scenes and no warnings.
+  - Full `npm run health` passed: format check, TypeScript, 292 tests, story
+    validation, and coverage playtest. Coverage had `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and wrote ignored
+    `ai-runs` reports plus one tracked cycle observation. Long-run signals
+    stayed stable: ideal-ending rate 78%, unfinished random runs 0, best score
+    399, and the MCP route reached `true_ending` with score 305.
+  - Actual CLI route reached `passenger_manifest_true_ending` through
+    `pull_release_with_ready_manifest` with score 273, no objectives, inventory
+    `badge, fuse, lantern, map, token`, and `heard_manifest_ready` set.
+- Playtest feedback:
+  - The new route reads cleaner for decisive players: after confirming every
+    kept passenger is aboard, the release is immediately actionable.
+  - The optional Mara count remains available first, preserving the more
+    emotional version of the manifest payoff for players who want it.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect normal-player endings for another single-choice late
+    intercom where adding a direct action or optional proof would improve
+    pacing without increasing route complexity.
+
 # Cycle 67 Echoed Confirmation Discovery
 
 - Date: 2026-06-08
