@@ -7,6 +7,77 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 23 Opened Manifest Handoff Objective
+
+- Date: 2026-06-08
+- Main objective: Make the simple `passenger_manifest_handoff_true_ending`
+  easier to recognize during normal play by changing the active objective once
+  Mara's opened-door handoff is underway.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 23 evidence: full coverage reaches every scene,
+  the 250-run MCP sample reaches `passenger_manifest_handoff_true_ending` only
+  twice, and the suggested next action still names that ending's
+  discoverability.
+- Why this matters: The opened-manifest hub has many valid optional passenger
+  threads. After the player has already watched Mara begin the handoff, the UI
+  should stop giving broad "pick any optional thread" guidance and instead say
+  that the handoff can now be finished.
+- Planned work:
+  - Add a handoff-specific objective for the state where Mara's opened-door
+    handoff is active and no stronger branch has taken over.
+  - Keep the existing opened-manifest objective for other passenger branches.
+  - Add regression coverage for the new objective on the handoff screen, the
+    returned hub, and the intercom handoff step.
+  - Run focused tests, full health, an evidence cycle, and an actual CLI
+    playthrough through the changed route.
+- Risks:
+  - Objective ordering is player-facing; the new rule must not obscure stronger
+    passenger-answer, gathering, or thumbprint branches.
+  - This is a clarity improvement, not a guaranteed random sampler shift,
+    because the random playtester does not read objectives semantically.
+- Status:
+  - Completed.
+  - Added a handoff-specific objective:
+    "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the
+    release while it is moving."
+  - Narrowed the broader opened-manifest objective so it still appears for
+    other passenger branches, but no longer competes while the simple Mara
+    handoff route is active.
+  - Added regression coverage showing the new objective appears on
+    `mara_manifest_handoff`, after returning to `passengers_released`, and at
+    `mara_manifest_handoff_intercom`; the same test verifies the route reaches
+    `passenger_manifest_handoff_true_ending` with no ending objectives.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 302 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record, then stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough followed the changed route through
+    `watch_mara_open_manifest`, `return_from_mara_manifest_handoff`,
+    `carry_mara_manifest_handoff_from_opened_doors`, and
+    `pull_release_after_manifest_handoff_goodbye`, reaching
+    `passenger_manifest_handoff_true_ending`, score 291, with no remaining
+    objectives.
+- Playtest feedback:
+  - The mid-route `passengers_released` screen now shows the new handoff
+    objective and the visible direct release/intercom choices together, so the
+    player gets a clear "finish this handoff now" prompt after returning from
+    Mara's call.
+  - No crash, dead end, unreachable scene, or stale objective appeared in the
+    changed route.
+  - The deterministic random sampler still does not use objective text, so this
+    is a player-clarity improvement rather than a guaranteed random-ending-rate
+    change.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue polishing the opened-manifest hub by reducing choice
+    crowding around the highest-value passenger-release payoffs.
+
 # Cycle 22 Returned Manifest Handoff Release
 
 - Date: 2026-06-08

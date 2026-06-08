@@ -96,11 +96,27 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
+  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving."
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: saw_mara_manifest_handoff
+        - notFlag: heard_passenger_answers
+        - notFlag: helped_passengers_gather
+        - notFlag: read_mara_thumbprint
+        - notFlag: read_manifest_thumbprint
   - text: Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
+        - any:
+            - notFlag: saw_mara_manifest_handoff
+            - flag: heard_passenger_answers
+            - flag: helped_passengers_gather
+            - flag: read_mara_thumbprint
+            - flag: read_manifest_thumbprint
   - text: Pull the emergency release in the third car.
     requires:
       all:

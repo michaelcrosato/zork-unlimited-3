@@ -4,6 +4,8 @@ import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
+const MANIFEST_HANDOFF_OBJECTIVE =
+  "Finish Mara's opened-door handoff: listen, confirm the doors, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Board now, or choose an optional opened-passenger thread such as the lunch-tin count or roster proof.";
 
@@ -13412,6 +13414,54 @@ describe("demo story critical paths", () => {
       "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
     ]);
+
+    const firstHandoffState = choose(story, state, "watch_mara_open_manifest");
+    observation = observe(story, firstHandoffState);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_during_mara_manifest_handoff"
+    );
+
+    const returnedHandoffState = choose(
+      story,
+      firstHandoffState,
+      "return_from_mara_manifest_handoff"
+    );
+    observation = observe(story, returnedHandoffState);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_with_seen_manifest_handoff"
+    );
+
+    const intercomHandoffState = choose(
+      story,
+      returnedHandoffState,
+      "carry_mara_manifest_handoff_from_opened_doors"
+    );
+    observation = observe(story, intercomHandoffState);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_handoff_doors",
+      "pull_release_after_manifest_handoff_goodbye"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, intercomHandoffState, "pull_release_after_manifest_handoff_goodbye")
+    );
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.objectives).toEqual([]);
+    expectIdealScore(observation.score);
 
     const directReleaseState = choose(story, state, "pull_release_for_opened_manifest");
     observation = observe(story, directReleaseState);
