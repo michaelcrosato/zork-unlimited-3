@@ -7,6 +7,75 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 48 Direct Lunch-Tin Pace
+
+- Date: 2026-06-08
+- Main objective: Make the simple lunch-tin boarding payoff easier to choose
+  from opened-passenger hubs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 16 evidence is broadly healthy, but random play still
+  under-samples `passenger_lunch_tin_boarding`,
+  `passenger_lunch_tin_intercom`, and `passenger_lunch_tin_true_ending`.
+- Why this matters: The late passenger hubs already foreground the lunch-tin
+  worker as an ordinary rhythm for the crowd. A normal player should be able
+  to let that worker set the boarding pace and reach the simple lunch-tin
+  release without first finding the answered-passenger route, the checked
+  count, or the roster proof.
+- Planned work:
+  - Add a direct lunch-tin boarding pace choice from `passengers_released`.
+  - Add the same direct boarding pace choice from `passenger_platform`.
+  - Preserve the existing passenger-farewell, intercom, checked-count, and
+    roster-proof routes.
+  - Add regression coverage for both direct hub choices.
+  - Run focused checks, full health, and one actual route through the new
+    lunch-tin boarding pace.
+- Risks:
+  - The late opened-passenger menus are already broad, so the new labels must
+    read as one clear optional lunch-tin path rather than another generic
+    boarding command.
+  - Random play may still under-sample the ending because many ideal passenger
+    endings compete from the same hubs.
+- Status:
+  - Completed.
+  - Added `let_opened_lunch_tin_worker_set_pace`, routing
+    `passengers_released` directly to `passenger_lunch_tin_boarding` while
+    setting `helped_passengers_gather`, `steadied_lunch_tin_worker`, and
+    `set_lunch_tin_pace`.
+  - Added `board_behind_lunch_tin_worker_pace` from `passenger_platform` with
+    the same pace flags.
+  - Updated the opened-manifest objective so the optional passenger threads
+    explicitly include lunch-tin pace as well as roster proof.
+  - Preserved the existing passenger-farewell, lunch-tin intercom,
+    checked-count, roster, and roster-proof routes.
+  - Added regression coverage for both direct hub choices into
+    `passenger_lunch_tin_true_ending` and updated affected menu-order
+    snapshots.
+  - Focused lunch-tin route regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin boarding pace|lunch-tin pacing route|opened manifest doors|passenger platform"`
+    with 13 matching tests and 224 skipped.
+  - Full `npm run health` passed: format check, TypeScript, 321 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 288, via
+    `let_opened_lunch_tin_worker_set_pace` and
+    `pull_release_after_lunch_tin_boarding`.
+  - `npm run ai:cycle` completed in evidence-only mode, wrote ignored
+    `ai-runs/` artifacts, and appended a passing MCP smoke observation:
+    `true_ending`, score 305.
+- Playtest feedback:
+  - The new opened-manifest label reads like a concrete passenger-action
+    thread because it names the lunch-tin worker and the opened boarding pace.
+  - The route lands cleanly in the existing boarding scene; the first release
+    option immediately pays off the worker's count without forcing an extra
+    intercom, checked-count, or roster detour.
+  - No invalid choice, stale objective, unvisited scene, unfinished playtest,
+    or route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect remaining low-frequency random misses around
+    `passenger_roll_call_answer_check`, `passenger_threshold_checked_true_ending`,
+    and manifest thumbprint receipt visibility.
+
 # Cycle 47 Direct Answered-Handoff Checks
 
 - Date: 2026-06-08

@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1717,6 +1717,19 @@ scenes:
             set_lunch_tin_pace: true
             checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
+      - id: let_opened_lunch_tin_worker_set_pace
+        label: Let the lunch-tin worker set the opened boarding pace
+        choiceGroup: Lunch tin / shift count
+        to: passenger_lunch_tin_boarding
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: set_lunch_tin_pace
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         choiceGroup: Door echoes / threshold
@@ -3168,6 +3181,18 @@ scenes:
         to: passenger_farewell
         requires:
           notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+      - id: board_behind_lunch_tin_worker_pace
+        label: Board behind the lunch-tin worker's count
+        to: passenger_lunch_tin_boarding
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: set_lunch_tin_pace
         effects:
           set:
             helped_passengers_gather: true

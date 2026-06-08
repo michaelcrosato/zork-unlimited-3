@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6648,28 +6648,33 @@ describe("demo story critical paths", () => {
       "Check the lunch-tin worker's passenger count before boarding"
     );
     expect(observation.choices[12]?.choiceGroup).toBe("Lunch tin / shift count");
-    expect(choiceIds[13]).toBe("hold_opened_manifest_threshold");
+    expect(choiceIds[13]).toBe("let_opened_lunch_tin_worker_set_pace");
     expect(observation.choices[13]?.label).toBe(
+      "Let the lunch-tin worker set the opened boarding pace"
+    );
+    expect(observation.choices[13]?.choiceGroup).toBe("Lunch tin / shift count");
+    expect(choiceIds[14]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[14]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[14]).toBe("hold_and_confirm_opened_manifest_threshold");
-    expect(observation.choices[14]?.label).toBe(
+    expect(choiceIds[15]).toBe("hold_and_confirm_opened_manifest_threshold");
+    expect(observation.choices[15]?.label).toBe(
       "Hold the threshold and confirm every opened passenger clears it"
     );
-    expect(choiceIds[15]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[15]?.label).toBe(
+    expect(choiceIds[16]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[16]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[16]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[16]?.label).toBe(
+    expect(choiceIds[17]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[17]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(choiceIds[17]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[17]?.label).toBe(
+    expect(choiceIds[18]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[18]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(choiceIds[18]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[18]?.label).toBe(
+    expect(choiceIds[19]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[19]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
@@ -6691,6 +6696,9 @@ describe("demo story critical paths", () => {
       choiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(choiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
+      choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")
+    );
+    expect(choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")).toBeLessThan(
       choiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(choiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
@@ -9665,6 +9673,7 @@ describe("demo story critical paths", () => {
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "board_behind_lunch_tin_worker_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "ask_conductor_to_call_platform_clear",
       "confirm_platform_conductor_clearance",
@@ -10665,6 +10674,96 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("surfaces the lunch-tin boarding pace directly from the opened passenger hubs", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    const basePath = [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ];
+
+    let openedState = initialState(story);
+    for (const choiceId of basePath) {
+      openedState = choose(story, openedState, choiceId);
+    }
+
+    let observation = observe(story, openedState);
+    let choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(choiceIds).toContain("let_opened_lunch_tin_worker_set_pace");
+    expect(choiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
+      choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")
+    );
+    expect(choiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")).toBeLessThan(
+      choiceIds.indexOf("hold_opened_manifest_threshold")
+    );
+
+    openedState = choose(story, openedState, "let_opened_lunch_tin_worker_set_pace");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_lunch_tin_boarding"
+    );
+
+    openedState = choose(story, openedState, "pull_release_after_lunch_tin_boarding");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("lunch-tin worker's count");
+    expectIdealScore(observation.score);
+
+    let platformState = initialState(story);
+    for (const choiceId of [...basePath, "board_after_releasing_passengers"]) {
+      platformState = choose(story, platformState, choiceId);
+    }
+
+    observation = observe(story, platformState);
+    choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(choiceIds).toContain("board_behind_lunch_tin_worker_pace");
+    expect(choiceIds.indexOf("ask_lunch_tin_worker_to_set_pace")).toBeLessThan(
+      choiceIds.indexOf("board_behind_lunch_tin_worker_pace")
+    );
+    expect(choiceIds.indexOf("board_behind_lunch_tin_worker_pace")).toBeLessThan(
+      choiceIds.indexOf("confirm_platform_lunch_tin_roster_proof")
+    );
+
+    platformState = choose(story, platformState, "board_behind_lunch_tin_worker_pace");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+
+    platformState = choose(story, platformState, "pull_release_after_lunch_tin_boarding");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("lets platform echo listeners check the lunch-tin count into its own release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -11052,10 +11151,11 @@ describe("demo story critical paths", () => {
     expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(passengerPlatformChoiceIds.slice(0, 10)).toEqual([
+    expect(passengerPlatformChoiceIds.slice(0, 11)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "board_behind_lunch_tin_worker_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
       "confirm_platform_answered_handoff_thresholds",
@@ -14125,6 +14225,7 @@ describe("demo story critical paths", () => {
       "ask_conductor_punch_from_opened_manifest",
       "confirm_opened_conductor_clearance",
       "check_lunch_tin_count_from_opened_manifest",
+      "let_opened_lunch_tin_worker_set_pace",
       "hold_opened_manifest_threshold",
       "hold_and_confirm_opened_manifest_threshold",
       "listen_to_opened_threshold_from_manifest",
@@ -14438,10 +14539,11 @@ describe("demo story critical paths", () => {
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(manifestPlatformChoiceIds.slice(0, 10)).toEqual([
+    expect(manifestPlatformChoiceIds.slice(0, 11)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
+      "board_behind_lunch_tin_worker_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
       "confirm_platform_answered_handoff_thresholds",
