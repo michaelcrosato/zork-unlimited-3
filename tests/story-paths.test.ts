@@ -12239,6 +12239,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("desk map");
+    expect(observation.scene.text).toContain("locker fuse and badge");
+    expect(observation.scene.text).toContain("clock token");
 
     state = initialState(story);
 
@@ -12394,6 +12397,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("route you now know how to start");
   });
 
   it("adds a one-time dark platform glance before early unlit escape", async () => {
@@ -12451,6 +12455,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's speaker");
   });
 
   it("routes ledger-warning players directly to the stopped clock for the token", async () => {
@@ -12922,6 +12927,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("escape_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("desk map");
+    expect(observation.scene.text).toContain("clock token");
   });
 
   it("lets wavering escape players return toward the stopped clock", async () => {

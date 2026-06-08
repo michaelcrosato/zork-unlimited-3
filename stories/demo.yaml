@@ -7066,8 +7066,11 @@ scenes:
     endingGroup: Early escape
     text: >
       You run before the train can choose you. Dawn finds you on Warden Street
-      with rain in your shoes and the certainty that someone else will hear
-      Mara calling tomorrow night.
+      with rain in your shoes, but the underpass has already arranged the
+      pieces you left behind: the desk map, the locker fuse and badge, the clock
+      token, and Mara's speaker waiting above the train. Someone else may hear
+      her tomorrow night. They will be following a route you now know how to
+      start.
     choices: []
 
   warned_escape_ending:

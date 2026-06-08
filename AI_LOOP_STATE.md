@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 27 Early Escape Replay Guidance
+
+- Date: 2026-06-08
+- Main objective: Turn the plain early escape ending into a clearer
+  fail-forward beat for players who flee before solving the station.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows active loop evidence: core health is green, manifest
+  handoff discoverability was already addressed, and the adaptive exploratory
+  route ended at `escape_ending`.
+- Why this matters: Early escape is a valid ending, but it should help a
+  normal player understand what a stronger second attempt needs. The warning
+  screens already point to the desk map, locker parts, and stopped clock; the
+  ending now preserves that learning after the player commits to leaving.
+- Planned work:
+  - Revise `escape_ending` so it names the missed route pieces without changing
+    route behavior.
+  - Add regression assertions that the ending keeps the desk map, locker
+    fuse/badge, clock token, and Mara speaker clues.
+  - Run focused tests, full health, evidence-only loop collection, and an
+    actual CLI route that reproduces the adaptive early-escape path.
+- Risks:
+  - This improves replay clarity and story payoff, not ending distribution.
+  - The wording must stay concise enough that early escape still feels like an
+    ending, not an out-of-world hint screen.
+- Status:
+  - Completed.
+  - Updated `escape_ending` so the early flight payoff now names the desk map,
+    locker fuse and badge, clock token, and Mara speaker as the route pieces
+    left behind.
+  - Added story-path assertions across lit and unlit early-escape branches so
+    the replay guidance stays attached to `escape_ending`.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 305 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record.
+  - Actual CLI playthrough reproduced the adaptive early-escape path
+    (`enter_dark`, `pull_chain`, `go_to_platform`,
+    `retreat_to_stairs_from_platform`, `confirm_unlit_flee_platform`) and
+    reached `escape_ending`, score 16, with no remaining objectives.
+- Playtest feedback:
+  - The route still feels like a valid early escape rather than a hard failure,
+    but the ending now gives a clearer second-attempt memory: map, fuse, badge,
+    clock token, and Mara's speaker.
+  - No crash, dead end, stale objective, score regression, or reachability issue
+    appeared in the changed route.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise choose one optional passenger or Mara ending for a similarly
+    small story-depth payoff.
+
 # Cycle 26 Manifest Handoff Screen Grouping
 
 - Date: 2026-06-08
