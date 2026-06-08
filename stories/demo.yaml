@@ -96,9 +96,16 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
+  - text: Choose one opened-passenger thread if desired, then pull the emergency release in the third car.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
   - text: Pull the emergency release in the third car.
     requires:
-      flag: freed_mara
+      all:
+        - flag: freed_mara
+        - notFlag: read_passenger_manifest
   - text: Use the marked map if you need a safe way out.
     requires:
       all:

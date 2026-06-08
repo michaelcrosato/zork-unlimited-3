@@ -3,6 +3,10 @@ import { choose, initialState, observe } from "../src/engine.js";
 import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
+const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
+const OPENED_MANIFEST_OBJECTIVE =
+  "Choose one opened-passenger thread if desired, then pull the emergency release in the third car.";
+
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
   expect(score.awards.some((award) => award.id === "flag_ideal_ending")).toBe(true);
@@ -3165,7 +3169,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Mara's cleared badge");
     expect(observation.scene.text).toContain("open what the ledger tried to keep closed");
     expect(observation.state.flags.checked_release_handle).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_handle_check"
     ]);
@@ -3545,7 +3549,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Third car. First seat. Pull once.");
     expect(observation.scene.text).toContain("Dispatch complete when the last door opens");
     expect(observation.state.flags.heard_mara_last_dispatch).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_last_dispatch_into_car",
       "let_last_dispatch_become_handoff",
@@ -4488,7 +4492,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain(
       "get them aboard, reach under the first seat, and pull"
     );
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "make_room_for_passengers_in_third_car"
     );
@@ -11669,7 +11673,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).not.toContain(
       "Learn how to survive the driverless train before boarding it."
     );
-    expect(observation.objectives).toContain("Pull the emergency release in the third car.");
+    expect(observation.objectives).toContain(RELEASE_OBJECTIVE);
     expect(observation.score.score).toBeGreaterThan(0);
     expect(choiceIds).toContain("pull_release");
 
@@ -12743,7 +12747,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("one final dispatch");
     expect(observation.scene.text).toContain("walks the platform beside you");
     expect(observation.state.flags.freed_mara).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "watch_mara_leave_booth",
       "ask_mara_for_last_dispatch",
@@ -12806,7 +12810,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_handoff");
     expect(observation.scene.text).toContain("done being the last line");
     expect(observation.state.flags.saw_mara_handoff).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual(["return_from_mara_handoff"]);
 
     state = choose(story, state, "return_from_mara_handoff");
@@ -13092,7 +13096,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.scene.text).toContain("every tiny stamped door");
     expect(observation.state.flags.freed_mara).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(choiceIds).toEqual([
       "watch_mara_open_manifest",
       "carry_mara_handoff_as_doors_open",
@@ -13817,7 +13821,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_answered_boarding");
     expect(observation.scene.text).toContain("The answered passengers board");
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_answered_boarding"
     );
@@ -14011,7 +14015,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("a kettle left on a stove");
     expect(observation.scene.text).toContain("somewhere to arrive");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "board_after_passenger_morning_chorus",
       "let_morning_chorus_answer_names",
@@ -14267,7 +14271,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the kettle before it boils dry");
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -14510,7 +14514,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("You are not late. You were held.");
     expect(observation.scene.text).toContain("no one boards alone");
     expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
-    expect(observation.objectives).toEqual(["Pull the emergency release in the third car."]);
+    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "notice_manifest_thumbprint_after_mara_signoff",
       "listen_to_answers_after_mara_signoff",

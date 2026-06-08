@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 78 Opened Manifest Objective Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the large opened-manifest hub easier to scan without
+  removing any late-game passenger routes.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this cycle follows live loop evidence and Cycle 77's next step:
+  the opened-manifest hub is stable but exposes 45 choices under a generic
+  release objective.
+- Why this matters: After players open every kept-passenger door, the game now
+  tells them they can choose one passenger thread if desired and then pull the
+  release. That keeps the optional depth visible without making the hub feel
+  like a mandatory checklist.
+- Planned work:
+  - Add an opened-manifest-specific objective once Mara is freed after reading
+    the passenger manifest.
+  - Preserve the original direct release objective on Mara-only routes.
+  - Update story-path tests for passenger-manifest and Mara-only objective
+    behavior.
+  - Run focused tests, validation, full health, one evidence cycle, and an
+    actual CLI playthrough through the opened-manifest hub.
+- Risks:
+  - Objective text must not imply every optional passenger branch is required.
+  - The generic Mara-only route should remain direct and uncluttered.
+- Status:
+  - Completed.
+  - Added the objective: "Choose one opened-passenger thread if desired, then
+    pull the emergency release in the third car."
+  - Limited the old "Pull the emergency release in the third car" objective to
+    freed-Mara routes where the passenger manifest was not opened.
+  - Added regression assertions so opened-manifest routes see the new objective
+    while Mara-only routes keep the old direct objective.
+  - Focused checks passed:
+    `npm test -- -t "manifest-specific platform|passenger morning chorus|Mara sign-off|release objective"`
+    and `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 294 tests, story
+    validation, and coverage playtest. Coverage still had `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended the
+    tracked cycle observation; long-run metrics stayed stable with true-ending
+    rate 78%, unfinished random runs 0, and best score 399.
+  - Actual CLI route reached `passenger_true_ending` through the new
+    opened-manifest objective state, then
+    `listen_to_passenger_morning_chorus`,
+    `board_after_passenger_morning_chorus`,
+    `confirm_morning_stops_before_release`, and
+    `pull_release_after_confirmed_morning_stops` with score 275 and no final
+    objectives.
+- Playtest feedback:
+  - The hub still has 45 available choices, but the visible objective now sets
+    the right expectation: explore one passenger thread if it interests you,
+    then finish with the release.
+  - The route felt clearer because optional late-game story depth no longer
+    hides behind a purely mechanical "pull the release" prompt.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise consider a deeper player-view option grouping or transcript
+    summary pass for the opened-manifest hub.
+
 # Cycle 77 Mara Sign-off Morning Bridge
 
 - Date: 2026-06-08
