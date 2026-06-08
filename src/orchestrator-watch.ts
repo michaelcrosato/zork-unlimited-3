@@ -75,10 +75,13 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
     snapshot.latestArtifact === undefined
       ? undefined
       : snapshot.now.getTime() - snapshot.latestArtifact.mtimeMs;
-  if (elapsedMs >= 10 * minute && snapshot.latestArtifact === undefined) {
+  const hasPostLaunchArtifact =
+    snapshot.latestArtifact !== undefined &&
+    snapshot.latestArtifact.mtimeMs >= snapshot.startedAt.getTime();
+  if (elapsedMs >= 10 * minute && !hasPostLaunchArtifact) {
     anomalies.push({
       severity: "hard",
-      reason: "no cycle report/prompt artifact appeared within 10 minutes of launch"
+      reason: "no post-launch cycle report/prompt artifact appeared within 10 minutes"
     });
   } else if (latestArtifactAgeMs !== undefined && latestArtifactAgeMs > 2 * hour) {
     anomalies.push({
@@ -213,7 +216,11 @@ function renderSnapshot(snapshot: WatchSnapshot, anomalies: Anomaly[]): string {
   const artifact =
     snapshot.latestArtifact === undefined
       ? "none"
-      : `${snapshot.latestArtifact.path} (${formatAge(snapshot.now.getTime() - snapshot.latestArtifact.mtimeMs)} old)`;
+      : `${snapshot.latestArtifact.path} (${formatAge(
+          snapshot.now.getTime() - snapshot.latestArtifact.mtimeMs
+        )} old${
+          snapshot.latestArtifact.mtimeMs < snapshot.startedAt.getTime() ? ", pre-launch" : ""
+        })`;
   const hard = anomalies.filter((item) => item.severity === "hard");
   const soft = anomalies.filter((item) => item.severity === "soft");
   const status = hard.length > 0 ? "ANOMALY" : soft.length > 0 ? "WATCH" : "OK";

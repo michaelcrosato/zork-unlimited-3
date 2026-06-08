@@ -62,7 +62,24 @@ describe("orchestrator anomaly classification", () => {
       )
     ).toContainEqual({
       severity: "hard",
-      reason: "no cycle report/prompt artifact appeared within 10 minutes of launch"
+      reason: "no post-launch cycle report/prompt artifact appeared within 10 minutes"
+    });
+  });
+
+  it("does not count pre-launch artifacts as fresh cycle evidence", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          now: new Date("2026-06-08T00:10:00.000Z"),
+          latestArtifact: {
+            path: "ai-runs/cycle-before-launch.md",
+            mtimeMs: new Date("2026-06-07T23:59:59.000Z").getTime()
+          }
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "no post-launch cycle report/prompt artifact appeared within 10 minutes"
     });
   });
 
