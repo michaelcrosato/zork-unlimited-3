@@ -7,6 +7,72 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 40 Direct Conductor Clearance Checks
+
+- Date: 2026-06-08
+- Main objective: Make the optional conductor-clearance receipt easier to act
+  on once the player has already asked the old conductor to clear the platform.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence was healthy overall, but the conductor
+  clearance checked ending remained a low-frequency optional passenger payoff.
+- Why this matters: The conductor signal scene already says "Platform clear,"
+  so a careful player should be able to confirm every door from that moment
+  instead of discovering the checked receipt only after an extra roll-call
+  detour.
+- Planned work:
+  - Add a direct clearance-confirmation choice from
+    `passenger_conductor_signal`.
+  - Add a matching confirmation choice from `passenger_conductor_intercom`.
+  - Keep the fast direct conductor release first for momentum players.
+  - Update the opened-manifest objective to name the conductor clear-signal
+    check.
+  - Add regression coverage for both direct confirmation routes.
+  - Run focused checks, full health, evidence collection, and one actual CLI
+    route through the new shortcut.
+- Risks:
+  - Adding another late passenger choice could crowd the conductor route if it
+    displaced the direct release.
+  - Random play may not show a large immediate lift because many optional
+    passenger endings compete in the same opened-manifest hub.
+- Status:
+  - Completed.
+  - Added `confirm_conductor_clearance_from_signal`, routing the platform clear
+    signal directly to `passenger_conductor_clearance_check` while setting
+    `heard_conductor_clearance`, `heard_final_roll_call`, and
+    `confirmed_conductor_clearance`.
+  - Added `confirm_intercom_conductor_clearance`, giving the third-car
+    conductor intercom the same checked receipt before release.
+  - Updated the opened-manifest objective text to include the conductor
+    clear-signal check.
+  - Focused conductor regression passed with 7 tests:
+    `npx vitest run tests/story-paths.test.ts -t conductor`.
+  - Story validation passed with 191 reachable scenes / 46 endings and no
+    errors or warnings: `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 311 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Random smoke passed with all 250 runs ended and `unfinished: 0`:
+    `npm run cyoa -- playtest stories/demo.yaml --runs 250 --strategy random --summary --json`.
+    The deterministic sample still under-sampled the door-echo seat scenes,
+    matching prior known pressure.
+  - Actual CLI route reached
+    `passenger_conductor_clearance_checked_true_ending`, score 310, no
+    remaining objectives, after choosing
+    `confirm_conductor_clearance_from_signal` directly from
+    `passenger_conductor_signal`.
+- Playtest feedback:
+  - The new choice appears where the scene already says "Platform clear," so
+    the careful-check action now reads as an immediate response rather than a
+    hidden submenu.
+  - Keeping the direct release first preserves route momentum for players who
+    trust the conductor without the extra receipt.
+  - The ending payoff remains distinct: every threshold answers in a human
+    voice before the release opens the doors.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving low-frequency optional passenger endings whose
+    setup is visible but whose strongest payoff remains one step too hidden.
+
 # Cycle 39 Door-Echo Seat Receipt Shortcut
 
 - Date: 2026-06-08

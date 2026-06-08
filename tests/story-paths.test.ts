@@ -8,7 +8,7 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, or pull the release while it is moving.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -4605,6 +4605,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_signal",
+      "confirm_conductor_clearance_from_signal",
       "inspect_conductor_punch_memory",
       "follow_conductor_signal_to_third_car"
     ]);
@@ -9056,6 +9057,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_clear",
+      "confirm_intercom_conductor_clearance",
       "hear_final_conductor_roll_call",
       "ask_conductor_to_punch_transfer",
       "hold_for_conductor_roll_call_before_release"
@@ -9106,6 +9108,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_signal",
+      "confirm_conductor_clearance_from_signal",
       "inspect_conductor_punch_memory",
       "follow_conductor_signal_to_third_car"
     ]);
@@ -9119,6 +9122,25 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("conductor's clear signal");
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorSignalState, "confirm_conductor_clearance_from_signal");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_check");
+    expect(observation.scene.text).toContain("one door at a time");
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_conductor_clearance).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_conductor_clearance"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_conductor_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_checked_true_ending");
+    expect(observation.scene.text).toContain("every door to belong to a human voice");
     expectIdealScore(observation.score);
 
     state = choose(story, conductorSignalState, "inspect_conductor_punch_memory");
@@ -9139,6 +9161,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_clear",
+      "confirm_intercom_conductor_clearance",
       "hear_final_conductor_roll_call",
       "ask_conductor_to_punch_transfer",
       "hold_for_conductor_roll_call_before_release"
@@ -9174,6 +9197,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("emergency release waits in your hand");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_clear",
+      "confirm_intercom_conductor_clearance",
       "hear_final_conductor_roll_call",
       "ask_conductor_to_punch_transfer",
       "hold_for_conductor_roll_call_before_release"
@@ -9186,6 +9210,25 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("conductor's clear signal");
     expect(observation.scene.text).toContain("another worker's voice");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expectIdealScore(observation.score);
+
+    state = choose(story, conductorIntercomState, "confirm_intercom_conductor_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_check");
+    expect(observation.scene.text).toContain("every open door");
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_conductor_clearance).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_conductor_clearance"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_conductor_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_conductor_clearance_checked_true_ending");
+    expect(observation.scene.text).toContain("answered from each threshold");
     expectIdealScore(observation.score);
 
     state = choose(story, conductorIntercomState, "ask_conductor_to_punch_transfer");
@@ -9718,6 +9761,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_clear",
+      "confirm_intercom_conductor_clearance",
       "hear_final_conductor_roll_call",
       "ask_conductor_to_punch_transfer",
       "hold_for_conductor_roll_call_before_release"

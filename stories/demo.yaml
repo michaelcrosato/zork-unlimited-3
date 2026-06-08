@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -3535,6 +3535,18 @@ scenes:
           set:
             heard_conductor_clearance: true
             heard_final_roll_call: true
+      - id: confirm_conductor_clearance_from_signal
+        label: Confirm the conductor's clear signal reaches every door
+        to: passenger_conductor_clearance_check
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: confirmed_conductor_clearance
+        effects:
+          set:
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
+            confirmed_conductor_clearance: true
       - id: inspect_conductor_punch_memory
         label: Ask what the conductor's punch remembers
         to: passenger_conductor_punch_memory
@@ -5382,6 +5394,18 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+      - id: confirm_intercom_conductor_clearance
+        label: Confirm every door answered the conductor's clear signal
+        to: passenger_conductor_clearance_check
+        requires:
+          all:
+            - notFlag: punched_conductor_transfer
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: confirmed_conductor_clearance
+        effects:
+          set:
+            heard_final_roll_call: true
+            confirmed_conductor_clearance: true
       - id: hear_final_conductor_roll_call
         label: Hear the conductor call the final platform clear
         to: passenger_conductor_roll_call
