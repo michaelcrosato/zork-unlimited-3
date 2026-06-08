@@ -119,6 +119,10 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Mara and manifest:\n- Watch Mara call the opened doors");
     expect(transcript).toContain("Counts / answers:\n- Review the opened count");
+    expect(transcript).toContain(
+      "Lunch tin / shift count:\n- Check the lunch-tin worker's passenger count before boarding"
+    );
+    expect(transcript).toContain("- Board with the lunch-tin worker's count ready for the release");
     expect(transcript).toContain("Passenger gathering:");
     expect(transcript).toContain(
       "- Help the opened passengers gather by helping one another board"

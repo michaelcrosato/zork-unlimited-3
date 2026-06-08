@@ -5,7 +5,7 @@ import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Choose one opened-passenger thread if desired, or board now and pull the emergency release.";
+  "Board now, or choose an optional opened-passenger thread such as the lunch-tin count.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -6248,6 +6248,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices[9]?.label).toBe(
       "Check the lunch-tin worker's passenger count before boarding"
     );
+    expect(observation.choices[9]?.choiceGroup).toBe("Lunch tin / shift count");
     expect(choiceIds[10]).toBe("hold_opened_manifest_threshold");
     expect(observation.choices[10]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
@@ -6297,6 +6298,32 @@ describe("demo story critical paths", () => {
 
     const openedManifestState = state;
 
+    let directLunchTinState = choose(story, openedManifestState, "follow_lunch_tin_latch");
+    observation = observe(story, directLunchTinState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.score.awards.some((award) => award.id === "flag_set_lunch_tin_pace")).toBe(
+      true
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_after_lunch_tin_intercom"
+    );
+
+    directLunchTinState = choose(
+      story,
+      directLunchTinState,
+      "pull_release_after_lunch_tin_intercom"
+    );
+    observation = observe(story, directLunchTinState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
     state = choose(story, openedManifestState, "check_lunch_tin_count_from_opened_manifest");
     observation = observe(story, state);
 
@@ -6304,6 +6331,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Nobody is only a number now");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
     expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -8529,13 +8557,13 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_farewell");
-    expect(observation.scene.text).toContain("packed for a double shift");
+    expect(observation.scene.id).toBe("passenger_lunch_tin_intercom");
+    expect(observation.scene.text).toContain("His tin latch clicks once for each open door");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
 
-    state = choose(story, state, "return_from_passenger_farewell");
-    state = choose(story, state, "pull_release_after_lunch_tin_boarding");
+    state = choose(story, state, "pull_release_after_lunch_tin_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");

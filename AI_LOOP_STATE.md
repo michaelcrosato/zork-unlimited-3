@@ -7,6 +7,75 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 82 Lunch-Tin Discovery
+
+- Date: 2026-06-08
+- Main objective: Make the lunch-tin passenger branch easier to notice and
+  finish from the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 81's next step and the latest evidence: random
+  play rarely reaches `passenger_lunch_tin_intercom`,
+  `passenger_lunch_tin_roll_call`, `passenger_lunch_tin_roster_proof`, or
+  `passenger_lunch_tin_true_ending` even though coverage proves they are
+  reachable.
+- Why this matters: The lunch-tin thread is a strong ordinary-life payoff, but
+  players had to notice it inside a large opened-manifest menu and usually take
+  an extra beat before the route became clearly release-ready.
+- Planned work:
+  - Mention the lunch-tin count in the opened-manifest objective.
+  - Convert the existing opened-manifest lunch-tin latch choice into a direct
+    boarding route that lands on the release-ready lunch-tin scene.
+  - Group opened-manifest lunch-tin choices under a dedicated player-facing
+    `Lunch tin / shift count` section.
+  - Ensure the lunch-tin pace score award is actually granted on lunch-tin
+    entry points touched by this cycle.
+  - Add regression coverage for visibility, grouping, scoring, and the direct
+    lunch-tin ending route.
+- Risks:
+  - The new direct choice must not make the existing slower lunch-tin farewell
+    scene unreachable.
+  - The dedicated group should improve scanning without implying the branch is
+    mandatory.
+- Status:
+  - Completed.
+  - Updated the opened-manifest objective to name the lunch-tin count as an
+    optional passenger thread.
+  - Moved opened-manifest lunch-tin choices into a dedicated
+    `Lunch tin / shift count` display group.
+  - Converted the existing `follow_lunch_tin_latch` choice into a direct
+    route to `passenger_lunch_tin_intercom`, so the first lunch-tin selection
+    immediately presents the count, roster, roll-call, and release options.
+  - Set the existing `set_lunch_tin_pace` score flag from lunch-tin entry
+    points that steady the worker, so the intended 9-point award now appears.
+  - Added regression coverage for the visible hub grouping, the direct
+    lunch-tin route to `passenger_lunch_tin_true_ending`, and the score award.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts`,
+    `npx vitest run tests/transcript.test.ts`, and
+    `npx vitest run tests/playtest.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 300 tests, story
+    validation with 176 reachable scenes, and coverage playtest with
+    `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough through `follow_lunch_tin_latch` reached
+    `passenger_lunch_tin_true_ending`, score 292, with no remaining
+    objectives and the lunch-tin pace award visible.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed and appended one
+    tracked observation. Long-run metrics stayed stable with true-ending rate
+    78%, unfinished runs 0, and best score 412.
+- Playtest feedback:
+  - The route now reads as a deliberate lunch-tin rescue thread instead of a
+    detour: the player selects the count from the opened-manifest hub, hears
+    Mara name why it matters, and can pull the release immediately.
+  - The older, slower lunch-tin farewell scene remains reachable from answered
+    passenger and platform routes.
+  - The 100-run random smoke still misses the deepest lunch-tin roll-call
+    proof path, so the next cycle should tune that sub-branch if blind feedback
+    continues to point there.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve the lunch-tin roster/roll-call proof path so players who
+    read the roster are more naturally invited to confirm the proof before the
+    ending.
+
 # Cycle 81 Opened-Manifest Direct Release
 
 - Date: 2026-06-08
