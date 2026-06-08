@@ -7,6 +7,64 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 31 Generic False-HOME Failure Clarity
+
+- Date: 2026-06-08
+- Main objective: Make the generic false-HOME `lost_ending` explain what the
+  player ignored without changing the trap or route graph.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. The current repo state shows the supplied
+  `passenger_manifest_handoff_true_ending` target has already been improved,
+  while suspicious evidence still includes short and late routes that end at the
+  generic `lost_ending`.
+- Why this matters: A bad ending can be useful if it teaches the next attempt.
+  The false-HOME loss now points back to the exact recovery cues the player
+  passed over: the service chain in the dark tunnel, the marked route on the
+  train, and Mara's warning that HOME is a false sign rather than a route.
+- Planned work:
+  - Revise `lost_ending` with clearer failure feedback.
+  - Keep route behavior, metadata, choice ordering, score rules, and ending
+    count unchanged.
+  - Add focused regression assertions for both early dark-tunnel and late
+    train-sign losses.
+  - Run focused checks, full health, evidence collection, and a real CLI route
+    through the changed ending.
+- Risks:
+  - This improves failure clarity, not ideal-ending frequency.
+  - The ending remains intentionally final; recovery stays in the preceding
+    warning scenes.
+- Status:
+  - Completed.
+  - Expanded `lost_ending` so it names the ignored service chain, the ignored
+    marked route, and Mara's warning that HOME is a sign asking to be trusted
+    instead of a route asking to be followed.
+  - Updated `tests/story-paths.test.ts` to assert the new feedback appears on
+    the dark-tunnel loss and late train-sign losses.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 307 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and `lost_ending` covered.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked cycle observation. `AI_AGENT_CMD` was unset, so it
+    stopped after evidence/prompt generation as expected in this shell.
+  - Actual CLI route reached `lost_ending`, score 10, with no remaining choices
+    and no remaining objectives after `follow_false_home_light` ->
+    `keep_following_false_home` -> `let_dark_home_finish_your_name`.
+- Playtest feedback:
+  - The failure now teaches that HOME won because the player trusted the false
+    sign after the game had offered a concrete recovery cue.
+  - The prose still preserves the uncanny punishment, but the next action is
+    clearer: answer Mara, use the chain, or follow the marked route instead of
+    waiting for HOME to finish.
+  - No crash, stale objective, reachability issue, or score regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving high-traffic failure and escape payoffs that
+    can teach the next run without adding new branch density.
+
 # Cycle 30 Late HOME Failure Clarity
 
 - Date: 2026-06-08

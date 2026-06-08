@@ -481,6 +481,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.surrendered_dark_home_flicker).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread in every version");
+    expect(observation.scene.text).toContain("the service chain was still within reach");
+    expect(observation.scene.text).toContain("HOME was a sign asking to be trusted");
   });
 
   it("lets dark-HOME warning players recover into the true ending", async () => {
@@ -2660,6 +2662,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.state.flags.surrendered_home_to_reflection).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");
+    expect(observation.scene.text).toContain("the marked route was still in your hand");
+    expect(observation.scene.text).toContain("instead of a route asking to be followed");
 
     state = initialState(story);
     for (const choiceId of [
@@ -2873,6 +2877,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("lost_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("The marked map falls unread");
+    expect(observation.scene.text).toContain("the marked route was still in your hand");
+    expect(observation.scene.text).toContain("Mara's warning had already named the trick");
 
     state = initialState(story);
     for (const choiceId of [
