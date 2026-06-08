@@ -4708,7 +4708,7 @@ scenes:
     choices:
       - id: pull_release_after_manifest_thumbprint_receipt
         label: Pull the release after the passengers receive the oath
-        to: passenger_manifest_thumbprint_true_ending
+        to: mara_manifest_thumbprint_receipt_true_ending
 
   mara_manifest_intercom:
     routeImportance: optional
@@ -6574,6 +6574,23 @@ scenes:
       the manifest or ahead of it. She walks through with the crowd she kept
       in ink for forty-three years, one hand on the page until rain makes the
       old oath unreadable and unnecessary.
+    choices: []
+
+  mara_manifest_thumbprint_receipt_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Manifest
+    text: >
+      The release opens every door at once after Mara's torn-thumbprint oath
+      has been received by the passengers themselves. The mark does not lift
+      from the ledger as one dispatcher's burden; it travels hand to hand in
+      passenger order: newspaper fold, mitten snap, lunch tin clasp,
+      conductor's punch, and every quieter proof between them. By the time rain
+      reaches the third car, the oath has stopped meaning last person left
+      behind. It means witnessed by the crowd, carried through the threshold,
+      and no longer needed because the open doors have answered it.
     choices: []
 
   passenger_manifest_true_ending:
