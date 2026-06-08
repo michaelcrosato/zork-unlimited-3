@@ -7,6 +7,77 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 20 Manifest Thumbprint Handoff Discovery
+
+- Date: 2026-06-08
+- Main objective: Make `passenger_manifest_thumbprint_true_ending` easier to
+  find in normal play by turning an earlier thumbprint discovery into visible
+  handoff actions.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: random play missed
+  `passenger_manifest_thumbprint_true_ending` in the 100-run sample while
+  coverage reached it, making discoverability the best focused target.
+- Why this matters: A player who touches Mara's torn thumbprint, follows it
+  into the passenger manifest, and then watches Mara hand the opened names
+  forward should not have to notice a separate late hidden branch. The main
+  release and boarding actions should carry that clue through naturally.
+- Planned work:
+  - Add thumbprint-aware release, boarding, and listen choices to
+    `mara_manifest_handoff` when the player has already studied the relevant
+    thumbprint clue.
+  - Keep the existing generic manifest-handoff choices unchanged for players
+    who did not follow the thumbprint clue.
+  - Add regression coverage for the newly surfaced actions and the direct
+    `passenger_manifest_thumbprint_true_ending` payoff.
+  - Run focused tests, full health, and one real CLI route through the improved
+    path.
+- Risks:
+  - The handoff scene already has many optional actions, so the change must
+    replace generic actions for thumbprint-informed players rather than simply
+    adding confusing duplicates.
+  - No new scene or ending should be introduced; the goal is discoverability,
+    not graph growth.
+- Status:
+  - Completed.
+  - Updated `mara_manifest_handoff` text so Mara's own row now explicitly
+    shows the torn thumbprint darkening like a route marker while she hands
+    opened names forward.
+  - Added thumbprint-aware pull, board, and listen actions when the player has
+    already studied Mara's thumbprint or the manifest thumbprint.
+  - Hid the generic manifest-handoff pull, board, and listen actions for
+    thumbprint-informed players, so the scene replaces vague choices with
+    clearer oath-specific choices instead of duplicating them.
+  - Kept the existing generic manifest-handoff choices unchanged for players
+    who did not follow the thumbprint clue.
+  - Added a regression test proving the thumbprint-first route now surfaces
+    the new actions and reaches `passenger_manifest_thumbprint_true_ending`.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts` with 224
+    tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 302 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports and
+    appended one tracked observation record, then stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough followed the improved route through
+    `pull_release_during_mara_manifest_thumbprint_handoff` and reached
+    `passenger_manifest_thumbprint_true_ending`, score 302, with no remaining
+    objectives.
+- Playtest feedback:
+  - The changed handoff scene now makes the player-facing action match the
+    prior clue: after touching Mara's torn thumbprint, the main release choice
+    itself mentions the oath and lands on the manifest-thumbprint payoff.
+  - The route no longer asks thumbprint-first players to find a separate
+    recognition option before the payoff makes sense.
+  - The scene remains busy, but the thumbprint-informed choice set is clearer
+    because the generic handoff pull/board/listen actions are not shown beside
+    their oath-specific replacements.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue using random misses to identify routes that coverage can
+    reach but ordinary play is unlikely to notice.
+
 # Cycle 19 Manifest Thumbprint Receipt Payoff
 
 - Date: 2026-06-08

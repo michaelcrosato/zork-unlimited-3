@@ -2506,27 +2506,84 @@ scenes:
       Mara does not leave the booth at once. She reads the first opened door,
       waits for its answer, then touches the next line as if steadiness can be
       handed from name to name. By the time she reaches her own row, the
+      torn thumbprint beside it has darkened like a route marker, and the
       speaker is full of people breathing with her instead of waiting for her.
       The third car answers with crowded shuffles, asking for room as plainly
       as it asks for the release.
     choices:
+      - id: pull_release_during_mara_manifest_thumbprint_handoff
+        label: Pull the release while Mara carries the thumbprint oath through the opened names
+        to: passenger_manifest_thumbprint_true_ending
+        requires:
+          all:
+            - any:
+                - flag: read_mara_thumbprint
+                - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            heard_mara_goodbye: true
       - id: pull_release_during_mara_manifest_handoff
         label: Pull the release while Mara is still handing names forward
         to: passenger_manifest_handoff_true_ending
+        requires:
+          all:
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
         effects:
           set:
+            heard_mara_goodbye: true
+      - id: board_after_mara_manifest_thumbprint_handoff
+        label: Board while Mara carries the thumbprint oath through the opened names
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - any:
+                - flag: read_mara_thumbprint
+                - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
             heard_mara_goodbye: true
       - id: board_after_mara_manifest_handoff
         label: Board the third car while Mara keeps calling names
         to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
         effects:
           set:
+            heard_mara_goodbye: true
+      - id: listen_to_manifest_thumbprint_handoff_from_handoff
+        label: Listen as Mara carries the thumbprint oath through the opened names
+        to: mara_manifest_thumbprint_intercom
+        requires:
+          all:
+            - any:
+                - flag: read_mara_thumbprint
+                - flag: read_manifest_thumbprint
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
             heard_mara_goodbye: true
       - id: listen_to_manifest_handoff_from_handoff
         label: Listen through the third-car speaker as Mara hands the names forward
         to: mara_manifest_handoff_intercom
         requires:
-          notFlag: heard_mara_goodbye
+          all:
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_mara_thumbprint
+            - notFlag: read_manifest_thumbprint
         effects:
           set:
             heard_mara_goodbye: true

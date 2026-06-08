@@ -7646,6 +7646,75 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("surfaces thumbprint-aware release actions during Mara's manifest handoff", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "inspect_mara_thumbprint",
+      "return_from_mara_thumbprint",
+      "read_manifest_after_thumbprint",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const choiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff");
+    expect(observation.scene.text).toContain("darkened like a route marker");
+    expect(observation.state.flags.read_mara_thumbprint).toBe(true);
+    expect(choiceIds).toContain("pull_release_during_mara_manifest_thumbprint_handoff");
+    expect(choiceIds).toContain("board_after_mara_manifest_thumbprint_handoff");
+    expect(choiceIds).toContain("listen_to_manifest_thumbprint_handoff_from_handoff");
+    expect(choiceIds).not.toContain("pull_release_during_mara_manifest_handoff");
+    expect(choiceIds).not.toContain("board_after_mara_manifest_handoff");
+    expect(choiceIds).not.toContain("listen_to_manifest_handoff_from_handoff");
+
+    const pulledState = choose(
+      story,
+      state,
+      "pull_release_during_mara_manifest_thumbprint_handoff"
+    );
+    observation = observe(story, pulledState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expectIdealScore(observation.score);
+
+    state = choose(story, state, "board_after_mara_manifest_thumbprint_handoff");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt",
+      "pull_release_after_manifest_thumbprint_goodbye"
+    ]);
+  });
+
   it("lets thumbprint-first players recognize Mara's manifest oath during handoff", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
