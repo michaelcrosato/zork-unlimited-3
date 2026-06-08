@@ -4538,7 +4538,7 @@ scenes:
     choices:
       - id: pull_release_after_dispatch_receipt
         label: Pull the release after the dispatch is received
-        to: mara_last_dispatch_true_ending
+        to: mara_last_dispatch_receipt_true_ending
 
   mara_thumbprint_intercom:
     routeImportance: optional
@@ -6365,6 +6365,24 @@ scenes:
       as a dispatcher who finally sent everyone home, and this time the record
       closes because the doors are open, not because anyone stayed behind to
       guard it.
+    choices: []
+
+  mara_last_dispatch_receipt_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
+    text: >
+      The release opens every door at once after every car has repeated Mara's
+      last dispatch back to her. Route held is no longer a command from a
+      booth; it is the first car keeping the track steady. Doors ready is no
+      longer a delay; it is the second car answering with rain-bright morning.
+      Passenger release authorized by proof, not by permission comes from the
+      third car closest to your hand, and the old line has no phrase left to
+      twist into another order. Mara signs off over a record that already
+      received her correctly, and the doors stay open because the dispatch
+      finally arrived.
     choices: []
 
   passenger_true_ending:

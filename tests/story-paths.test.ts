@@ -3707,11 +3707,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_dispatch_receipt");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_last_dispatch_true_ending");
+    expect(observation.scene.id).toBe("mara_last_dispatch_receipt_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("Mara's final dispatch");
+    expect(observation.scene.text).toContain("every car has repeated Mara's last dispatch");
+    expect(observation.scene.text).toContain("the dispatch finally arrived");
     expect(observation.scene.text).toContain("rain-bright morning");
-    expect(observation.scene.text).toContain("record closes");
     expectIdealScore(observation.score);
   });
 

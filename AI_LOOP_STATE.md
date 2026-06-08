@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 99 Last Dispatch Receipt Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional "confirm every car repeats Mara's
+  dispatch" route feel acknowledged instead of resolving into the same last
+  dispatch ending as the faster pull.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current cycle evidence: guidance, validation, and
+  ideal-ending rates are healthy; focused payoff on explicit care branches
+  remains the highest-value next increment.
+- Why this matters: The player can wait before pulling the release to verify
+  that Mara's final dispatch was received by every car. That deliberate
+  patience should visibly change the ending.
+- Planned work:
+  - Route `pull_release_after_dispatch_receipt` to a new ideal ending.
+  - Preserve the faster `pull_release_after_last_dispatch_goodbye` route to
+    `mara_last_dispatch_true_ending`.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must pay off the car-by-car receipt without duplicating the
+    existing final-dispatch ending.
+- Status:
+  - Completed.
+  - Added `mara_last_dispatch_receipt_true_ending` with ideal Mara / Core
+    metadata.
+  - Changed only `pull_release_after_dispatch_receipt` to land on the new
+    ending; the faster `pull_release_after_last_dispatch_goodbye` route still
+    lands on `mara_last_dispatch_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed receipt path
+    reaches the new ending and includes the every-car / dispatch-arrived
+    payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 189 reachable scenes / 44 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `mara_last_dispatch_receipt_true_ending` covered.
+  - Evidence cycle passed in evidence-only mode:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended one tracked observation record, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough reached
+    `mara_last_dispatch_receipt_true_ending`, score 294, with badge, fuse,
+    lantern, map, and token in inventory, no remaining objectives, and
+    `confirmed_last_dispatch_receipt: true`.
+- Playtest feedback:
+  - The extra dispatch receipt confirmation now lands better: the ending
+    explicitly says every car repeated Mara's dispatch before the release and
+    that the dispatch finally arrived.
+  - The faster last-dispatch ending remains useful for momentum, so the branch
+    now distinguishes "pull after the dispatch" from "wait until every car
+    receives the dispatch."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional confirmation beats
+    whose mechanical difference is clear but whose ending acknowledgment is
+    thin.
+
 # Cycle 98 Manifest Handoff Door Check Payoff
 
 - Date: 2026-06-08
