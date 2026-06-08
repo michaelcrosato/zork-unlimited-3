@@ -2572,6 +2572,7 @@ scenes:
             confirmed_manifest_handoff_doors: true
       - id: pull_release_during_mara_manifest_thumbprint_handoff
         label: Pull the release while Mara carries the thumbprint oath through the opened names
+        choiceGroup: Mara and manifest
         to: passenger_manifest_thumbprint_true_ending
         requires:
           all:
@@ -2598,6 +2599,7 @@ scenes:
             heard_mara_goodbye: true
       - id: board_after_mara_manifest_thumbprint_handoff
         label: Board while Mara carries the thumbprint oath through the opened names
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2624,6 +2626,7 @@ scenes:
             heard_mara_goodbye: true
       - id: listen_to_manifest_thumbprint_handoff_from_handoff
         label: Listen as Mara carries the thumbprint oath through the opened names
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2639,6 +2642,7 @@ scenes:
             heard_mara_goodbye: true
       - id: ask_mara_signoff_after_manifest_handoff
         label: Ask Mara to sign off before anyone boards alone
+        choiceGroup: Mara and manifest
         to: passenger_mara_signoff
         requires:
           all:
@@ -2650,6 +2654,7 @@ scenes:
             heard_passenger_mara_signoff: true
       - id: ask_mara_about_morning_after_manifest_handoff
         label: Ask Mara what morning means to the opened passengers
+        choiceGroup: Morning / keepsakes
         to: passenger_morning_chorus
         requires:
           notFlag: heard_passenger_morning_chorus
@@ -2658,6 +2663,7 @@ scenes:
             heard_passenger_morning_chorus: true
       - id: make_room_after_mara_manifest_handoff
         label: Make room in the third car while Mara calls the opened doors
+        choiceGroup: Board / release
         to: passenger_room_boarding
         requires:
           notFlag: made_room_for_passengers
@@ -2666,6 +2672,7 @@ scenes:
             made_room_for_passengers: true
       - id: hold_threshold_after_mara_manifest_handoff
         label: Hold the third-car threshold while Mara calls the opened doors
+        choiceGroup: Door echoes / threshold
         to: passenger_threshold_boarding
         requires:
           notFlag: held_passenger_threshold
@@ -2674,6 +2681,7 @@ scenes:
             held_passenger_threshold: true
       - id: finish_count_after_mara_manifest_handoff
         label: Let the opened passengers finish Mara's count together
+        choiceGroup: Manifest count
         to: passenger_answers
         requires:
           notFlag: passengers_finished_reviewed_count
@@ -2684,6 +2692,7 @@ scenes:
             heard_passenger_answers: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2698,6 +2707,7 @@ scenes:
             heard_mara_goodbye: true
       - id: touch_mara_manifest_thumbprint
         label: Touch Mara's torn thumbprint before boarding
+        choiceGroup: Mara and manifest
         to: mara_manifest_thumbprint
         requires:
           all:
@@ -2708,6 +2718,7 @@ scenes:
             read_manifest_thumbprint: true
       - id: continue_manifest_handoff_roll_call
         label: Keep listening as the opened passengers answer Mara
+        choiceGroup: Counts / answers
         to: passenger_answers
         requires:
           notFlag: heard_passenger_answers
@@ -2716,6 +2727,7 @@ scenes:
             heard_passenger_answers: true
       - id: board_with_mara_answered_handoff
         label: Board as Mara hands the roll call to the answered passengers
+        choiceGroup: Counts / answers
         to: passenger_answered_handoff_roll_call
         requires:
           notFlag: heard_passenger_answers
@@ -2725,6 +2737,7 @@ scenes:
             heard_answered_passengers: true
       - id: return_from_mara_manifest_handoff
         label: Return to the opened manifest doors
+        choiceGroup: Return
         to: passengers_released
 
   mara_manifest_thumbprint:

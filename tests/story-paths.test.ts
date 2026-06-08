@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { maskObservation, renderMaskedScene } from "../src/blind-facade.js";
 import { choose, initialState, observe } from "../src/engine.js";
 import type { GameState } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
@@ -5589,6 +5590,55 @@ describe("demo story critical paths", () => {
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff"
     ]);
+    expect(observation.choices.every((choice) => choice.choiceGroup)).toBe(true);
+
+    const handoffGroups = new Map(
+      observation.choices.map((choice) => [choice.id, choice.choiceGroup])
+    );
+    expect(handoffGroups.get("ask_mara_signoff_after_manifest_handoff")).toBe("Mara and manifest");
+    expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
+      "Morning / keepsakes"
+    );
+    expect(handoffGroups.get("make_room_after_mara_manifest_handoff")).toBe("Board / release");
+    expect(handoffGroups.get("hold_threshold_after_mara_manifest_handoff")).toBe(
+      "Door echoes / threshold"
+    );
+    expect(handoffGroups.get("finish_count_after_mara_manifest_handoff")).toBe("Manifest count");
+    expect(handoffGroups.get("continue_manifest_handoff_roll_call")).toBe("Counts / answers");
+    expect(handoffGroups.get("board_with_mara_answered_handoff")).toBe("Counts / answers");
+    expect(handoffGroups.get("return_from_mara_manifest_handoff")).toBe("Return");
+
+    const { masked, choiceIds: visibleChoiceIds } = maskObservation(observation);
+    const rendered = renderMaskedScene(masked);
+
+    expect(visibleChoiceIds).toEqual([
+      "listen_to_manifest_handoff_from_handoff",
+      "confirm_manifest_handoff_doors_from_handoff",
+      "pull_release_during_mara_manifest_handoff",
+      "board_after_mara_manifest_handoff",
+      "make_room_after_mara_manifest_handoff",
+      "ask_mara_signoff_after_manifest_handoff",
+      "touch_mara_manifest_thumbprint",
+      "finish_count_after_mara_manifest_handoff",
+      "continue_manifest_handoff_roll_call",
+      "board_with_mara_answered_handoff",
+      "hold_threshold_after_mara_manifest_handoff",
+      "ask_mara_about_morning_after_manifest_handoff",
+      "return_from_mara_manifest_handoff"
+    ]);
+    expect(rendered).toContain("  Finish Mara's handoff:\n    0. Listen through");
+    expect(rendered).toContain("  Board / release:\n    4. Make room in the third car");
+    expect(rendered).toContain("  Mara and manifest:\n    5. Ask Mara to sign off");
+    expect(rendered).toContain(
+      "  Manifest count:\n    7. Let the opened passengers finish Mara's count together"
+    );
+    expect(rendered).toContain(
+      "  Counts / answers:\n    8. Keep listening as the opened passengers answer Mara"
+    );
+    expect(rendered).toContain("  Door echoes / threshold:\n    10. Hold the third-car threshold");
+    expect(rendered).toContain("  Morning / keepsakes:\n    11. Ask Mara what morning means");
+    expect(rendered).toContain("  Return:\n    12. Return to the opened manifest doors");
+    expect(rendered).not.toContain("  Other:");
 
     state = choose(story, state, "return_from_mara_manifest_handoff");
     observation = observe(story, state);

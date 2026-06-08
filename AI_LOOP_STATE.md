@@ -7,6 +7,74 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 26 Manifest Handoff Screen Grouping
+
+- Date: 2026-06-08
+- Main objective: Make the second opened-manifest handoff screen easier to
+  scan by giving every visible branch an explicit player-facing choice group.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the active loop evidence and Cycle 25 next step:
+  core route health is good, but the opened-manifest handoff screens still need
+  readable organization for blind/player-view critique.
+- Why this matters: After the player chooses Mara's opened-door handoff, the
+  next screen has many valid continuations. The four direct handoff payoff
+  choices were grouped, but the optional Mara, count, answer, threshold,
+  morning, and return branches relied on generic label classification. Players
+  and operators should see those branches as intentional lanes instead of a
+  mixed long list.
+- Planned work:
+  - Add explicit `choiceGroup` metadata to all remaining
+    `mara_manifest_handoff` choices.
+  - Keep the direct `Finish Mara's handoff` group first and route behavior
+    unchanged.
+  - Add regression coverage for raw choice metadata and masked/player-view
+    display order.
+  - Run focused tests, full health, evidence-only loop collection, and an
+    actual CLI route through the changed screen.
+- Risks:
+  - This is a readability and auditability improvement; it does not change
+    deterministic random-choice behavior.
+  - The evidence-only random sample still reports
+    `passenger_manifest_handoff_true_ending` as unsampled in that specific
+    100-run set, so future discovery work should wait for blind-play feedback
+    or make a route-level change deliberately.
+- Status:
+  - Completed.
+  - Tagged handoff-screen branches with `Mara and manifest`,
+    `Board / release`, `Manifest count`, `Counts / answers`,
+    `Door echoes / threshold`, `Morning / keepsakes`, and `Return`.
+  - Added a story-path regression that verifies every choice on
+    `mara_manifest_handoff` has a group, the masked player view orders those
+    groups predictably, visible numbering is contiguous, and no `Other` group
+    appears.
+  - Focused checks passed:
+    `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - Full `npm run health` passed: format check, TypeScript, 305 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Evidence-only cycle passed:
+    `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle`; it wrote ignored reports,
+    appended a tracked cycle observation, and stopped before nested agent
+    execution because `AI_AGENT_CMD` is not set.
+  - Actual CLI playthrough stopped at `mara_manifest_handoff` and confirmed
+    all 13 visible choices have deliberate groups, then selected
+    `pull_release_during_mara_manifest_handoff` and reached
+    `passenger_manifest_handoff_true_ending`, score 285, with no remaining
+    objectives.
+- Playtest feedback:
+  - The handoff continuation screen now reads as organized lanes: finish the
+    handoff, board/release, Mara/manifest, count/answers, threshold, morning,
+    and return.
+  - No crash, dead end, unreachable scene, stale objective, or score issue
+    appeared in the changed route.
+  - The broad opened-manifest route is still dense; the next improvement
+    should be driven by consolidated blind-play S0-S2 feedback if available.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise inspect the opened-manifest hub for duplicate-feeling labels or
+    choose one character route for a small story-depth payoff.
+
 # Cycle 25 Player-View Choice Numbering
 
 - Date: 2026-06-08
