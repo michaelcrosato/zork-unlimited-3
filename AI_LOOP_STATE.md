@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 18 Direct Manifest Thumbprint Receipt
+
+- Date: 2026-06-08
+- Main objective: Make Mara's manifest-thumbprint receipt easier to discover
+  from the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 18 evidence is healthy overall, but normal random play still
+  under-samples the manifest thumbprint receipt path compared with the simpler
+  manifest and passenger-release endings.
+- Why this matters: The opened manifest already shows Mara's torn thumbprint as
+  the emotional proof that she can leave with the passengers. A normal player
+  should be able to confirm that oath reaches the passengers without first
+  finding the speaker detour and then choosing another optional confirmation.
+- Planned work:
+  - Add a direct opened-manifest choice that confirms Mara's thumbprint oath
+    reaches the opened passengers.
+  - Preserve the existing notice, speaker, direct release, and receipt
+    confirmation routes.
+  - Update the opened-manifest objective so the player-facing goal names
+    carrying or confirming the darkened thumbprint oath.
+  - Add regression coverage for menu placement, flags, receipt text, and the
+    ideal receipt ending.
+  - Run focused tests, full health, and one actual CLI route through the new
+    receipt choice.
+- Risks:
+  - The opened-manifest hub is already broad, so the new label must read like a
+    specific Mara/manifest payoff rather than another generic release action.
+  - Random play may still under-sample this ending because many ideal endings
+    compete from the same hub.
+- Status:
+  - Completed.
+  - Added `confirm_manifest_thumbprint_receipt_from_opened_doors` from
+    `passengers_released` to `mara_manifest_thumbprint_receipt`, setting the
+    thumbprint, handoff, goodbye, and receipt-confirmation flags.
+  - Updated the opened-manifest objective to say players can carry or confirm
+    the darkened thumbprint oath.
+  - Preserved existing thumbprint notice, speaker, direct release, and
+    receipt-confirmation routes.
+  - Added regression coverage for the new choice's menu placement, state flags,
+    receipt scene, ending text, and ideal-ending score.
+  - Focused manifest tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest thumbprint|opened manifest keeps the recovery objectives|manifest-specific platform"`.
+  - Full `npm run health` passed: format check, TypeScript, 322 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached
+    `mara_manifest_thumbprint_receipt_true_ending`, score 290, via
+    `confirm_manifest_thumbprint_receipt_from_opened_doors`; objectives were
+    cleared.
+- Playtest feedback:
+  - The new label is legible in the Mara and manifest group and names both the
+    thumbprint oath and the passengers receiving it.
+  - The receipt scene now follows directly from the opened-manifest hub and the
+    ending clearly pays off the oath traveling hand to hand.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or route break appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for `passenger_farewell` or the
+    shared-room passenger path.
+
 # Cycle 49 Direct Conductor Signal
 
 - Date: 2026-06-08

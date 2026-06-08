@@ -106,7 +106,7 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry it straight to the third-car speaker, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, carry or confirm the darkened thumbprint oath, board now, confirm remembered morning stops, check the door-echo seats, confirm the answered handoff crosses, confirm the threshold clears, follow or confirm the conductor's clear signal, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -1808,6 +1808,22 @@ scenes:
             read_manifest_thumbprint: true
             saw_mara_manifest_handoff: true
             heard_mara_goodbye: true
+      - id: confirm_manifest_thumbprint_receipt_from_opened_doors
+        label: Confirm Mara's thumbprint oath reaches the opened passengers
+        choiceGroup: Mara and manifest
+        to: mara_manifest_thumbprint_receipt
+        requires:
+          all:
+            - notFlag: confirmed_manifest_thumbprint_receipt
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
+            confirmed_manifest_thumbprint_receipt: true
       - id: return_opened_manifest_mitten
         label: Return the opened manifest's lost mitten to the child
         choiceGroup: Morning / keepsakes
