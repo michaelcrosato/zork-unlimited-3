@@ -2894,6 +2894,23 @@ scenes:
           set:
             matched_manifest_keepsakes: true
             helped_passengers_gather: true
+      - id: check_lunch_tin_echo_count_from_platform
+        label: Check the lunch-tin worker's echo count before boarding
+        to: passenger_lunch_tin_check
+        requires:
+          all:
+            - flag: heard_passenger_echoes
+            - notFlag: helped_passengers_gather
+            - notFlag: checked_lunch_tin_passengers
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            checked_lunch_tin_passengers: true
+            counted_lunch_tin_worker_self: true
+            checked_lunch_tin_echo_count: true
+            heard_gathered_passengers: true
       - id: help_passengers_gather
         label: Help the kept passengers gather by the open doors
         to: passenger_gathered_boarding
@@ -5578,6 +5595,11 @@ scenes:
       behind the word passenger. Nobody is only a number now, and the release
       under the first seat feels less like an escape than the end of a shift.
     choices:
+      - id: pull_release_after_echo_checked_lunch_tin_count
+        label: Pull the release after the echo count includes the worker
+        to: passenger_lunch_tin_checked_true_ending
+        requires:
+          flag: checked_lunch_tin_echo_count
       - id: carry_checked_lunch_tin_count_to_speaker
         label: Carry the checked lunch-tin count to Mara's speaker
         to: passenger_lunch_tin_intercom
@@ -5601,6 +5623,8 @@ scenes:
       - id: pull_release_after_checked_lunch_tin_count
         label: Start the release after every passenger answers the count
         to: passenger_lunch_tin_checked_true_ending
+        requires:
+          notFlag: checked_lunch_tin_echo_count
 
   passenger_lunch_tin_self_count:
     routeImportance: optional

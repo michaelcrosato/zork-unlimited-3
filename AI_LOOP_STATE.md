@@ -7,6 +7,73 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 85 Lunch-Tin Checked Discovery
+
+- Date: 2026-06-08
+- Main objective: Restore normal-play discovery for
+  `passenger_lunch_tin_checked_true_ending` without hiding the lunch-tin
+  intercom, roll-call, base ending, or roster ending restored in prior cycles.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows Cycle 84's next step and the current random-play
+  evidence: `passenger_lunch_tin_checked_true_ending` was reachable by coverage
+  and tests but absent from the 100-run random smoke.
+- Why this matters: The checked lunch-tin ending is the clearest payoff for
+  turning a ledger count back into people. If the smoke route skips it, normal
+  players can miss the branch where the worker verifies every passenger and
+  counts himself too.
+- Planned work:
+  - Add one natural checked-count entry point from the platform after players
+    have already heard the manifest door echoes.
+  - Keep the existing checked lunch-tin route's speaker and roll-call-first
+    ordering, so Cycle 84's restored intercom/base ending path remains visible.
+  - Add regression coverage for the new platform echo-count route and its
+    ending.
+  - Run focused tests, full health, random smoke, and an actual CLI playthrough
+    through the changed branch.
+- Risks:
+  - Adding a choice to a random-sensitive hub can reshuffle deterministic smoke
+    paths, so the route is narrowly gated by `heard_passenger_echoes`.
+  - The new choice must read like a natural consequence of hearing door echoes,
+    not an unrelated shortcut to an ending.
+- Status:
+  - Completed.
+  - Added `check_lunch_tin_echo_count_from_platform`, visible only after the
+    player has heard the manifest door echoes and reached `passenger_platform`.
+  - The new route sets the lunch-tin pace, checked-count, self-count, and
+    echo-count flags before landing on `passenger_lunch_tin_check`.
+  - Added `pull_release_after_echo_checked_lunch_tin_count` as the first release
+    choice only for that echo-count checked state; the older checked route still
+    offers speaker and roll-call continuations first.
+  - Updated `tests/story-paths.test.ts` with a regression route from manifest
+    echoes to the checked lunch-tin ending.
+  - Focused checks passed: `npx vitest run tests/story-paths.test.ts` and
+    `npm run cyoa -- validate stories/demo.yaml --json`.
+  - 100-run random smoke now visits every lunch-tin target together:
+    `passenger_lunch_tin_checked_true_ending`,
+    `passenger_lunch_tin_intercom`, `passenger_lunch_tin_roll_call`,
+    `passenger_lunch_tin_true_ending`, and
+    `passenger_lunch_tin_roster_true_ending`; `unvisitedScenes: []`.
+  - Actual CLI playthrough through `check_lunch_tin_echo_count_from_platform` ->
+    `pull_release_after_echo_checked_lunch_tin_count` reached
+    `passenger_lunch_tin_checked_true_ending`, score 299, with no remaining
+    objectives.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 176 reachable scenes, and coverage playtest with
+    `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation and appended one tracked observation; it stopped before nested
+    agent execution because `AI_AGENT_CMD` is not set in this environment.
+- Playtest feedback:
+  - The route reads coherently: hearing the passenger door echoes makes the
+    lunch-tin worker's checked echo count feel like a specific follow-up rather
+    than a random shortcut.
+  - The ending text lands cleanly after the check scene because it names both
+    passenger verification and the worker finally counting himself.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise shift from lunch-tin discoverability to another rare but
+    emotionally strong passenger branch or late-game clarity issue.
+
 # Cycle 84 Lunch-Tin Roll-Call Discovery
 
 - Date: 2026-06-08

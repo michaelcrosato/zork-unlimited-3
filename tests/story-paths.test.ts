@@ -9955,6 +9955,68 @@ describe("demo story critical paths", () => {
     ]);
   });
 
+  it("lets platform echo listeners check the lunch-tin count into its own release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "read_passenger_manifest",
+      "listen_to_manifest_doors_from_manifest",
+      "return_from_passenger_echoes",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const platformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(platformChoiceIds).toContain("check_lunch_tin_echo_count_from_platform");
+    expect(platformChoiceIds.indexOf("check_lunch_tin_echo_count_from_platform")).toBeLessThan(
+      platformChoiceIds.indexOf("help_passengers_gather")
+    );
+
+    state = choose(story, state, "check_lunch_tin_echo_count_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_check");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.state.flags.checked_lunch_tin_passengers).toBe(true);
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+    expect(observation.state.flags.checked_lunch_tin_echo_count).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_echo_checked_lunch_tin_count",
+      "carry_checked_lunch_tin_count_to_speaker",
+      "turn_checked_lunch_tin_count_into_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_echo_checked_lunch_tin_count");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("after the lunch-tin worker's checked count");
+    expectIdealScore(observation.score);
+  });
+
   it("lets opened-manifest players check the lunch-tin count directly", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
