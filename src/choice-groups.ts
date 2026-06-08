@@ -15,6 +15,7 @@ const GROUP_ORDER = [
   "Board / release",
   "Mara and manifest",
   "Mara",
+  "Manifest count",
   "Counts / answers",
   "Passenger gathering",
   "Door echoes / threshold",

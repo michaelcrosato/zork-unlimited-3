@@ -1593,7 +1593,7 @@ scenes:
             heard_passenger_morning_chorus: true
       - id: review_open_manifest_count
         label: Review the opened count so every passenger checks in
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_manifest_count
         requires:
           notFlag: reviewed_open_manifest_count
@@ -1602,7 +1602,7 @@ scenes:
             reviewed_open_manifest_count: true
       - id: board_with_completed_opened_count
         label: Board after the opened passengers finish the count together
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_counted_chorus
         requires:
           all:
@@ -1616,7 +1616,7 @@ scenes:
             passengers_finished_reviewed_count: true
       - id: board_with_opened_manifest_reviewed_count
         label: Review Mara's opened count before carrying it to the speaker
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_manifest_count
         requires:
           all:
@@ -1868,7 +1868,7 @@ scenes:
             heard_passenger_echoes: true
       - id: ready_opened_manifest_for_mara
         label: Ready every opened manifest name on the third car
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: opened_manifest_echoes
         requires:
           all:
@@ -1883,7 +1883,7 @@ scenes:
             heard_passenger_echoes: true
       - id: ask_conductor_to_read_opened_count
         label: Ask the conductor to read Mara's opened count clear
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_conductor_count_roll_call
         requires:
           all:
@@ -1972,7 +1972,7 @@ scenes:
             heard_mara_goodbye: true
       - id: let_opened_passengers_finish_count
         label: Listen as the opened passengers finish the count together
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_counted_chorus
         requires:
           notFlag: passengers_finished_reviewed_count
@@ -1997,7 +1997,7 @@ scenes:
             echoed_manifest_boarded: true
       - id: check_opened_manifest_blank_row
         label: Check the blank row in the opened manifest
-        choiceGroup: Counts / answers
+        choiceGroup: Manifest count
         to: passenger_missing_count
         requires:
           notFlag: checked_missing_passenger_count
