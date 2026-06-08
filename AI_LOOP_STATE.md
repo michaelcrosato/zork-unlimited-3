@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 27 Remembered Morning Speaker Beat
+
+- Date: 2026-06-08
+- Main objective: Make the remembered-morning stop-check route show the
+  third-car speaker beat during normal play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 27 MCP random evidence was otherwise healthy, but its 250-run
+  sample still missed `passenger_morning_intercom` while coverage could reach
+  it.
+- Why this matters: The morning route is strongest when players hear the
+  ordinary remembered places carried onto Mara's speaker before the destination
+  sign turns HOME into real stops. Jumping directly from a menu choice to the
+  stop-check payoff made that emotional step easier to miss.
+- Planned work:
+  - Route remembered-stop confirmation choices from the opened-manifest hub,
+    returned morning hub, morning chorus, and passenger platform through
+    `passenger_morning_intercom`.
+  - Keep the existing confirmation choice inside the intercom as the only step
+    that sets `confirmed_morning_stops`.
+  - Update regression coverage for the two-step speaker-to-stop-check flow.
+  - Run focused tests, full health, an actual route, and the evidence cycle.
+- Risks:
+  - This adds one extra click for players who choose explicit remembered-stop
+    confirmation, so the speaker beat must feel purposeful rather than like
+    padding.
+  - Uniform random play may still miss individual optional branches because the
+    opened-manifest hub has many valid endings.
+- Status:
+  - Completed and ready for commit/push.
+  - Story and regression tests have been updated so remembered-stop confirmation
+    now reaches `passenger_morning_intercom` first, then
+    `passenger_morning_stop_check` through the existing
+    `confirm_morning_stops_before_release` choice.
+  - Focused morning-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning chorus|remembered morning|morning stops"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route through `confirm_opened_manifest_morning_stops` now stops
+    at `passenger_morning_intercom`, then confirms stops and reaches
+    `passenger_morning_stop_checked_true_ending`, score 266, with objectives
+    cleared.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed. Evidence stayed
+    green: health passed, random play had `ended: 100` / `unfinished: 0` and
+    visited `passenger_morning_intercom`, coverage stayed complete, MCP play
+    reached `true_ending`, and the adaptive route ended at
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The changed route now reads as a clearer emotional sequence: the opened
+    passengers' ordinary mornings reach Mara's speaker before HOME becomes real
+    stops.
+  - The extra click felt purposeful in the CLI transcript because it offered a
+    real choice at the speaker: release on the morning chorus or confirm the
+    remembered stops first.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise improve normal-play visibility for remaining random misses such
+    as `passenger_lunch_tin_true_ending`, `passenger_room_boarding`, or
+    `mara_manifest_thumbprint_receipt_true_ending`.
+
 # Cycle 26 Morning Route Menu Clarity
 
 - Date: 2026-06-08
