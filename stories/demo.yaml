@@ -5812,7 +5812,7 @@ scenes:
     choices:
       - id: pull_release_after_confirmed_mitten_pair
         label: Pull the release after both mittened hands answer
-        to: passenger_mitten_true_ending
+        to: passenger_mitten_pair_checked_true_ending
 
   passenger_newspaper_intercom:
     routeImportance: optional
@@ -6732,6 +6732,25 @@ scenes:
       claim on small things and because the smallest signal was enough to keep
       the doors open for everyone. Mara lets that be the final sound before
       the speaker goes quiet.
+    choices: []
+
+  passenger_mitten_pair_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Passengers
+    endingFamily: Keepsakes
+    text: >
+      The release opens every door at once only after both mittened hands have
+      answered at the threshold. The damp cuff knocks first for the child who
+      lost it, and the warm cuff knocks second for the passenger who carried it
+      back instead of letting the station keep another small proof. Mara repeats
+      "Both hands accounted for" through the speaker, and the words pass down
+      the car until every passenger checks the hand beside them before stepping
+      into morning. The child does not have to run ahead to prove the door will
+      stay open. He waits with both mittens lifted in daylight, counting each
+      person through in pairs until the last answer is not a name in the ledger
+      but two hands finding rain together.
     choices: []
 
   good_ending:

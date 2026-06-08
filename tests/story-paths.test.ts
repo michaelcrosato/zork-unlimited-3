@@ -10887,8 +10887,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_mitten_pair");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.id).toBe("passenger_mitten_pair_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("both mittened hands have answered");
+    expect(observation.scene.text).toContain("Both hands accounted for");
+    expect(observation.scene.text).toContain("two hands finding rain together");
     expectIdealScore(observation.score);
   });
 
@@ -10964,8 +10967,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_confirmed_mitten_pair");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_mitten_true_ending");
+    expect(observation.scene.id).toBe("passenger_mitten_pair_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("both mittened hands have answered");
+    expect(observation.scene.text).toContain("Both hands accounted for");
+    expect(observation.scene.text).toContain("two hands finding rain together");
     expectIdealScore(observation.score);
   });
 

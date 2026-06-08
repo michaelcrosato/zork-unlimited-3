@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 91 Paired-Mitten Confirmation Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the optional paired-mitten confirmation route feel
+  acknowledged instead of resolving into the same ending as the faster mitten
+  release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window, so this follows the current long-run signal: route guidance,
+  coverage, and ideal-ending rates are healthy; invest in richer payoff on
+  already-playable high-traffic branches.
+- Why this matters: Random play reaches the mitten passenger route often, and
+  the player can explicitly pause to confirm both mittened hands before
+  release. That extra care should visibly matter at the ending.
+- Planned work:
+  - Route `pull_release_after_confirmed_mitten_pair` to a new ideal ending.
+  - Preserve the faster `passenger_mitten_true_ending` route for players who
+    release immediately after helping the child.
+  - Update route regression tests and ideal-ending count coverage.
+  - Run focused tests, full health, the evidence cycle, and one real CLI route
+    through the changed ending.
+- Risks:
+  - Adding an ending increases the reachable graph and ending count, so health
+    must prove no unreachable or unfinished path was introduced.
+  - The new ending must read like a payoff for the paired-hand check, not a
+    duplicate of the existing mitten ending.
+- Status:
+  - Completed.
+  - Added `passenger_mitten_pair_checked_true_ending` with ideal Passengers /
+    Keepsakes metadata.
+  - Changed only the confirmed paired-mitten release to land on the new ending;
+    direct mitten releases still land on `passenger_mitten_true_ending`.
+  - Updated `tests/story-paths.test.ts` to assert the confirmed route reaches
+    the new ending and includes the "Both hands accounted for" payoff.
+  - Updated `tests/playtest.test.ts` so the explicit true-ending helper counts
+    the new ideal variant.
+  - Focused check passed: `npx vitest run tests/story-paths.test.ts
+tests/playtest.test.ts` with 230 tests passing.
+  - Full `npm run health` passed: format check, TypeScript, 301 tests, story
+    validation with 181 reachable scenes / 36 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_mitten_pair_checked_true_ending`,
+    score 317, with badge, fuse, lantern, map, and token in inventory and no
+    remaining objectives.
+- Playtest feedback:
+  - The extra confirmation now lands better: the ending explicitly shows the
+    damp cuff, warm cuff, and paired-hand check becoming the reason passengers
+    look after one another through the doors.
+  - The faster mitten ending remains useful for momentum, so the route now has
+    a clearer difference between "help the child" and "confirm both hands
+    before release."
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue adding focused payoff to optional care branches whose
+    mechanical difference is clear but whose ending acknowledgment is thin.
+
 # Cycle 90 Core True-Ending Payoff Clarity
 
 - Date: 2026-06-08
