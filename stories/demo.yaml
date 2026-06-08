@@ -4620,7 +4620,7 @@ scenes:
     choices:
       - id: pull_release_after_handoff_door_check
         label: Pull the release after Mara clears the last door
-        to: mara_handoff_true_ending
+        to: mara_handoff_door_checked_true_ending
 
   mara_thumbprint_handoff_intercom:
     routeImportance: optional
@@ -6332,6 +6332,22 @@ scenes:
       as passengers step into rain-bright morning, and Mara is not only a voice
       thanking them from the speaker. She stands at the far doors with one hand
       on the rail, holding them open until the last name leaves the line behind.
+    choices: []
+
+  mara_handoff_door_checked_true_ending:
+    routeImportance: optional
+    ending: true
+    endingType: ideal
+    endingGroup: Mara
+    endingFamily: Core
+    text: >
+      The release opens every door at once after Mara has counted the far
+      threshold clear. She is not only a voice thanking the passengers from the
+      speaker; she stands where the line used to pinch shut, one hand on the
+      rail and one hand held out past the last door. Each car answers with
+      rain-bright morning before the ledger can ask for another name. When the
+      final passenger crosses, Mara's "Clear" becomes the record, and there is
+      no door left for the old line to close behind her.
     choices: []
 
   mara_last_dispatch_true_ending:

@@ -13155,9 +13155,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_handoff_door_check");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("mara_handoff_true_ending");
+    expect(observation.scene.id).toBe("mara_handoff_door_checked_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("Mara is not only a voice");
+    expect(observation.scene.text).toContain("counted the far threshold clear");
+    expect(observation.scene.text).toContain("no door left for the old line to close");
     expectIdealScore(observation.score);
   });
 
