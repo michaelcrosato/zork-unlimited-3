@@ -9285,6 +9285,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "check_shared_release_from_gathered_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "follow_lunch_tin_latch_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
@@ -9323,6 +9324,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "check_shared_release_from_gathered_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "follow_lunch_tin_latch_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
@@ -15902,6 +15904,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "follow_lunch_tin_latch_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);
@@ -15984,6 +15987,55 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("No one crosses alone");
     expectIdealScore(observation.score);
+  });
+
+  it("lets gathered passengers follow the lunch-tin latch into its self-count release", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "help_opened_passengers_gather",
+      "follow_lunch_tin_latch_from_gathered_boarding"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.scene.text).toContain("clicks the latch");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.objectives).toEqual([LUNCH_TIN_COUNT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_boarding",
+      "let_lunch_tin_worker_count_himself_from_boarding",
+      "check_lunch_tin_passengers_before_release",
+      "read_lunch_tin_roster_from_boarding",
+      "listen_to_lunch_tin_worker_from_boarding",
+      "let_lunch_tin_count_become_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_boarding");
+    ({ observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
   it("lets players hear the gathered-passenger intercom directly from opened manifest doors", async () => {
@@ -17032,6 +17084,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_boarding",
       "answer_final_roll_call_from_gathered_boarding",
+      "follow_lunch_tin_latch_from_gathered_boarding",
       "listen_to_gathered_passengers_from_boarding",
       "pull_release_after_gathered_boarding"
     ]);

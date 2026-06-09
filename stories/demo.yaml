@@ -4523,6 +4523,15 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+      - id: follow_lunch_tin_latch_from_gathered_boarding
+        label: Let the lunch-tin worker set the boarding pace from here
+        to: passenger_lunch_tin_boarding
+        requires:
+          notFlag: set_lunch_tin_pace
+        effects:
+          set:
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
       - id: listen_to_gathered_passengers_from_boarding
         label: Listen to the gathered passengers before the release
         to: passenger_gathered_intercom

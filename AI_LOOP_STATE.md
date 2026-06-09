@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 28 Gathered-To-Lunch-Tin Recovery
+
+- Date: 2026-06-09
+- Main objective: Let players who gather the opened passengers naturally pivot
+  into the lunch-tin worker's self-count route when the boarding text calls out
+  his quiet latch-count.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 28 evidence showed full validation/coverage health, but normal
+  random play still under-sampled late boarding variants including
+  `passenger_lunch_tin_boarding` and `passenger_lunch_tin_true_ending`.
+- Why this matters: The gathered-boarding scene already spotlights the
+  lunch-tin worker helping the crowd move. Players can now act on that visible
+  detail without backing out to a broader hub or guessing that a separate
+  lunch-tin branch exists.
+- Completed work:
+  - Added `follow_lunch_tin_latch_from_gathered_boarding` from
+    `passenger_gathered_boarding` to `passenger_lunch_tin_boarding`.
+  - Guarded the choice behind `notFlag: set_lunch_tin_pace` so it appears only
+    when the lunch-tin route has not already taken over.
+  - Set the existing `steadied_lunch_tin_worker` and `set_lunch_tin_pace` flags
+    so the current lunch-tin objectives and endings handle the rest of the
+    route.
+  - Added regression coverage proving the gathered-passenger route can reach
+    `passenger_lunch_tin_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered passengers|lunch-tin latch|lunch-tin boarding|morning chorus"`.
+  - Full `npm run health` passed: format check, TypeScript, 336 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 333,
+    through `help_opened_passengers_gather`,
+    `follow_lunch_tin_latch_from_gathered_boarding`,
+    `pull_release_after_lunch_tin_boarding`, and
+    `pull_release_after_lunch_tin_self_count`.
+- Playtest feedback:
+  - What felt better: the gathered-boarding prose already says the lunch-tin
+    worker keeps his latch quiet; the new action lets that visible detail
+    become a route instead of a dead descriptive beat.
+  - What still feels risky: this adds one more choice to a late menu. The guard
+    prevents duplicate lunch-tin routing once the worker's pace is already set.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue smoothing undersampled late boarding variants such as
+    `passenger_gathered_boarding` follow-throughs and `passenger_morning_chorus`
+    payoffs.
+- Risks:
+  - Low. The change reuses existing story scenes, objectives, flags, and
+    endings. The main watch item is one additional choice in a late-game menu.
+- Status: Complete.
+
 # Cycle 27 Threshold-To-Room Recovery
 
 - Date: 2026-06-09
