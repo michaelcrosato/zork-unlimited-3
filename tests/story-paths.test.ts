@@ -8519,13 +8519,17 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answers");
-    expect(observation.scene.text).toContain("present finally means something again");
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.scene.text).toContain("no last name left for the line to claim");
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
-    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
 
-    state = choose(story, state, "pull_release_after_answered_count");
+    state = choose(story, state, "pull_release_after_counted_chorus");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_counted_true_ending");

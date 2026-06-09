@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 46 Manifest Handoff Count Chorus
+
+- Date: 2026-06-09
+- Main objective: Make Mara's opened-door handoff count choice land on the
+  count-specific chorus scene it promises.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 46 evidence showed random play still under-sampling
+  `passenger_counted_true_ending`, and inspection found one handoff choice
+  whose label said the passengers finish Mara's count together but routed to
+  the broader passenger-answer scene.
+- Why this matters: A normal player choosing that handoff option should see
+  the passengers complete the count immediately, then pull the release from
+  that exact proof beat. The revised route makes the label, scene, and ending
+  match without changing the choice id or the surrounding hub.
+- Planned work:
+  - Keep `finish_count_after_mara_manifest_handoff` stable for playtest
+    history.
+  - Route it from `mara_manifest_handoff` to `passenger_counted_chorus`.
+  - Set `shared_count_release_ready` so the follow-up release points at
+    `passenger_counted_true_ending`.
+  - Update the focused regression for the revised branch.
+- Risks:
+  - This is a clarity and payoff fix, not a proven long-run random-rate fix.
+    The 100-run random sample in the evidence cycle still missed
+    `passenger_counted_true_ending`, so the next loop should keep watching
+    normal-play discovery for count and other late proof paths.
+- Status:
+  - Completed and ready for commit/push.
+  - `finish_count_after_mara_manifest_handoff` now routes to
+    `passenger_counted_chorus` and sets `shared_count_release_ready`.
+  - The revised scene exposes only `pull_release_after_counted_chorus`, leading
+    cleanly to `passenger_counted_true_ending`.
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-door handoff become a completed passenger count"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, the standard
+    MCP smoke route reached `true_ending`, and the adaptive route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough used `watch_mara_open_manifest` ->
+    `finish_count_after_mara_manifest_handoff`, saw
+    `passenger_counted_chorus` with the line "the count has become a chorus,"
+    then pulled to `passenger_counted_true_ending`.
+  - Final score was 286 with no remaining choices.
+  - What felt better: the branch now pays off the specific "finish Mara's
+    count together" promise instead of detouring through the generic answer
+    scene.
+  - What still feels risky: the opened-manifest hub remains dense, and random
+    play can still miss this specific ending in small samples.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery work for another current random miss such
+    as `mara_manifest_thumbprint_receipt`, `passenger_gathered_intercom`, or
+    `passenger_threshold_boarding`.
+
 # Cycle 45 Direct Lunch-Tin Boarding
 
 - Date: 2026-06-09

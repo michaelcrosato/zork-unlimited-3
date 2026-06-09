@@ -3076,14 +3076,14 @@ scenes:
       - id: finish_count_after_mara_manifest_handoff
         label: Let the opened passengers finish Mara's count together
         choiceGroup: Manifest count
-        to: passenger_answers
+        to: passenger_counted_chorus
         requires:
           notFlag: passengers_finished_reviewed_count
         effects:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
-            heard_passenger_answers: true
+            shared_count_release_ready: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
         choiceGroup: Mara and manifest
