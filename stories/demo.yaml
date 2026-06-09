@@ -118,6 +118,12 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: checked_answered_passengers
+  - text: Pull the release after every familiar passenger echo has a seat aboard.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: confirmed_echoed_manifest_seats
   - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
@@ -126,6 +132,7 @@ objectives:
         - notFlag: made_room_for_passengers
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
+        - notFlag: confirmed_echoed_manifest_seats
         - any:
             - notFlag: saw_mara_manifest_handoff
             - flag: heard_passenger_answers
@@ -3679,12 +3686,17 @@ scenes:
           set:
             checked_echoed_passengers: true
       - id: pull_release_after_checked_echoed_boarding
-        label: Pull the release once the checked echoes are aboard
-        to: passenger_echoed_true_ending
+        label: Confirm every checked echo has a seat before the release
+        to: passenger_echoed_seat_receipt
         requires:
           all:
             - flag: heard_mara_goodbye
             - flag: checked_echoed_passengers
+            - notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            confirmed_echoed_manifest_seats: true
+            echoed_manifest_boarded: true
 
   passenger_echoed_check:
     routeImportance: optional
@@ -3720,10 +3732,16 @@ scenes:
         requires:
           notFlag: heard_mara_goodbye
       - id: pull_release_after_checked_echoes
-        label: Pull the release after checking the familiar echoes
-        to: passenger_echoed_true_ending
+        label: Seat the checked echoes before pulling the release
+        to: passenger_echoed_seat_receipt
         requires:
-          flag: heard_mara_goodbye
+          all:
+            - flag: heard_mara_goodbye
+            - notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            confirmed_echoed_manifest_seats: true
+            echoed_manifest_boarded: true
 
   passenger_threshold_boarding:
     routeImportance: optional
@@ -4706,8 +4724,8 @@ scenes:
           set:
             checked_echoed_passengers: true
       - id: pull_release_after_checked_echoed_boarding
-        label: Pull the release while the checked echoes answer
-        to: passenger_echoed_true_ending
+        label: Confirm every checked echo has a seat before the release
+        to: passenger_echoed_seat_receipt
         requires:
           all:
             - flag: freed_mara
@@ -4715,8 +4733,13 @@ scenes:
             - flag: heard_passenger_echoes
             - flag: echoed_manifest_boarded
             - flag: checked_echoed_passengers
+            - notFlag: confirmed_echoed_manifest_seats
             - notFlag: helped_passengers_gather
             - notFlag: reviewed_open_manifest_count
+        effects:
+          set:
+            confirmed_echoed_manifest_seats: true
+            heard_mara_goodbye: true
       - id: pull_release_after_reviewed_manifest_count
         label: Pull the release while Mara's reviewed count holds
         to: passenger_reviewed_count_true_ending
@@ -5461,8 +5484,15 @@ scenes:
             checked_echoed_passengers: true
             echoed_manifest_boarded: true
       - id: pull_release_after_echoed_manifest_goodbye
-        label: Pull the release while the opened doors answer
-        to: passenger_echoed_true_ending
+        label: Seat every opened-door echo before the release
+        to: passenger_echoed_seat_receipt
+        requires:
+          notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            checked_echoed_passengers: true
+            confirmed_echoed_manifest_seats: true
+            echoed_manifest_boarded: true
 
   passenger_echoed_seat_receipt:
     routeImportance: optional

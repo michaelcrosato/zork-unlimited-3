@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 35 Echoed-Seat Receipt Discovery
+
+- Date: 2026-06-09
+- Main objective: Make the opened-door echo route pause on the existing
+  "every echo is aboard" seat receipt before its ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 35 evidence was green, but normal random play continued to
+  under-sample `passenger_echoed_boarding` / `passenger_echoed_seat_receipt`
+  in smaller samples compared with coverage.
+- Why this matters: The echoed-passenger branch is about small trapped sounds
+  becoming visible people. Letting common intercom/direct release exits jump
+  straight to the ending made the branch mechanically correct but reduced the
+  clearest proof that thermos, newspaper, and mitten sounds now belong to
+  passengers seated in the third car.
+- Planned work:
+  - Route direct checked-echo and intercom echo releases through
+    `passenger_echoed_seat_receipt`.
+  - Add a focused objective for the receipt pause and suppress the broad
+    opened-manifest checklist once the receipt is pending.
+  - Update regression tests to prove the added pause is intentional.
+  - Run focused tests, full health, evidence generation, and an actual CLI
+    playthrough of the revised route.
+- Risks:
+  - This adds one click to several optional echo-release exits, so the choice
+    labels and objective must read like final confirmation rather than delay.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_echoed_manifest_goodbye`,
+    `pull_release_after_checked_echoes`, and the checked echoed-boarding
+    release options now route to `passenger_echoed_seat_receipt`.
+  - `passenger_echoed_seat_receipt` now gets the focused objective: "Pull the
+    release after every familiar passenger echo has a seat aboard."
+  - The broad opened-manifest checklist no longer appears once
+    `confirmed_echoed_manifest_seats` is true.
+  - Focused echoed-branch tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "echo"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, random visited
+    `passenger_echoed_seat_receipt`, coverage stayed complete, and MCP route
+    evidence still reached `true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `board_with_echoed_manifest` ->
+    `listen_to_echoed_manifest_from_boarding` ->
+    `pull_release_after_echoed_manifest_goodbye` stopped at
+    `passenger_echoed_seat_receipt`, showed only the focused receipt objective
+    and one release choice, then reached `passenger_echoed_true_ending` with
+    score 304 and no remaining objectives.
+  - The new pause reads coherently: the option says to seat every opened-door
+    echo, the scene names the thermos, newspaper, and mitten as visible
+    passengers, and the final release then lands cleanly.
+  - No invalid choice, unreachable scene, stale objective, unfinished playtest,
+    or ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining random misses such
+    as `mara_manifest_handoff`, `passenger_morning_chorus`,
+    `passenger_gathered_boarding`, or `passenger_room_boarding`.
+
 # Cycle 34 Answered-Passenger Check Discovery
 
 - Date: 2026-06-09

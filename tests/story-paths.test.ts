@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { maskObservation, renderMaskedScene } from "../src/blind-facade.js";
 import { choose, initialState, observe } from "../src/engine.js";
-import type { GameState } from "../src/schema.js";
+import type { GameState, Story } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
@@ -13,12 +13,38 @@ const THUMBPRINT_RECEIPT_OBJECTIVE =
   "Pull the release after the opened passengers receive Mara's thumbprint oath.";
 const ANSWERED_CHECK_OBJECTIVE =
   "Pull the release after every answered passenger has a face behind the name.";
+const ECHO_SEAT_RECEIPT_OBJECTIVE =
+  "Pull the release after every familiar passenger echo has a seat aboard.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
   expect(score.awards.some((award) => award.id === "flag_ideal_ending")).toBe(true);
+}
+
+function releaseAfterEchoSeatReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_echoed_seat_receipt");
+  expect(observation.scene.text).toContain("Every echo is aboard");
+  expect(observation.objectives).toEqual([ECHO_SEAT_RECEIPT_OBJECTIVE]);
+  expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+  expect(observation.state.flags.confirmed_echoed_manifest_seats).toBe(true);
+  expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+
+  state = choose(story, state, "pull_release_after_echoed_seat_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("ordinary noise");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
 }
 
 describe("demo story critical paths", () => {
@@ -4107,11 +4133,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They keep time for people crossing it");
 
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
     expect(observation.scene.text).toContain("they have become footsteps");
-    expectIdealScore(observation.score);
   });
 
   it("lets ledger-first players pivot to the kept-passenger manifest before clearing Mara", async () => {
@@ -4232,11 +4255,7 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.text).toContain("ordinary noise");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("adds a threshold beat before the direct passenger manifest release", async () => {
@@ -5447,10 +5466,10 @@ describe("demo story critical paths", () => {
     ]);
 
     echoedCheckState = choose(story, echoedCheckState, "pull_release_after_checked_echoes");
-    observation = observe(story, echoedCheckState);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expectIdealScore(observation.score);
+    ({ state: echoedCheckState, observation } = releaseAfterEchoSeatReceipt(
+      story,
+      echoedCheckState
+    ));
 
     state = choose(story, state, "pull_release_after_manifest_answers");
     observation = observe(story, state);
@@ -5552,11 +5571,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.text).toContain("ordinary noise");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("adds an optional echoed-seat receipt before the echo ending", async () => {
@@ -5731,10 +5746,7 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_after_checked_echoed_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("recovers echoed passenger boarding after a Mara sign-off train-car detour", async () => {
@@ -5799,10 +5811,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "listen_to_echoed_manifest_intercom");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("recovers echoed passenger boarding after hearing the train-car intercom first", async () => {
@@ -5865,10 +5874,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_checked_echoes");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("adds a one-time Mara handoff beat after opening the passenger manifest", async () => {
@@ -7332,11 +7338,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("promotes opened door-echo listening near the top of opened manifest choices", async () => {
@@ -7389,11 +7391,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "listen_to_echoed_manifest_from_boarding");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("lets opened manifest players listen to passenger echoes before boarding them", async () => {
@@ -7499,11 +7497,10 @@ describe("demo story critical paths", () => {
       returnedBoardingState,
       "pull_release_after_echoed_manifest_goodbye"
     );
-    observation = observe(story, returnedBoardingState);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state: returnedBoardingState, observation } = releaseAfterEchoSeatReceipt(
+      story,
+      returnedBoardingState
+    ));
 
     state = choose(story, state, "board_with_listened_manifest_echoes");
     observation = observe(story, state);
@@ -7517,11 +7514,7 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "check_echoed_passengers_before_release");
     state = choose(story, state, "carry_checked_echoes_to_speaker");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("surfaces opened door-echo listening directly from opened manifest doors", async () => {
@@ -7580,11 +7573,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "carry_checked_echoes_to_speaker");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("lets opened-manifest players check familiar door-echoes directly", async () => {
@@ -7630,11 +7619,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "carry_checked_echoes_to_speaker");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
   it("pays off a direct release after reviewing Mara's opened manifest count", async () => {
@@ -15793,18 +15778,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
 
-    observation = observe(
+    const echoedAnswerState = choose(
       story,
-      choose(
-        story,
-        choose(story, state, "let_manifest_answers_keep_door_rhythm"),
-        "pull_release_after_echoed_manifest_goodbye"
-      )
+      choose(story, state, "let_manifest_answers_keep_door_rhythm"),
+      "pull_release_after_echoed_manifest_goodbye"
     );
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterEchoSeatReceipt(story, echoedAnswerState));
 
     const releaseState = choose(story, state, "pull_release_after_manifest_answers");
     observation = observe(story, releaseState);
@@ -16182,11 +16161,10 @@ describe("demo story critical paths", () => {
       echoedBoardingState,
       "pull_release_after_echoed_manifest_goodbye"
     );
-    observation = observe(story, echoedBoardingState);
-
-    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state: echoedBoardingState, observation } = releaseAfterEchoSeatReceipt(
+      story,
+      echoedBoardingState
+    ));
 
     const returnedState = choose(story, state, "return_from_passenger_morning_chorus");
     observation = observe(story, returnedState);
