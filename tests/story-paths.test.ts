@@ -5619,6 +5619,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They remember the way out now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -5676,6 +5677,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They remember the way out now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -5688,6 +5690,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the line teaches them to wait again");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -13950,6 +13953,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("They remember the way out now");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -17121,12 +17125,44 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_manifest_intercom");
     expect(observation.scene.text).toContain("each name answers with a small ordinary sound");
+    expect(observation.scene.text).toContain("the torn thumbprint darkens");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "confirm_manifest_thumbprint_receipt_from_manifest_intercom"
+      )?.choiceGroup
+    ).toBe("Thumbprint receipt");
+
+    let receiptState = choose(
+      story,
+      state,
+      "confirm_manifest_thumbprint_receipt_from_manifest_intercom"
+    );
+    observation = observe(story, receiptState);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_thumbprint_receipt"
+    ]);
+
+    receiptState = choose(story, receiptState, "pull_release_after_manifest_thumbprint_receipt");
+    observation = observe(story, receiptState);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("received by the passengers themselves");
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_manifest_goodbye");
     observation = observe(story, state);

@@ -7,6 +7,63 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 36 Manifest Intercom Thumbprint Receipt Bridge
+
+- Date: 2026-06-09
+- Main objective: Make Mara's manifest-thumbprint receipt easier to discover
+  from the opened-manifest intercom route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 36 evidence showed healthy validation, full coverage, and
+  remaining normal-play discoverability pressure on late branches including
+  `mara_manifest_thumbprint_receipt_true_ending`.
+- Why this matters: A player who asks Mara to read the opened manifest over the
+  third-car speaker now hears the torn thumbprint darken under passenger
+  answers and gets a direct "Thumbprint receipt" action there, instead of
+  needing to notice the receipt only from the denser opened-door or handoff
+  menus.
+- Completed work:
+  - Added
+    `confirm_manifest_thumbprint_receipt_from_manifest_intercom` from
+    `mara_manifest_intercom` to the existing
+    `mara_manifest_thumbprint_receipt` scene.
+  - Updated the intercom text so the thumbprint receipt cue is visible in the
+    scene before the new choice appears.
+  - Reused existing receipt flags, objective text, and
+    `mara_manifest_thumbprint_receipt_true_ending`.
+  - Updated exact menu-order tests and added route coverage proving the new
+    intercom choice reaches the receipt ending while preserving the direct
+    `passenger_manifest_true_ending` release.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest intercom|thumbprint receipt|direct third-car readout"`.
+  - Full `npm run health` passed: format check, TypeScript, 338 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached
+    `mara_manifest_thumbprint_receipt_true_ending`, score 292, via
+    `ask_mara_to_read_opened_manifest`,
+    `confirm_manifest_thumbprint_receipt_from_manifest_intercom`, and
+    `pull_release_after_manifest_thumbprint_receipt`.
+  - Extra random 100-run summary stayed healthy with `ended: 100`,
+    `unfinished: 0`, and average score 278.92, but did not hit this rare
+    receipt ending in that deterministic sample.
+- Playtest feedback:
+  - What felt better: the receipt choice now grows out of the text already on
+    screen when Mara reads the manifest, so the thumbprint oath feels like a
+    passenger-confirmed payoff rather than a hidden side branch.
+  - What still feels risky: the seeded random sample still missed the receipt
+    ending, so blind sessions should confirm whether human/player-view agents
+    notice the new wording and choose it from the intercom.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with an obvious contextual bridge,
+    especially `passenger_roll_call_true_ending` / checked roll-call recovery
+    or `passenger_helped_true_ending`.
+- Risks:
+  - Low. This adds one guarded story choice, reuses existing scenes/endings, and
+    keeps validation, tests, coverage, and actual CLI playthrough green.
+- Status: Complete.
+
 # Cycle 35 Gathered Door-Count Bridge
 
 - Date: 2026-06-09
