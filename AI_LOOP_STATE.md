@@ -7,6 +7,74 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 36 Mara Handoff Visibility
+
+- Date: 2026-06-09
+- Main objective: Make the direct opened-door release option actually show
+  Mara's opened-door handoff scene before the player pulls the release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 36 evidence is green, but the 100-run random sample still
+  under-sampled `mara_manifest_handoff` even though direct handoff endings were
+  reachable.
+- Why this matters: The handoff branch is about Mara passing responsibility
+  from ledger names to living passengers. One normal-play option marked the
+  handoff as seen and jumped straight to the ending, which made the state
+  technically correct while hiding the clearest scene that explains the
+  ending.
+- Planned work:
+  - Route `pull_release_as_mara_calls_opened_doors` to
+    `mara_manifest_handoff` instead of directly to the ending.
+  - Keep the existing release completion from the handoff scene, so the route
+    adds one proof beat without changing the ending target.
+  - Update regression tests to prove the direct option now pauses on the
+    handoff scene before release.
+  - Run focused tests, full health, evidence generation, and an actual
+    CLI/MCP-style playthrough of the revised route.
+- Risks:
+  - This adds one click to one direct handoff release option, so the label and
+    objective must make the extra beat feel like confirmation, not delay.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_as_mara_calls_opened_doors` now routes to
+    `mara_manifest_handoff` and no longer marks Mara's goodbye as already
+    heard before the player sees the handoff.
+  - The existing `pull_release_during_mara_manifest_handoff` choice still
+    completes the same `passenger_manifest_handoff_true_ending`.
+  - Regression coverage now proves the direct option pauses on
+    `mara_manifest_handoff`, shows the handoff objective, leaves
+    `heard_mara_goodbye` unset during the pause, and then reaches the ideal
+    handoff ending after release.
+  - Focused handoff tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-door handoff|manifest-specific platform beat|Mara handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0` and now visited
+    `mara_manifest_handoff`, coverage stayed complete, actual MCP play reached
+    `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `pull_release_as_mara_calls_opened_doors`
+    now stops at `mara_manifest_handoff`, awards the handoff-seen score, shows
+    the handoff objective, and then reaches
+    `passenger_manifest_handoff_true_ending` via
+    `pull_release_during_mara_manifest_handoff` with score 298 and no remaining
+    objectives.
+  - The new pause reads coherently: the choice says "before you pull," the
+    scene explains Mara handing steadiness from name to name, and the final
+    ending text now has visible setup.
+  - Tradeoff: the pause exposes the full handoff hub rather than a one-option
+    confirmation. It did not break health or coverage, but future blind-play
+    feedback should watch for hesitation here.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining misses such as
+    `mara_manifest_thumbprint_receipt`, `passenger_manifest_handoff_true_ending`,
+    `passenger_gathered_boarding`, `passenger_room_boarding`, or
+    `passenger_morning_chorus`.
+
 # Cycle 35 Echoed-Seat Receipt Discovery
 
 - Date: 2026-06-09

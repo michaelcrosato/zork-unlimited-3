@@ -6088,9 +6088,24 @@ describe("demo story critical paths", () => {
     expect(choiceIds[1]).toBe("carry_mara_handoff_as_doors_open");
     expect(choiceIds[2]).toBe("pull_release_as_mara_calls_opened_doors");
 
+    const firstHandoffState = choose(story, state, "pull_release_as_mara_calls_opened_doors");
+    const firstHandoffObservation = observe(story, firstHandoffState);
+
+    expect(firstHandoffObservation.scene.id).toBe("mara_manifest_handoff");
+    expect(firstHandoffObservation.scene.ending).toBe(false);
+    expect(firstHandoffObservation.scene.text).toContain(
+      "steadiness can be handed from name to name"
+    );
+    expect(firstHandoffObservation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
+    expect(firstHandoffObservation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(firstHandoffObservation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(firstHandoffObservation.choices.map((choice) => choice.id)).toContain(
+      "pull_release_during_mara_manifest_handoff"
+    );
+
     const firstDirectReleaseObservation = observe(
       story,
-      choose(story, state, "pull_release_as_mara_calls_opened_doors")
+      choose(story, firstHandoffState, "pull_release_during_mara_manifest_handoff")
     );
 
     expect(firstDirectReleaseObservation.scene.id).toBe("passenger_manifest_handoff_true_ending");
@@ -6682,9 +6697,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices[1]?.label).toBe("Carry Mara's opened-door handoff to the third car");
     expect(observation.choices[1]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[2]).toBe("pull_release_as_mara_calls_opened_doors");
-    expect(observation.choices[2]?.label).toBe(
-      "Let Mara call the opened doors, then pull the release"
-    );
+    expect(observation.choices[2]?.label).toBe("Let Mara call the opened doors before you pull");
     expect(observation.choices[2]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[3]).toBe("ask_mara_to_sign_off_opened_manifest");
     expect(observation.choices[3]?.label).toBe(
