@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 43 Gathered Intercom Direct Helped Release
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_helped_true_ending` pay off directly when
+  players choose the obvious release action from the gathered-passenger
+  intercom.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 43 evidence showed healthy validation and full coverage, but
+  the random samples still under-sampled several gathered/helped passenger
+  beats. The gathered intercom already has Mara say "Now," so the immediate
+  release action should finish instead of routing through another setup scene.
+- Why this matters: The old route asked players to pull the release, then
+  landed on a second "shared release" confirmation scene before the helped
+  ending. This made the direct "passengers help one another down" payoff feel
+  one beat later than the text promised.
+- Planned work:
+  - Change `pull_release_after_gathered_intercom` to reach
+    `passenger_helped_true_ending` directly.
+  - Preserve `passenger_gathered_release` through its explicit inspection and
+    boarding routes.
+  - Update route regression tests so the direct pull and optional confirmation
+    paths are both still covered.
+- Verification:
+  - Focused gathered/helped test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered|helped"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_helped_true_ending`, score 294, through
+    `listen_as_opened_passengers_gather` and
+    `pull_release_after_gathered_intercom`.
+- Playtest feedback:
+  - What felt better: the intercom line "Now" now matches the next command.
+    The player hears the gathered passengers move together, chooses to move
+    the release hand to hand, and immediately gets the helped ending.
+  - What still feels risky: this removes one confirmation beat from the direct
+    intercom path. The explicit "check how the gathered passengers share the
+    release" route still preserves that slower inspection scene, but blind
+    testers should confirm the direct route does not feel abrupt.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    watch whether `passenger_helped_true_ending` appears more often in normal
+    random play and continue trimming late-game routes where a "pull now"
+    command still leads to another setup scene.
+- Risks:
+  - Low. The change reuses an existing ideal ending and leaves the shared
+    release scene reachable through explicit inspection choices.
+- Status: Complete.
+
 # Cycle 42 Mara Manifest Thumbprint Readout Bridge
 
 - Date: 2026-06-09

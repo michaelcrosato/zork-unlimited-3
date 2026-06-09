@@ -11786,18 +11786,12 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("passengers helping one another down");
     expect(observation.scene.text).toContain("No one crosses alone");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -13228,16 +13222,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
     expect(observation.scene.text).toContain("No one crosses alone");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -16149,16 +16138,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
     expect(observation.scene.text).toContain("passengers helping one another down");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -16327,15 +16311,11 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("thanks each passenger by name");
     expect(observation.scene.text).toContain("No one crosses alone");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -16498,15 +16478,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("No one crosses alone");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -16566,16 +16541,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
@@ -18243,15 +18212,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
     expectIdealScore(observation.score);
   });
 
