@@ -348,7 +348,7 @@ objectives:
             - flag: heard_passenger_answers
             - flag: read_mara_thumbprint
             - flag: read_manifest_thumbprint
-  - text: Pass the release hand to hand through the room you made.
+  - text: Pull once every passenger has room, or pass the release hand to hand.
     requires:
       all:
         - flag: freed_mara
@@ -4172,6 +4172,9 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: pull_release_once_passengers_have_room
+        label: Pull the release once every passenger has room
+        to: passenger_true_ending
       - id: ask_conductor_to_clear_room_made
         label: Ask the old conductor to clear the room you made
         to: passenger_conductor_signal

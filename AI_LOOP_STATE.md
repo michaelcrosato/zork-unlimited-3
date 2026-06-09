@@ -7,6 +7,52 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 40 Room-Made Passenger Release Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the plain `passenger_true_ending` easier to discover
+  after players choose to make room for the opened passengers.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 40 evidence showed healthy validation and full coverage, but
+  random play still missed `passenger_true_ending` while nearby checked
+  passenger routes were heavily represented.
+- Why this matters: A player who has already made the third car physically fit
+  everyone should see the simple "pull now" passenger payoff, not only the
+  longer hand-to-hand receipt branch.
+- Planned work:
+  - Add a direct `passenger_room_boarding` choice to
+    `passenger_true_ending`.
+  - Broaden the room-making objective text so it accurately covers both the
+    direct pull and the shared-release receipt route.
+  - Add regression coverage proving the new room-made choice reaches the plain
+    passenger ending while the checked route remains available.
+- Verification:
+  - Focused room/passenger test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "direct manifest boarders make room|opened-manifest players make room physically|room-making"`.
+  - Full `npm run health` passed: format check, TypeScript, 339 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_true_ending`, score 265, via
+    `make_room_from_opened_manifest` and
+    `pull_release_once_passengers_have_room`.
+- Playtest feedback:
+  - What felt better: after the opened manifest doors are cleared, making
+    physical room in the third car now exposes a plain "pull once everyone has
+    room" payoff that matches the ending text directly.
+  - What still feels risky: this adds one more choice to a late menu that
+    already offers shared-release, intercom, conductor, and keepsake variants.
+    Blind sessions should confirm the new direct pull reads as the simple
+    ending, not as a duplicate of the checked shared-release route.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with a contextual bridge,
+    especially `passenger_conductor_true_ending` or
+    `passenger_manifest_thumbprint_true_ending`.
+- Risks:
+  - Low. This adds one late-game choice and updates exact menu expectations,
+    but it changes a menu that already has several optional proof beats.
+- Status: Complete.
+
 # Cycle 39 Lunch-Tin Farewell Self-Count Bridge
 
 - Date: 2026-06-09

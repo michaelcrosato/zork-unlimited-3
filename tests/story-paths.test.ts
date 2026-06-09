@@ -5,7 +5,8 @@ import type { GameState, Story } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
-const ROOM_BOARDING_OBJECTIVE = "Pass the release hand to hand through the room you made.";
+const ROOM_BOARDING_OBJECTIVE =
+  "Pull once every passenger has room, or pass the release hand to hand.";
 const ROOM_RELEASE_OBJECTIVE = "Let the shared release reach the back row before pulling.";
 const ROOM_RECEIPT_OBJECTIVE = "Pull together after every hand receives the release.";
 const THRESHOLD_BOARDING_OBJECTIVE =
@@ -4884,12 +4885,24 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
+      "pull_release_once_passengers_have_room",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
       "reach_release_after_making_room"
     ]);
 
     const roomState = state;
+
+    const directRoomEnding = observe(
+      story,
+      choose(story, roomState, "pull_release_once_passengers_have_room")
+    );
+
+    expect(directRoomEnding.scene.id).toBe("passenger_true_ending");
+    expect(directRoomEnding.scene.ending).toBe(true);
+    expect(directRoomEnding.scene.text).toContain("the crowd leaves by making room for itself");
+    expect(directRoomEnding.scene.text).toContain("an empty aisle that finally belongs to no one");
+    expectIdealScore(directRoomEnding.score);
 
     state = choose(story, roomState, "pass_room_release_after_making_room");
     observation = observe(story, state);
@@ -5115,6 +5128,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
+      "pull_release_once_passengers_have_room",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
       "reach_release_after_making_room"
@@ -5488,6 +5502,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
+      "pull_release_once_passengers_have_room",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
       "reach_release_after_making_room"
@@ -10171,6 +10186,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
+      "pull_release_once_passengers_have_room",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
       "reach_release_after_making_room"
@@ -15776,6 +15792,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
+      "pull_release_once_passengers_have_room",
       "ask_conductor_to_clear_room_made",
       "unfold_newspaper_bundle_after_making_room",
       "reach_release_after_making_room"
