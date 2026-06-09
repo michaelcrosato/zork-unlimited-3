@@ -9540,10 +9540,20 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_lunch_tin_worker_count_himself_from_farewell",
       "return_from_passenger_farewell"
     ]);
 
-    state = choose(story, state, "return_from_passenger_farewell");
+    const farewellState = state;
+
+    let directSelfCountState = choose(
+      story,
+      farewellState,
+      "let_lunch_tin_worker_count_himself_from_farewell"
+    );
+    releaseAfterLunchTinSelfCount(story, directSelfCountState);
+
+    state = choose(story, farewellState, "return_from_passenger_farewell");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
@@ -11863,6 +11873,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_lunch_tin_worker_count_himself_from_farewell",
       "return_from_passenger_farewell"
     ]);
 
@@ -11915,6 +11926,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_lunch_tin_worker_count_himself_from_farewell",
       "return_from_passenger_farewell"
     ]);
 
@@ -16337,6 +16349,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "let_lunch_tin_worker_count_himself_from_farewell",
       "return_from_passenger_farewell"
     ]);
 

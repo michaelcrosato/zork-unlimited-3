@@ -4516,6 +4516,17 @@ scenes:
       has become ordinary work again. No one thanks you yet. They are saving
       their voices for the morning.
     choices:
+      - id: let_lunch_tin_worker_count_himself_from_farewell
+        label: Let the lunch-tin worker count himself before the release
+        to: passenger_lunch_tin_self_count
+        requires:
+          notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            heard_gathered_passengers: true
+            counted_lunch_tin_worker_self: true
       - id: return_from_passenger_farewell
         label: Let the lunch-tin worker set the pace to the third car
         to: passenger_lunch_tin_boarding

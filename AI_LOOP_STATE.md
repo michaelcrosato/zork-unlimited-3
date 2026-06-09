@@ -7,6 +7,53 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 39 Lunch-Tin Farewell Self-Count Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the simple `passenger_lunch_tin_true_ending` payoff
+  easier to discover after players choose the lunch-tin worker's pace.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 39 evidence showed healthy validation, full coverage, and
+  remaining normal-play discoverability pressure on
+  `passenger_lunch_tin_true_ending`.
+- Why this matters: A player who has already chosen the lunch-tin worker as the
+  boarding rhythm should see the self-count release immediately, not only after
+  returning through a broader boarding menu.
+- Planned work:
+  - Add a direct `passenger_farewell` choice into the existing lunch-tin
+    self-count scene.
+  - Preserve the old boarding continuation for players who want to inspect,
+    roster-check, or speaker-check the lunch-tin count.
+  - Add regression coverage proving the new farewell choice reaches
+    `passenger_lunch_tin_true_ending`.
+- Verification:
+  - Focused lunch-tin test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 339 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 289, via
+    `let_opened_lunch_tin_worker_set_pace`,
+    `let_lunch_tin_worker_count_himself_from_farewell`, and
+    `pull_release_after_lunch_tin_self_count`.
+- Playtest feedback:
+  - What felt better: the lunch-tin worker's farewell now leads straight into
+    the self-count moment, so the player does not have to return through the
+    broader boarding menu after already choosing his pace.
+  - What still feels risky: this adds one more late-game choice in a branch with
+    many optional checks. Blind sessions should confirm the direct wording feels
+    like the intended simple payoff, not a shortcut around richer roster/check
+    variants.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with a contextual bridge,
+    especially `passenger_true_ending` or `passenger_conductor_true_ending`.
+- Risks:
+  - Low. This adds one guarded story choice and reuses the existing
+    self-count scene and ending, but it changes exact choice menus around
+    `passenger_farewell`.
+- Status: Complete.
+
 # Cycle 38 Manifest Answers Roll-Call Bridge
 
 - Date: 2026-06-09
