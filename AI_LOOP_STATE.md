@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 50 Direct Opened Count Speaker
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_counted_manifest_intercom` easier to reach
+  during normal opened-manifest passenger rescue play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 50 evidence showed full validation and coverage, but the MCP
+  random sample still missed `passenger_counted_manifest_intercom` while
+  under-sampling some late passenger payoffs.
+- Why this matters: After Mara opens every kept-passenger door, players can now
+  carry her opened count directly to the third-car speaker instead of needing
+  to choose the slower review scene first. The branch keeps the reviewed-count
+  payoff visible as a deliberate rescue action.
+- Completed work:
+  - Added `carry_opened_manifest_count_to_speaker` to the opened-manifest hub.
+  - Routed it to the existing `passenger_counted_manifest_intercom` scene and
+    reviewed-count ending path.
+  - Updated route, menu-order, and player-view numbering regressions in
+    `tests/story-paths.test.ts`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest-specific platform beat|opened-manifest count|Mara's count|reviewed manifest count|opened-manifest players carry"`.
+  - Full `npm run health` passed: format check, TypeScript, 343 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_reviewed_count_true_ending`, score
+    280, through `carry_opened_manifest_count_to_speaker`,
+    `let_passengers_finish_reviewed_count`, and
+    `pull_release_while_reviewed_count_holds`.
+  - A 250-run random sample ended cleanly every run and visited
+    `passenger_counted_manifest_intercom`; the remaining unvisited scene in
+    that sample was `passenger_mara_signoff`.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now offers a clear count-to-
+    speaker action beside the other count options. The route reads as Mara
+    bringing the passenger count into the car, then letting passengers count
+    one another home.
+  - What still feels risky: the opened-manifest menu gained one more option in
+    an already dense late-game hub. The grouping keeps it contained, but blind
+    feedback should still watch for choice overload.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target `passenger_mara_signoff`, the remaining miss in the latest 250-run
+    random sample.
+- Risks:
+  - Low. This adds one optional route into an existing scene/ending family,
+    preserves all previous paths, and keeps validation/playtest coverage green.
+- Status: Complete.
+
 # Cycle 49 Returned Mitten Pair Memory
 
 - Date: 2026-06-09

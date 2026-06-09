@@ -1917,6 +1917,20 @@ scenes:
         effects:
           set:
             reviewed_open_manifest_count: true
+      - id: carry_opened_manifest_count_to_speaker
+        label: Carry Mara's opened count straight to the third-car speaker
+        choiceGroup: Manifest count
+        to: passenger_counted_manifest_intercom
+        requires:
+          all:
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            heard_mara_goodbye: true
       - id: board_with_completed_opened_count
         label: Board after the opened passengers finish the count together
         choiceGroup: Shared count
