@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 38 Opened-Passenger Room Boarding Proof
+
+- Date: 2026-06-09
+- Main objective: Make the direct opened-manifest "board now" shortcut show the
+  physical make-room boarding beat before the room intercom payoff.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 38 evidence was green, but normal random play continued to
+  under-sample some proof beats, including `passenger_room_boarding` and
+  `passenger_room_intercom` in the 100-run random sample.
+- Why this matters: The passenger room route is about a crowd becoming able to
+  leave together by making practical space for one another. Jumping straight
+  to the intercom payoff made the ending mechanically correct but hid the
+  clearest physical setup for "the crowd leaves by making room for itself."
+- Planned work:
+  - Route `pull_release_for_opened_manifest` to `passenger_room_boarding`
+    instead of directly to `passenger_room_intercom`.
+  - Keep the focused room-release objective active after the shortcut.
+  - Let the existing boarding choices carry the player to the same intercom,
+    shared-release, conductor, newspaper, or train-car followups.
+  - Update regression coverage for the new boarding pause.
+  - Run focused tests, full health, evidence generation, and an actual
+    CLI/MCP-style playthrough of the revised route.
+- Risks:
+  - This adds one click to one opened-manifest shortcut, so the boarding text
+    and objective must make the pause feel like proof of passenger movement,
+    not a delay.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_for_opened_manifest` now routes to
+    `passenger_room_boarding` and no longer pre-sets `heard_mara_goodbye`
+    before the player hears the room intercom.
+  - The existing `listen_to_room_made_for_passengers` choice still reaches
+    `passenger_room_intercom`, and `pull_release_after_making_room` still
+    reaches `passenger_true_ending`.
+  - Regression coverage now proves the shortcut pauses on
+    `passenger_room_boarding`, shows the room-release objective, leaves
+    `heard_mara_goodbye` unset during the boarding pause, then reaches the
+    room intercom and ideal passenger ending.
+  - Focused room tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "make room|room"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `pull_release_for_opened_manifest` now
+    visits `passenger_room_boarding` -> `passenger_room_intercom` ->
+    `passenger_true_ending` with score 289 and no remaining objectives.
+  - The added boarding pause reads coherently: the player first moves bags,
+    lunch tin, newspaper, and mittened child into a crowded car, then the
+    intercom explains that the proof is enough room for everyone to leave.
+  - No invalid choice, stale objective, unreachable scene, unfinished run, or
+    ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining under-sampled proof
+    beats such as `mara_manifest_thumbprint_receipt`,
+    `passenger_answered_boarding_true_ending`, `passenger_lunch_tin_self_count`,
+    or `passenger_threshold_boarding`.
+
 # Cycle 37 Gathered Passenger Boarding Proof
 
 - Date: 2026-06-09

@@ -1905,11 +1905,10 @@ scenes:
       - id: pull_release_for_opened_manifest
         label: Board now and make room around the emergency release
         choiceGroup: Board / release
-        to: passenger_room_intercom
+        to: passenger_room_boarding
         effects:
           set:
             made_room_for_passengers: true
-            heard_mara_goodbye: true
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
         choiceGroup: Door echoes / threshold

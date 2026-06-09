@@ -14929,13 +14929,33 @@ describe("demo story critical paths", () => {
     const directReleaseState = choose(story, state, "pull_release_for_opened_manifest");
     observation = observe(story, directReleaseState);
 
-    expect(observation.scene.id).toBe("passenger_room_intercom");
+    expect(observation.scene.id).toBe("passenger_room_boarding");
     expect(observation.scene.ending).toBe(false);
+    expect(observation.scene.text).toContain("the first seat has become more than");
+    expect(observation.scene.text).toContain("crowded instead of haunted");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pass_room_release_after_making_room",
+      "listen_to_room_made_for_passengers",
+      "ask_conductor_to_clear_room_made",
+      "unfold_newspaper_bundle_after_making_room",
+      "reach_release_after_making_room"
+    ]);
+
+    const directIntercomState = choose(
+      story,
+      directReleaseState,
+      "listen_to_room_made_for_passengers"
+    );
+    observation = observe(story, directIntercomState);
+
+    expect(observation.scene.id).toBe("passenger_room_intercom");
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.scene.text).toContain("Proof that there is enough space");
-    expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
     expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
@@ -14944,7 +14964,7 @@ describe("demo story critical paths", () => {
 
     observation = observe(
       story,
-      choose(story, directReleaseState, "pull_release_after_making_room")
+      choose(story, directIntercomState, "pull_release_after_making_room")
     );
 
     expect(observation.scene.id).toBe("passenger_true_ending");
