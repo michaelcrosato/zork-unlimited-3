@@ -119,6 +119,12 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Finish Mara's handoff:\n- Watch Mara call the opened doors");
     expect(transcript).toContain("- Carry Mara's opened-door handoff to the third car");
+    expect(transcript).toContain(
+      "Thumbprint oath:\n- Notice Mara's torn thumbprint in the opened manifest"
+    );
+    expect(transcript).toContain(
+      "- Let Mara's thumbprint oath reach the opened names before release"
+    );
     expect(transcript).toContain("Manifest count:\n- Review the opened count");
     expect(transcript).toContain("Counts / answers:");
     expect(transcript).toContain(
@@ -144,6 +150,9 @@ describe("transcript rendering", () => {
       transcript.indexOf("Shared room / release:")
     );
     expect(transcript.indexOf("Shared room / release:")).toBeLessThan(
+      transcript.indexOf("Thumbprint oath:")
+    );
+    expect(transcript.indexOf("Thumbprint oath:")).toBeLessThan(
       transcript.indexOf("Mara and manifest:")
     );
   });

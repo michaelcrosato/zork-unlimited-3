@@ -14,6 +14,7 @@ const GROUP_ORDER = [
   "Finish Mara's handoff",
   "Board / release",
   "Shared room / release",
+  "Thumbprint oath",
   "Mara and manifest",
   "Mara",
   "Manifest count",

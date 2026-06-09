@@ -6082,8 +6082,9 @@ describe("demo story critical paths", () => {
     );
     expect(handoffGroups.get("ask_mara_signoff_after_manifest_handoff")).toBe("Mara and manifest");
     expect(handoffGroups.get("carry_darkened_manifest_thumbprint_to_speaker")).toBe(
-      "Mara and manifest"
+      "Thumbprint oath"
     );
+    expect(handoffGroups.get("touch_mara_manifest_thumbprint")).toBe("Thumbprint oath");
     expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
       "Morning / keepsakes"
     );
@@ -6108,8 +6109,8 @@ describe("demo story critical paths", () => {
       "board_after_mara_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
       "carry_darkened_manifest_thumbprint_to_speaker",
-      "ask_mara_signoff_after_manifest_handoff",
       "touch_mara_manifest_thumbprint",
+      "ask_mara_signoff_after_manifest_handoff",
       "finish_count_after_mara_manifest_handoff",
       "continue_manifest_handoff_roll_call",
       "board_with_mara_answered_handoff",
@@ -6119,8 +6120,9 @@ describe("demo story critical paths", () => {
     ]);
     expect(rendered).toContain("  Finish Mara's handoff:\n    0. Listen through");
     expect(rendered).toContain("  Shared room / release:\n    4. Make room in the third car");
-    expect(rendered).toContain("  Mara and manifest:\n    5. Carry the darkened thumbprint");
-    expect(rendered).toContain("    6. Ask Mara to sign off");
+    expect(rendered).toContain("  Thumbprint oath:\n    5. Carry the darkened thumbprint");
+    expect(rendered).toContain("    6. Touch Mara's torn thumbprint");
+    expect(rendered).toContain("  Mara and manifest:\n    7. Ask Mara to sign off");
     expect(rendered).toContain(
       "  Manifest count:\n    8. Let the opened passengers finish Mara's count together"
     );
@@ -6908,20 +6910,22 @@ describe("demo story critical paths", () => {
     expect(observation.choices[19]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
+    expect(observation.choices[19]?.choiceGroup).toBe("Thumbprint oath");
     expect(choiceIds[20]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
     expect(observation.choices[20]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
+    expect(observation.choices[20]?.choiceGroup).toBe("Thumbprint oath");
     expect(choiceIds[21]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     expect(observation.choices[21]?.label).toBe(
       "Let Mara's thumbprint oath reach the opened names before release"
     );
-    expect(observation.choices[21]?.choiceGroup).toBe("Mara and manifest");
+    expect(observation.choices[21]?.choiceGroup).toBe("Thumbprint oath");
     expect(choiceIds[22]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
     expect(observation.choices[22]?.label).toBe(
       "Confirm Mara's thumbprint oath reaches the opened passengers"
     );
-    expect(observation.choices[22]?.choiceGroup).toBe("Mara and manifest");
+    expect(observation.choices[22]?.choiceGroup).toBe("Thumbprint oath");
     expect(choiceIds[23]).toBe("return_opened_manifest_mitten");
     expect(observation.choices[23]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
@@ -8937,7 +8941,7 @@ describe("demo story critical paths", () => {
       observation.choices.find(
         (choice) => choice.id === "pull_release_with_manifest_thumbprint_oath_from_opened_doors"
       )?.choiceGroup
-    ).toBe("Mara and manifest");
+    ).toBe("Thumbprint oath");
 
     state = choose(story, state, "pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     observation = observe(story, state);

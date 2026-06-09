@@ -4,6 +4,34 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Manifest Thumbprint Grouping Pass
+
+### Current Plan
+
+- Main objective: Make Mara's opened-manifest thumbprint oath route easier to
+  spot in long player-facing choice lists.
+- Why this matters: The receipt branch already existed, but its proof actions
+  were mixed into broad Mara/manifest choices at the largest hub.
+
+### Work Completed
+
+- Added `Thumbprint oath` to the canonical grouped-choice display order.
+- Moved opened-manifest thumbprint notice, carry, reach, confirm, and related
+  handoff choices into that group.
+- Updated transcript and player-view regression checks for the new grouping.
+
+### Playtest Notes
+
+- Focused grouping/thumbprint tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- CLI playthrough reached `mara_manifest_thumbprint_receipt_true_ending`,
+  score 308. The hub transcript showed `Thumbprint oath` immediately before
+  `Mara and manifest`, with the receipt action visible in that group.
+- Next target if no blind-play issue appears: improve another undersampled
+  late-game branch such as `passenger_counted_true_ending`,
+  `passenger_echoed_check`, or `passenger_threshold_boarding`.
+
 ## 2026-06-09 - Answered-Name Boarding Proof
 
 ### Current Plan

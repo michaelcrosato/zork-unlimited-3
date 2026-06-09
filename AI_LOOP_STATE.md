@@ -7,6 +7,49 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 14 Manifest Thumbprint Grouping Pass
+
+- Date: 2026-06-09
+- Main objective: Make Mara's opened-manifest thumbprint oath route easier to
+  spot in long player-facing choice lists.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `mara_manifest_thumbprint_receipt` and
+  `mara_manifest_thumbprint_receipt_true_ending` as normal-play
+  discoverability targets while coverage can reach every scene.
+- Why this matters: The route already exists, but its notice, carry, receipt,
+  and release choices were mixed into the broader `Mara and manifest` group.
+  Players and blind-play agents should be able to scan the thumbprint oath as a
+  distinct proof path before choosing a generic Mara sign-off.
+- Completed work:
+  - Add a `Thumbprint oath` display group near other release-proof routes.
+  - Move existing opened-manifest thumbprint oath choices into that group.
+  - Update player-view and transcript regression checks.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|one-time Mara handoff|opened-manifest players confirm Mara's thumbprint|opened-manifest players carry Mara's thumbprint oath|pays off Mara's manifest thumbprint"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `mara_manifest_thumbprint_receipt_true_ending`,
+    score 308. The hub transcript showed `Thumbprint oath` containing notice,
+    carry, reach, and confirm actions immediately before `Mara and manifest`.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now presents Mara's thumbprint
+    oath as a coherent proof route instead of burying the receipt path inside
+    generic Mara/manifest actions.
+  - What still feels risky: the late-game hub remains intentionally large. This
+    improves route legibility and blind-play critique quality, not random
+    choice odds.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_counted_true_ending`, `passenger_echoed_check`, and
+    `passenger_threshold_boarding`.
+- Risks:
+  - This improves menu scanability and report critique quality, not the number
+    of late-game choices.
+- Status: Complete.
+
 # Cycle 13 Shared Room Route Grouping Pass
 
 - Date: 2026-06-09

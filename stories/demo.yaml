@@ -2052,7 +2052,7 @@ scenes:
             heard_mara_goodbye: true
       - id: notice_manifest_thumbprint_from_opened_doors
         label: Notice Mara's torn thumbprint in the opened manifest
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint
         requires:
           all:
@@ -2066,7 +2066,7 @@ scenes:
             saw_mara_manifest_handoff: true
       - id: carry_manifest_thumbprint_oath_from_opened_doors
         label: Carry Mara's torn thumbprint oath straight to the third-car speaker
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2081,7 +2081,7 @@ scenes:
             heard_mara_goodbye: true
       - id: pull_release_with_manifest_thumbprint_oath_from_opened_doors
         label: Let Mara's thumbprint oath reach the opened names before release
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_receipt
         requires:
           all:
@@ -2097,7 +2097,7 @@ scenes:
             confirmed_manifest_thumbprint_receipt: true
       - id: confirm_manifest_thumbprint_receipt_from_opened_doors
         label: Confirm Mara's thumbprint oath reaches the opened passengers
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_receipt
         requires:
           all:
@@ -2587,7 +2587,7 @@ scenes:
             confirmed_shared_room_release: true
       - id: touch_manifest_thumbprint_from_opened_doors
         label: Touch Mara's torn thumbprint before boarding
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint
         requires:
           all:
@@ -2598,7 +2598,7 @@ scenes:
             read_manifest_thumbprint: true
       - id: carry_manifest_thumbprint_from_opened_doors
         label: Carry Mara's thumbprint oath to the third car
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -2610,7 +2610,7 @@ scenes:
             heard_mara_goodbye: true
       - id: pull_release_with_manifest_thumbprint_oath
         label: Pull the release with Mara's thumbprint oath already moving
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: passenger_manifest_thumbprint_true_ending
         requires:
           all:
@@ -3162,7 +3162,7 @@ scenes:
             confirmed_manifest_handoff_doors: true
       - id: pull_release_during_mara_manifest_thumbprint_handoff
         label: Pull the release while Mara carries the thumbprint oath through the opened names
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: passenger_manifest_thumbprint_true_ending
         requires:
           all:
@@ -3190,7 +3190,7 @@ scenes:
             manifest_handoff_reached_doors: true
       - id: board_after_mara_manifest_thumbprint_handoff
         label: Board while Mara carries the thumbprint oath through the opened names
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -3217,7 +3217,7 @@ scenes:
             heard_mara_goodbye: true
       - id: listen_to_manifest_thumbprint_handoff_from_handoff
         label: Listen as Mara carries the thumbprint oath through the opened names
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -3233,7 +3233,7 @@ scenes:
             heard_mara_goodbye: true
       - id: carry_darkened_manifest_thumbprint_to_speaker
         label: Carry the darkened thumbprint oath straight to the third-car speaker
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -3298,7 +3298,7 @@ scenes:
             shared_count_release_ready: true
       - id: recognize_mara_manifest_thumbprint_oath
         label: Recognize Mara's thumbprint oath as she calls the opened doors
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint_intercom
         requires:
           all:
@@ -3313,7 +3313,7 @@ scenes:
             heard_mara_goodbye: true
       - id: touch_mara_manifest_thumbprint
         label: Touch Mara's torn thumbprint before boarding
-        choiceGroup: Mara and manifest
+        choiceGroup: Thumbprint oath
         to: mara_manifest_thumbprint
         requires:
           all:
