@@ -11,8 +11,10 @@ const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const THUMBPRINT_RECEIPT_OBJECTIVE =
   "Pull the release after the opened passengers receive Mara's thumbprint oath.";
+const ANSWERED_CHECK_OBJECTIVE =
+  "Pull the release after every answered passenger has a face behind the name.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -11091,7 +11093,9 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
-    expect(directChoice?.label).toBe("Let the answered passengers board, then pull the release");
+    expect(directChoice?.label).toBe(
+      "Let the answered passengers board, check them, then pull the release"
+    );
     expect(directChoice?.choiceGroup).toBe("Counts / answers");
     expect(choiceIds.indexOf("board_with_answered_passengers")).toBeLessThan(
       choiceIds.indexOf("pull_release_with_answered_passengers")
@@ -11103,14 +11107,24 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_with_answered_passengers");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_answered_check");
+    expect(observation.scene.ending).toBe(false);
+    expect(observation.scene.text).toContain("Every answer has a body behind it");
+    expect(observation.objectives).toEqual([ANSWERED_CHECK_OBJECTIVE]);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.checked_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+
+    state = choose(story, state, "pull_release_after_checked_answers");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("answered names can fade");
     expect(observation.scene.text).toContain("carry it into morning themselves");
-    expect(observation.state.flags.heard_passenger_answers).toBe(true);
-    expect(observation.state.flags.heard_answered_passengers).toBe(true);
-    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
-    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.objectives).toEqual([]);
     expectIdealScore(observation.score);
   });
 

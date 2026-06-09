@@ -112,13 +112,20 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_manifest_thumbprint_receipt
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Pull the release after every answered passenger has a face behind the name.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: checked_answered_passengers
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - notFlag: made_room_for_passengers
         - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: checked_answered_passengers
         - any:
             - notFlag: saw_mara_manifest_handoff
             - flag: heard_passenger_answers
@@ -2488,18 +2495,20 @@ scenes:
             heard_passenger_answers: true
             heard_answered_passengers: true
       - id: pull_release_with_answered_passengers
-        label: Let the answered passengers board, then pull the release
+        label: Let the answered passengers board, check them, then pull the release
         choiceGroup: Counts / answers
-        to: passenger_answered_boarding_true_ending
+        to: passenger_answered_check
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
             - notFlag: heard_passenger_answers
             - notFlag: helped_passengers_gather
+            - notFlag: checked_answered_passengers
         effects:
           set:
             heard_passenger_answers: true
             heard_answered_passengers: true
+            checked_answered_passengers: true
       - id: board_and_check_answered_passengers
         label: Board and check each answered name against a face
         choiceGroup: Counts / answers

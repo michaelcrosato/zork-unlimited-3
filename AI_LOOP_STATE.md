@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 34 Answered-Passenger Check Discovery
+
+- Date: 2026-06-09
+- Main objective: Make the answered-passenger direct release path pause on the
+  existing "check every answered name against a face" beat before the final
+  release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 34 evidence was green, but the normal 100-run random sample
+  under-sampled `passenger_answered_check` even though the answered-passenger
+  ending appeared.
+- Why this matters: This branch is about passengers becoming more than names in
+  Mara's roll call. Letting the direct "answered passengers board" route skip
+  the face-check made the ending work mechanically while hiding the clearest
+  human proof beat.
+- Planned work:
+  - Route `pull_release_with_answered_passengers` through
+    `passenger_answered_check` instead of jumping straight to the ending.
+  - Add a focused objective for the check pause so the next action is clear.
+  - Update regression tests to prove the added pause is intentional.
+  - Run focused tests, full health, evidence generation, and an actual CLI
+    playthrough of the revised route.
+- Risks:
+  - This adds one click to one direct answered-passenger release option, so the
+    label and objective must make that click feel like confirmation rather than
+    friction.
+- Status:
+  - Completed and ready for commit/push.
+  - The direct answered-passenger release choice now says it will board, check,
+    and release, then routes to `passenger_answered_check`.
+  - `passenger_answered_check` now gets the focused objective: "Pull the release
+    after every answered passenger has a face behind the name."
+  - The broad opened-manifest checklist no longer appears once
+    `checked_answered_passengers` is true.
+  - Focused answered-branch tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, MCP validation
+    passed, actual MCP play reached `true_ending`, and the larger MCP random
+    sample had `ended: 250` / `unfinished: 0`.
+  - The evidence cycle's 100-run random sample now visited
+    `passenger_answered_check`, which was the targeted normal-play discovery
+    miss.
+- Playtest feedback:
+  - Actual CLI playthrough through `pull_release_with_answered_passengers`
+    reached `passenger_answered_check`, showed only the focused answer-check
+    objective, offered the expected checked-answer continuations, then reached
+    `passenger_answered_boarding_true_ending` with score 300 and no remaining
+    objectives.
+  - The pause reads coherently because the choice label promises the check and
+    the scene confirms that every answered name has a body behind it.
+  - No invalid choice, stale objective, unreachable scene, unfinished playtest,
+    or ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining random misses such
+    as `mara_manifest_handoff`, `passenger_echoed_boarding`,
+    `passenger_echoed_seat_receipt`, or `passenger_morning_chorus`.
+
 # Cycle 33 Lunch-Tin Farewell Discovery
 
 - Date: 2026-06-09
