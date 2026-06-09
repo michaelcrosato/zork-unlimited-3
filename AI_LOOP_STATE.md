@@ -7,6 +7,50 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 12 Lunch-Tin Player-View Ordering Pass
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin shift-count route easier to notice in the
+  opened-manifest hub by ordering its player-facing group near other count
+  decisions instead of leaving it as an unrecognized late group.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named lunch-tin proof beats among normal-play
+  discoverability targets while coverage still reached every scene.
+- Why this matters: The opened-manifest hub has many valid late-game branches.
+  The lunch-tin branch already had strong labels and route objectives, but the
+  blind/player-view display sorter did not know its explicit group. That made
+  it easier to overlook in reports and masked playtests.
+- Completed work:
+  - Added `Lunch tin / shift count` to the canonical choice display order
+    immediately after `Manifest count`.
+  - Added a player-view regression showing the lunch-tin choices now sort after
+    manifest-count choices and before passenger-gathering and threshold groups.
+  - Added transcript ordering assertions so operator reports preserve the same
+    scan order.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|manifest-specific platform beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle -- --once` completed evidence
+    and prompt generation in ignored `ai-runs/`, appending the tracked cycle
+    observation record.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 309.
+    The hub transcript now shows `Manifest count`, then
+    `Lunch tin / shift count`, then `Counts / answers`,
+    `Passenger gathering`, and `Door echoes / threshold`.
+- Playtest feedback:
+  - What felt better: the lunch-tin route is no longer buried behind broader
+    passenger-gathering and threshold categories in player-facing grouped views.
+  - What still feels risky: this improves menu scanability and report quality,
+    not random-choice probability. A future pass should use blind-play feedback
+    to decide whether to reduce the opened-manifest hub's total choice load.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving player-facing route organization in the opened-manifest
+    hub, especially branches that remain undersampled by random play.
+
 # Cycle 11 Direct Manifest Handoff Release Pass
 
 - Date: 2026-06-09

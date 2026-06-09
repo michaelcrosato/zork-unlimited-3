@@ -15113,6 +15113,25 @@ describe("demo story critical paths", () => {
       "board_after_releasing_passengers"
     ]);
 
+    const { masked, choiceIds: playerChoiceIds } = maskObservation(observation);
+    const renderedPlayerView = renderMaskedScene(masked);
+
+    expect(playerChoiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
+      playerChoiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")
+    );
+    expect(playerChoiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
+      playerChoiceIds.indexOf("ask_conductor_punch_from_opened_manifest")
+    );
+    expect(playerChoiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
+      playerChoiceIds.indexOf("hold_opened_manifest_threshold")
+    );
+    expect(renderedPlayerView.indexOf("  Lunch tin / shift count:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Passenger gathering:")
+    );
+    expect(renderedPlayerView.indexOf("  Lunch tin / shift count:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Door echoes / threshold:")
+    );
+
     const directHandoffReleaseState = choose(
       story,
       state,

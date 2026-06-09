@@ -131,5 +131,14 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Door echoes / threshold:");
     expect(transcript).toContain("Morning / keepsakes:");
+    expect(transcript.indexOf("Manifest count:")).toBeLessThan(
+      transcript.indexOf("Lunch tin / shift count:")
+    );
+    expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
+      transcript.indexOf("Counts / answers:")
+    );
+    expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
+      transcript.indexOf("Passenger gathering:")
+    );
   });
 });
