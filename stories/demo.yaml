@@ -5850,8 +5850,9 @@ scenes:
       child shakes rain from the mitten on the third, and the newspaper woman
       reads the stop printed under each door. By the final row, the manifest is
       no longer a list. It is a car full of people proving they can answer for
-      themselves. "Now," Mara says, almost smiling. "Before the line remembers
-      how to interrupt."
+      themselves. The answer rhythm is already close to a roll call Mara no
+      longer has to own. "Now," Mara says, almost smiling. "Before the line
+      remembers how to interrupt."
     choices:
       - id: carry_manifest_answers_to_platform
         label: Carry the manifest answers toward the third car
@@ -5871,6 +5872,21 @@ scenes:
             saw_mara_manifest_handoff: true
             heard_passenger_answers: true
             heard_answered_passengers: true
+      - id: let_manifest_answers_become_final_roll_call
+        label: Let the manifest answers become the passengers' own roll call
+        choiceGroup: Final roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          all:
+            - notFlag: heard_final_roll_call
+            - notFlag: returned_lost_mitten
+        effects:
+          set:
+            heard_passenger_answers: true
+            heard_answered_passengers: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: let_manifest_answers_keep_door_rhythm
         label: Let the answered names keep their old door rhythm
         to: passenger_echoed_manifest_intercom

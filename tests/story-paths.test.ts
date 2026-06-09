@@ -5712,6 +5712,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
+      "let_manifest_answers_become_final_roll_call",
       "let_manifest_answers_keep_door_rhythm",
       "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
@@ -13986,6 +13987,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
+      "let_manifest_answers_become_final_roll_call",
       "let_manifest_answers_keep_door_rhythm",
       "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
@@ -16831,6 +16833,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_answers_to_platform",
       "hand_manifest_answers_to_mara",
+      "let_manifest_answers_become_final_roll_call",
       "let_manifest_answers_keep_door_rhythm",
       "check_manifest_answers_against_echoes",
       "pull_release_after_manifest_answers"
@@ -16891,6 +16894,29 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_answered_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+
+    const rollCallState = choose(story, state, "let_manifest_answers_become_final_roll_call");
+    observation = observe(story, rollCallState);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_roll_call_answers).toBeUndefined();
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
+
+    observation = observe(
+      story,
+      choose(story, rollCallState, "pull_release_on_finished_roll_call")
+    );
+
+    expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("passengers' own roll call");
     expectIdealScore(observation.score);
 
     const echoedAnswerState = choose(

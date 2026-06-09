@@ -7,6 +7,51 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 38 Manifest Answers Roll-Call Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the plain passenger final-roll-call payoff easier to
+  discover from the opened-manifest answers route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 38 evidence showed healthy validation and full coverage, but
+  the 250-run MCP random sample still missed `passenger_roll_call_true_ending`.
+- Why this matters: A player who already hears the opened manifest names answer
+  for themselves now has a visible way to let those answers become the
+  passengers' own final roll call, instead of only branching into answered,
+  echo, or direct manifest-release endings.
+- Planned work:
+  - Add a contextual choice from `passenger_manifest_answers` to the existing
+    `passenger_roll_call_epilogue`.
+  - Reuse existing roll-call flags, objective text, and
+    `passenger_roll_call_true_ending`.
+  - Update exact menu-order tests and add route coverage proving the new bridge
+    reaches the plain roll-call ending.
+- Verification:
+  - Focused test passed:
+    `npx vitest run tests\story-paths.test.ts -t "opened manifest names answer directly"`.
+  - Full `npm run health` passed: format check, TypeScript, 339 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_roll_call_true_ending`, score 303, via
+    `let_opened_manifest_names_answer_once`,
+    `let_manifest_answers_become_final_roll_call`, and
+    `pull_release_on_finished_roll_call`.
+- Playtest feedback:
+  - What felt better: the manifest-answers scene now names the roll-call
+    rhythm before offering the roll-call choice, so the transition from
+    answered names to passenger-owned chorus is clear.
+  - What still feels risky: this adds one more option to a late-game menu that
+    already branches heavily. Blind sessions should confirm the label reads as
+    a distinct payoff, not another duplicate answer path.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with a contextual bridge,
+    especially `passenger_lunch_tin_true_ending` or `passenger_true_ending`.
+- Risks:
+  - Low. This adds one guarded story choice that reuses existing scenes and
+    flags, but the manifest-answers menu gains one more option.
+- Status: Complete.
+
 # Cycle 37 Gathered Shared-Release Bridge
 
 - Date: 2026-06-09
