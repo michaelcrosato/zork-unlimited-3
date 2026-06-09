@@ -18,7 +18,7 @@ const ECHO_SEAT_RECEIPT_OBJECTIVE =
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull the release after the gathered passengers pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -11083,7 +11083,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(directChoice?.label).toBe(
-      "Carry the answered names to Mara's speaker, then pull the release"
+      "Carry the answered names into the third car before the release"
     );
     expect(directChoice?.choiceGroup).toBe("Counts / answers");
     expect(choiceIds.indexOf("board_with_answered_passengers")).toBeLessThan(
@@ -11096,9 +11096,27 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_with_answered_names_on_speaker");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_answered_true_ending");
+    expect(observation.scene.id).toBe("passenger_answered_boarding");
+    expect(observation.scene.text).toContain("board by repeating themselves");
+    expect(observation.scene.text).toContain("carrying their own names now");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_answered_passengers_before_release",
+      "listen_to_answered_passengers_from_boarding",
+      "pull_release_after_answered_boarding"
+    ]);
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.checked_answered_passengers).toBeUndefined();
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+
+    state = choose(story, state, "pull_release_after_answered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
     expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("their own voices carry the last name");
+    expect(observation.scene.text).toContain("answered names can fade");
+    expect(observation.scene.text).toContain("carry it into morning themselves");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.checked_answered_passengers).toBeUndefined();

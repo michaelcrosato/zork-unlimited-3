@@ -7,6 +7,66 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 41 Answered-Name Boarding Proof
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest answered-name shortcut show the
+  passengers physically boarding before the release payoff.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 41 evidence was green, but normal random play still missed
+  `passenger_answered_boarding_true_ending` in the 100-run sample while
+  coverage could reach it.
+- Why this matters: The answered-name branch is about passengers carrying
+  their own names instead of waiting for Mara to prove them again. A direct
+  shortcut that jumped straight to the ending hid the clearest proof: the child,
+  newspaper woman, and conductor boarding while repeating their own answers.
+- Planned work:
+  - Keep the existing `pull_release_with_answered_names_on_speaker` choice id
+    stable, but route it through `passenger_answered_boarding`.
+  - Update the player-facing objective and choice label so the extra beat reads
+    as boarding proof rather than a surprise delay.
+  - Update focused regression coverage for the revised shortcut.
+  - Run focused tests, full health, and a real CLI/MCP-style playthrough of the
+    revised route.
+- Risks:
+  - This adds one click to one opened-manifest shortcut, so the boarding scene
+    must feel like the route's payoff setup rather than friction.
+- Status:
+  - Completed and ready for commit/push.
+  - Kept the existing `pull_release_with_answered_names_on_speaker` choice id
+    stable, but routed it through `passenger_answered_boarding` before
+    `passenger_answered_boarding_true_ending`.
+  - Updated the opened-manifest objective and choice label so the shortcut now
+    promises a third-car boarding proof before release.
+  - Updated focused answered-route regression coverage.
+  - Focused answered-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0` and now included
+    `passenger_answered_boarding_true_ending: 1`, coverage stayed complete,
+    actual MCP play reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `pull_release_with_answered_names_on_speaker`
+    now visits `passenger_answered_boarding` ->
+    `passenger_answered_boarding_true_ending` with score 300 and no remaining
+    objectives.
+  - The added beat reads coherently: the child says present at each doorway,
+    the newspaper woman carries Warden Street, and the conductor clears the
+    aisle before the release fires.
+  - No invalid choice, unreachable scene, stale objective, unfinished run, or
+    ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining under-sampled proof
+    beats such as `mara_manifest_thumbprint_receipt`,
+    `passenger_counted_true_ending`, `passenger_threshold_boarding`, or
+    `passenger_gathered_release`.
+
 # Cycle 40 Manifest Handoff Release Proof
 
 - Date: 2026-06-09

@@ -4,6 +4,41 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Answered-Name Boarding Proof
+
+### Current Plan
+
+- Main objective: Make the opened-manifest answered-name shortcut show the
+  passengers physically boarding before the release payoff.
+- Why this matters: The branch is about passengers carrying their own names
+  into morning, so the player should see the named passengers board before the
+  ending declares that Mara no longer has to repeat the list.
+
+### Work Completed
+
+- Routed `pull_release_with_answered_names_on_speaker` through
+  `passenger_answered_boarding` while keeping the choice id stable.
+- Updated the shortcut label and opened-manifest objective to promise a
+  third-car boarding proof before release.
+- Updated answered-route regression coverage for the revised shortcut.
+
+### Playtest Notes
+
+- Focused answered-route tests passed:
+  `npx vitest run tests/story-paths.test.ts -t "answered"`.
+- CLI playthrough reached `passenger_answered_boarding_true_ending` with score
+  300, no objectives left, and the new boarding beat in the transcript.
+- `npm run health` passed: format check, TypeScript, 329 tests, validation, and
+  complete coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` stayed green; random play now
+  included `passenger_answered_boarding_true_ending: 1`, actual MCP play
+  reached `true_ending`, and the adaptive MCP route reached
+  `passenger_conductor_clearance_checked_true_ending`.
+- Next target if no blind-play issue appears: continue improving normal-play
+  discovery for under-sampled proof beats such as
+  `mara_manifest_thumbprint_receipt`, `passenger_counted_true_ending`, or
+  `passenger_threshold_boarding`.
+
 ## 2026-06-08 - Gathered Passenger Release Payoff
 
 ### Current Plan

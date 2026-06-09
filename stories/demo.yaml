@@ -136,7 +136,7 @@ objectives:
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
         - notFlag: confirmed_echoed_manifest_seats
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2498,9 +2498,9 @@ scenes:
             heard_passenger_answers: true
             heard_answered_passengers: true
       - id: pull_release_with_answered_names_on_speaker
-        label: Carry the answered names to Mara's speaker, then pull the release
+        label: Carry the answered names into the third car before the release
         choiceGroup: Counts / answers
-        to: passenger_answered_true_ending
+        to: passenger_answered_boarding
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
