@@ -138,6 +138,63 @@ objectives:
         - flag: read_passenger_manifest
         - flag: checked_echoed_passengers
         - notFlag: confirmed_echoed_manifest_seats
+  - text: Let the lunch-tin count reach the worker himself before pulling the release.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - notFlag: counted_lunch_tin_worker_self
+        - notFlag: checked_lunch_tin_passengers
+        - notFlag: read_lunch_tin_roster
+  - text: Pull after the lunch-tin worker counts himself, or check the aisle once more.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: counted_lunch_tin_worker_self
+        - notFlag: checked_lunch_tin_passengers
+        - notFlag: read_lunch_tin_roster
+  - text: Pull after the lunch-tin count includes every passenger.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: checked_lunch_tin_passengers
+        - notFlag: read_lunch_tin_roster
+  - text: Use the lunch-tin roster to clock everyone out before pulling the release.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: read_lunch_tin_roster
+        - notFlag: heard_final_roll_call
+        - notFlag: confirmed_lunch_tin_roster_proof
+  - text: Pull on the completed lunch-tin roster count, or confirm each proof first.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: read_lunch_tin_roster
+        - flag: heard_final_roll_call
+        - notFlag: confirmed_lunch_tin_roster_proof
+  - text: Pull after every lunch-tin roster proof is closed.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: confirmed_lunch_tin_roster_proof
   - text: Pull after the opened passengers finish counting one another.
     requires:
       all:
@@ -161,6 +218,7 @@ objectives:
         - flag: heard_final_roll_call
         - notFlag: confirmed_roll_call_answers
         - notFlag: returned_lost_mitten
+        - notFlag: set_lunch_tin_pace
   - text: Pull the release after every final roll-call answer has a witness.
     requires:
       all:
@@ -182,6 +240,7 @@ objectives:
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
         - notFlag: confirmed_echoed_manifest_seats
+        - notFlag: set_lunch_tin_pace
   - text: Get the opened passengers moving together, then pull the third-car release.
     requires:
       all:

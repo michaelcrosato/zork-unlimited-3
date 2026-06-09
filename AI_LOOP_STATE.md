@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 61 Lunch-Tin Objective Pass
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin passenger-count branch describe its own
+  next step instead of inheriting the broad gathered-passenger release prompt.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence remains healthy, and recent suggested actions
+  named the lunch-tin checked/self-count routes as normal-play proof beats worth
+  surfacing.
+- Why this matters: The lunch-tin path is about a worker counting people
+  without erasing himself. Once that path is active, the objective should talk
+  about the count, the self-count, the aisle check, or the roster proof instead
+  of telling the player to pass the release hand to hand.
+- Planned work:
+  - Add lunch-tin-specific objective rules for count, self-count, checked count,
+    roster setup, roster roll call, and roster proof states.
+  - Suppress the generic gathered-passenger and final-roll-call objectives while
+    the lunch-tin pace is active.
+  - Add focused regression assertions across opened-manifest, platform, and
+    boarding entry routes.
+  - Run focused tests, full health, evidence-only cycle, and an actual CLI
+    playthrough.
+- Risks:
+  - This improves clarity after a player chooses the lunch-tin branch. It does
+    not shorten the route or raise its random selection rate directly.
+- Status:
+  - Completed and ready for commit/push.
+  - Added six lunch-tin objective prompts covering the branch's non-ending
+    states.
+  - `passenger_lunch_tin_intercom` now shows
+    `Let the lunch-tin count reach the worker himself before pulling the release.`
+  - `passenger_lunch_tin_self_count` now shows
+    `Pull after the lunch-tin worker counts himself, or check the aisle once more.`
+  - `passenger_lunch_tin_check` now shows
+    `Pull after the lunch-tin count includes every passenger.`
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI route paused at `passenger_lunch_tin_intercom`,
+    `passenger_lunch_tin_self_count`, and `passenger_lunch_tin_check`; each
+    showed the new lunch-tin-specific objective instead of the stale gathered
+    prompt.
+  - Continuing with `pull_release_after_checked_lunch_tin_count` reached
+    `passenger_lunch_tin_checked_true_ending`, score 313, with no remaining
+    objectives or choices.
+  - What felt better: the route now keeps the player's attention on counting
+    the worker himself and checking the aisle, which matches the branch's story
+    payoff.
+  - What still feels risky: normal random play may still undersample this
+    optional branch; this pass improves the branch once reached.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving late optional proof beats that random play undersamples,
+    with morning chorus boarding or manifest thumbprint receipt as likely
+    candidates.
+
 # Cycle 60 Checked-Echo Objective
 
 - Date: 2026-06-09
