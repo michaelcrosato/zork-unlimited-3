@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 31 Gathered Passenger Release Payoff
+
+- Date: 2026-06-08
+- Main objective: Make the gathered-passenger branch show the shared release
+  handoff before its helped-passengers ending, instead of letting normal play
+  skip the branch's strongest payoff scene.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 31 evidence is green overall, but random play still
+  under-samples `passenger_gathered_boarding`, `passenger_gathered_intercom`,
+  `passenger_gathered_release`, and `passenger_helped_true_ending`.
+- Why this matters: This route is about passengers helping one another, so the
+  ending lands better when players first see the release move hand to hand
+  through the crowd.
+- Planned work:
+  - Route the direct gathered-boarding release through
+    `passenger_gathered_release` before `passenger_helped_true_ending`.
+  - Route the gathered-intercom release through the same shared-release scene.
+  - Update regression tests so the extra payoff beat is intentional.
+  - Run focused tests, full health, and an actual CLI/MCP-style playthrough.
+- Risks:
+  - This adds one click to the gathered branch, so the label and payoff scene
+    must read as confirmation rather than delay.
+- Status:
+  - Completed and ready for commit/push.
+  - The direct gathered-boarding release choice now routes to
+    `passenger_gathered_release` before the final helped-passengers ending.
+  - The gathered-intercom release choice now routes through the same
+    shared-release handoff before `passenger_helped_true_ending`.
+  - The train-car fallback for `helped_passengers_gather` also routes through
+    `passenger_gathered_release`, so the branch behaves consistently after
+    boarding.
+  - Focused gathered-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered|gather|shared release"`.
+  - Full `npm test` passed with 329 tests.
+  - Actual CLI playthrough through `help_opened_passengers_gather` reached
+    `passenger_gathered_release`, then `passenger_helped_true_ending`, score
+    313, with no remaining objectives.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route ended at
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - The gathered route now reads more coherently: "everyone is ready" leads to
+    a visible hand-to-hand release moment before the ending declares that no
+    one crosses alone.
+  - The extra click felt like confirmation rather than friction in the CLI
+    route because the shared-release scene gives the player two meaningful
+    choices: hear one last roll call or pull once every hand is ready.
+  - Random play still missed the gathered helped ending in the evidence
+    sample, so this should be treated as a payoff-quality improvement rather
+    than a proven random-discovery improvement.
+  - No invalid choice, stale objective, unreachable scene, unfinished
+    playtest, or ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue improving normal-play discovery for remaining random
+    misses such as `mara_manifest_thumbprint_receipt_true_ending`,
+    `passenger_answered_check`, `passenger_farewell`, or
+    `passenger_morning_chorus`.
+
 # Cycle 30 Conductor Clearance Speaker Pass
 
 - Date: 2026-06-08

@@ -4,6 +4,42 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-08 - Gathered Passenger Release Payoff
+
+### Current Plan
+
+- Main objective: Make the gathered-passenger helped route show the shared
+  release handoff before its ending.
+- Why this matters: The branch is about passengers helping one another, so the
+  ending lands better when players first see the release move hand to hand.
+
+### Work Completed
+
+- Routed the direct gathered-boarding release choice through
+  `passenger_gathered_release`.
+- Routed the gathered-intercom release choice through the same shared-release
+  scene.
+- Routed the train-car fallback for `helped_passengers_gather` through
+  `passenger_gathered_release` for consistent branch behavior.
+- Updated regression tests for the added payoff beat and the new labels.
+
+### Playtest Notes
+
+- Focused gathered tests passed:
+  `npx vitest run tests/story-paths.test.ts -t "gathered|gather|shared release"`.
+- Full `npm test` passed with 329 tests.
+- CLI playthrough through `help_opened_passengers_gather` reached
+  `passenger_gathered_release`, then `passenger_helped_true_ending`, score
+  313, with no remaining objectives.
+- `npm run health` passed with clean formatting, TypeScript, tests,
+  validation, and complete coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence generation;
+  health stayed green, random play ended 100/100 runs, coverage stayed
+  complete, actual MCP play reached `true_ending`, and the adaptive route
+  reached `passenger_conductor_clearance_checked_true_ending`.
+- Random play still missed `passenger_helped_true_ending`, so this is a
+  payoff-quality improvement rather than a proven random-discovery fix.
+
 ## 2026-06-08 - Lunch-Tin Roster Proof Route
 
 ### Current Plan

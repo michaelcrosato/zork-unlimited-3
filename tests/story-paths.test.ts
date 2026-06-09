@@ -11140,9 +11140,15 @@ describe("demo story critical paths", () => {
     expect(
       observation.choices.find((choice) => choice.id === "pull_release_after_gathered_boarding")
         ?.label
-    ).toBe("Pull the release once every passenger is ready");
+    ).toBe("Move the release hand to hand once every passenger is ready");
 
     state = choose(story, state, "pull_release_after_gathered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
@@ -12493,6 +12499,12 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
@@ -15126,6 +15138,12 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("thanks each passenger by name");
@@ -15231,6 +15249,12 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("No one crosses alone");
@@ -15278,6 +15302,12 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
@@ -15335,6 +15365,12 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
@@ -16227,6 +16263,12 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
@@ -16863,6 +16905,12 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+
+    state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
