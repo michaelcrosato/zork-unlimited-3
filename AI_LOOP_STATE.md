@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 63 Answered Boarding Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the answered-passenger boarding release show a final
+  receipt beat before the answered-boarding ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 63 evidence showed healthy coverage and no unfinished runs, but
+  normal random play still under-sampled several late passenger payoff scenes,
+  including answered-passenger boarding variants.
+- Why this matters: When the player boards with the passengers who answered
+  their own names, the release now pauses on a visible proof scene: the child,
+  newspaper woman, and old conductor are settled in real seats and bodies
+  before the player pulls. The same ideal answered-boarding ending remains, but
+  the route no longer jumps straight from "names hold" to the result.
+- Completed work:
+  - Added `passenger_answered_boarding_receipt` as a non-ending receipt scene
+    after answered passengers board.
+  - Retargeted `pull_release_after_answered_boarding` to the new receipt scene
+    and renamed the label to `Hold the release while the answered names settle`.
+  - Added `pull_release_after_answered_boarding_receipt` to complete the same
+    `passenger_answered_boarding_true_ending`.
+  - Updated answered-passenger regressions with a helper proving:
+    boarding -> receipt -> answered-boarding true ending.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "answered passengers"`.
+  - Story validation passed with 193 reachable scenes / 46 endings.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation, and coverage playtest with `unfinished: 0` and
+    `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_answered_boarding_receipt`, then
+    `passenger_answered_boarding_true_ending`, score 311, with final objectives
+    empty.
+  - A 100-run random smoke sample ended every run with `unfinished: 0`.
+- Playtest feedback:
+  - What felt better: the route now makes the answered passengers feel embodied
+    before release. The ending reads as a payoff to people settled in the car,
+    not just names surviving a roll call.
+  - What still feels risky: the deterministic 100-run random sample did not hit
+    the new receipt scene, so this improves an existing late payoff rather than
+    proving stronger normal-play discovery.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull route where the label promises a concrete
+    passenger proof but still routes around the scene that shows it.
+- Risks:
+  - Low. The new scene is reachable, non-ending, covered by tests, and all
+    coverage playtest paths still terminate.
+- Status: Complete.
+
 # Cycle 62 Manifest Thumbprint Receipt Payoff
 
 - Date: 2026-06-09

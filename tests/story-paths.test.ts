@@ -59,6 +59,32 @@ function expectIdealScore(score: { score: number; awards: Array<{ id: string }> 
   expect(score.awards.some((award) => award.id === "flag_ideal_ending")).toBe(true);
 }
 
+function releaseAfterAnsweredBoardingReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_answered_boarding_receipt");
+  expect(observation.scene.text).toContain("wait one breath longer");
+  expect(observation.scene.text).toContain("every voice has weight behind it");
+  expect(observation.state.flags.confirmed_answered_boarding_receipt).toBe(true);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_answered_boarding_receipt"
+  ]);
+
+  state = choose(story, state, "pull_release_after_answered_boarding_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("answered names can fade");
+  expect(observation.scene.text).toContain("carry it into morning themselves");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
 function releaseAfterEchoSeatReceipt(
   story: Story,
   state: GameState
@@ -2185,10 +2211,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "board_after_answered_passengers");
     state = choose(story, state, "pull_release_after_answered_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterAnsweredBoardingReceipt(story, state));
 
     state = initialState(story);
 
@@ -11628,7 +11651,8 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "listen_to_passenger_answers",
       "board_after_answered_passengers",
-      "pull_release_after_answered_boarding"
+      "pull_release_after_answered_boarding",
+      "pull_release_after_answered_boarding_receipt"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -11722,7 +11746,8 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "board_with_answered_passengers",
-      "pull_release_after_answered_boarding"
+      "pull_release_after_answered_boarding",
+      "pull_release_after_answered_boarding_receipt"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -11799,12 +11824,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
 
     state = choose(story, state, "pull_release_after_answered_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("answered names can fade");
-    expect(observation.scene.text).toContain("carry it into morning themselves");
+    ({ state, observation } = releaseAfterAnsweredBoardingReceipt(story, state));
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.heard_answered_passengers).toBe(true);
     expect(observation.state.flags.checked_answered_passengers).toBeUndefined();
@@ -16210,12 +16230,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_answered_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
-    expect(observation.scene.text).toContain("answered names can fade");
-    expect(observation.scene.text).toContain("carry it into morning themselves");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterAnsweredBoardingReceipt(story, state));
 
     state = initialState(story);
 
@@ -17286,14 +17301,12 @@ describe("demo story critical paths", () => {
       "pull_release_after_answered_boarding"
     );
 
-    observation = observe(
+    const boardingReceiptState = choose(
       story,
-      choose(story, boardedState, "pull_release_after_answered_boarding")
+      boardedState,
+      "pull_release_after_answered_boarding"
     );
-
-    expect(observation.scene.id).toBe("passenger_answered_boarding_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    observation = releaseAfterAnsweredBoardingReceipt(story, boardingReceiptState).observation;
 
     const handoffState = choose(story, state, "hand_manifest_answers_to_mara");
     observation = observe(story, handoffState);

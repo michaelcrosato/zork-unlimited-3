@@ -3731,7 +3731,25 @@ scenes:
           set:
             heard_answered_passengers: true
       - id: pull_release_after_answered_boarding
-        label: Pull the release while the answered names hold
+        label: Hold the release while the answered names settle
+        to: passenger_answered_boarding_receipt
+        effects:
+          set:
+            confirmed_answered_boarding_receipt: true
+
+  passenger_answered_boarding_receipt:
+    routeImportance: optional
+    text: >
+      Your hand closes around the release, but you wait one breath longer than
+      the tunnel wants. The child answers present from a real seat, the
+      newspaper woman presses Warden Street flat against her coat, and the old
+      conductor listens down the aisle until every voice has weight behind it.
+      The answered names do not fade while you wait. They become passengers
+      with hands on rails, knees against bags, and morning already finding
+      their faces through the open seams of the doors.
+    choices:
+      - id: pull_release_after_answered_boarding_receipt
+        label: Pull once every answered passenger is settled
         to: passenger_answered_boarding_true_ending
 
   passenger_answered_check:
