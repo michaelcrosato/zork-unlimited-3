@@ -7,6 +7,60 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 48 Gathered Passenger Boarding First
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_gathered_boarding` easier to encounter in
+  normal passenger-rescue play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 48 evidence showed healthy validation and full coverage, but
+  normal random play continued to under-sample late gathered-passenger boarding
+  compared with the intercom/release branches.
+- Why this matters: The broad passenger rescue should feel like people
+  physically helping one another into the third car before the player pulls the
+  release. The opened-manifest gather action now shows that boarding beat first
+  instead of jumping straight to the intercom.
+- Planned work:
+  - Route the opened-manifest gathered-passenger action through
+    `passenger_gathered_boarding`.
+  - Keep the gathered intercom available immediately after boarding.
+  - Preserve a recovery choice for routes that enter the intercom before seeing
+    the boarding beat.
+  - Add regressions for the boarding-first path and the non-looping intercom
+    recovery path.
+- Verification:
+  - Focused gathered tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered"`.
+  - Full `npm run health` passed: format check, TypeScript, 341 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_helped_true_ending`, score 305, through
+    `listen_as_opened_passengers_gather`,
+    `listen_to_gathered_passengers_from_boarding`, and
+    `pull_release_after_gathered_intercom`.
+  - A 250-run random sample ended cleanly every run and now visited
+    `passenger_gathered_boarding`; the supplied pre-change MCP random sample
+    had missed that scene.
+- Playtest feedback:
+  - What felt better: the gathered route now reads as action before broadcast:
+    passengers board by passing steadiness hand to hand, then the player can
+    listen to Mara carry their movement over the speaker before releasing.
+  - What still feels risky: the route no longer gives the broad opened-manifest
+    gather action an immediate intercom scene. The intercom is one choice later,
+    and blind sessions should confirm the extra physical beat feels clarifying
+    rather than like a detour.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving under-sampled late passenger scenes from the latest
+    random sample, especially `passenger_keepsake_handoff`,
+    `passenger_keepsake_roll_call`, `passenger_mara_signoff`, and
+    `passenger_mitten_pair_memory`.
+- Risks:
+  - Low. This changes one late-game transition, keeps all scenes reachable, and
+    adds a guard flag so the intercom does not loop players back into a boarding
+    beat they already saw.
+- Status: Complete.
+
 # Cycle 47 Prepared Manifest Answers
 
 - Date: 2026-06-09

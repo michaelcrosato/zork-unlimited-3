@@ -11817,6 +11817,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "board_with_gathered_passengers_from_intercom",
       "check_shared_release_from_gathered_intercom",
       "let_gathered_door_count_finish",
       "let_conductor_clear_gathered_doors",
@@ -11829,6 +11830,21 @@ describe("demo story critical paths", () => {
       observation.choices.find((choice) => choice.id === "pull_release_after_gathered_intercom")
         ?.label
     ).toBe("Move the release hand to hand while the passengers hold the doors");
+
+    let boardingState = choose(story, state, "board_with_gathered_passengers_from_intercom");
+    observation = observe(story, boardingState);
+
+    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.state.flags.watched_gathered_boarding).toBe(true);
+
+    boardingState = choose(story, boardingState, "listen_to_gathered_passengers_from_boarding");
+    observation = observe(story, boardingState);
+
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.choices.map((choice) => choice.id)).not.toContain(
+      "board_with_gathered_passengers_from_intercom"
+    );
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
@@ -13518,7 +13534,8 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "listen_as_opened_passengers_gather"
+      "listen_as_opened_passengers_gather",
+      "listen_to_gathered_passengers_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -13579,7 +13596,8 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "listen_as_opened_passengers_gather"
+      "listen_as_opened_passengers_gather",
+      "listen_to_gathered_passengers_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -16445,7 +16463,8 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
-      "listen_as_opened_passengers_gather"
+      "listen_as_opened_passengers_gather",
+      "listen_to_gathered_passengers_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -16486,7 +16505,7 @@ describe("demo story critical paths", () => {
     ({ observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
-  it("lets players hear the gathered-passenger intercom directly from opened manifest doors", async () => {
+  it("lets players hear the gathered-passenger intercom after boarding from opened manifest doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -16514,6 +16533,17 @@ describe("demo story critical paths", () => {
     }
 
     let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.watched_gathered_boarding).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_gathered_passengers_from_boarding"
+    );
+
+    state = choose(story, state, "listen_to_gathered_passengers_from_boarding");
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_intercom");
     expect(observation.scene.text).toContain("The passengers gather themselves");
@@ -16584,6 +16614,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "board_with_gathered_passengers_from_intercom",
       "check_shared_release_from_gathered_intercom",
       "let_gathered_door_count_finish",
       "let_conductor_clear_gathered_doors",

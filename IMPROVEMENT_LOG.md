@@ -4,6 +4,41 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Gathered Boarding First
+
+### Current Plan
+
+- Main objective: Make `passenger_gathered_boarding` show up naturally during
+  the broad opened-manifest passenger rescue.
+- Why this matters: Cycle 48 evidence was green overall, but normal random play
+  still missed the physical gathered-passenger boarding scene while reaching
+  nearby gathered intercom/release branches.
+
+### Work Completed
+
+- Changed the opened-manifest gathered-passenger action to land on
+  `passenger_gathered_boarding` before the intercom.
+- Kept `passenger_gathered_intercom` one choice later from boarding.
+- Added an intercom recovery choice for routes that arrive at the gathered
+  intercom before seeing the boarding beat, guarded by
+  `watched_gathered_boarding` to avoid a loop.
+- Updated gathered-route regressions for the boarding-first flow and recovery
+  choice.
+
+### Playtest Notes
+
+- Focused gathered tests passed.
+- `npm run health` passed with 341 tests, story validation, and complete
+  coverage playtest.
+- CLI playthrough reached `passenger_helped_true_ending`, score 305, through
+  the new boarding-first gathered route.
+- A 250-run random sample ended cleanly and now visited
+  `passenger_gathered_boarding`.
+- Next target if no blind-play issue appears: improve under-sampled late
+  passenger branches such as `passenger_keepsake_handoff`,
+  `passenger_keepsake_roll_call`, `passenger_mara_signoff`, or
+  `passenger_mitten_pair_memory`.
+
 ## 2026-06-09 - Gathered Intercom Lunch-Tin Bridge
 
 ### Current Plan

@@ -2600,9 +2600,9 @@ scenes:
           set:
             heard_mara_goodbye: true
       - id: listen_as_opened_passengers_gather
-        label: Listen as the opened passengers gather themselves
+        label: Watch the opened passengers gather themselves into the third car
         choiceGroup: Passenger gathering
-        to: passenger_gathered_intercom
+        to: passenger_gathered_boarding
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -2610,7 +2610,7 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
-            heard_gathered_passengers: true
+            watched_gathered_boarding: true
       - id: make_room_from_opened_manifest
         label: Make room in the third car as the opened passengers board
         choiceGroup: Shared room / release
@@ -4628,6 +4628,7 @@ scenes:
         effects:
           set:
             heard_gathered_passengers: true
+            watched_gathered_boarding: true
       - id: pull_release_after_gathered_boarding
         label: Pass the release hand to hand with the gathered passengers
         to: passenger_gathered_release
@@ -6706,6 +6707,16 @@ scenes:
       voices carry through the speaker. "Now," she says. "While they remember
       they can move together."
     choices:
+      - id: board_with_gathered_passengers_from_intercom
+        label: Board with the gathered passengers before sharing the release
+        to: passenger_gathered_boarding
+        requires:
+          notFlag: watched_gathered_boarding
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            watched_gathered_boarding: true
       - id: check_shared_release_from_gathered_intercom
         label: Check how the gathered passengers share the release
         to: passenger_gathered_release
