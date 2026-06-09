@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 40 Manifest Handoff Release Proof
+
+- Date: 2026-06-09
+- Main objective: Make Mara's opened-manifest handoff show one concrete
+  passenger-to-passenger proof beat before the direct handoff release ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 40 evidence was green, but the larger MCP random sample still
+  missed `passenger_manifest_handoff_true_ending` while coverage could reach
+  it.
+- Why this matters: The branch is about Mara turning the manifest into a
+  handoff instead of one more order. If a player chooses to pull during that
+  handoff, they should briefly see the names begin moving through passengers'
+  hands before the ending declares the timing mattered.
+- Planned work:
+  - Route the direct opened-handoff release choices through a short proof scene
+    before the existing `passenger_manifest_handoff_true_ending`.
+  - Keep existing choice ids stable so route tooling and player habits still
+    work.
+  - Add focused regression coverage for the new pause.
+  - Run focused tests, full health, and a real CLI/MCP-style playthrough of the
+    revised route.
+- Risks:
+  - This adds one click to a direct ending path, so the scene must read as the
+    missing proof of the route rather than as friction.
+- Status:
+  - Completed and ready for commit/push.
+  - Added `passenger_manifest_handoff_release`, a short proof scene where
+    Mara's opened-door handoff reaches the nearest passengers before the
+    release fires.
+  - Kept the existing route choice ids
+    `pull_release_during_mara_manifest_handoff` and
+    `pull_release_with_seen_manifest_handoff`, but routed both through the new
+    proof scene before `passenger_manifest_handoff_true_ending`.
+  - Added focused regression coverage with a helper that asserts the proof
+    scene, its one release choice, and the existing ideal handoff ending.
+  - Focused manifest-handoff tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest handoff|opened-door handoff|morning chorus flow"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `watch_mara_open_manifest` and
+    `pull_release_during_mara_manifest_handoff` now visits
+    `mara_manifest_handoff` -> `passenger_manifest_handoff_release` ->
+    `passenger_manifest_handoff_true_ending` with score 304 and no remaining
+    objectives.
+  - The new beat reads coherently: the player reaches for the handle, then
+    sees the newspaper woman, conductor, lunch-tin worker, and strangers start
+    carrying names before the final release.
+  - No invalid choice, unreachable scene, unfinished run, stale ending
+    classification, or coverage regression appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for under-sampled proof beats such
+    as `passenger_answered_boarding_true_ending`,
+    `mara_manifest_thumbprint_receipt`, or `passenger_threshold_boarding`.
+
 # Cycle 39 Lunch-Tin Self-Count Visibility
 
 - Date: 2026-06-09

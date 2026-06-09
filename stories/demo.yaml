@@ -2157,7 +2157,7 @@ scenes:
       - id: pull_release_with_seen_manifest_handoff
         label: Pull the release with Mara's opened-door handoff already moving
         choiceGroup: Finish Mara's handoff
-        to: passenger_manifest_handoff_true_ending
+        to: passenger_manifest_handoff_release
         requires:
           all:
             - flag: saw_mara_manifest_handoff
@@ -2944,7 +2944,7 @@ scenes:
       - id: pull_release_during_mara_manifest_handoff
         label: Pull the release while Mara is still handing names forward
         choiceGroup: Finish Mara's handoff
-        to: passenger_manifest_handoff_true_ending
+        to: passenger_manifest_handoff_release
         requires:
           all:
             - notFlag: read_mara_thumbprint
@@ -5324,6 +5324,20 @@ scenes:
             confirmed_manifest_handoff_doors: true
       - id: pull_release_after_manifest_handoff_goodbye
         label: Pull the release while Mara holds the manifest open
+        to: passenger_manifest_handoff_true_ending
+
+  passenger_manifest_handoff_release:
+    routeImportance: optional
+    text: >
+      You set your fingers under the emergency release, but you do not make the
+      handle the only voice in the car. Mara's call reaches the nearest opened
+      door first. The newspaper woman repeats the child's name, the conductor
+      passes the lunch-tin worker's stop down the aisle, and a stranger catches
+      a stranger's shoulder before the old line can turn the manifest back into
+      rows. Now the handoff is moving faster than the ledger can close.
+    choices:
+      - id: pull_release_after_manifest_handoff_reaches_doors
+        label: Pull the release after the handoff reaches the doors
         to: passenger_manifest_handoff_true_ending
 
   passenger_manifest_handoff_door_check:

@@ -77,6 +77,33 @@ function releaseAfterLunchTinSelfCount(
   return { state, observation };
 }
 
+function releaseAfterManifestHandoffProof(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_manifest_handoff_release");
+  expect(observation.scene.text).toContain("Mara's call reaches the nearest opened door first");
+  expect(observation.scene.text).toContain("the handoff is moving faster than the ledger");
+  expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+  expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_manifest_handoff_reaches_doors"
+  ]);
+
+  state = choose(story, state, "pull_release_after_manifest_handoff_reaches_doors");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("Mara is still mid-handoff");
+  expect(observation.scene.text).toContain("no longer a duty in one voice");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
 describe("demo story critical paths", () => {
   it("can reach the true ending", async () => {
     const story = await loadStory("stories/demo.yaml");
@@ -6133,7 +6160,7 @@ describe("demo story critical paths", () => {
       "pull_release_during_mara_manifest_handoff"
     );
 
-    const firstDirectReleaseObservation = observe(
+    const { observation: firstDirectReleaseObservation } = releaseAfterManifestHandoffProof(
       story,
       choose(story, firstHandoffState, "pull_release_during_mara_manifest_handoff")
     );
@@ -6229,7 +6256,7 @@ describe("demo story critical paths", () => {
       "pull_release_with_seen_manifest_handoff"
     );
 
-    let directReleaseObservation = observe(
+    const { observation: directReleaseObservation } = releaseAfterManifestHandoffProof(
       story,
       choose(story, state, "pull_release_with_seen_manifest_handoff")
     );
@@ -6342,7 +6369,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("can release during Mara's opened-door handoff without the intercom detour", async () => {
+  it("can release during Mara's opened-door handoff after the handoff reaches the doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -6377,7 +6404,7 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_during_mara_manifest_handoff");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -16316,7 +16343,7 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_during_mara_manifest_handoff");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
