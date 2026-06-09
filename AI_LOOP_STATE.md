@@ -7,6 +7,53 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 24 Reviewed Count Recovery
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_counted_true_ending` recoverable from the
+  natural reviewed-count chorus path instead of requiring players to choose
+  the blank-row check before the chorus.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 24 evidence named `passenger_counted_true_ending` as a
+  normal-play miss while coverage could still reach every scene.
+- Why this matters: Players who review Mara's count and let the passengers
+  finish it now get one more clear chance to make room for the old blank row
+  before pulling. The existing reviewed-count ending remains available, but
+  the stronger "count as people making room" payoff is less brittle.
+- Completed work:
+  - Added `resolve_blank_row_after_reviewed_chorus` from
+    `passenger_counted_chorus` to the existing `passenger_missing_count` scene.
+  - Made `board_with_unanswered_row_resolved` clear the reviewed-count release
+    flag when it turns the route into the shared-count release path.
+  - Updated count-route regression coverage so the old reviewed-count ending
+    still works and the new recovery reaches `passenger_counted_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "reviewed count|shared count|counted"`.
+  - Full `npm run health` passed: format check, TypeScript, 334 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_counted_true_ending`, score 283,
+    through `let_passengers_finish_reviewed_count`,
+    `resolve_blank_row_after_reviewed_chorus`,
+    `board_with_unanswered_row_resolved`, and
+    `pull_release_after_counted_chorus`.
+- Playtest feedback:
+  - What felt better: the reviewed-count chorus now offers a readable late
+    recovery, `Make room for the old blank row before pulling`, before the
+    player commits to the release.
+  - What still feels risky: after resolving the blank row, the route returns to
+    the same chorus text; the narrowed single release choice keeps it clear,
+    but a future pass could add a receipt-specific chorus variant.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving normal-play misses such as `mara_manifest_handoff`,
+    `mara_manifest_thumbprint_receipt`, or the remaining boarding variants.
+- Risks:
+  - The reviewed-count chorus now has one extra choice, but it appears only on
+    the reviewed-count path and reuses an existing explanatory scene.
+- Status: Complete.
+
 # Cycle 23 Checked Echo Speaker Route
 
 - Date: 2026-06-09

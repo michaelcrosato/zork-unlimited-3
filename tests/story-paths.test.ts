@@ -2356,8 +2356,41 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "resolve_blank_row_after_reviewed_chorus",
       "pull_release_while_reviewed_count_holds"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "resolve_blank_row_after_reviewed_chorus")
+        ?.label
+    ).toBe("Make room for the old blank row before pulling");
+
+    const recoveredBlankRowState = choose(story, state, "resolve_blank_row_after_reviewed_chorus");
+    observation = observe(story, recoveredBlankRowState);
+
+    expect(observation.scene.id).toBe("passenger_missing_count");
+    expect(observation.state.flags.checked_missing_passenger_count).toBe(true);
+
+    const recoveredSharedCountState = choose(
+      story,
+      recoveredBlankRowState,
+      "board_with_unanswered_row_resolved"
+    );
+    observation = observe(story, recoveredSharedCountState);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
+
+    const recoveredEnding = observe(
+      story,
+      choose(story, recoveredSharedCountState, "pull_release_after_counted_chorus")
+    );
+
+    expect(recoveredEnding.scene.id).toBe("passenger_counted_true_ending");
+    expect(recoveredEnding.scene.ending).toBe(true);
+    expectIdealScore(recoveredEnding.score);
 
     state = choose(story, state, "pull_release_while_reviewed_count_holds");
     observation = observe(story, state);
@@ -7372,6 +7405,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "resolve_blank_row_after_reviewed_chorus",
       "pull_release_while_reviewed_count_holds"
     ]);
 
@@ -7935,6 +7969,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "resolve_blank_row_after_reviewed_chorus",
       "pull_release_while_reviewed_count_holds"
     ]);
 
@@ -7999,6 +8034,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "resolve_blank_row_after_reviewed_chorus",
       "pull_release_while_reviewed_count_holds"
     ]);
 
@@ -8128,6 +8164,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "resolve_blank_row_after_reviewed_chorus",
       "pull_release_while_reviewed_count_holds"
     ]);
 

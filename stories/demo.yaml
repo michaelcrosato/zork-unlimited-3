@@ -3163,6 +3163,7 @@ scenes:
           set:
             reviewed_open_manifest_count: true
             passengers_finished_reviewed_count: true
+            reviewed_count_release_ready: false
             shared_count_release_ready: true
       - id: return_from_unanswered_row
         label: Return to the reviewed manifest count
@@ -6000,6 +6001,16 @@ scenes:
       By the time Mara breathes again, the count has become a chorus with no
       last name left for the line to claim.
     choices:
+      - id: resolve_blank_row_after_reviewed_chorus
+        label: Make room for the old blank row before pulling
+        to: passenger_missing_count
+        requires:
+          all:
+            - flag: reviewed_count_release_ready
+            - notFlag: checked_missing_passenger_count
+        effects:
+          set:
+            checked_missing_passenger_count: true
       - id: pull_release_after_counted_chorus
         label: Pull the release after the passengers finish the count
         to: passenger_counted_true_ending
