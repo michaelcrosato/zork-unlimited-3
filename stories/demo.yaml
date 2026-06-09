@@ -2170,6 +2170,21 @@ scenes:
           set:
             returned_lost_mitten: true
             helped_passengers_gather: true
+      - id: pair_opened_manifest_mittens
+        label: Pair the child's mittens at the third-car frame
+        choiceGroup: Keepsakes / memories
+        to: passenger_mitten_pair_memory
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: returned_lost_mitten
+            - notFlag: heard_mitten_pair_memory
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_mitten_pair_memory: true
       - id: pull_release_for_opened_manifest
         label: Board now and make room around the emergency release
         choiceGroup: Shared room / release
@@ -4447,6 +4462,17 @@ scenes:
       her stop. The crowd shifts closer, not as passengers waiting to be
       counted, but as people beginning to look after one another.
     choices:
+      - id: pair_returned_mittens_before_boarding
+        label: Pair the returned mitten with the child's other mitten
+        to: passenger_mitten_pair_memory
+        requires:
+          notFlag: heard_mitten_pair_memory
+        effects:
+          set:
+            returned_lost_mitten: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_mitten_pair_memory: true
       - id: lead_mitten_child_to_third_car
         label: Lead the child and gathered passengers to the third car
         to: passenger_mitten_intercom

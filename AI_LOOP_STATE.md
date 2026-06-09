@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 49 Returned Mitten Pair Memory
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_mitten_pair_memory` easier to encounter in
+  normal passenger-rescue play.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 49 evidence showed full validation and coverage, but the latest
+  MCP random sample still missed `passenger_mitten_pair_memory` even while
+  reaching the paired-mitten checked ending through other routes.
+- Why this matters: Returning the child's mitten naturally raises the question
+  of the other mitten. Players can now pause on that human-scale proof before
+  boarding, instead of needing to find the paired-memory beat from a later
+  third-car intercom menu.
+- Completed work:
+  - Added `pair_returned_mittens_before_boarding` to `passenger_mitten_memory`.
+  - Added `pair_opened_manifest_mittens` from the opened-manifest hub for
+    players who want the paired-mitten proof immediately.
+  - Reused the existing `passenger_mitten_pair_memory`,
+    `passenger_mitten_pair_check`, and checked paired-mitten ending.
+  - Updated route and menu-order regressions in `tests/story-paths.test.ts`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "mitten|opened manifest"`.
+  - Full `npm run health` passed: format check, TypeScript, 342 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_mitten_pair_checked_true_ending`, score
+    307, through `return_lost_mitten`,
+    `pair_returned_mittens_before_boarding`,
+    `confirm_paired_mittens_after_memory`, and
+    `pull_release_after_confirmed_mitten_pair`.
+  - A 250-run random sample ended cleanly every run and now visited
+    `passenger_mitten_pair_memory`; before the second route tightening, the
+    same sample still missed that scene.
+- Playtest feedback:
+  - What felt better: after the child says his mother warned him not to lose the
+    other mitten, the player can immediately compare the two mittens and let
+    that proof help the crowd answer. The branch reads like a natural emotional
+    follow-up rather than a hidden intercom submenu.
+  - What still feels risky: the opened-manifest hub gained one more optional
+    keepsake action. The stronger improvement is the child-scene action; blind
+    feedback should confirm the hub shortcut is useful rather than too much
+    choice density.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving late optional scenes still missed by the latest random
+    sample, especially `passenger_mara_signoff`,
+    `passenger_gathered_boarding`, and `passenger_helped_true_ending`.
+- Risks:
+  - Low. This adds optional routes to existing scenes and endings, keeps all
+    scenes reachable, and does not change objective metadata or engine logic.
+- Status: Complete.
+
 # Cycle 48 Gathered Passenger Boarding First
 
 - Date: 2026-06-09

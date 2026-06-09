@@ -7110,6 +7110,9 @@ describe("demo story critical paths", () => {
     expect(observation.choices[25]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
+    expect(choiceIds[26]).toBe("pair_opened_manifest_mittens");
+    expect(observation.choices[26]?.label).toBe("Pair the child's mittens at the third-car frame");
+    expect(observation.choices[26]?.choiceGroup).toBe("Keepsakes / memories");
     const keepsakeRollCallChoice = observation.choices.find(
       (choice) => choice.id === "let_opened_keepsakes_answer_roll_call"
     );
@@ -12450,6 +12453,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.returned_lost_mitten).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pair_returned_mittens_before_boarding",
       "lead_mitten_child_to_third_car"
     ]);
 
@@ -12517,6 +12521,13 @@ describe("demo story critical paths", () => {
       openedManifestChoiceIds.indexOf("return_opened_manifest_mitten")
     );
     expect(openedManifestChoiceIds.indexOf("return_opened_manifest_mitten")).toBeLessThan(
+      openedManifestChoiceIds.indexOf("match_opened_manifest_keepsakes")
+    );
+    expect(openedManifestChoiceIds).toContain("pair_opened_manifest_mittens");
+    expect(openedManifestChoiceIds.indexOf("return_opened_manifest_mitten")).toBeLessThan(
+      openedManifestChoiceIds.indexOf("pair_opened_manifest_mittens")
+    );
+    expect(openedManifestChoiceIds.indexOf("pair_opened_manifest_mittens")).toBeLessThan(
       openedManifestChoiceIds.indexOf("match_opened_manifest_keepsakes")
     );
 
@@ -13147,8 +13158,7 @@ describe("demo story critical paths", () => {
       "clear_manifest_and_mara_from_ledger",
       "board_after_releasing_passengers",
       "return_lost_mitten",
-      "lead_mitten_child_to_third_car",
-      "tap_paired_mittens_for_missing_name"
+      "pair_returned_mittens_before_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -15696,6 +15706,7 @@ describe("demo story critical paths", () => {
       "pull_release_with_manifest_thumbprint_oath_from_opened_doors",
       "confirm_manifest_thumbprint_receipt_from_opened_doors",
       "return_opened_manifest_mitten",
+      "pair_opened_manifest_mittens",
       "pull_release_for_opened_manifest",
       "pause_on_opened_door_echoes",
       "check_opened_manifest_echoes",
@@ -16938,6 +16949,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.returned_lost_mitten).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pair_returned_mittens_before_boarding",
       "lead_mitten_child_to_third_car"
     ]);
 
@@ -16952,6 +16964,62 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces paired-mitten memory directly from the opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "pair_opened_manifest_mittens"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_memory");
+    expect(observation.scene.text).toContain("The child taps one mitten against the frame");
+    expect(observation.state.flags.returned_lost_mitten).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_mitten_pair_memory).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_roll_call_after_paired_mittens",
+      "pull_release_after_paired_mittens",
+      "confirm_paired_mittens_after_memory"
+    ]);
+
+    state = choose(story, state, "confirm_paired_mittens_after_memory");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_check");
+    expect(observation.state.flags.confirmed_mitten_pair).toBe(true);
+
+    state = choose(story, state, "pull_release_after_confirmed_mitten_pair");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_mitten_pair_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("both mittened hands have answered");
     expectIdealScore(observation.score);
   });
 
