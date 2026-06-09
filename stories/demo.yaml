@@ -109,6 +109,7 @@ objectives:
         - flag: read_passenger_manifest
         - flag: saw_mara_manifest_handoff
         - notFlag: manifest_handoff_reached_doors
+        - notFlag: passengers_finished_reviewed_count
         - notFlag: held_passenger_threshold
         - notFlag: confirmed_threshold_clearance
         - notFlag: heard_passenger_morning_boarding
@@ -2865,6 +2866,17 @@ scenes:
         effects:
           set:
             heard_passenger_answers: true
+      - id: let_morning_chorus_finish_opened_count
+        label: Let the morning chorus finish the opened count together
+        choiceGroup: Shared count
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
+            shared_count_release_ready: true
       - id: let_mara_handoff_morning_names
         label: Let Mara hand the remembered mornings from name to name
         to: mara_manifest_handoff

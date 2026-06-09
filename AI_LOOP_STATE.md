@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 29 Morning Chorus Count Bridge
+
+- Date: 2026-06-09
+- Main objective: Let players who stop to hear the opened passengers'
+  remembered mornings carry that chorus directly into the shared-count release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 29 evidence showed the game is healthy overall, but normal
+  random play still under-sampled late passenger variants including
+  `passenger_morning_chorus` and `passenger_counted_true_ending`.
+- Why this matters: The morning chorus already describes several passengers
+  remembering ordinary destinations together. Players can now turn that visible
+  group beat into the existing "count one another" payoff without backing out
+  to the broad opened-manifest hub.
+- Completed work:
+  - Added `let_morning_chorus_finish_opened_count` from
+    `passenger_morning_chorus` to `passenger_counted_chorus`.
+  - Set the established shared-count flags:
+    `reviewed_open_manifest_count`, `passengers_finished_reviewed_count`, and
+    `shared_count_release_ready`.
+  - Tightened the Mara handoff objective rule so a shared-count takeover no
+    longer leaves the handoff objective visible.
+  - Added regression coverage proving the morning chorus can reach
+    `passenger_counted_true_ending` and that the handoff-to-count route shows
+    only the shared-count objective.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "morning chorus|opened-door handoff lead into passenger count|shared count"`.
+  - Full `npm run health` passed: format check, TypeScript, 336 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_counted_true_ending`, score 271, through
+    `listen_to_passenger_morning_chorus`,
+    `let_morning_chorus_finish_opened_count`, and
+    `pull_release_after_counted_chorus`.
+  - Extra random playtest stayed stable: 100/100 runs ended with no unfinished
+    paths. The fixed 100-run sample still did not visit `passenger_morning_chorus`,
+    so the next discovery problem is entry into that scene, not the new bridge.
+- Playtest feedback:
+  - What felt better: the option reads like a direct continuation of the
+    morning text. The chorus of ordinary destinations can become a passenger
+    count instead of only a stop-confirmation route.
+  - What still feels risky: this adds one more choice to a late optional scene.
+    The scene remains readable, but future blind feedback should watch for
+    late-game menu breadth.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    improve normal-play entry into `passenger_morning_chorus` or continue
+    smoothing the still under-sampled Mara manifest thumbprint receipt branch.
+- Risks:
+  - Low. The change reuses existing scenes, flags, objectives, scoring, and an
+    existing ideal ending.
+- Status: Complete.
+
 # Cycle 28 Gathered-To-Lunch-Tin Recovery
 
 - Date: 2026-06-09

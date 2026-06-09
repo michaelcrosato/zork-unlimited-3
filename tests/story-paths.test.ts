@@ -8907,6 +8907,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.objectives).toEqual([COUNTED_SHARED_COUNT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_counted_chorus"
     ]);
@@ -16924,6 +16925,7 @@ describe("demo story critical paths", () => {
       "board_after_passenger_morning_chorus",
       "board_and_confirm_morning_stops_after_chorus",
       "let_morning_chorus_answer_names",
+      "let_morning_chorus_finish_opened_count",
       "let_mara_handoff_morning_names",
       "listen_for_echoes_inside_morning_chorus",
       "gather_after_passenger_morning_chorus",
@@ -16941,6 +16943,26 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_answered_names_to_intercom"
     );
+
+    let countedMorningState = choose(story, state, "let_morning_chorus_finish_opened_count");
+    observation = observe(story, countedMorningState);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.objectives).toEqual([COUNTED_SHARED_COUNT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
+
+    countedMorningState = choose(story, countedMorningState, "pull_release_after_counted_chorus");
+    observation = observe(story, countedMorningState);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     const echoedMorningState = choose(story, state, "listen_for_echoes_inside_morning_chorus");
     observation = observe(story, echoedMorningState);
