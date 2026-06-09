@@ -1891,9 +1891,9 @@ scenes:
           set:
             heard_passenger_morning_chorus: true
       - id: confirm_opened_manifest_morning_stops
-        label: Confirm the opened passengers' remembered stops at the sign
+        label: Carry the opened passengers' remembered stops to the speaker
         choiceGroup: Morning stops
-        to: passenger_morning_stop_check
+        to: passenger_morning_intercom
         requires:
           all:
             - notFlag: heard_passenger_morning_chorus
@@ -1908,7 +1908,6 @@ scenes:
           set:
             heard_passenger_morning_chorus: true
             heard_passenger_morning_boarding: true
-            confirmed_morning_stops: true
       - id: review_open_manifest_count
         label: Review the opened count so every passenger checks in
         choiceGroup: Manifest count
@@ -2603,9 +2602,9 @@ scenes:
           set:
             heard_passenger_morning_boarding: true
       - id: confirm_morning_stops_from_opened_manifest
-        label: Confirm the remembered stops at the third-car sign
+        label: Carry the remembered stops to the third-car speaker
         choiceGroup: Morning stops
-        to: passenger_morning_stop_check
+        to: passenger_morning_intercom
         requires:
           all:
             - flag: heard_passenger_morning_chorus
@@ -2619,7 +2618,6 @@ scenes:
         effects:
           set:
             heard_passenger_morning_boarding: true
-            confirmed_morning_stops: true
       - id: ask_mara_to_read_opened_manifest
         label: Ask Mara to read the opened manifest over the third-car speaker
         choiceGroup: Mara and manifest
@@ -2944,14 +2942,13 @@ scenes:
           set:
             heard_passenger_morning_boarding: true
       - id: board_and_confirm_morning_stops_after_chorus
-        label: Board and confirm the remembered stops before pulling
-        to: passenger_morning_stop_check
+        label: Board with the remembered stops before confirming the sign
+        to: passenger_morning_intercom
         requires:
           notFlag: confirmed_morning_stops
         effects:
           set:
             heard_passenger_morning_boarding: true
-            confirmed_morning_stops: true
       - id: let_morning_chorus_answer_names
         label: Let the morning chorus answer Mara's roll call
         to: passenger_answers
@@ -4077,8 +4074,8 @@ scenes:
           set:
             heard_passenger_morning_chorus: true
       - id: confirm_platform_morning_stops
-        label: Confirm the passengers' remembered stops at the sign
-        to: passenger_morning_stop_check
+        label: Carry the passengers' remembered stops into the third car
+        to: passenger_morning_intercom
         requires:
           all:
             - notFlag: heard_passenger_morning_chorus
@@ -4089,7 +4086,6 @@ scenes:
           set:
             heard_passenger_morning_chorus: true
             heard_passenger_morning_boarding: true
-            confirmed_morning_stops: true
       - id: ask_mara_finish_manifest_from_platform
         label: Ask Mara to finish the opened manifest count before you board
         to: mara_manifest_intercom

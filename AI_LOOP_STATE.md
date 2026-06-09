@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 58 Morning Stop Speaker Payoff
+
+- Date: 2026-06-09
+- Main objective: Make every direct morning-stop shortcut pass through the
+  third-car morning intercom before the stop-confirmation scene.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 58 evidence showed the normal 250-run MCP random sample could
+  reach `passenger_morning_stop_checked_true_ending` while leaving
+  `passenger_morning_intercom` unvisited.
+- Why this matters: When a player chooses a remembered-stop shortcut, the game
+  now pays off the promise with the audible third-car morning chorus before the
+  sign resolves into real stops. The ending is unchanged, but the route now
+  has the missing sensory beat.
+- Completed work:
+  - Routed `confirm_opened_manifest_morning_stops`,
+    `confirm_morning_stops_from_opened_manifest`,
+    `board_and_confirm_morning_stops_after_chorus`, and
+    `confirm_platform_morning_stops` to `passenger_morning_intercom`.
+  - Updated the shortcut labels so they promise carrying remembered stops to
+    the speaker or third car, not completing confirmation in one click.
+  - Updated morning-route regressions to prove the new sequence:
+    shortcut -> `passenger_morning_intercom` ->
+    `passenger_morning_stop_check` ->
+    `passenger_morning_stop_checked_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `passenger_morning_stop_checked_true_ending`, score 266, through
+    `confirm_opened_manifest_morning_stops`,
+    `confirm_morning_stops_before_release`, and
+    `pull_release_after_confirmed_morning_stops`; the transcript included
+    `passenger_morning_intercom` before `passenger_morning_stop_check`.
+  - A post-change 250-run random sample ended every run, reached
+    `passenger_morning_stop_checked_true_ending` twice, visited
+    `passenger_morning_intercom`, and reported `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the direct shortcut now reads as a cleaner progression:
+    passengers remember morning, the third-car speaker carries those ordinary
+    memories aboard, the sign breaks HOME into real stops, then the player
+    pulls.
+  - What still feels risky: the opened-manifest hub remains broad. This cycle
+    fixes a specific skipped payoff, not overall branch density.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another low-frequency opened-manifest payoff where a shortcut may
+    skip the named sensory or confirmation beat.
+- Risks:
+  - Low. The changed choices still lead to the same morning-stop ending, and
+    confirmation still happens through the existing intercom options.
+- Status: Complete.
+
 # Cycle 57 Direct Morning Chorus Boarding
 
 - Date: 2026-06-09

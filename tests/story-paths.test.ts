@@ -7022,7 +7022,7 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[5]).toBe("confirm_opened_manifest_morning_stops");
     expect(observation.choices[5]?.label).toBe(
-      "Confirm the opened passengers' remembered stops at the sign"
+      "Carry the opened passengers' remembered stops to the speaker"
     );
     expect(observation.choices[5]?.choiceGroup).toBe("Morning stops");
     expect(choiceIds[6]).toBe("review_open_manifest_count");
@@ -18027,25 +18027,21 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_morning_stop_check");
-    expect(observation.scene.text).toContain("Warden Street");
-    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
-    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
+    expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_confirmed_morning_stops"
+      "pull_release_after_morning_chorus_boarding",
+      "confirm_morning_stops_before_release"
     ]);
 
-    state = choose(story, state, "pull_release_after_confirmed_morning_stops");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("Bellweather Yard");
-    expectIdealScore(observation.score);
+    state = choose(story, state, "confirm_morning_stops_before_release");
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("confirms remembered morning stops directly from the opened passenger hubs", async () => {
@@ -18089,23 +18085,20 @@ describe("demo story critical paths", () => {
     openedState = choose(story, openedState, "confirm_opened_manifest_morning_stops");
     observation = observe(story, openedState);
 
-    expect(observation.scene.id).toBe("passenger_morning_stop_check");
-    expect(observation.scene.text).toContain("Warden Street");
-    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
-    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
+    expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_confirmed_morning_stops"
+      "pull_release_after_morning_chorus_boarding",
+      "confirm_morning_stops_before_release"
     ]);
 
-    openedState = choose(story, openedState, "pull_release_after_confirmed_morning_stops");
-    observation = observe(story, openedState);
-
-    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    openedState = choose(story, openedState, "confirm_morning_stops_before_release");
+    ({ state: openedState, observation } = releaseAfterMorningStopCheck(story, openedState));
 
     let platformState = initialState(story);
     for (const choiceId of [...basePath, "board_after_releasing_passengers"]) {
@@ -18124,25 +18117,21 @@ describe("demo story critical paths", () => {
     platformState = choose(story, platformState, "confirm_platform_morning_stops");
     observation = observe(story, platformState);
 
-    expect(observation.scene.id).toBe("passenger_morning_stop_check");
-    expect(observation.scene.text).toContain("Warden Street");
-    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
-    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
+    expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_confirmed_morning_stops"
+      "pull_release_after_morning_chorus_boarding",
+      "confirm_morning_stops_before_release"
     ]);
 
-    platformState = choose(story, platformState, "pull_release_after_confirmed_morning_stops");
-    observation = observe(story, platformState);
-
-    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("Bellweather Yard");
-    expectIdealScore(observation.score);
+    platformState = choose(story, platformState, "confirm_morning_stops_before_release");
+    ({ state: platformState, observation } = releaseAfterMorningStopCheck(story, platformState));
   });
 
   it("pays off the passenger morning chorus before the release", async () => {
@@ -18236,27 +18225,27 @@ describe("demo story critical paths", () => {
 
     observation = observe(story, directConfirmedState);
 
-    expect(observation.scene.id).toBe("passenger_morning_stop_check");
-    expect(observation.scene.text).toContain("Warden Street");
-    expect(observation.scene.text).toContain("the sign answers");
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.state.flags.confirmed_morning_stops).toBe(true);
-    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
+    expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_confirmed_morning_stops"
+      "pull_release_after_morning_chorus_boarding",
+      "confirm_morning_stops_before_release"
     ]);
 
     directConfirmedState = choose(
       story,
       directConfirmedState,
-      "pull_release_after_confirmed_morning_stops"
+      "confirm_morning_stops_before_release"
     );
-    observation = observe(story, directConfirmedState);
-
-    expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state: directConfirmedState, observation } = releaseAfterMorningStopCheck(
+      story,
+      directConfirmedState
+    ));
   });
 
   it("lets opened-manifest players board directly with the morning chorus", async () => {
