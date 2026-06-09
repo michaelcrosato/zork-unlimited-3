@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 57 Manifest Handoff Release Payoff
+
+- Date: 2026-06-09
+- Main objective: Make Mara's third-car manifest handoff release show the
+  handoff reaching the opened doors before the true ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall, but random MCP play still
+  missed `passenger_manifest_handoff_release` and
+  `passenger_manifest_handoff_true_ending` while coverage could reach them.
+- Why this matters: This branch is about Mara passing names back to passengers
+  instead of issuing one last command. A player who pulls while Mara holds the
+  manifest open should see that handoff move through actual doors before the
+  ending says it became shared proof.
+- Planned work:
+  - Keep `pull_release_after_manifest_handoff_goodbye` stable for playtest
+    history.
+  - Route it to `passenger_manifest_handoff_release` instead of directly to
+    `passenger_manifest_handoff_true_ending`.
+  - Set `manifest_handoff_reached_doors` on that route so objectives match the
+    visible proof beat.
+  - Suppress the broader opened-manifest objective once the handoff release
+    proof is active.
+  - Update focused manifest-handoff tests, run health, and actually play the
+    revised route.
+- Risks:
+  - The route becomes one step longer. This is intentional because the skipped
+    proof scene is the branch's clearest payoff.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_manifest_handoff_goodbye` now routes through
+    `passenger_manifest_handoff_release` and sets
+    `manifest_handoff_reached_doors`.
+  - The broad opened-manifest objective is suppressed once
+    `manifest_handoff_reached_doors` is set, leaving only the specific handoff
+    release objective at the proof scene.
+  - Focused manifest-handoff tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI playthrough used `watch_mara_open_manifest` ->
+    `listen_to_manifest_handoff_from_handoff` ->
+    `pull_release_after_manifest_handoff_goodbye` ->
+    `pull_release_after_manifest_handoff_reaches_doors`.
+  - The route now stops at `passenger_manifest_handoff_release`, where Mara's
+    call reaches the nearest opened door before the final pull.
+  - Final scene was `passenger_manifest_handoff_true_ending`, score 310, with
+    no remaining choices or objectives.
+  - What felt better: the handoff now becomes visible passenger action before
+    the ending claims it as shared proof.
+  - What still feels risky: this branch is still optional and choice-dense, so
+    normal random play may continue to under-sample it even though coverage
+    reaches it.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue surfacing skipped late-branch proof beats, with checked roll-call
+    payoff still a good candidate.
+
 # Cycle 56 Gathered Intercom Payoff
 
 - Date: 2026-06-09

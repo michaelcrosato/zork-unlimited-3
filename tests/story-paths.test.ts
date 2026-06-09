@@ -6211,7 +6211,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(directDoorObservation.score);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -6649,7 +6649,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -8107,7 +8107,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -8166,7 +8166,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -15047,10 +15047,10 @@ describe("demo story critical paths", () => {
       "pull_release_after_manifest_handoff_goodbye"
     ]);
 
-    observation = observe(
+    ({ observation } = releaseAfterManifestHandoffProof(
       story,
       choose(story, intercomHandoffState, "pull_release_after_manifest_handoff_goodbye")
-    );
+    ));
 
     expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
     expect(observation.scene.ending).toBe(true);
