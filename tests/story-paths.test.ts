@@ -11727,6 +11727,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
@@ -13131,6 +13132,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
@@ -13267,6 +13269,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.steadied_lunch_tin_worker).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
@@ -13399,6 +13402,67 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("every answer has been witnessed");
     expect(observation.scene.text).toContain("no echo is left without a face");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets gathered intercom listeners finish the shared passenger count", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_as_opened_passengers_gather"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("the old conductor answers each number");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "let_gathered_door_count_finish"
+    );
+    expect(
+      observation.choices.find((choice) => choice.id === "let_gathered_door_count_finish")?.label
+    ).toBe("Let the gathered door-count become everyone's final check");
+
+    state = choose(story, state, "let_gathered_door_count_finish");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_chorus");
+    expect(observation.scene.text).toContain("the count has become a chorus");
+    expect(observation.state.flags.reviewed_open_manifest_count).toBe(true);
+    expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
+    expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.objectives).toEqual([COUNTED_SHARED_COUNT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_counted_chorus"
+    ]);
+
+    state = choose(story, state, "pull_release_after_counted_chorus");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_counted_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("The release opens every door at once");
+    expect(observation.scene.text).toContain("people keeping track of one another");
     expectIdealScore(observation.score);
   });
 
@@ -16085,6 +16149,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
@@ -16253,6 +16318,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
@@ -16319,6 +16385,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
+      "let_gathered_door_count_finish",
       "hear_final_passenger_roll_call",
       "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",

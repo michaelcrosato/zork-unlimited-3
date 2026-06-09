@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 35 Gathered Door-Count Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the counted-passenger payoff recoverable from the common
+  gathered-passenger intercom route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 35 evidence showed healthy validation, all scenes reachable, and
+  remaining normal-play discoverability pressure on late branches including
+  `passenger_counted_true_ending`.
+- Why this matters: A player who reaches the gathered intercom already sees the
+  child count open doors and the conductor answer clear. That visible cue now
+  has an explicit action that leads to the existing counted chorus instead of
+  requiring the player to have chosen the count branch earlier.
+- Completed work:
+  - Added `let_gathered_door_count_finish` from `passenger_gathered_intercom`
+    to `passenger_counted_chorus`.
+  - Set the existing shared-count flags on that bridge so the current counted
+    objective and `passenger_counted_true_ending` payoff handle the route.
+  - Suppressed the gathered-release objective once the shared count is complete,
+    keeping guidance focused on the counted release.
+  - Updated gathered-intercom menu expectations and added regression coverage
+    proving the bridge reaches `passenger_counted_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered intercom|shared passenger count"`.
+  - Full `npm run health` passed: format check, TypeScript, 338 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_counted_true_ending`, score 305, via
+    `listen_as_opened_passengers_gather`,
+    `let_gathered_door_count_finish`, and
+    `pull_release_after_counted_chorus`.
+- Playtest feedback:
+  - What felt better: the choice grows out of text already on screen, so the
+    player can follow the count they just saw instead of backing up to the
+    manifest-count hub.
+  - What still feels risky: the gathered intercom menu is now denser. Blind
+    sessions should confirm that the new counted choice reads as distinct from
+    roll call and shared-release choices.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch that benefits from a natural
+    bridge, especially `mara_manifest_thumbprint_receipt_true_ending` or direct
+    normal-play discovery of `passenger_roll_call_true_ending`.
+- Risks:
+  - Low. This adds one guarded story choice, reuses existing scenes/endings, and
+    keeps validation, coverage, and actual playthrough green.
+- Status: Complete.
+
 # Cycle 34 Gathered Threshold Bridge
 
 - Date: 2026-06-09

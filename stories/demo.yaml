@@ -315,6 +315,7 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: helped_passengers_gather
+        - notFlag: passengers_finished_reviewed_count
         - notFlag: held_passenger_threshold
         - notFlag: heard_final_roll_call
         - notFlag: made_room_for_passengers
@@ -6600,6 +6601,16 @@ scenes:
       - id: check_shared_release_from_gathered_intercom
         label: Check how the gathered passengers share the release
         to: passenger_gathered_release
+      - id: let_gathered_door_count_finish
+        label: Let the gathered door-count become everyone's final check
+        to: passenger_counted_chorus
+        requires:
+          notFlag: passengers_finished_reviewed_count
+        effects:
+          set:
+            reviewed_open_manifest_count: true
+            passengers_finished_reviewed_count: true
+            shared_count_release_ready: true
       - id: hear_final_passenger_roll_call
         label: Hear the gathered passengers answer one last roll call
         to: passenger_roll_call_epilogue
