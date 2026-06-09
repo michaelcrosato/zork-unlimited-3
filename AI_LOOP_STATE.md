@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 44 Answered Roll Call Direct Release
+
+- Date: 2026-06-09
+- Main objective: Make the plain `passenger_roll_call_true_ending` easier to
+  reach when players have already listened to the opened passengers answer
+  their names.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 44 evidence showed full coverage and clean automated/MCP
+  playthroughs, but normal random play continued to under-sample several late
+  passenger endings, including the plain final roll-call payoff.
+- Why this matters: The answered-passenger scene already says every passenger
+  has answered and the third car is ready. A player who wants to pull at that
+  exact moment should be able to finish the roll-call ending directly, while
+  still leaving the slower witness-check route available for players who want
+  one more confirmation beat.
+- Planned work:
+  - Add a direct answered-passenger final-roll-call release choice from
+    `passenger_answers` to `passenger_roll_call_true_ending`.
+  - Preserve the existing `passenger_roll_call_epilogue` and
+    `passenger_roll_call_answer_check` routes for the inspected/checked
+    payoff.
+  - Update route regression tests to cover the direct release and the slower
+    final-roll-call path.
+- Verification:
+  - Focused answered/final-roll-call test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "answered passenger|final passenger roll call|final roll call"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_roll_call_true_ending`, score 302,
+    through `listen_to_passenger_answers` and
+    `pull_release_on_answered_final_roll_call`.
+  - A 250-run random sample ended cleanly every run and reached
+    `passenger_roll_call_true_ending` once; the supplied 250-run MCP random
+    evidence for this cycle had missed that ending.
+- Playtest feedback:
+  - What felt better: after the passengers answer their names, the new command
+    lets the player pull at the exact moment the text says the third car is
+    ready. The payoff lands without another setup scene.
+  - What still feels risky: this adds one more option to a busy late-game menu.
+    Blind sessions should confirm the final-roll-call group still scans
+    cleanly.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving under-sampled late passenger branches that still require
+    extra confirmation after an obvious release command.
+- Risks:
+  - Low. This adds one late-game menu option to an already rich answered
+    passenger scene, but it reuses the scene's explicit roll-call language and
+    does not remove existing routes.
+- Status: Complete.
+
 # Cycle 43 Gathered Intercom Direct Helped Release
 
 - Date: 2026-06-09

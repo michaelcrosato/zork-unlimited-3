@@ -10143,6 +10143,7 @@ describe("demo story critical paths", () => {
       "follow_newspaper_answer",
       "gather_answered_passengers",
       "let_answered_passengers_finish_final_roll_call",
+      "pull_release_on_answered_final_roll_call",
       "let_lunch_tin_worker_keep_count",
       "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",
@@ -10153,6 +10154,22 @@ describe("demo story critical paths", () => {
     ]);
 
     const answeredState = state;
+
+    const directAnsweredRollCallEnding = observe(
+      story,
+      choose(story, answeredState, "pull_release_on_answered_final_roll_call")
+    );
+
+    expect(directAnsweredRollCallEnding.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(directAnsweredRollCallEnding.scene.ending).toBe(true);
+    expect(directAnsweredRollCallEnding.scene.text).toContain("passengers' own roll call");
+    expect(directAnsweredRollCallEnding.state.flags.heard_passenger_answers).toBe(true);
+    expect(directAnsweredRollCallEnding.state.flags.heard_answered_passengers).toBe(true);
+    expect(directAnsweredRollCallEnding.state.flags.helped_passengers_gather).toBe(true);
+    expect(directAnsweredRollCallEnding.state.flags.heard_gathered_passengers).toBe(true);
+    expect(directAnsweredRollCallEnding.state.flags.heard_final_roll_call).toBe(true);
+    expect(directAnsweredRollCallEnding.state.flags.confirmed_roll_call_answers).toBeUndefined();
+    expectIdealScore(directAnsweredRollCallEnding.score);
 
     const directRollCallState = choose(
       story,
@@ -15923,6 +15940,7 @@ describe("demo story critical paths", () => {
       "follow_newspaper_answer",
       "gather_answered_passengers",
       "let_answered_passengers_finish_final_roll_call",
+      "pull_release_on_answered_final_roll_call",
       "let_lunch_tin_worker_keep_count",
       "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",
