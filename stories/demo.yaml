@@ -1967,7 +1967,7 @@ scenes:
       - id: follow_lunch_tin_latch
         label: Board with the lunch-tin worker's count ready for the release
         choiceGroup: Lunch tin / shift count
-        to: passenger_lunch_tin_intercom
+        to: passenger_lunch_tin_boarding
         requires:
           notFlag: helped_passengers_gather
         effects:

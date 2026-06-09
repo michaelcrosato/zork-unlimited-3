@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 45 Direct Lunch-Tin Boarding
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest lunch-tin boarding choice land on
+  the boarding scene it promises.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 45 evidence showed random play still under-sampling the direct
+  lunch-tin endings even though coverage can reach every scene.
+- Why this matters: The hub choice already says the player will board with the
+  lunch-tin worker's count ready for the release, but it previously landed on
+  the speaker/intercom beat. Sending that specific choice to the existing
+  boarding scene makes the label, scene, and immediate release payoff line up.
+- Planned work:
+  - Keep the existing `follow_lunch_tin_latch` choice id and label stable.
+  - Route it from `passengers_released` to `passenger_lunch_tin_boarding`.
+  - Preserve the explicit lunch-tin intercom choices for players who choose to
+    listen or carry the count to Mara's speaker.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - The boarding scene has several optional proof choices, so the direct pull
+    remains one of multiple valid follow-ups rather than the only path.
+- Status:
+  - Completed and ready for commit/push.
+  - `follow_lunch_tin_latch` now routes directly to
+    `passenger_lunch_tin_boarding`, matching the player-facing "Board with the
+    lunch-tin worker's count" label.
+  - The explicit intercom paths remain available through
+    `listen_to_lunch_tin_latch_from_opened_manifest`,
+    `pull_release_on_opened_lunch_tin_count`, and the boarding scene's
+    `listen_to_lunch_tin_worker_from_boarding` choice.
+  - Updated route coverage that previously asserted the old intercom landing.
+  - Focused lunch-tin route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, the standard
+    MCP smoke route reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough used `follow_lunch_tin_latch` from
+    `passengers_released`, saw `passenger_lunch_tin_boarding` with the direct
+    release plus optional proof choices, then pulled the release to
+    `passenger_lunch_tin_true_ending`.
+  - Final score was 292 with no remaining objectives.
+  - What felt better: the hub wording now pays off immediately in scene text;
+    the worker is physically aboard and counting people into the third car
+    before the player can pull.
+  - What still feels risky: the opened-manifest hub is still dense, and the
+    lunch-tin branch still offers several optional proof follow-ups that random
+    play may not choose consistently. The evidence-only random sample still
+    missed `passenger_lunch_tin_true_ending`, so this is a clarity fix rather
+    than a proven long-run rate change.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery work for another current random miss such
+    as `mara_manifest_thumbprint_receipt` or `passenger_threshold_boarding`.
+
 # Cycle 44 Direct Manifest Handoff Release
 
 - Date: 2026-06-09
