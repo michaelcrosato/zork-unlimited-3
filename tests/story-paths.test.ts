@@ -10003,6 +10003,7 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toEqual([
       "follow_newspaper_answer",
       "gather_answered_passengers",
+      "let_answered_passengers_finish_final_roll_call",
       "let_lunch_tin_worker_keep_count",
       "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",
@@ -10013,6 +10014,31 @@ describe("demo story critical paths", () => {
     ]);
 
     const answeredState = state;
+
+    const directRollCallState = choose(
+      story,
+      answeredState,
+      "let_answered_passengers_finish_final_roll_call"
+    );
+    observation = observe(story, directRollCallState);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
+
+    const directRollCallEnding = observe(
+      story,
+      choose(story, directRollCallState, "pull_release_on_finished_roll_call")
+    );
+
+    expect(directRollCallEnding.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(directRollCallEnding.scene.ending).toBe(true);
+    expectIdealScore(directRollCallEnding.score);
 
     state = choose(story, answeredState, "make_room_after_answered_names");
     observation = observe(story, state);
@@ -15584,6 +15610,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "follow_newspaper_answer",
       "gather_answered_passengers",
+      "let_answered_passengers_finish_final_roll_call",
       "let_lunch_tin_worker_keep_count",
       "make_room_after_answered_names",
       "ask_conductor_punch_from_answers",

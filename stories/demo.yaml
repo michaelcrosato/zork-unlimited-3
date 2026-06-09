@@ -3467,6 +3467,20 @@ scenes:
           set:
             helped_passengers_gather: true
             heard_gathered_passengers: true
+      - id: let_answered_passengers_finish_final_roll_call
+        label: Let the answered passengers finish Mara's final roll call
+        choiceGroup: Final roll call
+        to: passenger_roll_call_epilogue
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_final_roll_call
+        effects:
+          set:
+            heard_answered_passengers: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: let_lunch_tin_worker_keep_count
         label: Let the lunch-tin worker count the answered passengers aboard
         to: passenger_farewell

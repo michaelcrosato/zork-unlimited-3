@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 26 Answered Roll Call Recovery
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_roll_call_true_ending` easier to reach after
+  players naturally listen to the opened passengers answer their names.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 26 evidence showed overall route health was strong, but the
+  plain final roll-call ending remained much rarer than nearby checked or
+  branch-specific endings.
+- Why this matters: A player who chooses the obvious answer-listening branch
+  now sees an immediate follow-up: let those answered passengers finish Mara's
+  final roll call. The route no longer requires inferring a detour through
+  the separate gathered-passenger branch before the final roll-call payoff
+  becomes visible.
+- Completed work:
+  - Added `let_answered_passengers_finish_final_roll_call` to
+    `passenger_answers`.
+  - Routed it to the existing `passenger_roll_call_epilogue` and set the same
+    answer/gather/final-roll-call flags used by the direct opened-manifest
+    route.
+  - Added regression coverage for the new answered-passenger recovery route
+    into `passenger_roll_call_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "answer listeners ask the conductor|manifest-specific platform beat|final passenger roll call"`.
+  - Full `npm run health` passed: format check, TypeScript, 335 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_roll_call_true_ending`, score 303,
+    through `listen_to_passenger_answers`,
+    `let_answered_passengers_finish_final_roll_call`, and
+    `pull_release_on_finished_roll_call`.
+- Playtest feedback:
+  - What felt better: the answer-listening scene now keeps its own momentum.
+    The phrase "answers roll call" leads directly to "finish Mara's final roll
+    call," so the option reads as a continuation instead of a hidden branch.
+  - What still feels risky: the opened-manifest hub remains broad. This change
+    improves one common intermediate scene rather than reducing the hub's
+    total menu size.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving undersampled late branches that still rely on broad hub
+    scanning, especially threshold and shared-room boarding variants.
+- Risks:
+  - Low. The change reuses an existing scene, ending, objective, and metadata
+    without adding a new ending or altering engine behavior.
+- Status: Complete.
+
 # Cycle 25 Direct Thumbprint Receipt Handoff
 
 - Date: 2026-06-09
