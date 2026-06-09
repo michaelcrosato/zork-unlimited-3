@@ -7,6 +7,51 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 56 Direct Blank-Row Roll Call
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest blank-row choice pay off as a final
+  passenger roll call instead of detouring through the generic answers hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 56 evidence showed full coverage and no unfinished runs, while
+  normal random samples still under-sampled several late passenger scenes,
+  including `passenger_missing_count` and roll-call payoffs.
+- Why this matters: The blank row is the clearest explanation that the
+  passenger rescue is about making room for everyone, not just clearing names.
+  When the player chooses to let that row become a roll call, the next scene now
+  proves the passengers can answer together and immediately offers the final
+  release.
+- Completed work:
+  - Route `let_unanswered_row_become_roll_call` directly to
+    `passenger_roll_call_epilogue`.
+  - Set the roll-call and gathered-passenger flags earned by that choice.
+  - Update the unanswered-row regression so it proves the route reaches
+    `passenger_roll_call_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "unanswered-row"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_roll_call_true_ending`, score
+    300, through `check_for_unanswered_manifest_row` and
+    `let_unanswered_row_become_roll_call`; final objectives were empty.
+- Playtest feedback:
+  - What felt better: the blank-row scene now reads as a clean promise and
+    payoff. Mara identifies the blank row as shared room, the player chooses to
+    make it a roll call, and the next scene is the final roll call.
+  - What still feels risky: this is a targeted clarity fix more than a proven
+    random-frequency shift. Blind feedback should still decide whether the
+    opened-manifest hub has too many attractive late-game options.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue tightening low-frequency opened-manifest payoffs where a visible
+    choice names a specific proof but routes through a broader hub.
+- Risks:
+  - Low. This is one optional story edge, and the conductor-clear,
+    conductor-count, shared-count, and return routes remain available.
+- Status: Complete.
+
 # Cycle 55 Direct Opened-Conductor Release
 
 - Date: 2026-06-09

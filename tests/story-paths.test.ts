@@ -2148,6 +2148,27 @@ describe("demo story critical paths", () => {
       "return_from_unanswered_row"
     ]);
 
+    const rollCallState = choose(story, state, "let_unanswered_row_become_roll_call");
+    observation = observe(story, rollCallState);
+
+    expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
+    expect(observation.scene.text).toContain("the passengers finish the roll call for her");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
+
+    const rollCallEnding = observe(
+      story,
+      choose(story, rollCallState, "pull_release_on_finished_roll_call")
+    );
+
+    expect(rollCallEnding.scene.id).toBe("passenger_roll_call_true_ending");
+    expect(rollCallEnding.scene.ending).toBe(true);
+    expectIdealScore(rollCallEnding.score);
+
     state = choose(story, state, "return_from_unanswered_row");
     observation = observe(story, state);
 
