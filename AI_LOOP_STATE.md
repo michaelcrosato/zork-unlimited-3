@@ -7,6 +7,49 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 19 Final Roll Call Grouping Pass
+
+- Date: 2026-06-09
+- Main objective: Make the optional opened-passenger final roll-call route
+  easier to spot in the late-game hub without changing route mechanics.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_roll_call_true_ending` as an
+  undersampled normal-play target while coverage could still reach every scene.
+- Why this matters: The final roll-call choice was playable, but it was buried
+  inside the broad `Counts / answers` group beside answer checks and handoff
+  threshold choices. Blind-player screens and transcripts now give the route a
+  distinct `Final roll call` heading, making the commitment easier to scan.
+- Completed work:
+  - Added `Final roll call` to the canonical choice-group display order.
+  - Updated fallback choice classification so unauthored final-roll-call labels
+    group consistently.
+  - Moved `let_opened_passengers_answer_final_roll_call` into the new group.
+  - Updated transcript, route, and player-view regressions for the split.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|opened manifest|final passenger roll call"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_roll_call_true_ending`, score 302, via
+    `let_opened_passengers_answer_final_roll_call` and
+    `pull_release_on_finished_roll_call`.
+  - CLI hub inspection confirmed the direct final-roll-call option now reports
+    `choiceGroup: Final roll call` while adjacent answer-count choices remain
+    in `Counts / answers`.
+- Playtest feedback:
+  - What felt better: the route now reads as a clear late-game promise rather
+    than one more answer/count variant inside a large menu.
+  - What still feels risky: this improves scanability and blind-play report
+    clarity, but it does not reduce the total number of opened-manifest choices.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_keepsake_roll_call` and Mara manifest thumbprint receipt routes.
+- Risks:
+  - Route mechanics, scene count, and ending count are intentionally unchanged.
+- Status: Complete.
+
 # Cycle 18 Morning Stops / Keepsakes Split
 
 - Date: 2026-06-09

@@ -134,6 +134,9 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Counts / answers:");
     expect(transcript).toContain(
+      "Final roll call:\n- Let the opened passengers answer the final roll call"
+    );
+    expect(transcript).toContain(
       "Lunch tin count:\n- Check the lunch-tin worker's passenger count before boarding"
     );
     expect(transcript).toContain("- Board with the lunch-tin worker ready to count himself");
@@ -163,6 +166,12 @@ describe("transcript rendering", () => {
     );
     expect(transcript.indexOf("Lunch tin roster:")).toBeLessThan(
       transcript.indexOf("Counts / answers:")
+    );
+    expect(transcript.indexOf("Counts / answers:")).toBeLessThan(
+      transcript.indexOf("Final roll call:")
+    );
+    expect(transcript.indexOf("Final roll call:")).toBeLessThan(
+      transcript.indexOf("Passenger gathering:")
     );
     expect(transcript.indexOf("Door echoes:")).toBeLessThan(
       transcript.indexOf("Threshold holding:")

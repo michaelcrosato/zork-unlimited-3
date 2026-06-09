@@ -2665,7 +2665,7 @@ scenes:
             confirmed_answered_handoff_thresholds: true
       - id: let_opened_passengers_answer_final_roll_call
         label: Let the opened passengers answer the final roll call
-        choiceGroup: Counts / answers
+        choiceGroup: Final roll call
         to: passenger_roll_call_epilogue
         requires:
           all:

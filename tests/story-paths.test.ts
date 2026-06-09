@@ -15165,6 +15165,14 @@ describe("demo story critical paths", () => {
     expect(renderedPlayerView.indexOf("  Lunch tin count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin roster:")
     );
+    expect(renderedPlayerView).toContain("  Final roll call:");
+    expect(renderedPlayerView).toContain("Let the opened passengers answer the final roll call");
+    expect(renderedPlayerView.indexOf("  Counts / answers:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Final roll call:")
+    );
+    expect(renderedPlayerView.indexOf("  Final roll call:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Passenger gathering:")
+    );
     expect(renderedPlayerView.indexOf("  Door echoes:")).toBeLessThan(
       renderedPlayerView.indexOf("  Threshold holding:")
     );
@@ -16292,7 +16300,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passengers_released");
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
     expect(finalRollCallChoice?.label).toBe("Let the opened passengers answer the final roll call");
-    expect(finalRollCallChoice?.choiceGroup).toBe("Counts / answers");
+    expect(finalRollCallChoice?.choiceGroup).toBe("Final roll call");
     expect(choiceIds.indexOf("confirm_opened_answered_handoff_thresholds")).toBeLessThan(
       choiceIds.indexOf("let_opened_passengers_answer_final_roll_call")
     );
