@@ -2123,7 +2123,7 @@ scenes:
             helped_passengers_gather: true
       - id: pull_release_for_opened_manifest
         label: Board now and make room around the emergency release
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_boarding
         effects:
           set:
@@ -2532,7 +2532,7 @@ scenes:
             heard_gathered_passengers: true
       - id: make_room_from_opened_manifest
         label: Make room in the third car as the opened passengers board
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_boarding
         requires:
           all:
@@ -2544,7 +2544,7 @@ scenes:
             made_room_for_passengers: true
       - id: listen_to_room_from_opened_manifest
         label: Listen as the opened passengers make room around the release
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_intercom
         requires:
           all:
@@ -2557,7 +2557,7 @@ scenes:
             heard_mara_goodbye: true
       - id: pass_shared_release_from_opened_manifest
         label: Pass the release hand to hand as the opened passengers make room
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_release
         requires:
           all:
@@ -2571,7 +2571,7 @@ scenes:
             shared_release_reached: true
       - id: confirm_shared_release_from_opened_manifest
         label: Confirm the shared release reaches the back row before pulling
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_release_receipt
         requires:
           all:
@@ -3269,7 +3269,7 @@ scenes:
             heard_passenger_morning_chorus: true
       - id: make_room_after_mara_manifest_handoff
         label: Make room in the third car while Mara calls the opened doors
-        choiceGroup: Board / release
+        choiceGroup: Shared room / release
         to: passenger_room_boarding
         requires:
           notFlag: made_room_for_passengers
@@ -3773,6 +3773,7 @@ scenes:
             heard_mara_goodbye: true
       - id: make_room_for_passengers_in_third_car
         label: Make room inside the third car before reaching for the release
+        choiceGroup: Shared room / release
         to: passenger_room_boarding
         requires:
           all:
@@ -3786,6 +3787,7 @@ scenes:
             made_room_for_passengers: true
       - id: listen_as_passengers_make_room
         label: Listen as the passengers make room around the release
+        choiceGroup: Shared room / release
         to: passenger_room_intercom
         requires:
           all:
@@ -3801,6 +3803,7 @@ scenes:
             heard_mara_goodbye: true
       - id: confirm_shared_release_from_platform
         label: Confirm the shared release reaches the back row before pulling
+        choiceGroup: Shared room / release
         to: passenger_room_release_receipt
         requires:
           all:

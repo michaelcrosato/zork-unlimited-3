@@ -5192,7 +5192,7 @@ describe("demo story critical paths", () => {
     expect(
       observation.choices.find((choice) => choice.id === "listen_to_room_from_opened_manifest")
         ?.choiceGroup
-    ).toBe("Board / release");
+    ).toBe("Shared room / release");
 
     state = choose(story, state, "listen_to_room_from_opened_manifest");
     observation = observe(story, state);
@@ -5253,6 +5253,14 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "listen_as_passengers_make_room"
     );
+    expect(
+      observation.choices.find((choice) => choice.id === "make_room_for_passengers_in_third_car")
+        ?.choiceGroup
+    ).toBe("Shared room / release");
+    expect(
+      observation.choices.find((choice) => choice.id === "listen_as_passengers_make_room")
+        ?.choiceGroup
+    ).toBe("Shared room / release");
 
     state = choose(story, state, "listen_as_passengers_make_room");
     observation = observe(story, state);
@@ -5304,6 +5312,10 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(platformChoiceIds).toContain("confirm_shared_release_from_platform");
+    expect(
+      observation.choices.find((choice) => choice.id === "confirm_shared_release_from_platform")
+        ?.choiceGroup
+    ).toBe("Shared room / release");
     expect(platformChoiceIds.indexOf("confirm_shared_release_from_platform")).toBeGreaterThan(
       platformChoiceIds.indexOf("listen_as_passengers_make_room")
     );
@@ -6075,7 +6087,9 @@ describe("demo story critical paths", () => {
     expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
       "Morning / keepsakes"
     );
-    expect(handoffGroups.get("make_room_after_mara_manifest_handoff")).toBe("Board / release");
+    expect(handoffGroups.get("make_room_after_mara_manifest_handoff")).toBe(
+      "Shared room / release"
+    );
     expect(handoffGroups.get("hold_threshold_after_mara_manifest_handoff")).toBe(
       "Door echoes / threshold"
     );
@@ -6104,7 +6118,7 @@ describe("demo story critical paths", () => {
       "return_from_mara_manifest_handoff"
     ]);
     expect(rendered).toContain("  Finish Mara's handoff:\n    0. Listen through");
-    expect(rendered).toContain("  Board / release:\n    4. Make room in the third car");
+    expect(rendered).toContain("  Shared room / release:\n    4. Make room in the third car");
     expect(rendered).toContain("  Mara and manifest:\n    5. Carry the darkened thumbprint");
     expect(rendered).toContain("    6. Ask Mara to sign off");
     expect(rendered).toContain(

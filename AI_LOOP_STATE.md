@@ -7,6 +7,50 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 13 Shared Room Route Grouping Pass
+
+- Date: 2026-06-09
+- Main objective: Make the opened-passenger room-making route easier to see in
+  the 64-choice late-game hub and in player-view reports.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_room_boarding` and
+  `passenger_room_intercom` as normal-play discoverability targets, while
+  coverage could still reach them.
+- Why this matters: The route already existed and was playable, but its
+  boarding, intercom, and shared-release choices were split between broad
+  board/passenger/other categories on different surfaces. Players and operators
+  should be able to scan one clear shared-room route without losing the direct
+  emergency-release path.
+- Completed work:
+  - Added a `Shared room / release` player-facing choice group immediately
+    after `Board / release`.
+  - Moved opened-manifest, Mara-handoff, and passenger-platform room-making
+    choices into the new group.
+  - Added regression checks that the opened-manifest transcript and
+    passenger-platform choices keep the shared-room route grouped together.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|room|manifest-specific platform beat|manifest handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Directed player-view check showed `Board / release` with the direct platform
+    crossing, followed by `Shared room / release` with the five room-making and
+    shared-release choices.
+  - Actual CLI route reached `passenger_shared_release_checked_true_ending`,
+    score 291, with `made_room_for_passengers`,
+    `shared_release_reached`, and `confirmed_shared_room_release` set.
+- Playtest feedback:
+  - What felt better: the player-view hub now presents the shared-room route as
+    a coherent track: board/make room, listen, pass the handle, confirm the back
+    row, then pull together.
+  - What still feels risky: the opened-manifest hub remains intentionally large.
+    This improves scanability and report quality, not random-selection odds.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches by grouping related
+    choices and reducing ambiguous labels.
+
 # Cycle 12 Lunch-Tin Player-View Ordering Pass
 
 - Date: 2026-06-09

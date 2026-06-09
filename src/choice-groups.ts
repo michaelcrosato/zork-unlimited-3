@@ -13,6 +13,7 @@ const MIN_GROUPED_CHOICE_COUNT = 8;
 const GROUP_ORDER = [
   "Finish Mara's handoff",
   "Board / release",
+  "Shared room / release",
   "Mara and manifest",
   "Mara",
   "Manifest count",
