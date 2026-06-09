@@ -7,6 +7,51 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 10 Manifest Thumbprint Objective Pass
+
+- Date: 2026-06-09
+- Main objective: Make Mara's opened-manifest thumbprint receipt route show
+  route-specific next steps instead of falling back to the generic
+  opened-passenger prompt.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `mara_manifest_thumbprint_receipt` and
+  `mara_manifest_thumbprint_receipt_true_ending` as low normal-play discovery
+  beats, while coverage still reached every scene.
+- Why this matters: When players notice Mara's torn thumbprint in the opened
+  manifest, the route is no longer just "get passengers moving." The player
+  should see whether the next action is to carry the oath to the speaker,
+  confirm that passengers received it, or pull after receipt.
+- Completed work:
+  - Added objective rules for the thumbprint carry and intercom stages.
+  - Kept the existing receipt objective as the final pre-release step.
+  - Suppressed the broad opened-manifest objective once
+    `read_manifest_thumbprint` is active.
+  - Updated thumbprint path tests across direct opened-door, Mara handoff,
+    sign-off, and return-to-doors entry points.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "thumbprint"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `mara_manifest_thumbprint`,
+    `mara_manifest_thumbprint_intercom`, `mara_manifest_thumbprint_receipt`,
+    and `mara_manifest_thumbprint_receipt_true_ending`, score 301.
+- Playtest feedback:
+  - The route now shows the sequence: carry Mara's thumbprint oath to the
+    third-car speaker, confirm the opened passengers received it, then pull
+    after receipt.
+  - What felt better: the oath route reads like a deliberate passenger-proof
+    sequence instead of a generic opened-manifest action.
+  - What still feels risky: random play can still undersample optional late
+    proof branches because the opened-manifest choice list is intentionally
+    broad.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late proof beats, likely by making the
+    opened-manifest choice surface easier to scan without removing meaningful
+    branches.
+
 # Cycle 64 Threshold Objective Pass
 
 - Date: 2026-06-09

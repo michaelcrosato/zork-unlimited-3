@@ -141,6 +141,44 @@ objectives:
         - flag: read_passenger_manifest
         - flag: held_passenger_threshold
         - flag: confirmed_threshold_clearance
+  - text: Carry Mara's thumbprint oath to the third-car speaker.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: read_manifest_thumbprint
+        - notFlag: heard_mara_goodbye
+        - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: held_passenger_threshold
+        - notFlag: confirmed_threshold_clearance
+        - notFlag: heard_passenger_morning_boarding
+        - notFlag: confirmed_morning_stops
+        - notFlag: heard_passenger_answers
+        - notFlag: helped_passengers_gather
+        - notFlag: made_room_for_passengers
+        - notFlag: checked_answered_passengers
+        - notFlag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
+        - notFlag: set_lunch_tin_pace
+  - text: Confirm the opened passengers received Mara's thumbprint oath, or pull with it now.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: read_manifest_thumbprint
+        - flag: heard_mara_goodbye
+        - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: held_passenger_threshold
+        - notFlag: confirmed_threshold_clearance
+        - notFlag: heard_passenger_morning_boarding
+        - notFlag: confirmed_morning_stops
+        - notFlag: heard_passenger_answers
+        - notFlag: helped_passengers_gather
+        - notFlag: made_room_for_passengers
+        - notFlag: checked_answered_passengers
+        - notFlag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
+        - notFlag: set_lunch_tin_pace
   - text: Pull the release after the opened passengers receive Mara's thumbprint oath.
     requires:
       all:
@@ -295,6 +333,7 @@ objectives:
         - notFlag: confirmed_threshold_clearance
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: read_manifest_thumbprint
         - notFlag: heard_passenger_morning_boarding
         - notFlag: confirmed_morning_stops
         - notFlag: checked_answered_passengers

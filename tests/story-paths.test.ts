@@ -17,6 +17,9 @@ const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const MANIFEST_HANDOFF_RELEASE_OBJECTIVE =
   "Pull after Mara's handoff reaches the opened manifest doors.";
+const THUMBPRINT_CARRY_OBJECTIVE = "Carry Mara's thumbprint oath to the third-car speaker.";
+const THUMBPRINT_INTERCOM_OBJECTIVE =
+  "Confirm the opened passengers received Mara's thumbprint oath, or pull with it now.";
 const THUMBPRINT_RECEIPT_OBJECTIVE =
   "Pull the release after the opened passengers receive Mara's thumbprint oath.";
 const ANSWERED_CHECK_OBJECTIVE =
@@ -8285,6 +8288,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_thumbprint");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_CARRY_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_manifest_thumbprint_to_third_car",
       "board_after_manifest_thumbprint",
@@ -8321,6 +8325,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt",
       "pull_release_after_manifest_thumbprint_goodbye"
@@ -8372,6 +8377,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("opened manifest answers in passenger order");
     expect(observation.scene.text).toContain("Received by the passengers");
     expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_manifest_thumbprint_receipt"
     ]);
@@ -8451,6 +8457,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt",
       "pull_release_after_manifest_thumbprint_goodbye"
@@ -8501,6 +8508,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt",
       "pull_release_after_manifest_thumbprint_goodbye"
@@ -8563,6 +8571,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
     observation = observe(story, state);
@@ -8614,6 +8623,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_thumbprint");
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_CARRY_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_manifest_thumbprint_to_third_car"
     );
@@ -8624,6 +8634,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("I thought that mark meant I had to be last");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
     observation = observe(story, state);
@@ -8722,11 +8733,13 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_manifest_thumbprint");
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_CARRY_OBJECTIVE]);
 
     state = choose(story, state, "return_from_manifest_thumbprint");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passengers_released");
+    expect(observation.objectives).toEqual([THUMBPRINT_CARRY_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_manifest_thumbprint_from_opened_doors"
     );
@@ -8750,6 +8763,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
     observation = observe(story, state);
@@ -8799,6 +8813,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("witness keeping the door open");
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_CARRY_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "carry_manifest_thumbprint_to_third_car"
     );
@@ -8809,6 +8824,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("mara_manifest_thumbprint_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("Let it mean I stayed long enough to leave");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_manifest_thumbprint_goodbye");
     observation = observe(story, state);
@@ -8859,6 +8875,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.scene.text).toContain("Let it mean I stayed long enough to leave");
+    expect(observation.objectives).toEqual([THUMBPRINT_INTERCOM_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt",
       "pull_release_after_manifest_thumbprint_goodbye"
@@ -8989,6 +9006,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_manifest_thumbprint_receipt"
     ]);
