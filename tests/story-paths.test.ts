@@ -17,6 +17,7 @@ const ANSWERED_CHECK_OBJECTIVE =
   "Pull the release after every answered passenger has a face behind the name.";
 const ECHO_SEAT_RECEIPT_OBJECTIVE =
   "Pull the release after every familiar passenger echo has a seat aboard.";
+const CHECKED_ECHO_OBJECTIVE = "Seat the checked passenger echoes before pulling the release.";
 const COUNTED_SHARED_COUNT_OBJECTIVE =
   "Pull after the opened passengers finish counting one another.";
 const REVIEWED_COUNT_OBJECTIVE = "Pull while Mara's reviewed count still holds.";
@@ -5714,6 +5715,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.checked_echoed_passengers).toBe(true);
     expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
     expect(observation.state.flags.confirmed_echoed_manifest_seats).toBeUndefined();
+    expect(observation.objectives).toEqual([CHECKED_ECHO_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_checked_echoed_manifest_seats",
       "pull_release_after_checked_echoes"
@@ -5770,6 +5773,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_echoed_check");
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.objectives).toEqual([CHECKED_ECHO_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "carry_checked_echoes_to_speaker",
       "confirm_checked_echoed_manifest_seats",

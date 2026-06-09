@@ -131,6 +131,13 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Seat the checked passenger echoes before pulling the release.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
   - text: Pull after the opened passengers finish counting one another.
     requires:
       all:
@@ -186,6 +193,7 @@ objectives:
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
+        - notFlag: checked_echoed_passengers
         - notFlag: confirmed_echoed_manifest_seats
         - any:
             - notFlag: saw_mara_manifest_handoff

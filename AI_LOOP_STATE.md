@@ -7,6 +7,63 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 60 Checked-Echo Objective
+
+- Date: 2026-06-09
+- Main objective: Make the familiar door-echo check give a precise next
+  objective instead of falling back to the broad opened-manifest prompt.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence remains healthy, and recent suggested actions
+  named `passenger_echoed_check` / `passenger_echoed_manifest_intercom` as
+  normal-play proof beats worth surfacing.
+- Why this matters: Once the player has matched thermos, newspaper, and mitten
+  sounds to real boarded passengers, the next decision is not generic movement.
+  The UI should tell them to seat those checked echoes before pulling the
+  release.
+- Planned work:
+  - Add a checked-echo objective for
+    `checked_echoed_passengers + !confirmed_echoed_manifest_seats`.
+  - Suppress the broad opened-manifest objective while that checked-echo
+    objective is active.
+  - Add focused regression assertions for both checked-echo entry routes.
+  - Run focused tests, full health, evidence-only cycle, and an actual CLI
+    playthrough.
+- Risks:
+  - This does not make the branch structurally shorter. It improves the
+    player-facing objective once the branch is reached. Blind-play feedback
+    should decide whether the hub menu needs a later ordering pass.
+- Status:
+  - Completed and ready for commit/push.
+  - Added `Seat the checked passenger echoes before pulling the release.` as
+    the only objective at `passenger_echoed_check`.
+  - The broad `Get the opened passengers moving together...` objective now
+    clears once `checked_echoed_passengers` is set.
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "echoed"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI route reached `passenger_echoed_check` through
+    `check_opened_manifest_echoes` and showed only the new checked-echo
+    objective.
+  - Continuing with `confirm_checked_echoed_manifest_seats` then
+    `pull_release_after_echoed_seat_receipt` reached
+    `passenger_echoed_true_ending`, score 271, with no remaining objectives or
+    choices.
+  - What felt better: after checking the door sounds against real passengers,
+    the route now tells the player exactly what proof remains before release.
+  - What still feels risky: normal random play may still undersample this
+    optional branch; this pass improves clarity after discovery, not the hub's
+    earlier branch selection pressure.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving late optional proof beats that random play undersamples,
+    with lunch-tin checked routes or the morning chorus boarding route as likely
+    candidates.
+
 # Cycle 59 Counted-Chorus Objective
 
 - Date: 2026-06-09
