@@ -1939,6 +1939,16 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: share_release_after_opened_passengers_gather
+        label: Pass the release hand to hand after the opened passengers gather
+        choiceGroup: Passenger gathering
+        to: passenger_gathered_release
+        requires:
+          notFlag: helped_passengers_gather
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: ask_conductor_punch_from_opened_manifest
         label: Ask the old conductor to punch a clear path for the opened passengers
         choiceGroup: Passenger gathering

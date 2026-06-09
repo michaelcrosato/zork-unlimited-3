@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 37 Gathered Shared-Release Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the helped-passenger shared-release payoff easier to
+  discover from the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 37 evidence showed healthy validation, full coverage, and
+  remaining normal-play discoverability pressure on late branches including
+  `passenger_gathered_release` and `passenger_helped_true_ending`.
+- Why this matters: A player who opens every kept-passenger door can now choose
+  to pass the release hand to hand immediately after the passengers gather,
+  reaching the existing shared-release check without first finding the separate
+  gathered-boarding path.
+- Completed work:
+  - Added `share_release_after_opened_passengers_gather` from
+    `passengers_released` to the existing `passenger_gathered_release` scene.
+  - Reused the existing `helped_passengers_gather`,
+    `heard_gathered_passengers`, objective text, shared-release scene, and
+    `passenger_helped_true_ending`.
+  - Updated strict menu-order/player-view tests for the new Passenger
+    gathering choice.
+  - Added regression coverage proving the new opened-manifest bridge reaches
+    `passenger_helped_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "opened manifest|gathered shared-release|gathered-passenger"`.
+  - Full `npm run health` passed: format check, TypeScript, 339 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_helped_true_ending`, score 294, via
+    `share_release_after_opened_passengers_gather` and
+    `pull_release_after_shared_gathered_check`.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now offers the shared-release
+    responsibility in the same moment it describes passengers gathering and
+    making room, so the "No one crosses alone" ending reads like a central
+    rescue option instead of a hidden follow-up.
+  - What still feels risky: the opened-manifest menu is already dense. Blind
+    sessions should confirm that the new Passenger gathering choice helps
+    rather than feeling like a duplicate of gathered boarding.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with a contextual bridge, especially
+    direct normal-play discovery of `passenger_roll_call_true_ending` or
+    `passenger_lunch_tin_true_ending`.
+- Risks:
+  - Low. This adds one guarded story choice, reuses existing scenes/endings, and
+    keeps validation, tests, coverage, and actual CLI playthrough green.
+- Status: Complete.
+
 # Cycle 36 Manifest Intercom Thumbprint Receipt Bridge
 
 - Date: 2026-06-09
