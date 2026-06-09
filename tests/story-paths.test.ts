@@ -9,6 +9,8 @@ const ROOM_RELEASE_OBJECTIVE =
   "Pull the emergency release while the opened passengers hold room for one another.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
+const THUMBPRINT_RECEIPT_OBJECTIVE =
+  "Pull the release after the opened passengers receive Mara's thumbprint oath.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
@@ -6756,7 +6758,7 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[21]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     expect(observation.choices[21]?.label).toBe(
-      "Pull the release as Mara's thumbprint oath moves through the opened names"
+      "Let Mara's thumbprint oath reach the opened names before release"
     );
     expect(observation.choices[21]?.choiceGroup).toBe("Mara and manifest");
     expect(choiceIds[22]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
@@ -8700,7 +8702,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("lets opened-manifest players release directly with Mara's thumbprint oath", async () => {
+  it("routes opened-manifest thumbprint release through the passenger receipt", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -8746,14 +8748,26 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
-    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(observation.scene.ending).not.toBe(true);
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBeUndefined();
-    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
-    expect(observation.scene.text).toContain("walks through with the crowd");
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest answers in passenger order");
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_thumbprint_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("received by the passengers themselves");
+    expect(observation.scene.text).toContain("the open doors have answered it");
     expectIdealScore(observation.score);
   });
 

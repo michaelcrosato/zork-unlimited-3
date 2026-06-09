@@ -7,6 +7,77 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 32 Manifest Thumbprint Receipt Discovery
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest thumbprint route surface the
+  passenger receipt confirmation before one of its direct release payoffs.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 32 evidence is green overall, but random normal-play samples
+  still under-sample `mara_manifest_thumbprint_receipt`,
+  `mara_manifest_thumbprint_receipt_true_ending`, and nearby optional
+  opened-manifest branches.
+- Why this matters: The receipt beat is the clearest version of Mara's
+  thumbprint changing from "last dispatcher" into a witnessed passenger oath.
+  If normal play can skip straight past it too easily, the branch loses its
+  emotional proof before the ending.
+- Planned work:
+  - Route the direct opened-door thumbprint release through
+    `mara_manifest_thumbprint_receipt` instead of jumping straight to
+    `passenger_manifest_thumbprint_true_ending`.
+  - Keep the existing explicit receipt-confirmation choice intact.
+  - Update route tests so the added confirmation beat is intentional.
+  - Run focused tests, full health, and an actual CLI/MCP-style playthrough.
+- Risks:
+  - This adds one click to one direct thumbprint release path, so the choice
+    label must set the expectation that the passengers receive the oath before
+    the release is pulled.
+- Status:
+  - Completed and ready for commit/push.
+  - The direct opened-door thumbprint release choice now routes to
+    `mara_manifest_thumbprint_receipt` before
+    `mara_manifest_thumbprint_receipt_true_ending`.
+  - The choice label now promises that the oath reaches the opened names
+    before the release, so the extra click reads as confirmation rather than a
+    surprise delay.
+  - A new receipt-specific objective appears at the pause:
+    "Pull the release after the opened passengers receive Mara's thumbprint
+    oath." The broad opened-manifest objective no longer appears after that
+    receipt is confirmed.
+  - Focused thumbprint receipt tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "thumbprint receipt|opened-manifest thumbprint"`.
+  - Actual CLI playthrough through
+    `pull_release_with_manifest_thumbprint_oath_from_opened_doors` reached
+    `mara_manifest_thumbprint_receipt`, showed only the receipt-release
+    objective, then reached `mara_manifest_thumbprint_receipt_true_ending`,
+    score 308, with no remaining objectives.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route ended at
+    `passenger_conductor_clearance_checked_true_ending`.
+  - The larger MCP random sample in the cycle report hit
+    `mara_manifest_thumbprint_receipt_true_ending` twice; the 100-run random
+    sample still missed it, so this is a proven route-quality improvement and a
+    partial discoverability improvement rather than a fully solved random
+    sampling issue.
+- Playtest feedback:
+  - The receipt pause reads coherently: the player asks for the thumbprint oath
+    to reach the opened names, sees the passengers receive it in passenger
+    order, then pulls the release.
+  - The focused objective at the pause removes the noisy opened-manifest
+    checklist and makes the next action obvious.
+  - No invalid choice, stale ending objective, unreachable scene, unfinished
+    playtest, or ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery work on remaining random misses
+    such as `passenger_answered_check`, `passenger_counted_true_ending`,
+    `passenger_farewell`, or `passenger_morning_chorus`.
+
 # Cycle 31 Gathered Passenger Release Payoff
 
 - Date: 2026-06-08
