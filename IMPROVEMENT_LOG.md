@@ -4,6 +4,35 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Mara Thumbprint Receipt Split
+
+### Current Plan
+
+- Main objective: Make Mara's opened-manifest thumbprint receipt route easier
+  to recognize in the large late-game hub.
+- Why this matters: Current cycle evidence flagged
+  `mara_manifest_thumbprint_receipt` and its true ending as normal-play
+  discoverability targets. The receipt payoff was mixed into the broader
+  `Thumbprint oath` group.
+
+### Work Completed
+
+- Added `Thumbprint receipt` as a first-class display group.
+- Moved the two opened-manifest receipt choices into that group.
+- Reworded receipt labels so the visible promise is that the opened passengers
+  receive Mara's oath before release.
+- Updated fallback grouping plus transcript and player-view regressions.
+
+### Playtest Notes
+
+- Focused grouping/receipt-route tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- CLI playthrough reached `mara_manifest_thumbprint_receipt_true_ending`, score 308. The new label read clearly before selection, and the receipt scene paid
+  it off without adding extra navigation.
+- Next target if no blind-play issue appears: continue improving undersampled
+  late-game branches such as `passenger_keepsake_roll_call`.
+
 ## 2026-06-09 - Morning Stops / Keepsakes Split
 
 ### Current Plan

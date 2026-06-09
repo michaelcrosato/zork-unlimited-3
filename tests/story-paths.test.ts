@@ -6919,14 +6919,14 @@ describe("demo story critical paths", () => {
     expect(observation.choices[20]?.choiceGroup).toBe("Thumbprint oath");
     expect(choiceIds[21]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     expect(observation.choices[21]?.label).toBe(
-      "Let Mara's thumbprint oath reach the opened names before release"
+      "Let the opened passengers receive Mara's thumbprint oath before release"
     );
-    expect(observation.choices[21]?.choiceGroup).toBe("Thumbprint oath");
+    expect(observation.choices[21]?.choiceGroup).toBe("Thumbprint receipt");
     expect(choiceIds[22]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
     expect(observation.choices[22]?.label).toBe(
-      "Confirm Mara's thumbprint oath reaches the opened passengers"
+      "Confirm the opened passengers receive Mara's thumbprint oath"
     );
-    expect(observation.choices[22]?.choiceGroup).toBe("Thumbprint oath");
+    expect(observation.choices[22]?.choiceGroup).toBe("Thumbprint receipt");
     expect(choiceIds[23]).toBe("return_opened_manifest_mitten");
     expect(observation.choices[23]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
@@ -8942,7 +8942,7 @@ describe("demo story critical paths", () => {
       observation.choices.find(
         (choice) => choice.id === "pull_release_with_manifest_thumbprint_oath_from_opened_doors"
       )?.choiceGroup
-    ).toBe("Thumbprint oath");
+    ).toBe("Thumbprint receipt");
 
     state = choose(story, state, "pull_release_with_manifest_thumbprint_oath_from_opened_doors");
     observation = observe(story, state);
@@ -15164,6 +15164,18 @@ describe("demo story critical paths", () => {
     );
     expect(renderedPlayerView.indexOf("  Lunch tin count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin roster:")
+    );
+    expect(renderedPlayerView).toContain(
+      "  Thumbprint receipt:\n    11. Let the opened passengers receive Mara's thumbprint oath before release"
+    );
+    expect(renderedPlayerView).toContain(
+      "    12. Confirm the opened passengers receive Mara's thumbprint oath"
+    );
+    expect(renderedPlayerView.indexOf("  Thumbprint oath:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Thumbprint receipt:")
+    );
+    expect(renderedPlayerView.indexOf("  Thumbprint receipt:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Mara and manifest:")
     );
     expect(renderedPlayerView).toContain("  Final roll call:");
     expect(renderedPlayerView).toContain("Let the opened passengers answer the final roll call");

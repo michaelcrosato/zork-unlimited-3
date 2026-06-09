@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 20 Mara Thumbprint Receipt Split
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest Mara thumbprint receipt route easier
+  to spot as a distinct payoff in the late-game hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence named `mara_manifest_handoff`,
+  `mara_manifest_thumbprint_receipt`, and
+  `mara_manifest_thumbprint_receipt_true_ending` as normal-play discoverability
+  targets while coverage could still reach every scene.
+- Why this matters: The receipt route was playable, but the menu grouped
+  discovery/carrying choices and receipt-confirmation choices together under
+  `Thumbprint oath`. Players scanning the opened-manifest hub now see the
+  actual payoff under `Thumbprint receipt`: the opened passengers receive
+  Mara's oath before the release.
+- Completed work:
+  - Added `Thumbprint receipt` to the canonical choice-group display order.
+  - Updated fallback choice classification so unauthored thumbprint-receipt
+    labels group consistently.
+  - Moved the two opened-manifest receipt choices into `Thumbprint receipt`.
+  - Reworded receipt labels to emphasize passenger receipt rather than a vague
+    oath movement.
+  - Updated transcript and player-view regressions for the split.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest-specific platform beat|thumbprint receipt"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `mara_manifest_thumbprint_receipt_true_ending`,
+    score 308, through
+    `pull_release_with_manifest_thumbprint_oath_from_opened_doors` and
+    `pull_release_after_manifest_thumbprint_receipt`.
+- Playtest feedback:
+  - What felt better: the updated label makes the route promise explicit before
+    selection, and the next scene immediately pays it off with passenger-order
+    receipt.
+  - What still feels risky: this improves scanability and transcript critique
+    quality, but the opened-manifest hub remains intentionally large.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_keepsake_roll_call` or another normal-play miss from the current
+    evidence.
+- Risks:
+  - Route mechanics, scene count, and ending count are intentionally unchanged.
+- Status: Complete.
+
 # Cycle 19 Final Roll Call Grouping Pass
 
 - Date: 2026-06-09

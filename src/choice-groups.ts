@@ -15,6 +15,7 @@ const GROUP_ORDER = [
   "Board / release",
   "Shared room / release",
   "Thumbprint oath",
+  "Thumbprint receipt",
   "Mara and manifest",
   "Mara",
   "Manifest count",
@@ -95,6 +96,14 @@ function classifyChoiceLabel(label: string): string {
 
   if (/\b(final roll call|passengers' own roll call|passengers' roll call)\b/.test(normalized)) {
     return "Final roll call";
+  }
+
+  if (
+    /\bthumbprint\b.*\b(receipt|receive|received|reaches|reach)\b|\b(receipt|receive|received|reaches|reach)\b.*\bthumbprint\b/.test(
+      normalized
+    )
+  ) {
+    return "Thumbprint receipt";
   }
 
   if (

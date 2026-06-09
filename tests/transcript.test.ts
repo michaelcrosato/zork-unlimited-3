@@ -123,8 +123,9 @@ describe("transcript rendering", () => {
       "Thumbprint oath:\n- Notice Mara's torn thumbprint in the opened manifest"
     );
     expect(transcript).toContain(
-      "- Let Mara's thumbprint oath reach the opened names before release"
+      "Thumbprint receipt:\n- Let the opened passengers receive Mara's thumbprint oath before release"
     );
+    expect(transcript).toContain("- Confirm the opened passengers receive Mara's thumbprint oath");
     expect(transcript).toContain("Manifest count:\n- Review the opened count");
     expect(transcript).toContain(
       "Shared count:\n- Board after the opened passengers finish the count together"
@@ -192,6 +193,9 @@ describe("transcript rendering", () => {
       transcript.indexOf("Thumbprint oath:")
     );
     expect(transcript.indexOf("Thumbprint oath:")).toBeLessThan(
+      transcript.indexOf("Thumbprint receipt:")
+    );
+    expect(transcript.indexOf("Thumbprint receipt:")).toBeLessThan(
       transcript.indexOf("Mara and manifest:")
     );
   });
