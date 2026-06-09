@@ -5646,8 +5646,11 @@ scenes:
       share, then settles back into the aisle as room no one has to earn.
     choices:
       - id: pull_shared_release_after_making_room
-        label: Pull together once every hand has found the release
-        to: passenger_true_ending
+        label: Let the shared release reach the back row before pulling
+        to: passenger_room_release_receipt
+        effects:
+          set:
+            confirmed_shared_room_release: true
       - id: confirm_shared_room_release
         label: Confirm the shared release reaches the back of the car
         to: passenger_room_release_receipt

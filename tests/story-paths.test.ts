@@ -134,6 +134,43 @@ function releaseAfterMorningStopCheck(
   return { state, observation };
 }
 
+function releaseAfterSharedRoomReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_room_release");
+  expect(observation.scene.text).toContain("room no one has to earn");
+  expect(observation.state.flags.shared_release_reached).toBe(true);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_shared_release_after_making_room",
+    "confirm_shared_room_release"
+  ]);
+
+  state = choose(story, state, "pull_shared_release_after_making_room");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_room_release_receipt");
+  expect(observation.scene.text).toContain("the back row");
+  expect(observation.scene.text).toContain("No hand is left out");
+  expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_confirmed_shared_room_release"
+  ]);
+
+  state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_shared_release_checked_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("the handle has answered all");
+  expect(observation.scene.text).toContain("Received by every hand");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
 describe("demo story critical paths", () => {
   it("can reach the true ending", async () => {
     const story = await loadStory("stories/demo.yaml");
@@ -4766,14 +4803,7 @@ describe("demo story critical paths", () => {
 
     const sharedRoomReleaseState = state;
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
 
     state = choose(story, sharedRoomReleaseState, "confirm_shared_room_release");
     observation = observe(story, state);
@@ -4865,14 +4895,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
 
     state = choose(story, roomState, "listen_to_room_made_for_passengers");
     observation = observe(story, state);
@@ -4888,14 +4911,7 @@ describe("demo story critical paths", () => {
       "confirm_shared_room_release"
     ]);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
 
     state = choose(story, roomState, "reach_release_after_making_room");
     observation = observe(story, state);
@@ -4911,14 +4927,7 @@ describe("demo story critical paths", () => {
       "confirm_shared_room_release"
     ]);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("lets opened-manifest players make room physically before the intercom payoff", async () => {
@@ -4982,14 +4991,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("promotes the shared room-making release directly from opened manifest doors", async () => {
@@ -5031,13 +5033,7 @@ describe("demo story critical paths", () => {
       "confirm_shared_room_release"
     ]);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("lets opened manifest players confirm the shared room release directly", async () => {
@@ -5164,13 +5160,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("lets the opened passenger platform directly surface the room-making intercom", async () => {
@@ -5220,12 +5210,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("lets platform explorers confirm the shared room release directly", async () => {
@@ -5347,12 +5332,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
 
   it("pays off Mara's opened manifest count before a direct passenger release", async () => {
@@ -9743,12 +9723,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    state = choose(story, state, "pull_shared_release_after_making_room");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
 
     state = choose(story, answeredState, "ask_conductor_punch_from_answers");
     observation = observe(story, state);
@@ -15126,17 +15101,10 @@ describe("demo story critical paths", () => {
     expect(observation.scene.ending).toBe(false);
     expect(observation.state.flags.shared_release_reached).toBe(true);
 
-    directIntercomReleaseState = choose(
+    ({ state: directIntercomReleaseState, observation } = releaseAfterSharedRoomReceipt(
       story,
-      directIntercomReleaseState,
-      "pull_shared_release_after_making_room"
-    );
-    observation = observe(story, directIntercomReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expectIdealScore(observation.score);
+      directIntercomReleaseState
+    ));
 
     let countState = choose(story, state, "let_opened_passengers_finish_count");
     observation = observe(story, countState);

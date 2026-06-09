@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 55 Shared-Room Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the direct shared-room release route show the back-row
+  receipt before the checked passenger ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall and points at optional
+  late-game discovery/payoff misses rather than crashes or unfinished runs.
+- Why this matters: The shared-room route is about passengers making enough
+  space for everyone to leave together. A player who chooses the release-minded
+  action after making room should see the handle reach every hand before the
+  ending says that no one had to pull alone.
+- Planned work:
+  - Keep `pull_shared_release_after_making_room` stable for playtest history.
+  - Route it to `passenger_room_release_receipt` instead of the generic
+    passenger ending.
+  - Set `confirmed_shared_room_release` on that direct route so state matches
+    the visible receipt.
+  - Update focused shared-room route tests, run health, and actually play the
+    revised route.
+- Risks:
+  - The shared-room release scene still offers two visible actions that reach
+    the same receipt. That is acceptable here because one preserves immediate
+    release intent and the other remains an explicit confirmation option.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_shared_release_after_making_room` now routes through
+    `passenger_room_release_receipt` and sets
+    `confirmed_shared_room_release`.
+  - Focused shared-room tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "shared room|room-making|make room|room release"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI playthrough used `make_room_for_passengers_in_third_car` ->
+    `pass_room_release_after_making_room` ->
+    `pull_shared_release_after_making_room` ->
+    `pull_release_after_confirmed_shared_room_release`.
+  - Final scene was `passenger_shared_release_checked_true_ending`, score 272,
+    with no remaining choices or objectives.
+  - What felt better: the route now explicitly shows the release reaching the
+    back row before the ending, so the checked ending is earned on-screen.
+  - What still feels risky: the room branch remains choice-dense because it can
+    branch into conductor, newspaper, intercom, and direct release payoffs.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue reducing late opened-manifest choice density where a release
+    option can skip the most legible proof beat.
+
 # Cycle 54 Morning-Stop Proof Payoff
 
 - Date: 2026-06-09
