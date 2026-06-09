@@ -315,6 +315,7 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: helped_passengers_gather
+        - notFlag: held_passenger_threshold
         - notFlag: heard_final_roll_call
         - notFlag: made_room_for_passengers
         - notFlag: matched_manifest_keepsakes
@@ -6607,6 +6608,14 @@ scenes:
         effects:
           set:
             heard_final_roll_call: true
+      - id: hold_threshold_from_gathered_intercom
+        label: Hold the third-car threshold while the gathered passengers move
+        to: passenger_threshold_boarding
+        requires:
+          notFlag: held_passenger_threshold
+        effects:
+          set:
+            held_passenger_threshold: true
       - id: let_lunch_tin_worker_set_pace_from_gathered_intercom
         label: Let the lunch-tin worker set the boarding pace from here
         to: passenger_farewell

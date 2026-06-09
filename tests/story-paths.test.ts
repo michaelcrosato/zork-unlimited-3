@@ -11728,6 +11728,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
@@ -13131,9 +13132,48 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
+
+    const thresholdState = choose(story, state, "hold_threshold_from_gathered_intercom");
+    observation = observe(story, thresholdState);
+
+    expect(observation.scene.id).toBe("passenger_threshold_boarding");
+    expect(observation.scene.text).toContain("stand at the third-car threshold");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(GATHERED_RELEASE_OBJECTIVE);
+
+    let thresholdRouteState = choose(story, thresholdState, "listen_to_threshold_from_boarding");
+    observation = observe(story, thresholdRouteState);
+
+    expect(observation.scene.id).toBe("passenger_threshold_intercom");
+    expect(observation.objectives).toEqual([THRESHOLD_INTERCOM_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(GATHERED_RELEASE_OBJECTIVE);
+
+    thresholdRouteState = choose(
+      story,
+      thresholdRouteState,
+      "confirm_threshold_clearance_before_release"
+    );
+    observation = observe(story, thresholdRouteState);
+
+    expect(observation.scene.id).toBe("passenger_threshold_clearance_check");
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
+
+    thresholdRouteState = choose(
+      story,
+      thresholdRouteState,
+      "pull_release_after_confirmed_threshold_clearance"
+    );
+    observation = observe(story, thresholdRouteState);
+
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
@@ -13228,6 +13268,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
@@ -16045,6 +16086,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
@@ -16212,6 +16254,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
@@ -16277,6 +16320,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "hold_threshold_from_gathered_intercom",
       "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);

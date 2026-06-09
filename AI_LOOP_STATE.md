@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 34 Gathered Threshold Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the held-threshold payoff recoverable from the common
+  gathered-passenger intercom route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 34 evidence showed all scenes reachable, healthy ideal-ending
+  rates, and remaining normal-play discoverability pressure on late passenger
+  branches including `passenger_threshold_boarding`.
+- Why this matters: A player who listens to the gathered passengers before the
+  shared release now sees a concrete threshold action in the same scene, instead
+  of needing to have chosen the threshold path earlier from the opened-manifest
+  hub.
+- Completed work:
+  - Added `hold_threshold_from_gathered_intercom` from
+    `passenger_gathered_intercom` to `passenger_threshold_boarding`.
+  - Suppressed the gathered-release objective once the player pivots into the
+    held-threshold route, so guidance changes to threshold-specific prompts.
+  - Updated exact gathered-intercom menu expectations and added regression
+    coverage proving the new bridge reaches
+    `passenger_threshold_checked_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered|threshold"`.
+  - Full `npm run health` passed: format check, TypeScript, 337 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_threshold_checked_true_ending`, score
+    345, through `listen_to_gathered_passengers_from_boarding`,
+    `hold_threshold_from_gathered_intercom`,
+    `listen_to_threshold_from_boarding`,
+    `confirm_threshold_clearance_before_release`, and
+    `pull_release_after_confirmed_threshold_clearance`.
+- Playtest feedback:
+  - What felt better: the gathered intercom already describes people moving
+    together, so holding the threshold reads like a natural next responsibility
+    instead of a separate hidden branch.
+  - What still feels risky: the choice adds another late optional branch to an
+    already busy intercom menu. Blind sessions should confirm players recognize
+    it as a threshold route rather than another generic release check.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch that benefits from a natural bridge,
+    especially `passenger_counted_true_ending` or any route still missed by
+    normal random runs.
+- Risks:
+  - Low. This adds one guarded story choice, reuses existing threshold scenes and
+    flags, and keeps validation and coverage green.
+- Status: Complete.
+
 # Cycle 33 Room-Echo Intercom Bridge
 
 - Date: 2026-06-09
