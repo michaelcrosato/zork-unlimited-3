@@ -11244,21 +11244,14 @@ describe("demo story critical paths", () => {
     expect(
       observation.choices.find((choice) => choice.id === "pull_release_after_gathered_boarding")
         ?.label
-    ).toBe("Listen once more before the gathered passengers share the release");
+    ).toBe("Pass the release hand to hand with the gathered passengers");
 
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_intercom");
-    expect(observation.scene.text).toContain("The passengers gather themselves");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_gathered_release");
     expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_shared_gathered_check");
@@ -15535,16 +15528,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_intercom");
-    expect(observation.scene.text).toContain("The passengers gather themselves");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_gathered_release");
     expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_shared_gathered_check");
@@ -16433,16 +16419,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_intercom");
-    expect(observation.scene.text).toContain("The passengers gather themselves");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_gathered_release");
     expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_shared_gathered_check");
@@ -17077,15 +17056,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_intercom");
-    expect(observation.scene.text).toContain("passengers gather themselves");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-
-    state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_gathered_release");
     expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
 
     state = choose(story, state, "pull_release_after_shared_gathered_check");
     observation = observe(story, state);

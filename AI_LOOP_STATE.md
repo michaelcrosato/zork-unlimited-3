@@ -7,6 +7,60 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 51 Gathered Release Direct Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the gathered-passenger boarding release action pay off
+  with the shared-handle scene immediately, while keeping the explicit intercom
+  listen branch available.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall and points at optional
+  late-game discovery/payoff misses, including `passenger_gathered_intercom`
+  and `passenger_gathered_release`.
+- Why this matters: A player who has already helped the opened passengers board
+  by helping one another is choosing a physical shared-release action. The next
+  screen should show the handle moving hand to hand instead of asking them to
+  pass through another explanatory intercom beat.
+- Planned work:
+  - Keep `pull_release_after_gathered_boarding` stable for playtest history.
+  - Route it from `passenger_gathered_boarding` to
+    `passenger_gathered_release`.
+  - Rename the player-facing label so it describes the direct shared-release
+    action.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This improves one gathered-passenger payoff branch. It does not reduce the
+    opened-manifest hub's overall choice density.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_gathered_boarding` now routes directly to
+    `passenger_gathered_release` and its label describes the shared-handle
+    action.
+  - Focused gathered-route regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered"`.
+  - Full `npm run health` passed: format check, TypeScript, 330 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI playthrough used `listen_to_passenger_answers` ->
+    `gather_answered_passengers` -> `pull_release_after_gathered_boarding` ->
+    `pull_release_after_shared_gathered_check`.
+  - Final scene was `passenger_helped_true_ending`, score 332, with no
+    remaining objectives.
+  - What felt better: the gathered-passenger route now goes from boarding
+    directly into the physical shared-release scene, so the player sees the
+    handle move hand to hand before the ending.
+  - What still feels risky: this improves one gathered-passenger payoff path;
+    other optional late-game branches such as lunch-tin self-count and morning
+    chorus remain under-sampled by normal random play.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery/payoff work for another current random miss
+    such as `passenger_lunch_tin_self_count` or `passenger_morning_chorus`.
+
 # Cycle 50 Room-Making Intercom Payoff
 
 - Date: 2026-06-09

@@ -4228,8 +4228,8 @@ scenes:
           set:
             heard_gathered_passengers: true
       - id: pull_release_after_gathered_boarding
-        label: Listen once more before the gathered passengers share the release
-        to: passenger_gathered_intercom
+        label: Pass the release hand to hand with the gathered passengers
+        to: passenger_gathered_release
         effects:
           set:
             heard_gathered_passengers: true
