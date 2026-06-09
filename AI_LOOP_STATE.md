@@ -7,6 +7,70 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 39 Lunch-Tin Self-Count Visibility
+
+- Date: 2026-06-09
+- Main objective: Make the common opened-manifest lunch-tin speaker route show
+  the worker counting himself before the player pulls the release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 39 evidence was green, but normal random play still
+  under-sampled `passenger_lunch_tin_self_count` and
+  `passenger_lunch_tin_true_ending` in the 100-run sample.
+- Why this matters: The lunch-tin branch is about refusing to let the person
+  doing the counting disappear inside the count. Letting a direct speaker
+  release skip the self-count beat made the ending technically reachable but
+  less legible.
+- Planned work:
+  - Route `pull_release_after_lunch_tin_intercom` to
+    `passenger_lunch_tin_self_count` instead of directly to
+    `passenger_lunch_tin_true_ending`.
+  - Keep the existing choice id stable for route tooling while changing the
+    player-facing label to the self-count action.
+  - Update the broad opened-manifest objective so it tells players to carry the
+    count to the speaker, let the worker count himself, and then pull.
+  - Update focused lunch-tin regression coverage.
+  - Run focused tests, full health, and a real CLI/MCP-style playthrough of the
+    revised route.
+- Risks:
+  - This adds one click to one lunch-tin speaker shortcut, so the self-count
+    scene must feel like the emotional proof of the route rather than a delay.
+- Status:
+  - Completed and ready for commit/push.
+  - Story and focused regression changes are implemented.
+  - `pull_release_after_lunch_tin_intercom` now keeps its stable choice id but
+    routes to `passenger_lunch_tin_self_count`, sets
+    `counted_lunch_tin_worker_self`, and shows the player-facing label "Let
+    the lunch-tin worker count himself before the release."
+  - The opened-manifest objective now names the revised lunch-tin sequence:
+    carry the count to the speaker, let the worker count himself, then pull.
+  - Focused lunch-tin story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `pull_release_on_opened_lunch_tin_count` now
+    visits `passenger_lunch_tin_intercom` ->
+    `passenger_lunch_tin_self_count` ->
+    `passenger_lunch_tin_true_ending` with score 325 and no remaining
+    objectives.
+  - The added pause reads coherently: Mara says the worker's count should be
+    the last thing the line counts, then the worker taps the tin against his
+    own chest before the release.
+  - No invalid choice, stale objective, unreachable scene, unfinished run, or
+    ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining under-sampled proof
+    beats such as `mara_manifest_thumbprint_receipt`,
+    `passenger_answered_boarding_true_ending`,
+    `passenger_manifest_handoff_true_ending`, or `passenger_threshold_boarding`.
+
 # Cycle 38 Opened-Passenger Room Boarding Proof
 
 - Date: 2026-06-09

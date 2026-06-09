@@ -18,7 +18,7 @@ const ECHO_SEAT_RECEIPT_OBJECTIVE =
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull the release after the gathered passengers pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -44,6 +44,34 @@ function releaseAfterEchoSeatReceipt(
   expect(observation.scene.id).toBe("passenger_echoed_true_ending");
   expect(observation.scene.ending).toBe(true);
   expect(observation.scene.text).toContain("ordinary noise");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
+function releaseAfterLunchTinSelfCount(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+  expect(observation.scene.text).toContain("the person doing the counting");
+  expect(observation.scene.text).toContain("has not disappeared inside the count");
+  expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+  expect(observation.state.flags.checked_lunch_tin_passengers).toBeUndefined();
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_lunch_tin_self_count",
+    "check_lunch_tin_passengers_after_self_count"
+  ]);
+
+  state = choose(story, state, "pull_release_after_lunch_tin_self_count");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("lunch-tin worker's count");
+  expect(observation.scene.text).toContain("everyone got a break at last");
   expectIdealScore(observation.score);
 
   return { state, observation };
@@ -6849,17 +6877,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_lunch_tin_intercom"
     );
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_after_lunch_tin_intercom")
+        ?.label
+    ).toBe("Let the lunch-tin worker count himself before the release");
 
     directLunchTinState = choose(
       story,
       directLunchTinState,
       "pull_release_after_lunch_tin_intercom"
     );
-    observation = observe(story, directLunchTinState);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state: directLunchTinState, observation } = releaseAfterLunchTinSelfCount(
+      story,
+      directLunchTinState
+    ));
 
     state = choose(story, openedManifestState, "check_lunch_tin_count_from_opened_manifest");
     observation = observe(story, state);
@@ -8978,15 +9009,13 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_lunch_tin_intercom"
     );
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_after_lunch_tin_intercom")
+        ?.label
+    ).toBe("Let the lunch-tin worker count himself before the release");
 
     state = choose(story, state, "pull_release_after_lunch_tin_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("lunch-tin worker's count");
-    expect(observation.scene.text).toContain("everyone got a break at last");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
   it("lets answer listeners follow the lunch-tin count directly into the third car", async () => {
@@ -9173,11 +9202,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the conductor has room to raise his punch");
 
     state = choose(story, state, "pull_release_after_lunch_tin_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterLunchTinSelfCount(story, state));
 
     state = boardingState;
     state = choose(story, state, "check_lunch_tin_passengers_before_release");
@@ -9536,11 +9561,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
 
     state = choose(story, state, "pull_release_after_lunch_tin_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
   it("lets answer listeners ask the conductor to gather passengers by signal", async () => {
@@ -11513,13 +11534,13 @@ describe("demo story critical paths", () => {
       "hear_final_lunch_tin_roll_call",
       "pull_release_after_lunch_tin_intercom"
     ]);
+    expect(
+      observation.choices.find((choice) => choice.id === "pull_release_after_lunch_tin_intercom")
+        ?.label
+    ).toBe("Let the lunch-tin worker count himself before the release");
 
     state = choose(story, state, "pull_release_after_lunch_tin_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
   it("lets opened-manifest players confirm the lunch-tin roster proof directly", async () => {

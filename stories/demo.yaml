@@ -136,7 +136,7 @@ objectives:
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
         - notFlag: confirmed_echoed_manifest_seats
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -6250,12 +6250,16 @@ scenes:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
       - id: pull_release_after_lunch_tin_intercom
-        label: Pull the release while the lunch tin keeps time
-        to: passenger_lunch_tin_true_ending
+        label: Let the lunch-tin worker count himself before the release
+        to: passenger_lunch_tin_self_count
         requires:
           all:
             - notFlag: checked_lunch_tin_passengers
             - notFlag: read_lunch_tin_roster
+            - notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            counted_lunch_tin_worker_self: true
       - id: pull_release_after_checked_lunch_tin_intercom
         label: Pull the release after the checked lunch-tin count
         to: passenger_lunch_tin_checked_true_ending
