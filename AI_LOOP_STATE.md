@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 53 Direct Morning Stop Confirmation
+
+- Date: 2026-06-09
+- Main objective: Make explicit remembered-stop confirmation choices resolve
+  directly to the morning stop-check payoff instead of routing through an
+  extra general intercom beat.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 53 evidence showed healthy coverage and no unfinished runs,
+  while `passenger_morning_stop_checked_true_ending` remained a low-frequency
+  core passenger payoff.
+- Why this matters: When a player chooses to confirm the remembered stops, the
+  game now honors that intent immediately. The player sees HOME break into
+  real station names before pulling the release, rather than making another
+  choice that repeats the same instruction.
+- Completed work:
+  - Routed `confirm_opened_manifest_morning_stops`,
+    `confirm_morning_stops_from_opened_manifest`,
+    `board_and_confirm_morning_stops_after_chorus`, and
+    `confirm_platform_morning_stops` directly to
+    `passenger_morning_stop_check`.
+  - Set `confirmed_morning_stops` on those explicit confirmation routes.
+  - Updated labels so the choices say they are confirming stops at the sign,
+    not merely carrying them to the speaker.
+  - Updated route regressions for opened-manifest, platform, and chorus
+    morning-stop entries.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "morning"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `passenger_morning_stop_checked_true_ending`, score 271, through
+    `listen_to_passenger_morning_chorus`,
+    `board_and_confirm_morning_stops_after_chorus`, and
+    `pull_release_after_confirmed_morning_stops`; final objectives were empty.
+- Playtest feedback:
+  - What felt better: the route now reads as a clear promise and payoff. The
+    player hears the morning memories, chooses to confirm the stops, sees the
+    sign answer with Warden Street / Bellweather Yard / Ash Steps, then pulls.
+  - What still feels risky: this improves clarity and pacing more than it
+    changes ending frequency, because the old intercom scene already funneled
+    to the same stop-check branch.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another low-frequency passenger payoff whose choice label implies
+    a stronger action than the current destination delivers.
+- Risks:
+  - Low. The general morning-intercom route remains available through boarding
+    choices; only explicit confirmation actions skip the extra intercom beat.
+- Status: Complete.
+
 # Cycle 52 Direct Gathered Boarding Release
 
 - Date: 2026-06-09
