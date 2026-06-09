@@ -5751,8 +5751,11 @@ scenes:
       stops with real streets again.
     choices:
       - id: pull_release_after_morning_chorus_boarding
-        label: Pull the release while the morning chorus points home
-        to: passenger_true_ending
+        label: Let the morning chorus name its stops before the release
+        to: passenger_morning_stop_check
+        effects:
+          set:
+            confirmed_morning_stops: true
       - id: confirm_morning_stops_before_release
         label: Confirm the remembered stops before pulling the release
         to: passenger_morning_stop_check

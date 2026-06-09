@@ -8,6 +8,7 @@ import {
   getRestartSensitiveChangedPaths,
   idealEndingRate,
   isAgentAuthenticationFailure,
+  normalizeProcessExitCode,
   parseMcpJsonResult,
   runLocalExploratoryRouteForStory,
   parsePorcelainPaths,
@@ -50,6 +51,12 @@ describe("AI loop restart detection", () => {
     expect(script).toContain("git status --porcelain --untracked-files=no");
     expect(script).toContain("left tracked files dirty; refusing automatic retry");
     expect(script).toContain("AI_LOOP_RETRY_DIRTY_FAILURE");
+  });
+
+  it("normalizes unsigned Windows process failures back to signed exit codes", () => {
+    expect(normalizeProcessExitCode(4294967295)).toBe(-1);
+    expect(normalizeProcessExitCode(0)).toBe(0);
+    expect(normalizeProcessExitCode(null)).toBe(1);
   });
 
   it("commits cycle observations only after pushed agent cycles", () => {

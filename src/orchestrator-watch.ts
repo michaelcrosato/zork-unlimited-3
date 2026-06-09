@@ -163,7 +163,7 @@ export function classifyAnomalies(snapshot: WatchSnapshot): Anomaly[] {
   }
 
   if (
-    /AI agent command failed|Agent command exited \d+; refusing to commit|postAgentStatus":"failed/i.test(
+    /AI agent command failed|Agent command exited -?\d+; refusing to commit|postAgentStatus":"failed/i.test(
       combinedLogs
     )
   ) {

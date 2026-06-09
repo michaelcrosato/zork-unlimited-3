@@ -108,6 +108,32 @@ function releaseAfterManifestHandoffProof(
   return { state, observation };
 }
 
+function releaseAfterMorningStopCheck(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_morning_stop_check");
+  expect(observation.scene.text).toContain("Warden Street");
+  expect(observation.scene.text).toContain("the sign answers");
+  expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_confirmed_morning_stops"
+  ]);
+
+  state = choose(story, state, "pull_release_after_confirmed_morning_stops");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_morning_stop_checked_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("Bellweather Yard");
+  expect(observation.scene.text).toContain("the remembered stops answer in full");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
 describe("demo story critical paths", () => {
   it("can reach the true ending", async () => {
     const story = await loadStory("stories/demo.yaml");
@@ -16383,11 +16409,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("lets the morning chorus flow into Mara's manifest handoff", async () => {
@@ -16532,11 +16554,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("confirms remembered morning stops from the opened manifest hub", async () => {
@@ -16746,11 +16764,7 @@ describe("demo story critical paths", () => {
     ]);
 
     const directState = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, directState);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    releaseAfterMorningStopCheck(story, directState);
 
     let confirmedState = choose(story, state, "confirm_morning_stops_before_release");
     observation = observe(story, confirmedState);
@@ -16873,11 +16887,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("lets Mara's opened-door handoff lead into the morning chorus", async () => {
@@ -16923,11 +16933,7 @@ describe("demo story critical paths", () => {
 
     state = choose(story, state, "board_after_passenger_morning_chorus");
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("surfaces the morning chorus from the passenger platform", async () => {
@@ -17000,11 +17006,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
 
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
 
   it("adds a one-time Mara sign-off for the opened passenger manifest", async () => {
@@ -17063,11 +17065,7 @@ describe("demo story critical paths", () => {
 
     morningState = choose(story, morningState, "board_after_passenger_morning_chorus");
     morningState = choose(story, morningState, "pull_release_after_morning_chorus_boarding");
-    observation = observe(story, morningState);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state: morningState, observation } = releaseAfterMorningStopCheck(story, morningState));
 
     const answeredState = choose(story, state, "listen_to_answers_after_mara_signoff");
     observation = observe(story, answeredState);

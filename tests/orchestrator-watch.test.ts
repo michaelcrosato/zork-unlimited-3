@@ -177,6 +177,19 @@ describe("orchestrator anomaly classification", () => {
     });
   });
 
+  it("flags negative agent command exits from post-agent automation logs", () => {
+    expect(
+      classifyAnomalies(
+        snapshot({
+          loopLogTail: "Agent command exited -1; refusing to commit."
+        })
+      )
+    ).toContainEqual({
+      severity: "hard",
+      reason: "agent command or post-agent automation failed"
+    });
+  });
+
   it("flags MCP route failures from the latest cycle observation", () => {
     expect(
       classifyAnomalies(

@@ -713,7 +713,7 @@ function runCommand(command: string): Promise<CommandResult> {
       output += chunk.toString();
     });
     child.on("close", (exitCode) => {
-      resolve({ command, exitCode: exitCode ?? 1, output });
+      resolve({ command, exitCode: normalizeProcessExitCode(exitCode), output });
     });
   });
 }
@@ -776,7 +776,12 @@ function runAgentCommand(
       if (settled) return;
       settled = true;
       if (timeout) clearTimeout(timeout);
-      resolve({ command, exitCode: exitCode ?? 1, output, timedOut: false });
+      resolve({
+        command,
+        exitCode: normalizeProcessExitCode(exitCode),
+        output,
+        timedOut: false
+      });
     });
 
     child.stdin.end(prompt);
@@ -1288,6 +1293,11 @@ export function shellQuote(value: string, platform: NodeJS.Platform = process.pl
     return `"${value.replace(/"/g, '\\"')}"`;
   }
   return `'${value.replace(/'/g, `'\\''`)}'`;
+}
+
+export function normalizeProcessExitCode(exitCode: number | null | undefined): number {
+  if (exitCode === null || exitCode === undefined) return 1;
+  return exitCode > 0x7fffffff ? exitCode - 0x100000000 : exitCode;
 }
 
 export function isAgentAuthenticationFailure(output: string): boolean {

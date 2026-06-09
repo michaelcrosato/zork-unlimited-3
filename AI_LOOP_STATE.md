@@ -7,6 +7,40 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 54 Morning-Stop Proof Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the direct morning-chorus release route show the
+  remembered-stop proof before the ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Fresh seeded random evidence in this checkout remains healthy with
+  `unfinished: 0`, but it still treats `passenger_morning_chorus` and related
+  proof branches as late optional misses.
+- Why this matters: The morning-chorus route is about passengers recovering
+  real destinations instead of obeying the tunnel's false HOME sign. A player
+  who chooses the release-minded action should still see the destination sign
+  break into real stops before the final release.
+- Planned work:
+  - Keep `pull_release_after_morning_chorus_boarding` stable for playtest
+    history.
+  - Route it to `passenger_morning_stop_check` instead of the generic
+    passenger ending.
+  - Set `confirmed_morning_stops` on that route so the state matches the proof
+    scene.
+  - Update focused morning-route tests, run health, and actually play the
+    revised route.
+- Risks:
+  - The morning intercom now has two visible actions that enter the same
+    remembered-stop proof. That preserves an explicit confirm option while
+    ensuring the release-minded option no longer skips the branch's payoff.
+- Status:
+  - Completed after orchestrator recovery from a child-agent `-1` exit.
+  - `pull_release_after_morning_chorus_boarding` now routes through
+    `passenger_morning_stop_check` and sets `confirmed_morning_stops`.
+  - Focused route coverage was expanded with `releaseAfterMorningStopCheck`.
+  - Manual CLI play reached `passenger_morning_stop_checked_true_ending` with
+    an ideal-ending score of 293.
+
 # Cycle 53 Opened-Door Handoff Payoff
 
 - Date: 2026-06-09
