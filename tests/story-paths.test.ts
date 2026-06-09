@@ -27,6 +27,8 @@ const ANSWERED_CHECK_OBJECTIVE =
   "Pull the release after every answered passenger has a face behind the name.";
 const ECHO_SEAT_RECEIPT_OBJECTIVE =
   "Pull the release after every familiar passenger echo has a seat aboard.";
+const MANIFEST_READY_RECEIPT_OBJECTIVE =
+  "Pull after every kept manifest name has visibly answered aboard.";
 const CHECKED_ECHO_OBJECTIVE = "Seat the checked passenger echoes before pulling the release.";
 const MORNING_BOARDING_OBJECTIVE =
   "Confirm the morning chorus's remembered stops before pulling the release.";
@@ -162,6 +164,34 @@ function releaseAfterManifestHandoffProof(
   expect(observation.scene.ending).toBe(true);
   expect(observation.scene.text).toContain("Mara is still mid-handoff");
   expect(observation.scene.text).toContain("no longer a duty in one voice");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
+function releaseAfterManifestReadyReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_manifest_ready_receipt");
+  expect(observation.scene.text).toContain("the manifest to become visible in the car");
+  expect(observation.scene.text).toContain("Every kept name has a body behind it now");
+  expect(observation.state.flags.heard_manifest_ready).toBe(true);
+  expect(observation.state.flags.confirmed_manifest_ready_receipt).toBe(true);
+  expect(observation.objectives).toEqual([MANIFEST_READY_RECEIPT_OBJECTIVE]);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_ready_manifest_receipt"
+  ]);
+
+  state = choose(story, state, "pull_release_after_ready_manifest_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("Mara's opened manifest is still answering");
+  expect(observation.scene.text).toContain("finish the count in morning air");
   expectIdealScore(observation.score);
 
   return { state, observation };
@@ -5629,13 +5659,7 @@ describe("demo story critical paths", () => {
       state,
       "pull_release_for_every_opened_manifest_name"
     );
-    observation = observe(story, directOpenedManifestReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("Mara's opened manifest is still answering");
-    expect(observation.state.flags.heard_manifest_ready).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, directOpenedManifestReleaseState));
 
     let openedDoorReadyState = choose(story, state, "board_and_confirm_opened_manifest_ready");
     observation = observe(story, openedDoorReadyState);
@@ -5656,11 +5680,7 @@ describe("demo story critical paths", () => {
       openedDoorReadyState,
       "pull_release_with_ready_manifest"
     );
-    observation = observe(story, openedDoorDirectReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, openedDoorDirectReleaseState));
 
     openedDoorReadyState = choose(
       story,
@@ -5672,11 +5692,7 @@ describe("demo story critical paths", () => {
       openedDoorReadyState,
       "pull_release_after_manifest_goodbye"
     );
-    observation = observe(story, openedDoorReadyState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, openedDoorReadyState));
 
     state = choose(story, state, "board_after_releasing_passengers");
     observation = observe(story, state);
@@ -5710,11 +5726,7 @@ describe("demo story critical paths", () => {
       platformIntercomState,
       "pull_release_after_manifest_goodbye"
     );
-    observation = observe(story, platformIntercomState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, platformIntercomState));
 
     state = choose(story, manifestPlatformState, "board_third_car_with_passengers");
     observation = observe(story, state);
@@ -5745,11 +5757,7 @@ describe("demo story critical paths", () => {
     ]);
 
     const readyDirectReleaseState = choose(story, readyState, "pull_release_with_ready_manifest");
-    observation = observe(story, readyDirectReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, readyDirectReleaseState));
 
     readyState = choose(story, readyState, "listen_to_mara_finish_ready_manifest");
     observation = observe(story, readyState);
@@ -5779,12 +5787,7 @@ describe("demo story critical paths", () => {
     ]);
 
     let directReleaseState = choose(story, state, "pull_release_after_manifest_goodbye");
-    observation = observe(story, directReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("opened manifest is still answering");
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, directReleaseState));
 
     state = choose(story, state, "let_manifest_names_answer_once");
     observation = observe(story, state);
@@ -7453,11 +7456,7 @@ describe("demo story critical paths", () => {
     ]);
 
     const directReadyReleaseState = choose(story, state, "pull_release_with_ready_manifest");
-    observation = observe(story, directReadyReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, directReadyReleaseState));
 
     state = choose(story, state, "listen_to_mara_finish_ready_manifest");
     observation = observe(story, state);
@@ -14269,12 +14268,7 @@ describe("demo story critical paths", () => {
     ]);
 
     const directReleaseState = choose(story, state, "pull_release_after_manifest_goodbye");
-    observation = observe(story, directReleaseState);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("opened manifest is still answering");
-    expectIdealScore(observation.score);
+    ({ observation } = releaseAfterManifestReadyReceipt(story, directReleaseState));
 
     state = choose(story, state, "let_manifest_names_answer_once");
     observation = observe(story, state);
@@ -17711,12 +17705,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_manifest_goodbye");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("opened manifest is still answering");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterManifestReadyReceipt(story, state));
   });
 
   it("adds a one-time passenger morning chorus after opening the manifest", async () => {

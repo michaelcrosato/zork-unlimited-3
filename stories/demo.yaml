@@ -199,6 +199,12 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Pull after every kept manifest name has visibly answered aboard.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: confirmed_manifest_ready_receipt
   - text: Confirm the morning chorus's remembered stops before pulling the release.
     requires:
       all:
@@ -337,6 +343,7 @@ objectives:
         - notFlag: confirmed_threshold_clearance
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: confirmed_manifest_ready_receipt
         - notFlag: read_manifest_thumbprint
         - notFlag: heard_passenger_morning_boarding
         - notFlag: confirmed_morning_stops
@@ -2895,7 +2902,7 @@ scenes:
       - id: pull_release_for_every_opened_manifest_name
         label: Pull the release now for every opened manifest name
         choiceGroup: Board / release
-        to: passenger_manifest_true_ending
+        to: passenger_manifest_ready_receipt
         requires:
           all:
             - notFlag: heard_manifest_ready
@@ -2910,6 +2917,7 @@ scenes:
         effects:
           set:
             heard_manifest_ready: true
+            confirmed_manifest_ready_receipt: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         choiceGroup: Board / release
@@ -5980,7 +5988,11 @@ scenes:
             manifest_names_answered_once: true
       - id: pull_release_after_manifest_goodbye
         label: Pull the release while Mara keeps the doors open
-        to: passenger_manifest_true_ending
+        to: passenger_manifest_ready_receipt
+        effects:
+          set:
+            heard_manifest_ready: true
+            confirmed_manifest_ready_receipt: true
 
   passenger_manifest_ready_intercom:
     routeImportance: optional
@@ -6002,6 +6014,24 @@ scenes:
             heard_mara_goodbye: true
       - id: pull_release_with_ready_manifest
         label: Pull the release with every kept name aboard
+        to: passenger_manifest_ready_receipt
+        effects:
+          set:
+            confirmed_manifest_ready_receipt: true
+
+  passenger_manifest_ready_receipt:
+    routeImportance: optional
+    text: >
+      You hold the release long enough for the manifest to become visible in
+      the car instead of trapped on paper. The newspaper woman folds her page
+      flat on her knees, the lunch-tin worker sets his tin under a real seat,
+      the child lifts his mittened hand where Mara can see it, and the old
+      conductor punches the air once as if marking every transfer clear. Every
+      kept name has a body behind it now. The handle waits for the count to
+      finish before it moves.
+    choices:
+      - id: pull_release_after_ready_manifest_receipt
+        label: Pull after every kept manifest name answers aboard
         to: passenger_manifest_true_ending
 
   passenger_manifest_answers:

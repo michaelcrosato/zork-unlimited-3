@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 64 Manifest Ready Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the ready-manifest release show a visible passenger
+  receipt before the manifest ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 64 evidence showed healthy validation, complete coverage, and
+  no unfinished runs; normal random play still under-sampled late passenger
+  payoff scenes, so this cycle focused on a compact story-depth improvement.
+- Why this matters: When the player confirms every kept manifest passenger is
+  aboard, the game now pauses long enough to show the newspaper woman,
+  lunch-tin worker, mittened child, and conductor physically present before
+  the final release. The ending no longer has to carry the entire proof beat
+  by itself.
+- Completed work:
+  - Added `passenger_manifest_ready_receipt` as a non-ending receipt scene
+    before `passenger_manifest_true_ending`.
+  - Routed the opened-manifest direct release, the ready-manifest pull, and
+    Mara's manifest-goodbye pull through the new receipt.
+  - Added `confirmed_manifest_ready_receipt` and a matching objective so the
+    receipt screen has one clear next action.
+  - Updated manifest regressions with a helper proving:
+    ready release -> receipt -> manifest true ending.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 194 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - A 100-run random smoke sample ended every run with `unfinished: 0` and
+    reached the new `passenger_manifest_ready_receipt` scene.
+  - Actual CLI playthrough reached `passenger_manifest_ready_receipt`, then
+    `passenger_manifest_true_ending`, score 289, with final objectives empty.
+- Playtest feedback:
+  - What felt better: the ready-manifest route now clearly shows "every kept
+    name has a body behind it" before the doors open. The final ending reads
+    as a payoff to visible passengers instead of an abstract list.
+  - What still feels risky: this adds depth to one branch; it does not by
+    itself improve random discovery of every late optional route.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull branch from the random-missed list where
+    a label promises concrete passenger proof but the route still jumps
+    straight to an ending.
+- Risks:
+  - Low. The new scene is reachable, non-ending, covered by tests, and all
+    health gates remain green.
+- Status: Complete.
+
 # Cycle 63 Answered Boarding Receipt Payoff
 
 - Date: 2026-06-09
