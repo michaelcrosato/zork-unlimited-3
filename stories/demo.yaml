@@ -5674,7 +5674,9 @@ scenes:
       breath, short enough that the line cannot teach anyone to wait again.
       "They are not entries anymore," she says. "They are almost through. If
       you need proof, count doors now; then pull while they still sound like
-      people."
+      people." Under her last name, the torn thumbprint keeps darkening, as if
+      the opened passengers can receive that oath instead of making Mara carry
+      it alone.
     choices:
       - id: confirm_manifest_handoff_doors
         label: Confirm every manifest door has someone moving through it
@@ -5684,6 +5686,19 @@ scenes:
         effects:
           set:
             confirmed_manifest_handoff_doors: true
+      - id: confirm_manifest_thumbprint_receipt_after_handoff
+        label: Confirm Mara's thumbprint oath reaches the opened passengers
+        to: mara_manifest_thumbprint_receipt
+        requires:
+          all:
+            - notFlag: confirmed_manifest_thumbprint_receipt
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            confirmed_manifest_thumbprint_receipt: true
       - id: pull_release_after_manifest_handoff_goodbye
         label: Pull the release while Mara holds the manifest open
         to: passenger_manifest_handoff_release

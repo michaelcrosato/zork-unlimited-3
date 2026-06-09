@@ -6323,8 +6323,32 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
       "pull_release_after_manifest_handoff_goodbye"
     ]);
+
+    const directReceiptState = choose(
+      story,
+      state,
+      "confirm_manifest_thumbprint_receipt_after_handoff"
+    );
+    let directReceiptObservation = observe(story, directReceiptState);
+
+    expect(directReceiptObservation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(directReceiptObservation.scene.text).toContain("Received by the passengers");
+    expect(directReceiptObservation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(directReceiptObservation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(directReceiptObservation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
+
+    directReceiptObservation = observe(
+      story,
+      choose(story, directReceiptState, "pull_release_after_manifest_thumbprint_receipt")
+    );
+
+    expect(directReceiptObservation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(directReceiptObservation.scene.ending).toBe(true);
+    expect(directReceiptObservation.scene.text).toContain("received by the passengers themselves");
+    expectIdealScore(directReceiptObservation.score);
 
     const directDoorState = choose(story, state, "confirm_manifest_handoff_doors");
     let directDoorObservation = observe(story, directDoorState);
@@ -6417,6 +6441,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
       "pull_release_after_manifest_handoff_goodbye"
     ]);
 
@@ -8357,6 +8382,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("they still sound like people");
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
       "pull_release_after_manifest_handoff_goodbye"
     ]);
 
@@ -8416,6 +8442,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
       "pull_release_after_manifest_handoff_goodbye"
     ]);
 
@@ -15542,6 +15569,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
       "pull_release_after_manifest_handoff_goodbye"
     ]);
 

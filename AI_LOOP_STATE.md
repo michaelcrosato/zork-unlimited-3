@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 31 Handoff Thumbprint Receipt Bridge
+
+- Date: 2026-06-09
+- Main objective: Make Mara's manifest-thumbprint receipt payoff recoverable
+  from the most natural opened-door handoff route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 31 evidence showed all scenes reachable and health green, but
+  normal random play under-sampled `mara_manifest_thumbprint_receipt` and
+  `mara_manifest_thumbprint_receipt_true_ending`.
+- Why this matters: A player who chose the obvious "listen through the
+  third-car speaker" handoff path could previously continue the basic handoff
+  or door-check payoff, but the thumbprint-receipt route fell away even though
+  the handoff prose highlights Mara's darkening thumbprint. The intercom now
+  keeps that emotional proof visible as a direct follow-up.
+- Completed work:
+  - Added handoff-intercom prose that calls out the opened manifest's darkening
+    thumbprint as something the passengers can receive together.
+  - Added `confirm_manifest_thumbprint_receipt_after_handoff` from
+    `mara_manifest_handoff_intercom` to `mara_manifest_thumbprint_receipt`.
+  - Guarded the new choice so it appears only before the player has already
+    pivoted into answered-passenger or gathered-passenger branches.
+  - Added regression coverage proving the new handoff follow-up reaches
+    `mara_manifest_thumbprint_receipt_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest handoff|thumbprint receipt"`.
+  - Actual CLI route reached `mara_manifest_thumbprint_receipt_true_ending`,
+    score 302, through `listen_to_manifest_handoff_from_handoff`,
+    `confirm_manifest_thumbprint_receipt_after_handoff`, and
+    `pull_release_after_manifest_thumbprint_receipt`.
+  - Full `npm run health` passed: format check, TypeScript, 336 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the route now reads like a natural escalation from
+    Mara's handoff instead of requiring players to backtrack to the broader
+    opened-manifest menu or notice the thumbprint before listening.
+  - What still feels risky: this improves a normal-player route but may not
+    materially change random sampling because it adds another optional branch
+    inside a late scene.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled branch that disappears after an intuitive
+    first choice, especially `passenger_farewell` or `passenger_gathered_boarding`
+    follow-through.
+- Risks:
+  - Low. This adds one guarded choice and reuses existing scenes, objectives,
+    scoring, and ending metadata.
+- Status: Complete.
+
 # Cycle 30 Morning Choice Scan Order
 
 - Date: 2026-06-09
