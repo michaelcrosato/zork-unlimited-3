@@ -6931,6 +6931,13 @@ describe("demo story critical paths", () => {
     expect(observation.choices[23]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
+    const keepsakeRollCallChoice = observation.choices.find(
+      (choice) => choice.id === "let_opened_keepsakes_answer_roll_call"
+    );
+    expect(keepsakeRollCallChoice?.label).toBe(
+      "Let the matched keepsakes answer Mara's final roll call"
+    );
+    expect(keepsakeRollCallChoice?.choiceGroup).toBe("Keepsake roll call");
     expect(choiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
       choiceIds.indexOf("help_opened_passengers_gather")
     );
@@ -15113,6 +15120,7 @@ describe("demo story critical paths", () => {
       "match_opened_manifest_keepsakes",
       "check_opened_manifest_keepsakes",
       "confirm_opened_manifest_keepsake_owners",
+      "let_opened_keepsakes_answer_roll_call",
       "ask_mara_to_read_opened_manifest",
       "listen_as_opened_passengers_gather",
       "make_room_from_opened_manifest",
@@ -15179,10 +15187,14 @@ describe("demo story critical paths", () => {
     );
     expect(renderedPlayerView).toContain("  Final roll call:");
     expect(renderedPlayerView).toContain("Let the opened passengers answer the final roll call");
+    expect(renderedPlayerView).toContain("Let the matched keepsakes answer Mara's final roll call");
     expect(renderedPlayerView.indexOf("  Counts / answers:")).toBeLessThan(
       renderedPlayerView.indexOf("  Final roll call:")
     );
     expect(renderedPlayerView.indexOf("  Final roll call:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Keepsake roll call:")
+    );
+    expect(renderedPlayerView.indexOf("  Keepsake roll call:")).toBeLessThan(
       renderedPlayerView.indexOf("  Passenger gathering:")
     );
     expect(renderedPlayerView.indexOf("  Door echoes:")).toBeLessThan(
@@ -15192,10 +15204,10 @@ describe("demo story critical paths", () => {
       renderedPlayerView.indexOf("  Door echoes:")
     );
     expect(renderedPlayerView).toContain(
-      "  Morning stops:\n    53. Listen for what the opened passengers remember about morning"
+      "  Morning stops:\n    54. Listen for what the opened passengers remember about morning"
     );
     expect(renderedPlayerView).toContain(
-      "  Keepsakes / memories:\n    56. Return the opened manifest's lost mitten to the child"
+      "  Keepsakes / memories:\n    57. Return the opened manifest's lost mitten to the child"
     );
     expect(renderedPlayerView.indexOf("  Threshold holding:")).toBeLessThan(
       renderedPlayerView.indexOf("  Morning stops:")
@@ -15892,6 +15904,60 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "hear_keepsake_roll_call_from_boarding");
+    state = choose(story, state, "pull_release_after_keepsake_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces the matched-keepsake roll call directly from opened manifest doors", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const directRollCall = observation.choices.find(
+      (choice) => choice.id === "let_opened_keepsakes_answer_roll_call"
+    );
+
+    expect(observation.scene.id).toBe("passengers_released");
+    expect(directRollCall?.label).toBe("Let the matched keepsakes answer Mara's final roll call");
+    expect(directRollCall?.choiceGroup).toBe("Keepsake roll call");
+
+    state = choose(story, state, "let_opened_keepsakes_answer_roll_call");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_keepsake_roll_call");
+    expect(observation.scene.text).toContain("matched keepsakes answer");
+    expect(observation.state.flags.matched_manifest_keepsakes).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
+
     state = choose(story, state, "pull_release_after_keepsake_roll_call");
     observation = observe(story, state);
 

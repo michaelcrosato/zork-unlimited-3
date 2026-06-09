@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 21 Keepsake Roll Call Hub Route
+
+- Date: 2026-06-09
+- Main objective: Make the matched-keepsake final roll-call branch visible from
+  the opened-manifest hub instead of hiding it behind a second-stage keepsake
+  choice.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence named `passenger_keepsake_roll_call` as a
+  normal-play miss while coverage could reach every scene.
+- Why this matters: Players scanning the large late-game hub can now see a
+  distinct `Keepsake roll call` option that explains the payoff before they
+  commit. The broader keepsake checks still exist under `Keepsakes / memories`.
+- Completed work:
+  - Added a direct opened-manifest choice:
+    `Let the matched keepsakes answer Mara's final roll call`.
+  - Added the `Keepsake roll call` display group after `Final roll call`.
+  - Updated fallback choice classification so keepsake roll-call labels do not
+    collapse into the generic final-roll-call group.
+  - Added regression coverage for transcript grouping, player-view ordering,
+    and the direct route into `passenger_keepsake_roll_call`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|matched-keepsake roll call|manifest-specific platform beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 333 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_keepsake_true_ending`, score 300, via
+    `let_opened_keepsakes_answer_roll_call` and
+    `pull_release_after_keepsake_roll_call`.
+  - Post-change random playtest ended 100/100 runs, visited
+    `passenger_keepsake_roll_call`, and reached `passenger_keepsake_true_ending`
+    3 times.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now names the keepsake roll-call
+    payoff directly, and the next scene immediately pays off the ordinary
+    object proofs.
+  - What still feels risky: the late-game hub remains intentionally large; this
+    improves scanability for one route but does not reduce total menu size.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled normal-play branches such as
+    `passenger_gathered_boarding`, `passenger_echoed_check`, or
+    `passenger_lunch_tin_self_count`.
+- Risks:
+  - Route mechanics are intentionally broadened with one direct shortcut, while
+    scene count and ending count stay unchanged.
+- Status: Complete.
+
 # Cycle 20 Mara Thumbprint Receipt Split
 
 - Date: 2026-06-09

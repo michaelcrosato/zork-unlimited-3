@@ -2472,6 +2472,20 @@ scenes:
             checked_matched_keepsakes: true
             confirmed_keepsake_owners: true
             helped_passengers_gather: true
+      - id: let_opened_keepsakes_answer_roll_call
+        label: Let the matched keepsakes answer Mara's final roll call
+        choiceGroup: Keepsake roll call
+        to: passenger_keepsake_roll_call
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_final_roll_call
+        effects:
+          set:
+            matched_manifest_keepsakes: true
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            heard_final_roll_call: true
       - id: carry_morning_chorus_from_opened_manifest
         label: Carry the remembered mornings into the third car
         choiceGroup: Board / release

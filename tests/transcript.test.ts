@@ -138,6 +138,9 @@ describe("transcript rendering", () => {
       "Final roll call:\n- Let the opened passengers answer the final roll call"
     );
     expect(transcript).toContain(
+      "Keepsake roll call:\n- Let the matched keepsakes answer Mara's final roll call"
+    );
+    expect(transcript).toContain(
       "Lunch tin count:\n- Check the lunch-tin worker's passenger count before boarding"
     );
     expect(transcript).toContain("- Board with the lunch-tin worker ready to count himself");
@@ -172,6 +175,9 @@ describe("transcript rendering", () => {
       transcript.indexOf("Final roll call:")
     );
     expect(transcript.indexOf("Final roll call:")).toBeLessThan(
+      transcript.indexOf("Keepsake roll call:")
+    );
+    expect(transcript.indexOf("Keepsake roll call:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")
     );
     expect(transcript.indexOf("Door echoes:")).toBeLessThan(

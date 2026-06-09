@@ -24,6 +24,7 @@ const GROUP_ORDER = [
   "Lunch tin roster",
   "Counts / answers",
   "Final roll call",
+  "Keepsake roll call",
   "Passenger gathering",
   "Door echoes",
   "Threshold holding",
@@ -93,6 +94,10 @@ function groupOrder(label: string): number {
 
 function classifyChoiceLabel(label: string): string {
   const normalized = label.toLowerCase();
+
+  if (/\bkeepsakes?\b.*\broll call\b|\broll call\b.*\bkeepsakes?\b/.test(normalized)) {
+    return "Keepsake roll call";
+  }
 
   if (/\b(final roll call|passengers' own roll call|passengers' roll call)\b/.test(normalized)) {
     return "Final roll call";
