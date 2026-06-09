@@ -4,6 +4,38 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Door Echo / Threshold Group Split
+
+### Current Plan
+
+- Main objective: Make the opened-manifest door-echo and threshold-holding
+  branches easier to distinguish in the large late-game hub.
+- Why this matters: `passenger_echoed_check` and `passenger_threshold_boarding`
+  were reachable but still showed up as normal-play discoverability targets,
+  and both branches shared one broad menu group.
+
+### Work Completed
+
+- Added separate `Door echoes` and `Threshold holding` display groups.
+- Moved opened-manifest echo choices into `Door echoes`.
+- Moved opened-manifest and Mara-handoff threshold choices into
+  `Threshold holding`.
+- Updated transcript and player-view tests so future reports preserve the
+  separation.
+
+### Playtest Notes
+
+- Focused grouping/route tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence generation.
+- CLI playthrough reached `passenger_echoed_true_ending`, score 266. The
+  opened-manifest hub showed five `Door echoes` choices followed by three
+  `Threshold holding` choices.
+- Next target if no blind-play issue appears: keep improving undersampled
+  late-game passenger proof branches, especially final roll-call and other
+  low-frequency payoff routes.
+
 ## 2026-06-09 - Shared Count Grouping Pass
 
 ### Current Plan

@@ -6092,7 +6092,7 @@ describe("demo story critical paths", () => {
       "Shared room / release"
     );
     expect(handoffGroups.get("hold_threshold_after_mara_manifest_handoff")).toBe(
-      "Door echoes / threshold"
+      "Threshold holding"
     );
     expect(handoffGroups.get("finish_count_after_mara_manifest_handoff")).toBe("Shared count");
     expect(handoffGroups.get("continue_manifest_handoff_roll_call")).toBe("Counts / answers");
@@ -6129,7 +6129,7 @@ describe("demo story critical paths", () => {
     expect(rendered).toContain(
       "  Counts / answers:\n    9. Keep listening as the opened passengers answer Mara"
     );
-    expect(rendered).toContain("  Door echoes / threshold:\n    11. Hold the third-car threshold");
+    expect(rendered).toContain("  Threshold holding:\n    11. Hold the third-car threshold");
     expect(rendered).toContain("  Morning / keepsakes:\n    12. Ask Mara what morning means");
     expect(rendered).toContain("  Return:\n    13. Return to the opened manifest doors");
     expect(rendered).not.toContain("  Other:");
@@ -15156,8 +15156,11 @@ describe("demo story critical paths", () => {
     expect(renderedPlayerView.indexOf("  Shared count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin / shift count:")
     );
+    expect(renderedPlayerView.indexOf("  Door echoes:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Threshold holding:")
+    );
     expect(renderedPlayerView.indexOf("  Lunch tin / shift count:")).toBeLessThan(
-      renderedPlayerView.indexOf("  Door echoes / threshold:")
+      renderedPlayerView.indexOf("  Door echoes:")
     );
 
     const directHandoffReleaseState = choose(

@@ -141,7 +141,10 @@ describe("transcript rendering", () => {
     expect(transcript).toContain(
       "- Help the opened passengers gather by helping one another board"
     );
-    expect(transcript).toContain("Door echoes / threshold:");
+    expect(transcript).toContain("Door echoes:\n- Pause on the opened door-echoes before boarding");
+    expect(transcript).toContain(
+      "Threshold holding:\n- Hold the third-car threshold while Mara keeps the speaker open"
+    );
     expect(transcript).toContain("Morning / keepsakes:");
     expect(transcript.indexOf("Manifest count:")).toBeLessThan(transcript.indexOf("Shared count:"));
     expect(transcript.indexOf("Shared count:")).toBeLessThan(
@@ -149,6 +152,9 @@ describe("transcript rendering", () => {
     );
     expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
       transcript.indexOf("Counts / answers:")
+    );
+    expect(transcript.indexOf("Door echoes:")).toBeLessThan(
+      transcript.indexOf("Threshold holding:")
     );
     expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")

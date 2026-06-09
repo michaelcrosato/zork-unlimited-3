@@ -2018,7 +2018,7 @@ scenes:
             heard_gathered_passengers: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Threshold holding
         to: passenger_threshold_boarding
         requires:
           notFlag: held_passenger_threshold
@@ -2027,7 +2027,7 @@ scenes:
             held_passenger_threshold: true
       - id: hold_and_confirm_opened_manifest_threshold
         label: Hold the threshold and confirm every opened passenger clears it
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Threshold holding
         to: passenger_threshold_clearance_check
         requires:
           all:
@@ -2040,7 +2040,7 @@ scenes:
             heard_mara_goodbye: true
       - id: listen_to_opened_threshold_from_manifest
         label: Let Mara talk you through holding the opened threshold
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Threshold holding
         to: passenger_threshold_intercom
         requires:
           all:
@@ -2130,7 +2130,7 @@ scenes:
             made_room_for_passengers: true
       - id: pause_on_opened_door_echoes
         label: Pause on the opened door-echoes before boarding
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Door echoes
         to: opened_manifest_echoes
         requires:
           all:
@@ -2143,7 +2143,7 @@ scenes:
             heard_passenger_echoes: true
       - id: check_opened_manifest_echoes
         label: Check the familiar door-echoes against the opened passengers
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Door echoes
         to: passenger_echoed_check
         requires:
           all:
@@ -2244,7 +2244,7 @@ scenes:
             confirmed_lunch_tin_roster_proof: true
       - id: listen_to_opened_manifest_echoes
         label: Listen to the opened door-echoes before boarding
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Door echoes
         to: opened_manifest_echoes
         requires:
           all:
@@ -2257,7 +2257,7 @@ scenes:
             heard_passenger_echoes: true
       - id: follow_opened_manifest_echoes
         label: Follow the newspaper fold in the opened door-echoes
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Door echoes
         to: opened_manifest_echoes
         requires:
           all:
@@ -2271,7 +2271,7 @@ scenes:
             followed_opened_newspaper_fold: true
       - id: board_with_opened_manifest_echoes
         label: Board with the opened door-echoes leading the way
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Door echoes
         to: passenger_echoed_boarding
         requires:
           all:
@@ -3278,7 +3278,7 @@ scenes:
             made_room_for_passengers: true
       - id: hold_threshold_after_mara_manifest_handoff
         label: Hold the third-car threshold while Mara calls the opened doors
-        choiceGroup: Door echoes / threshold
+        choiceGroup: Threshold holding
         to: passenger_threshold_boarding
         requires:
           notFlag: held_passenger_threshold

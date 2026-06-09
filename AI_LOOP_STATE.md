@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 16 Door Echo / Threshold Group Split
+
+- Date: 2026-06-09
+- Main objective: Make two undersampled late-game routes easier to distinguish
+  in the opened-manifest hub: familiar passenger door-echoes and third-car
+  threshold holding.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_echoed_check` and
+  `passenger_threshold_boarding` as normal-play discoverability targets while
+  coverage can reach every scene.
+- Why this matters: Both routes were playable, but they shared one broad
+  `Door echoes / threshold` bucket. Players and blind-play transcripts had to
+  parse two different intentions inside the same late-game menu group.
+- Completed work:
+  - Replaced the combined display group with separate `Door echoes` and
+    `Threshold holding` groups in the canonical display order.
+  - Moved opened-manifest echo choices into `Door echoes`.
+  - Moved opened-manifest and Mara-handoff threshold choices into
+    `Threshold holding`.
+  - Updated transcript and player-view regressions so the two routes stay
+    separated in long choice lists.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|opened manifest|manifest handoff|echo|threshold"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+  - Actual CLI route reached `passenger_echoed_true_ending`, score 266. The
+    opened-manifest hub showed `Door echoes` with five echo choices followed by
+    `Threshold holding` with three threshold choices.
+- Playtest feedback:
+  - What felt better: the menu now separates "identify and seat the familiar
+    echoes" from "hold the door threshold clear," so each branch reads as a
+    distinct player goal.
+  - What still feels risky: this improves scanability and report critique
+    quality, not random-choice probability in the large hub.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_roll_call_true_ending` and remaining low-frequency passenger
+    proof routes.
+- Risks:
+  - No route mechanics changed, so existing coverage and route balance remain
+    intentionally stable.
+- Status: Complete.
+
 # Cycle 15 Shared Count Grouping Pass
 
 - Date: 2026-06-09
