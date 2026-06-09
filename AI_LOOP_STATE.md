@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 46 Opened Manifest Direct Release
+
+- Date: 2026-06-09
+- Main objective: Make the central `passenger_manifest_true_ending` available
+  immediately after Mara opens every kept-passenger door.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 46 evidence showed full coverage and clean runs, but normal
+  random samples continued to under-sample the plain manifest passenger payoff
+  compared with more specialized late passenger branches.
+- Why this matters: The opened-manifest scene already says every door clicks
+  open and the release handle feels like the next beat. Players who want the
+  straightforward "open every passenger door now" rescue should not have to
+  route through platform boarding, train-car confirmation, or proof variants
+  first. The slower confirmation, handoff, echo, count, threshold, room,
+  keepsake, and conductor routes remain available.
+- Planned work:
+  - Add a direct opened-manifest release choice from `passengers_released` to
+    `passenger_manifest_true_ending`.
+  - Guard it so it only appears before the player commits to a more specific
+    branch.
+  - Update route and player-view menu regression tests.
+- Verification:
+  - Focused opened-manifest test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "opened manifest count|opened manifest"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_manifest_true_ending`, score 269, via
+    `clear_manifest_and_mara_from_ledger` and
+    `pull_release_for_every_opened_manifest_name`.
+  - A 250-run random sample ended cleanly every run and reached
+    `passenger_manifest_true_ending` six times.
+- Playtest feedback:
+  - What felt better: the opened-manifest scene now lets the player act on the
+    strongest central promise immediately. The text says every door opens and
+    the release is the next beat; the new choice makes that true.
+  - What still feels risky: the already large opened-manifest menu gained one
+    more option. It is grouped under `Board / release`, and blind sessions
+    should confirm the earlier direct release does not make the optional proof
+    routes feel less intentional.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving under-sampled late passenger payoffs where the obvious
+    release action still detours.
+- Risks:
+  - Low. This adds one optional ideal-ending choice and does not remove any
+    existing route.
+- Status: Complete.
+
 # Cycle 45 Lunch-Tin Intercom Direct Release
 
 - Date: 2026-06-09

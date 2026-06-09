@@ -2848,6 +2848,24 @@ scenes:
           set:
             heard_manifest_ready: true
             heard_passenger_echoes: true
+      - id: pull_release_for_every_opened_manifest_name
+        label: Pull the release now for every opened manifest name
+        choiceGroup: Board / release
+        to: passenger_manifest_true_ending
+        requires:
+          all:
+            - notFlag: heard_manifest_ready
+            - notFlag: heard_mara_goodbye
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_echoes
+            - notFlag: held_passenger_threshold
+            - notFlag: made_room_for_passengers
+        effects:
+          set:
+            heard_manifest_ready: true
       - id: board_after_releasing_passengers
         label: Cross the platform as the passengers gather
         choiceGroup: Board / release
