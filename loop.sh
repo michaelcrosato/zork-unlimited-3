@@ -115,6 +115,14 @@ while true; do
   fi
 
   if [[ "$status" != "0" && "${AI_LOOP_EXIT_ON_ERROR:-0}" != "1" ]]; then
+    dirty_after_failure="$(git status --porcelain --untracked-files=no)"
+    if [[ -n "$dirty_after_failure" && "${AI_LOOP_RETRY_DIRTY_FAILURE:-0}" != "1" ]]; then
+      echo "AI loop exited with status $status and left tracked files dirty; refusing automatic retry from a mixed baseline." >&2
+      echo "Set AI_LOOP_RETRY_DIRTY_FAILURE=1 only when intentionally debugging dirty retry behavior." >&2
+      git status --short --untracked-files=no >&2
+      exit "$status"
+    fi
+
     retry_delay_ms="${AI_LOOP_RETRY_DELAY_MS:-60000}"
     retry_delay_s=$((retry_delay_ms / 1000))
     if [[ "$retry_delay_s" -lt 1 ]]; then

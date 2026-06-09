@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import {
   agentAuthFailureExitCode,
   cycleSavePath,
@@ -41,6 +42,14 @@ describe("AI loop restart detection", () => {
 
   it("uses a stable agent-auth failure exit code for loop.sh", () => {
     expect(agentAuthFailureExitCode).toBe(76);
+  });
+
+  it("keeps loop.sh from retrying failed cycles with a dirty tracked baseline", () => {
+    const script = readFileSync("loop.sh", "utf8");
+
+    expect(script).toContain("git status --porcelain --untracked-files=no");
+    expect(script).toContain("left tracked files dirty; refusing automatic retry");
+    expect(script).toContain("AI_LOOP_RETRY_DIRTY_FAILURE");
   });
 
   it("commits cycle observations only after pushed agent cycles", () => {
