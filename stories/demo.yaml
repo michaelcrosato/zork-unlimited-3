@@ -2284,7 +2284,7 @@ scenes:
       - id: listen_to_lunch_tin_latch_from_opened_manifest
         label: Listen as the lunch-tin count reaches Mara's speaker
         choiceGroup: Lunch tin count
-        to: passenger_lunch_tin_intercom
+        to: passenger_mara_signoff
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -2295,6 +2295,8 @@ scenes:
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
             heard_gathered_passengers: true
+            heard_passenger_mara_signoff: true
+            lunch_tin_count_reached_mara_signoff: true
       - id: study_opened_newspaper_transfer
         label: Study the newspaper transfer column before the opened passengers board
         choiceGroup: Keepsakes / memories
@@ -2925,7 +2927,18 @@ scenes:
     choices:
       - id: board_after_passenger_morning_chorus
         label: Board the third car with the morning chorus behind you
+        to: passenger_mara_signoff
+        requires:
+          notFlag: heard_passenger_mara_signoff
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
+            heard_passenger_mara_signoff: true
+      - id: board_after_signed_off_morning_chorus
+        label: Board with Mara's sign-off and the morning chorus behind you
         to: passenger_morning_intercom
+        requires:
+          flag: heard_passenger_mara_signoff
         effects:
           set:
             heard_passenger_morning_boarding: true
@@ -2964,6 +2977,14 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+      - id: ask_mara_signoff_after_morning_chorus
+        label: Ask Mara to sign off once the passengers remember morning
+        to: passenger_mara_signoff
+        requires:
+          notFlag: heard_passenger_mara_signoff
+        effects:
+          set:
+            heard_passenger_mara_signoff: true
       - id: listen_for_echoes_inside_morning_chorus
         label: Listen for the opened door-echoes inside the morning chorus
         to: opened_manifest_echoes
@@ -2997,6 +3018,16 @@ scenes:
       cheer but with movement: hands finding handles, shoulders turning toward
       the third car, small proofs of life making room for one another.
     choices:
+      - id: carry_signed_morning_chorus_after_mara_signoff
+        label: Carry Mara's signed-off morning chorus to the third-car speaker
+        to: passenger_morning_intercom
+        requires:
+          flag: heard_passenger_morning_boarding
+      - id: continue_lunch_tin_count_after_mara_signoff
+        label: Let the lunch-tin count continue through Mara's sign-off
+        to: passenger_lunch_tin_intercom
+        requires:
+          flag: lunch_tin_count_reached_mara_signoff
       - id: notice_manifest_thumbprint_after_mara_signoff
         label: Notice Mara's thumbprint holding the opened manifest
         to: mara_manifest_thumbprint

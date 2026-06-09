@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 51 Passenger Sign-Off Discovery
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_mara_signoff` appear in normal passenger-
+  rescue play instead of only in coverage-directed routes.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 51 evidence showed full coverage, but the 250-run MCP random
+  sample still missed `passenger_mara_signoff`.
+- Why this matters: Mara's opened-passenger sign-off is a strong human payoff
+  before the crowd boards. Players who follow common late-game passenger routes
+  should hear her say the passengers were held, not late, before the release
+  becomes a mechanical ending.
+- Completed work:
+  - Added a one-time sign-off route from `passenger_morning_chorus`.
+  - Promoted the common morning-boarding action through Mara's sign-off, then
+    back into the existing morning intercom payoff.
+  - Threaded the high-frequency opened-manifest lunch-tin speaker route through
+    Mara's sign-off, then back into the existing lunch-tin count payoff.
+  - Added route regressions for the morning sign-off and lunch-tin sign-off
+    continuations.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning chorus|lunch-tin count on the speaker"`.
+  - Story validation passed with 192 reachable scenes / 46 endings.
+  - A 250-run deterministic random sample ended every run, visited
+    `passenger_mara_signoff`, and reported `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_lunch_tin_true_ending`, score
+    296, through `listen_to_lunch_tin_latch_from_opened_manifest`,
+    `continue_lunch_tin_count_after_mara_signoff`, and
+    `pull_release_after_lunch_tin_intercom`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the lunch-tin route now pauses for Mara's clear passenger
+    sign-off before continuing the count. The beat reads as emotional closure,
+    not as an unrelated detour, because the next choice explicitly resumes the
+    count.
+  - What still feels risky: the sign-off scene now carries a few continuation
+    choices depending on how the player arrived. Blind feedback should watch
+    whether those choices feel like useful agency or extra branching.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect the next random under-sampled passenger payoff after the latest
+    run, since scene coverage is now complete in random and coverage samples.
+- Risks:
+  - Low to medium. This changes two optional late-game routes into sign-off
+    intermediates, but both continuations preserve their previous payoff
+    families and validation remains green.
+- Status: Complete.
+
 # Cycle 50 Direct Opened Count Speaker
 
 - Date: 2026-06-09
