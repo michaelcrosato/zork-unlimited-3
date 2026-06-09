@@ -4,6 +4,38 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Morning Stops / Keepsakes Split
+
+### Current Plan
+
+- Main objective: Make the opened-passenger morning route easier to scan in the
+  large late-game hub.
+- Why this matters: `passenger_morning_chorus` was reachable but named as a
+  normal-play discoverability target. Its entry choices shared the broad
+  `Morning / keepsakes` group with mitten, newspaper transfer, conductor
+  transfer, and keepsake-owner routes.
+
+### Work Completed
+
+- Added `Morning stops` as a first-class display group.
+- Moved remembered-morning choices into `Morning stops`.
+- Moved mitten, newspaper/transfer, conductor-transfer, and keepsake-owner
+  choices into `Keepsakes / memories`.
+- Updated fallback choice classification plus transcript and player-view
+  regressions.
+
+### Playtest Notes
+
+- Focused grouping/morning-route tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence generation.
+- CLI playthrough reached `passenger_morning_stop_checked_true_ending`, score 275. The route felt coherent: hear remembered morning, board with it, confirm
+  real stops, then pull the release.
+- Next target if no blind-play issue appears: improve another undersampled
+  late-game branch such as `passenger_roll_call_true_ending` or
+  `passenger_keepsake_roll_call`.
+
 ## 2026-06-09 - Lunch Tin Count / Roster Split
 
 ### Current Plan

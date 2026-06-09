@@ -7,6 +7,52 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 18 Morning Stops / Keepsakes Split
+
+- Date: 2026-06-09
+- Main objective: Make the opened-passenger morning route easier to spot in the
+  late-game hub without changing route mechanics.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_morning_chorus` as a
+  normal-play discoverability target while coverage could still reach every
+  scene.
+- Why this matters: `Morning / keepsakes` mixed a distinct "remembered stops"
+  route with mitten, newspaper transfer, conductor transfer, and keepsake-owner
+  choices. Players scanning the opened-manifest menu had to infer which choices
+  were about ordinary morning destinations versus object/memory proofs.
+- Completed work:
+  - Replaced the combined `Morning / keepsakes` display group with a focused
+    `Morning stops` group.
+  - Moved mitten, newspaper transfer, conductor transfer, and owner-matching
+    choices into `Keepsakes / memories`.
+  - Updated fallback choice classification so unauthored morning labels also
+    group under `Morning stops`.
+  - Updated transcript and player-view regressions for the split groups and
+    ordering.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|manifest-specific platform beat|manifest handoff|passengers' remembered mornings"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+  - Actual CLI route reached `passenger_morning_stop_checked_true_ending`,
+    score 275, through the new morning-stop branch.
+- Playtest feedback:
+  - What felt better: the morning route now reads as its own late-game promise:
+    listen for ordinary remembered stops, carry them aboard, then confirm them
+    before release.
+  - What still feels risky: this improves scanability and report critique
+    quality, but the opened-manifest hub is still intentionally large.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_roll_call_true_ending` and `passenger_keepsake_roll_call`.
+- Risks:
+  - Route mechanics, scene count, and ending count are intentionally unchanged.
+- Status: Complete.
+
 # Cycle 17 Lunch Tin Count / Roster Split
 
 - Date: 2026-06-09

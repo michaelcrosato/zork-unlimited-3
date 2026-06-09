@@ -6086,7 +6086,7 @@ describe("demo story critical paths", () => {
     );
     expect(handoffGroups.get("touch_mara_manifest_thumbprint")).toBe("Thumbprint oath");
     expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
-      "Morning / keepsakes"
+      "Morning stops"
     );
     expect(handoffGroups.get("make_room_after_mara_manifest_handoff")).toBe(
       "Shared room / release"
@@ -6130,7 +6130,7 @@ describe("demo story critical paths", () => {
       "  Counts / answers:\n    9. Keep listening as the opened passengers answer Mara"
     );
     expect(rendered).toContain("  Threshold holding:\n    11. Hold the third-car threshold");
-    expect(rendered).toContain("  Morning / keepsakes:\n    12. Ask Mara what morning means");
+    expect(rendered).toContain("  Morning stops:\n    12. Ask Mara what morning means");
     expect(rendered).toContain("  Return:\n    13. Return to the opened manifest doors");
     expect(rendered).not.toContain("  Other:");
 
@@ -6848,7 +6848,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices[5]?.label).toBe(
       "Carry the opened passengers' remembered stops to the speaker"
     );
-    expect(observation.choices[5]?.choiceGroup).toBe("Morning / keepsakes");
+    expect(observation.choices[5]?.choiceGroup).toBe("Morning stops");
     expect(choiceIds[6]).toBe("review_open_manifest_count");
     expect(observation.choices[6]?.label).toBe(
       "Review the opened count so every passenger checks in"
@@ -15171,6 +15171,21 @@ describe("demo story critical paths", () => {
     expect(renderedPlayerView.indexOf("  Lunch tin roster:")).toBeLessThan(
       renderedPlayerView.indexOf("  Door echoes:")
     );
+    expect(renderedPlayerView).toContain(
+      "  Morning stops:\n    53. Listen for what the opened passengers remember about morning"
+    );
+    expect(renderedPlayerView).toContain(
+      "  Keepsakes / memories:\n    56. Return the opened manifest's lost mitten to the child"
+    );
+    expect(renderedPlayerView.indexOf("  Threshold holding:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Morning stops:")
+    );
+    expect(renderedPlayerView.indexOf("  Morning stops:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Keepsakes / memories:")
+    );
+    expect(playerChoiceIds.indexOf("listen_to_passenger_morning_chorus")).toBeLessThan(
+      playerChoiceIds.indexOf("return_opened_manifest_mitten")
+    );
 
     const directHandoffReleaseState = choose(
       story,
@@ -17071,7 +17086,7 @@ describe("demo story critical paths", () => {
     expect(
       observation.choices.find((choice) => choice.id === "board_with_passenger_morning_chorus")
         ?.choiceGroup
-    ).toBe("Morning / keepsakes");
+    ).toBe("Morning stops");
 
     state = choose(story, state, "board_with_passenger_morning_chorus");
     observation = observe(story, state);

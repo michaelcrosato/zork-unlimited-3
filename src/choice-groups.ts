@@ -25,7 +25,7 @@ const GROUP_ORDER = [
   "Passenger gathering",
   "Door echoes",
   "Threshold holding",
-  "Morning / keepsakes",
+  "Morning stops",
   "Keepsakes / memories",
   "Passenger threads",
   "Return",
@@ -112,11 +112,11 @@ function classifyChoiceLabel(label: string): string {
     return "Counts / answers";
   }
 
-  if (
-    /\b(newspaper|mitten|keepsake|keepsakes|lunch[- ]tin|memory|transfer|morning stop|stops)\b/.test(
-      normalized
-    )
-  ) {
+  if (/\b(morning|remembered stops|morning stop|stops)\b/.test(normalized)) {
+    return "Morning stops";
+  }
+
+  if (/\b(newspaper|mitten|keepsake|keepsakes|lunch[- ]tin|memory|transfer)\b/.test(normalized)) {
     return "Keepsakes / memories";
   }
 

@@ -148,7 +148,12 @@ describe("transcript rendering", () => {
     expect(transcript).toContain(
       "Threshold holding:\n- Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(transcript).toContain("Morning / keepsakes:");
+    expect(transcript).toContain(
+      "Morning stops:\n- Listen for what the opened passengers remember about morning"
+    );
+    expect(transcript).toContain(
+      "Keepsakes / memories:\n- Return the opened manifest's lost mitten to the child"
+    );
     expect(transcript.indexOf("Manifest count:")).toBeLessThan(transcript.indexOf("Shared count:"));
     expect(transcript.indexOf("Shared count:")).toBeLessThan(
       transcript.indexOf("Lunch tin count:")
@@ -161,6 +166,12 @@ describe("transcript rendering", () => {
     );
     expect(transcript.indexOf("Door echoes:")).toBeLessThan(
       transcript.indexOf("Threshold holding:")
+    );
+    expect(transcript.indexOf("Threshold holding:")).toBeLessThan(
+      transcript.indexOf("Morning stops:")
+    );
+    expect(transcript.indexOf("Morning stops:")).toBeLessThan(
+      transcript.indexOf("Keepsakes / memories:")
     );
     expect(transcript.indexOf("Lunch tin count:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")
