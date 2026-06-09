@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 17 Lunch Tin Count / Roster Split
+
+- Date: 2026-06-09
+- Main objective: Make the low-frequency lunch-tin passenger proof routes
+  easier to scan in the opened-manifest hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_lunch_tin_true_ending`,
+  `passenger_lunch_tin_checked_true_ending`, and
+  `passenger_lunch_tin_self_count` as normal-play discoverability targets while
+  coverage could reach every scene.
+- Why this matters: The direct worker-count route and the roster-proof route
+  were both playable, but they shared one `Lunch tin / shift count` bucket.
+  Players scanning the large opened-manifest menu had to infer whether a choice
+  would include the worker himself or detour into roster proof.
+- Completed work:
+  - Replaced the combined `Lunch tin / shift count` display group with separate
+    `Lunch tin count` and `Lunch tin roster` groups.
+  - Moved direct count and checked-count entry choices into `Lunch tin count`.
+  - Moved roster and roster-proof entry choices into `Lunch tin roster`.
+  - Reworded direct count labels so the visible payoff says the worker is
+    included in the count.
+  - Updated transcript and player-view regressions for the split groups and
+    ordering.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|manifest-specific platform beat|opened manifest players hear the lunch-tin count|opened-manifest players check the lunch-tin count|lunch-tin roster"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 309. The
+    opened-manifest transcript showed `Lunch tin count` with five direct count
+    choices, followed by `Lunch tin roster` with two roster-proof choices.
+- Playtest feedback:
+  - What felt better: the lunch-tin branch now presents "count the worker too"
+    as a visible route promise, separate from the roster/proof route.
+  - What still feels risky: this improves scanability and critique quality, but
+    it does not reduce the large hub's total choice count.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_roll_call_true_ending`, `passenger_morning_chorus`, and
+    `passenger_keepsake_roll_call`.
+- Risks:
+  - Route mechanics and ending counts are intentionally unchanged.
+- Status: Complete.
+
 # Cycle 16 Door Echo / Threshold Group Split
 
 - Date: 2026-06-09

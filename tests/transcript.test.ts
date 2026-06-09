@@ -134,9 +134,12 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Counts / answers:");
     expect(transcript).toContain(
-      "Lunch tin / shift count:\n- Check the lunch-tin worker's passenger count before boarding"
+      "Lunch tin count:\n- Check the lunch-tin worker's passenger count before boarding"
     );
-    expect(transcript).toContain("- Board with the lunch-tin worker's count ready for the release");
+    expect(transcript).toContain("- Board with the lunch-tin worker ready to count himself");
+    expect(transcript).toContain(
+      "Lunch tin roster:\n- Read the lunch-tin worker's roster for the opened passengers"
+    );
     expect(transcript).toContain("Passenger gathering:");
     expect(transcript).toContain(
       "- Help the opened passengers gather by helping one another board"
@@ -148,15 +151,18 @@ describe("transcript rendering", () => {
     expect(transcript).toContain("Morning / keepsakes:");
     expect(transcript.indexOf("Manifest count:")).toBeLessThan(transcript.indexOf("Shared count:"));
     expect(transcript.indexOf("Shared count:")).toBeLessThan(
-      transcript.indexOf("Lunch tin / shift count:")
+      transcript.indexOf("Lunch tin count:")
     );
-    expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
+    expect(transcript.indexOf("Lunch tin count:")).toBeLessThan(
+      transcript.indexOf("Lunch tin roster:")
+    );
+    expect(transcript.indexOf("Lunch tin roster:")).toBeLessThan(
       transcript.indexOf("Counts / answers:")
     );
     expect(transcript.indexOf("Door echoes:")).toBeLessThan(
       transcript.indexOf("Threshold holding:")
     );
-    expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(
+    expect(transcript.indexOf("Lunch tin count:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")
     );
     expect(transcript.indexOf("Board / release:")).toBeLessThan(

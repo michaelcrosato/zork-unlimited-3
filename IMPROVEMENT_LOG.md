@@ -4,6 +4,41 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Lunch Tin Count / Roster Split
+
+### Current Plan
+
+- Main objective: Make the lunch-tin passenger proof routes easier to scan in
+  the opened-manifest hub.
+- Why this matters: `passenger_lunch_tin_true_ending`,
+  `passenger_lunch_tin_checked_true_ending`, and
+  `passenger_lunch_tin_self_count` were reachable but still low-frequency in
+  normal play evidence. The direct worker-count route and roster-proof route
+  shared one broad group.
+
+### Work Completed
+
+- Split `Lunch tin / shift count` into `Lunch tin count` and
+  `Lunch tin roster`.
+- Moved direct count/check choices into `Lunch tin count`.
+- Moved roster/proof choices into `Lunch tin roster`.
+- Reworded direct count choices so the visible payoff says the worker is
+  counted too.
+- Updated transcript and player-view tests for the new groups.
+
+### Playtest Notes
+
+- Focused grouping/lunch-tin tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence generation.
+- CLI playthrough reached `passenger_lunch_tin_true_ending`, score 309. The
+  opened-manifest hub showed five `Lunch tin count` choices followed by two
+  `Lunch tin roster` choices.
+- Next target if no blind-play issue appears: improve another undersampled
+  late-game branch such as `passenger_roll_call_true_ending`,
+  `passenger_morning_chorus`, or `passenger_keepsake_roll_call`.
+
 ## 2026-06-09 - Door Echo / Threshold Group Split
 
 ### Current Plan

@@ -1975,7 +1975,7 @@ scenes:
             confirmed_conductor_clearance: true
       - id: check_lunch_tin_count_from_opened_manifest
         label: Check the lunch-tin worker's passenger count before boarding
-        choiceGroup: Lunch tin / shift count
+        choiceGroup: Lunch tin count
         to: passenger_lunch_tin_check
         requires:
           all:
@@ -1989,8 +1989,8 @@ scenes:
             checked_lunch_tin_passengers: true
             heard_gathered_passengers: true
       - id: let_opened_lunch_tin_worker_set_pace
-        label: Let the lunch-tin worker set the opened boarding pace
-        choiceGroup: Lunch tin / shift count
+        label: Let the lunch-tin worker set a count that includes himself
+        choiceGroup: Lunch tin count
         to: passenger_farewell
         requires:
           all:
@@ -2002,8 +2002,8 @@ scenes:
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
       - id: pull_release_on_opened_lunch_tin_count
-        label: Carry the lunch-tin count to Mara's speaker before the release
-        choiceGroup: Lunch tin / shift count
+        label: Carry the lunch-tin count to Mara until the worker counts himself
+        choiceGroup: Lunch tin count
         to: passenger_lunch_tin_intercom
         requires:
           all:
@@ -2175,8 +2175,8 @@ scenes:
             heard_passenger_morning_chorus: true
             heard_passenger_morning_boarding: true
       - id: follow_lunch_tin_latch
-        label: Board with the lunch-tin worker's count ready for the release
-        choiceGroup: Lunch tin / shift count
+        label: Board with the lunch-tin worker ready to count himself
+        choiceGroup: Lunch tin count
         to: passenger_lunch_tin_boarding
         requires:
           notFlag: helped_passengers_gather
@@ -2186,8 +2186,8 @@ scenes:
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
       - id: listen_to_lunch_tin_latch_from_opened_manifest
-        label: Listen as the lunch-tin latch keeps time on the speaker
-        choiceGroup: Lunch tin / shift count
+        label: Listen as the lunch-tin count reaches Mara's speaker
+        choiceGroup: Lunch tin count
         to: passenger_lunch_tin_intercom
         requires:
           all:
@@ -2212,7 +2212,7 @@ scenes:
             restored_newspaper_transfer: true
       - id: call_lunch_tin_roster_from_opened_manifest
         label: Read the lunch-tin worker's roster for the opened passengers
-        choiceGroup: Lunch tin / shift count
+        choiceGroup: Lunch tin roster
         to: passenger_lunch_tin_roster
         requires:
           all:
@@ -2227,7 +2227,7 @@ scenes:
             read_lunch_tin_roster: true
       - id: confirm_opened_lunch_tin_roster_proof
         label: Read the lunch-tin roster and confirm every proof
-        choiceGroup: Lunch tin / shift count
+        choiceGroup: Lunch tin roster
         to: passenger_lunch_tin_roster_proof
         requires:
           all:
