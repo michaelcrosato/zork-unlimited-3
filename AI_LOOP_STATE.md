@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 59 Threshold Intercom Shortcut Payoff
+
+- Date: 2026-06-09
+- Main objective: Make direct threshold-confirmation shortcuts pass through the
+  held-threshold intercom before the final clearance check.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 59 evidence showed full coverage and no unfinished runs, while
+  normal-play samples still under-sampled some late passenger payoff scenes.
+- Why this matters: When a player chooses the shortcut to hold and confirm the
+  third-car threshold, the route now pays off the speaker beat instead of
+  jumping straight to the clearance proof. The same checked threshold ending is
+  preserved, but the player hears Mara and the passengers make the doorway
+  readable first.
+- Completed work:
+  - Routed `hold_and_confirm_opened_manifest_threshold` to
+    `passenger_threshold_intercom`.
+  - Routed `hold_and_confirm_third_car_threshold` to
+    `passenger_threshold_intercom`.
+  - Updated labels so those shortcuts promise holding/carrying the threshold,
+    not silently completing the final confirmation in one click.
+  - Updated threshold regressions to prove the sequence:
+    shortcut -> `passenger_threshold_intercom` ->
+    `passenger_threshold_clearance_check` ->
+    `passenger_threshold_checked_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "threshold"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `passenger_threshold_checked_true_ending`, score 266, through
+    `hold_and_confirm_opened_manifest_threshold`,
+    `confirm_threshold_clearance_before_release`, and
+    `pull_release_after_confirmed_threshold_clearance`; the transcript included
+    `passenger_threshold_intercom` before `passenger_threshold_clearance_check`.
+- Playtest feedback:
+  - What felt better: the shortcut now reads as a complete action chain. The
+    player holds the opened threshold, hears Mara stop counting because the
+    doorway is answering in footsteps, then confirms the last shoulder clears
+    before pulling.
+  - What still feels risky: the opened-manifest hub remains broad. This cycle
+    improves one skipped sensory beat, not the overall number of late-game
+    choices.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another low-frequency late passenger payoff where a shortcut names
+    a specific proof but routes around its named scene.
+- Risks:
+  - Low. Existing endings, reachability, and coverage remain intact; the route
+    adds one deliberate confirmation beat before the same ending.
+- Status: Complete.
+
 # Cycle 58 Morning Stop Speaker Payoff
 
 - Date: 2026-06-09

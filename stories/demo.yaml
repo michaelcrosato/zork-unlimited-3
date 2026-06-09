@@ -2090,9 +2090,9 @@ scenes:
           set:
             held_passenger_threshold: true
       - id: hold_and_confirm_opened_manifest_threshold
-        label: Hold the threshold and confirm every opened passenger clears it
+        label: Hold the opened threshold while Mara carries the clearance
         choiceGroup: Threshold holding
-        to: passenger_threshold_clearance_check
+        to: passenger_threshold_intercom
         requires:
           all:
             - notFlag: held_passenger_threshold
@@ -2100,7 +2100,6 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
-            confirmed_threshold_clearance: true
             heard_mara_goodbye: true
       - id: listen_to_opened_threshold_from_manifest
         label: Let Mara talk you through holding the opened threshold
@@ -3973,8 +3972,8 @@ scenes:
           set:
             held_passenger_threshold: true
       - id: hold_and_confirm_third_car_threshold
-        label: Hold the threshold and confirm every passenger clears it
-        to: passenger_threshold_clearance_check
+        label: Hold the threshold while Mara carries every passenger through
+        to: passenger_threshold_intercom
         requires:
           all:
             - notFlag: heard_passenger_echoes
@@ -3986,7 +3985,6 @@ scenes:
         effects:
           set:
             held_passenger_threshold: true
-            confirmed_threshold_clearance: true
             heard_mara_goodbye: true
       - id: make_room_for_passengers_in_third_car
         label: Make room inside the third car before reaching for the release
