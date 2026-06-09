@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 57 Direct Morning Chorus Boarding
+
+- Date: 2026-06-09
+- Main objective: Make the explicit morning-chorus boarding choice reach the
+  third-car morning intercom immediately.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 57 evidence showed healthy validation and full coverage, while
+  normal random samples still under-sampled `passenger_morning_intercom` even
+  though coverage could reach it.
+- Why this matters: When the player chooses to board with the morning chorus
+  behind them, the next scene now pays off that exact action in the third car.
+  Mara's sign-off remains available as its own deliberate choice instead of
+  being inserted into the boarding action.
+- Completed work:
+  - Routed `board_after_passenger_morning_chorus` directly to
+    `passenger_morning_intercom`.
+  - Stopped that direct boarding route from setting the Mara sign-off flag.
+  - Updated morning-chorus route regressions to prove the direct intercom path
+    and preserve the separate sign-off path.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "morning chorus"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `passenger_morning_stop_checked_true_ending`, score 293, through
+    `listen_to_passenger_morning_chorus`,
+    `board_after_passenger_morning_chorus`,
+    `pull_release_after_morning_chorus_boarding`, and
+    `pull_release_after_confirmed_morning_stops`; final objectives were empty.
+  - A post-change 250-run random sample ended every run and reached
+    `passenger_morning_stop_checked_true_ending` twice, but still did not visit
+    `passenger_morning_intercom` in that deterministic sample.
+- Playtest feedback:
+  - What felt better: the changed route now reads as a cleaner promise and
+    payoff. The player hears ordinary morning memories, chooses to board with
+    them, reaches the third-car speaker immediately, then lets the sign break
+    HOME into real stops before pulling.
+  - What still feels risky: this is a targeted route clarity fix, not a proven
+    normal-random frequency improvement. The opened-manifest hub still has many
+    appealing late-game branches, and blind feedback should decide whether
+    morning needs stronger ordering or grouping.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another low-frequency opened-manifest payoff and tighten only the
+    route whose visible choice still delays its named reward.
+- Risks:
+  - Low. The optional Mara sign-off route remains available through
+    `ask_mara_signoff_after_morning_chorus` and
+    `board_after_signed_off_morning_chorus`.
+- Status: Complete.
+
 # Cycle 56 Direct Blank-Row Roll Call
 
 - Date: 2026-06-09

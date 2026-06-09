@@ -2929,13 +2929,12 @@ scenes:
     choices:
       - id: board_after_passenger_morning_chorus
         label: Board the third car with the morning chorus behind you
-        to: passenger_mara_signoff
+        to: passenger_morning_intercom
         requires:
           notFlag: heard_passenger_mara_signoff
         effects:
           set:
             heard_passenger_morning_boarding: true
-            heard_passenger_mara_signoff: true
       - id: board_after_signed_off_morning_chorus
         label: Board with Mara's sign-off and the morning chorus behind you
         to: passenger_morning_intercom

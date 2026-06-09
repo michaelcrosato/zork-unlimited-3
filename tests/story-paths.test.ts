@@ -17771,20 +17771,10 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "board_after_passenger_morning_chorus");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_mara_signoff");
-    expect(observation.scene.text).toContain("You are not late. You were held.");
-    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
-    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "carry_signed_morning_chorus_after_mara_signoff"
-    );
-
-    state = choose(story, state, "carry_signed_morning_chorus_after_mara_signoff");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_morning_intercom");
-    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBeUndefined();
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -18177,8 +18167,7 @@ describe("demo story critical paths", () => {
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
       "listen_to_passenger_morning_chorus",
-      "board_after_passenger_morning_chorus",
-      "carry_signed_morning_chorus_after_mara_signoff"
+      "board_after_passenger_morning_chorus"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -18189,7 +18178,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the kettle before it boils dry");
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.state.flags.heard_passenger_mara_signoff).toBe(true);
+    expect(observation.state.flags.heard_passenger_mara_signoff).toBeUndefined();
     expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
@@ -18366,7 +18355,6 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
 
     state = choose(story, state, "board_after_passenger_morning_chorus");
-    state = choose(story, state, "carry_signed_morning_chorus_after_mara_signoff");
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
     ({ state, observation } = releaseAfterMorningStopCheck(story, state));
   });
