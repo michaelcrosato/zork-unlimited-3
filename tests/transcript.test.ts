@@ -145,6 +145,9 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("- Board with the lunch-tin worker ready to count himself");
     expect(transcript).toContain(
+      "Lunch tin self-count:\n- Let the lunch-tin worker count himself before the opened release"
+    );
+    expect(transcript).toContain(
       "Lunch tin roster:\n- Read the lunch-tin worker's roster for the opened passengers"
     );
     expect(transcript).toContain("Passenger gathering:");
@@ -166,6 +169,9 @@ describe("transcript rendering", () => {
       transcript.indexOf("Lunch tin count:")
     );
     expect(transcript.indexOf("Lunch tin count:")).toBeLessThan(
+      transcript.indexOf("Lunch tin self-count:")
+    );
+    expect(transcript.indexOf("Lunch tin self-count:")).toBeLessThan(
       transcript.indexOf("Lunch tin roster:")
     );
     expect(transcript.indexOf("Lunch tin roster:")).toBeLessThan(

@@ -6895,40 +6895,45 @@ describe("demo story critical paths", () => {
       "Carry the lunch-tin count to Mara until the worker counts himself"
     );
     expect(observation.choices[15]?.choiceGroup).toBe("Lunch tin count");
-    expect(choiceIds[16]).toBe("hold_opened_manifest_threshold");
+    expect(choiceIds[16]).toBe("let_opened_lunch_tin_worker_count_himself");
     expect(observation.choices[16]?.label).toBe(
+      "Let the lunch-tin worker count himself before the opened release"
+    );
+    expect(observation.choices[16]?.choiceGroup).toBe("Lunch tin self-count");
+    expect(choiceIds[17]).toBe("hold_opened_manifest_threshold");
+    expect(observation.choices[17]?.label).toBe(
       "Hold the third-car threshold while Mara keeps the speaker open"
     );
-    expect(choiceIds[17]).toBe("hold_and_confirm_opened_manifest_threshold");
-    expect(observation.choices[17]?.label).toBe(
+    expect(choiceIds[18]).toBe("hold_and_confirm_opened_manifest_threshold");
+    expect(observation.choices[18]?.label).toBe(
       "Hold the threshold and confirm every opened passenger clears it"
     );
-    expect(choiceIds[18]).toBe("listen_to_opened_threshold_from_manifest");
-    expect(observation.choices[18]?.label).toBe(
+    expect(choiceIds[19]).toBe("listen_to_opened_threshold_from_manifest");
+    expect(observation.choices[19]?.label).toBe(
       "Let Mara talk you through holding the opened threshold"
     );
-    expect(choiceIds[19]).toBe("notice_manifest_thumbprint_from_opened_doors");
-    expect(observation.choices[19]?.label).toBe(
+    expect(choiceIds[20]).toBe("notice_manifest_thumbprint_from_opened_doors");
+    expect(observation.choices[20]?.label).toBe(
       "Notice Mara's torn thumbprint in the opened manifest"
     );
-    expect(observation.choices[19]?.choiceGroup).toBe("Thumbprint oath");
-    expect(choiceIds[20]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[20]?.label).toBe(
+    expect(observation.choices[20]?.choiceGroup).toBe("Thumbprint oath");
+    expect(choiceIds[21]).toBe("carry_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[21]?.label).toBe(
       "Carry Mara's torn thumbprint oath straight to the third-car speaker"
     );
-    expect(observation.choices[20]?.choiceGroup).toBe("Thumbprint oath");
-    expect(choiceIds[21]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
-    expect(observation.choices[21]?.label).toBe(
+    expect(observation.choices[21]?.choiceGroup).toBe("Thumbprint oath");
+    expect(choiceIds[22]).toBe("pull_release_with_manifest_thumbprint_oath_from_opened_doors");
+    expect(observation.choices[22]?.label).toBe(
       "Let the opened passengers receive Mara's thumbprint oath before release"
     );
-    expect(observation.choices[21]?.choiceGroup).toBe("Thumbprint receipt");
-    expect(choiceIds[22]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
-    expect(observation.choices[22]?.label).toBe(
+    expect(observation.choices[22]?.choiceGroup).toBe("Thumbprint receipt");
+    expect(choiceIds[23]).toBe("confirm_manifest_thumbprint_receipt_from_opened_doors");
+    expect(observation.choices[23]?.label).toBe(
       "Confirm the opened passengers receive Mara's thumbprint oath"
     );
-    expect(observation.choices[22]?.choiceGroup).toBe("Thumbprint receipt");
-    expect(choiceIds[23]).toBe("return_opened_manifest_mitten");
-    expect(observation.choices[23]?.label).toBe(
+    expect(observation.choices[23]?.choiceGroup).toBe("Thumbprint receipt");
+    expect(choiceIds[24]).toBe("return_opened_manifest_mitten");
+    expect(observation.choices[24]?.label).toBe(
       "Return the opened manifest's lost mitten to the child"
     );
     const keepsakeRollCallChoice = observation.choices.find(
@@ -6966,6 +6971,9 @@ describe("demo story critical paths", () => {
       choiceIds.indexOf("pull_release_on_opened_lunch_tin_count")
     );
     expect(choiceIds.indexOf("pull_release_on_opened_lunch_tin_count")).toBeLessThan(
+      choiceIds.indexOf("let_opened_lunch_tin_worker_count_himself")
+    );
+    expect(choiceIds.indexOf("let_opened_lunch_tin_worker_count_himself")).toBeLessThan(
       choiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(choiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
@@ -6979,6 +6987,37 @@ describe("demo story critical paths", () => {
     expect(choiceIds).toContain("board_after_releasing_passengers");
 
     const openedManifestState = state;
+
+    let directSelfCountState = choose(
+      story,
+      openedManifestState,
+      "let_opened_lunch_tin_worker_count_himself"
+    );
+    observation = observe(story, directSelfCountState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.scene.text).toContain("the person doing the counting");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+    expect(observation.objectives).toEqual([LUNCH_TIN_SELF_COUNT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_self_count",
+      "check_lunch_tin_passengers_after_self_count"
+    ]);
+
+    directSelfCountState = choose(
+      story,
+      directSelfCountState,
+      "pull_release_after_lunch_tin_self_count"
+    );
+    observation = observe(story, directSelfCountState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
 
     let directLunchTinState = choose(story, openedManifestState, "follow_lunch_tin_latch");
     observation = observe(story, directLunchTinState);
@@ -9156,6 +9195,10 @@ describe("demo story critical paths", () => {
       openedChoiceIds.indexOf("let_opened_lunch_tin_worker_set_pace")
     );
     expect(openedChoiceIds.indexOf("pull_release_on_opened_lunch_tin_count")).toBeLessThan(
+      openedChoiceIds.indexOf("let_opened_lunch_tin_worker_count_himself")
+    );
+    expect(openedChoiceIds).toContain("let_opened_lunch_tin_worker_count_himself");
+    expect(openedChoiceIds.indexOf("let_opened_lunch_tin_worker_count_himself")).toBeLessThan(
       openedChoiceIds.indexOf("hold_opened_manifest_threshold")
     );
     expect(
@@ -9166,6 +9209,11 @@ describe("demo story critical paths", () => {
       observation.choices.find((choice) => choice.id === "pull_release_on_opened_lunch_tin_count")
         ?.choiceGroup
     ).toBe("Lunch tin count");
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "let_opened_lunch_tin_worker_count_himself"
+      )?.choiceGroup
+    ).toBe("Lunch tin self-count");
 
     state = choose(story, state, "pull_release_on_opened_lunch_tin_count");
     observation = observe(story, state);
@@ -15089,6 +15137,7 @@ describe("demo story critical paths", () => {
       "check_lunch_tin_count_from_opened_manifest",
       "let_opened_lunch_tin_worker_set_pace",
       "pull_release_on_opened_lunch_tin_count",
+      "let_opened_lunch_tin_worker_count_himself",
       "hold_opened_manifest_threshold",
       "hold_and_confirm_opened_manifest_threshold",
       "listen_to_opened_threshold_from_manifest",
@@ -15168,9 +15217,15 @@ describe("demo story critical paths", () => {
       "  Lunch tin count:\n    23. Check the lunch-tin worker's passenger count before boarding"
     );
     expect(renderedPlayerView).toContain(
-      "  Lunch tin roster:\n    28. Read the lunch-tin worker's roster for the opened passengers"
+      "  Lunch tin self-count:\n    28. Let the lunch-tin worker count himself before the opened release"
     );
     expect(renderedPlayerView.indexOf("  Lunch tin count:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Lunch tin self-count:")
+    );
+    expect(renderedPlayerView).toContain(
+      "  Lunch tin roster:\n    29. Read the lunch-tin worker's roster for the opened passengers"
+    );
+    expect(renderedPlayerView.indexOf("  Lunch tin self-count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin roster:")
     );
     expect(renderedPlayerView).toContain(
@@ -15204,10 +15259,10 @@ describe("demo story critical paths", () => {
       renderedPlayerView.indexOf("  Door echoes:")
     );
     expect(renderedPlayerView).toContain(
-      "  Morning stops:\n    54. Listen for what the opened passengers remember about morning"
+      "  Morning stops:\n    55. Listen for what the opened passengers remember about morning"
     );
     expect(renderedPlayerView).toContain(
-      "  Keepsakes / memories:\n    57. Return the opened manifest's lost mitten to the child"
+      "  Keepsakes / memories:\n    58. Return the opened manifest's lost mitten to the child"
     );
     expect(renderedPlayerView.indexOf("  Threshold holding:")).toBeLessThan(
       renderedPlayerView.indexOf("  Morning stops:")

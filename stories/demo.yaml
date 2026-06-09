@@ -2016,6 +2016,21 @@ scenes:
             steadied_lunch_tin_worker: true
             set_lunch_tin_pace: true
             heard_gathered_passengers: true
+      - id: let_opened_lunch_tin_worker_count_himself
+        label: Let the lunch-tin worker count himself before the opened release
+        choiceGroup: Lunch tin self-count
+        to: passenger_lunch_tin_self_count
+        requires:
+          all:
+            - notFlag: helped_passengers_gather
+            - notFlag: counted_lunch_tin_worker_self
+        effects:
+          set:
+            helped_passengers_gather: true
+            steadied_lunch_tin_worker: true
+            set_lunch_tin_pace: true
+            heard_gathered_passengers: true
+            counted_lunch_tin_worker_self: true
       - id: hold_opened_manifest_threshold
         label: Hold the third-car threshold while Mara keeps the speaker open
         choiceGroup: Threshold holding

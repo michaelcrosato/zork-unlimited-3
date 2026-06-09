@@ -21,6 +21,7 @@ const GROUP_ORDER = [
   "Manifest count",
   "Shared count",
   "Lunch tin count",
+  "Lunch tin self-count",
   "Lunch tin roster",
   "Counts / answers",
   "Final roll call",
@@ -101,6 +102,14 @@ function classifyChoiceLabel(label: string): string {
 
   if (/\b(final roll call|passengers' own roll call|passengers' roll call)\b/.test(normalized)) {
     return "Final roll call";
+  }
+
+  if (
+    /\blunch[- ]tin\b.*\b(count himself|counts himself|counted himself|self-count)\b|\b(count himself|counts himself|counted himself|self-count)\b.*\blunch[- ]tin\b/.test(
+      normalized
+    )
+  ) {
+    return "Lunch tin self-count";
   }
 
   if (

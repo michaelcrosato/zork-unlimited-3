@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 22 Lunch-Tin Self-Count Hub Route
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin worker self-count route visible from the
+  opened-manifest hub instead of requiring players to infer it through boarding
+  or intercom setup.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 22 evidence named `passenger_lunch_tin_self_count`,
+  `passenger_lunch_tin_true_ending`, and
+  `passenger_lunch_tin_checked_true_ending` as normal-play misses while
+  coverage could reach every scene.
+- Why this matters: Players scanning the large late-game hub can now see a
+  distinct `Lunch tin self-count` route that names the actual emotional payoff:
+  the worker must count himself before the opened release.
+- Completed work:
+  - Added a direct opened-manifest choice:
+    `Let the lunch-tin worker count himself before the opened release`.
+  - Added the `Lunch tin self-count` display group after `Lunch tin count`.
+  - Updated fallback choice classification so lunch-tin self-count labels do
+    not collapse into generic count or release groups.
+  - Added/updated regression coverage for transcript grouping, player-view
+    ordering, and the direct route into `passenger_lunch_tin_self_count`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts tests\transcript.test.ts -t "lunch-tin|groups long final-state|opened manifest"`.
+  - Full `npm run health` passed: format check, TypeScript, 333 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 293,
+    through `let_opened_lunch_tin_worker_count_himself` and
+    `pull_release_after_lunch_tin_self_count`.
+  - `npm run ai:cycle` was attempted, but this shell inherited
+    `AI_AGENT_CMD`; the command started nested Codex agent processes and timed
+    out locally. The nested processes were stopped and only ignored `ai-runs/`
+    evidence artifacts were left.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now names the worker's self-count
+    directly, and the next scene pays it off without making the player infer
+    the route through a setup choice.
+  - What still feels risky: the hub is still large, so this improves scanability
+    for one branch but does not reduce the total number of late-game options.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue with undersampled normal-play branches such as
+    `passenger_echoed_check`, `passenger_echoed_manifest_intercom`, or
+    `passenger_threshold_boarding`.
+- Risks:
+  - The opened-manifest hub gains one more choice, but grouping keeps the new
+    route scannable and scene/ending counts stay unchanged.
+- Status: Complete.
+
 # Cycle 21 Keepsake Roll Call Hub Route
 
 - Date: 2026-06-09
