@@ -7,6 +7,48 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 11 Direct Manifest Handoff Release Pass
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest choice labeled as waiting for
+  Mara's handoff before pulling actually enter the handoff-release proof beat.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_manifest_handoff_release` and
+  `passenger_manifest_handoff_true_ending` as low normal-play discovery beats,
+  while coverage could still reach them.
+- Why this matters: Players who choose the near-release handoff action should
+  see the proof beat immediately, not bounce back into a broader handoff scene
+  and have to infer the same release action again.
+- Planned work:
+  - Route `pull_release_as_mara_calls_opened_doors` directly to
+    `passenger_manifest_handoff_release`.
+  - Set the same handoff proof flags used by the longer intercom path.
+  - Add a regression that plays the direct opened-manifest handoff route through
+    `passenger_manifest_handoff_true_ending`.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This improves one normal-play discovery branch without removing the longer
+    watch/listen handoff path.
+- Status:
+  - Completed and ready for commit/push.
+  - Focused opened-manifest tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-door handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle -- --once` completed evidence
+    and prompt generation in ignored `ai-runs/`. Its random sample reached
+    `passenger_manifest_handoff_true_ending` once and
+    `passenger_manifest_handoff_door_checked_true_ending` once in 100 runs.
+  - Actual CLI route reached `passenger_manifest_handoff_release` with the
+    objective `Pull after Mara's handoff reaches the opened manifest doors.`,
+    then ended at `passenger_manifest_handoff_true_ending`, score 293.
+  - What felt better: the near-release choice now behaves like its label; it
+    moves straight to proof that Mara's handoff reached the doors, then asks
+    for the final pull.
+  - What still feels risky: the opened-manifest hub is intentionally broad, so
+    optional proof branches can still be undersampled by pure random play.
+
 # Cycle 10 Manifest Thumbprint Objective Pass
 
 - Date: 2026-06-09

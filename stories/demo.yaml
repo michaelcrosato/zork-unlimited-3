@@ -1831,7 +1831,7 @@ scenes:
       - id: pull_release_as_mara_calls_opened_doors
         label: Let Mara's handoff reach the opened doors before pulling
         choiceGroup: Finish Mara's handoff
-        to: mara_manifest_handoff
+        to: passenger_manifest_handoff_release
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
@@ -1843,6 +1843,8 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
+            manifest_handoff_reached_doors: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off before the opened passengers board
         choiceGroup: Mara and manifest

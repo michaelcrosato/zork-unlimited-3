@@ -6215,21 +6215,13 @@ describe("demo story critical paths", () => {
     let firstDirectReleaseState = choose(story, state, "pull_release_as_mara_calls_opened_doors");
     observation = observe(story, firstDirectReleaseState);
 
-    expect(observation.scene.id).toBe("mara_manifest_handoff");
-    expect(observation.scene.text).toContain("steadiness can be handed from name to name");
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_release");
+    expect(observation.scene.text).toContain("Mara's call reaches the nearest opened door first");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
-    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
-    expect(observation.state.flags.manifest_handoff_reached_doors).toBeUndefined();
-    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_during_mara_manifest_handoff"
-    );
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.manifest_handoff_reached_doors).toBe(true);
+    expect(observation.objectives).toEqual([MANIFEST_HANDOFF_RELEASE_OBJECTIVE]);
 
-    firstDirectReleaseState = choose(
-      story,
-      firstDirectReleaseState,
-      "pull_release_during_mara_manifest_handoff"
-    );
     const { observation: firstDirectReleaseObservation } = releaseAfterManifestHandoffProof(
       story,
       firstDirectReleaseState
@@ -15120,6 +15112,18 @@ describe("demo story critical paths", () => {
       "board_and_confirm_opened_manifest_ready",
       "board_after_releasing_passengers"
     ]);
+
+    const directHandoffReleaseState = choose(
+      story,
+      state,
+      "pull_release_as_mara_calls_opened_doors"
+    );
+    ({ observation } = releaseAfterManifestHandoffProof(story, directHandoffReleaseState));
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.objectives).toEqual([]);
+    expectIdealScore(observation.score);
 
     const firstHandoffState = choose(story, state, "watch_mara_open_manifest");
     observation = observe(story, firstHandoffState);
