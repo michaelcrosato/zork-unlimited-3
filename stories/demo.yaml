@@ -102,7 +102,7 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: manifest_handoff_reached_doors
-  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving."
+  - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath, confirm its receipt, pull with the oath, or pull the release while the handoff is moving."
     requires:
       all:
         - flag: freed_mara
@@ -3294,6 +3294,21 @@ scenes:
           set:
             read_manifest_thumbprint: true
             heard_mara_goodbye: true
+      - id: confirm_darkened_manifest_thumbprint_receipt_from_handoff
+        label: Confirm Mara's darkened thumbprint reaches the opened passengers
+        choiceGroup: Thumbprint receipt
+        to: mara_manifest_thumbprint_receipt
+        requires:
+          all:
+            - notFlag: confirmed_manifest_thumbprint_receipt
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            heard_mara_goodbye: true
+            confirmed_manifest_thumbprint_receipt: true
       - id: ask_mara_signoff_after_manifest_handoff
         label: Ask Mara to sign off before anyone boards alone
         choiceGroup: Mara and manifest

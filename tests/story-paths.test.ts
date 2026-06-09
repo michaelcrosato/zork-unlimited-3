@@ -14,7 +14,7 @@ const THRESHOLD_INTERCOM_OBJECTIVE =
   "Confirm the held threshold is clear, or pull while it stays open.";
 const THRESHOLD_RELEASE_OBJECTIVE = "Pull after the third-car threshold is clear.";
 const MANIFEST_HANDOFF_OBJECTIVE =
-  "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
+  "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath, confirm its receipt, pull with the oath, or pull the release while the handoff is moving.";
 const MANIFEST_HANDOFF_RELEASE_OBJECTIVE =
   "Pull after Mara's handoff reaches the opened manifest doors.";
 const THUMBPRINT_CARRY_OBJECTIVE = "Carry Mara's thumbprint oath to the third-car speaker.";
@@ -6088,6 +6088,7 @@ describe("demo story critical paths", () => {
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
       "carry_darkened_manifest_thumbprint_to_speaker",
+      "confirm_darkened_manifest_thumbprint_receipt_from_handoff",
       "ask_mara_signoff_after_manifest_handoff",
       "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
@@ -6117,6 +6118,9 @@ describe("demo story critical paths", () => {
     expect(handoffGroups.get("carry_darkened_manifest_thumbprint_to_speaker")).toBe(
       "Thumbprint oath"
     );
+    expect(handoffGroups.get("confirm_darkened_manifest_thumbprint_receipt_from_handoff")).toBe(
+      "Thumbprint receipt"
+    );
     expect(handoffGroups.get("touch_mara_manifest_thumbprint")).toBe("Thumbprint oath");
     expect(handoffGroups.get("ask_mara_about_morning_after_manifest_handoff")).toBe(
       "Morning stops"
@@ -6143,6 +6147,7 @@ describe("demo story critical paths", () => {
       "make_room_after_mara_manifest_handoff",
       "carry_darkened_manifest_thumbprint_to_speaker",
       "touch_mara_manifest_thumbprint",
+      "confirm_darkened_manifest_thumbprint_receipt_from_handoff",
       "ask_mara_signoff_after_manifest_handoff",
       "finish_count_after_mara_manifest_handoff",
       "continue_manifest_handoff_roll_call",
@@ -6155,16 +6160,17 @@ describe("demo story critical paths", () => {
     expect(rendered).toContain("  Shared room / release:\n    4. Make room in the third car");
     expect(rendered).toContain("  Thumbprint oath:\n    5. Carry the darkened thumbprint");
     expect(rendered).toContain("    6. Touch Mara's torn thumbprint");
-    expect(rendered).toContain("  Mara and manifest:\n    7. Ask Mara to sign off");
+    expect(rendered).toContain("  Thumbprint receipt:\n    7. Confirm Mara's darkened thumbprint");
+    expect(rendered).toContain("  Mara and manifest:\n    8. Ask Mara to sign off");
     expect(rendered).toContain(
-      "  Shared count:\n    8. Let the opened passengers finish Mara's count together"
+      "  Shared count:\n    9. Let the opened passengers finish Mara's count together"
     );
     expect(rendered).toContain(
-      "  Counts / answers:\n    9. Keep listening as the opened passengers answer Mara"
+      "  Counts / answers:\n    10. Keep listening as the opened passengers answer Mara"
     );
-    expect(rendered).toContain("  Threshold holding:\n    11. Hold the third-car threshold");
-    expect(rendered).toContain("  Morning stops:\n    12. Ask Mara what morning means");
-    expect(rendered).toContain("  Return:\n    13. Return to the opened manifest doors");
+    expect(rendered).toContain("  Threshold holding:\n    12. Hold the third-car threshold");
+    expect(rendered).toContain("  Morning stops:\n    13. Ask Mara what morning means");
+    expect(rendered).toContain("  Return:\n    14. Return to the opened manifest doors");
     expect(rendered).not.toContain("  Other:");
 
     state = choose(story, state, "return_from_mara_manifest_handoff");
@@ -8535,6 +8541,56 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("received by the passengers themselves");
     expect(observation.scene.text).toContain("passenger order");
     expect(observation.scene.text).toContain("the open doors have answered it");
+    expectIdealScore(observation.score);
+  });
+
+  it("lets Mara's opened-door handoff confirm the thumbprint receipt directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "watch_mara_open_manifest",
+      "confirm_darkened_manifest_thumbprint_receipt_from_handoff"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_thumbprint_receipt"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_thumbprint_receipt");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("received by the passengers themselves");
     expectIdealScore(observation.score);
   });
 

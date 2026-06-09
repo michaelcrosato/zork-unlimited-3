@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 25 Direct Thumbprint Receipt Handoff
+
+- Date: 2026-06-09
+- Main objective: Make the `mara_manifest_thumbprint_receipt_true_ending`
+  easier to recognize from Mara's opened-door handoff instead of requiring
+  players to detour through a separate touch/carry step after the text already
+  calls out the darkened thumbprint.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 25 evidence named `mara_manifest_handoff`,
+  `mara_manifest_thumbprint_receipt`, and
+  `mara_manifest_thumbprint_receipt_true_ending` as normal-play discovery
+  misses while coverage could still reach every scene.
+- Why this matters: When a player watches Mara call the opened manifest doors,
+  the scene now gives them a plain receipt action that matches the prose:
+  confirm that Mara's darkened thumbprint reaches the passengers, then pull.
+  The route still uses the existing receipt scene and ending, so the payoff is
+  clearer without adding a new branch family.
+- Completed work:
+  - Added `confirm_darkened_manifest_thumbprint_receipt_from_handoff` to
+    `mara_manifest_handoff`.
+  - Updated the opened-door handoff objective to mention confirming receipt.
+  - Updated player-view grouping expectations so the new action appears under
+    `Thumbprint receipt`, after `Thumbprint oath` and before Mara sign-off.
+  - Added a regression route from opened manifest handoff directly to
+    `mara_manifest_thumbprint_receipt_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest handoff|thumbprint receipt"`.
+  - Actual CLI route reached `mara_manifest_thumbprint_receipt_true_ending`,
+    score 296, through `watch_mara_open_manifest`,
+    `confirm_darkened_manifest_thumbprint_receipt_from_handoff`, and
+    `pull_release_after_manifest_thumbprint_receipt`.
+  - Full `npm run health` passed after the tracked changes.
+- Playtest feedback:
+  - What felt better: the handoff scene now makes the thumbprint receipt payoff
+    readable at the moment the text points to it. The player can choose the
+    receipt route directly instead of inferring that "touch" or "carry" is the
+    only way to complete that thought.
+  - What still feels risky: the handoff scene has one more late-game choice.
+    Grouping keeps it scannable, but the hub remains broad enough that future
+    blind-play evidence should keep checking for menu fatigue.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving undersampled late branches such as
+    `passenger_gathered_boarding`, `passenger_threshold_boarding`, or
+    `passenger_roll_call_true_ending`.
+- Risks:
+  - Low. The new choice reuses existing flags, objective rules, receipt scene,
+    and ideal ending metadata.
+- Status: Complete.
+
 # Cycle 24 Reviewed Count Recovery
 
 - Date: 2026-06-09
