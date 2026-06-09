@@ -5578,25 +5578,11 @@ describe("demo story critical paths", () => {
     let openedDoorReadyState = choose(story, state, "board_and_confirm_opened_manifest_ready");
     observation = observe(story, openedDoorReadyState);
 
-    expect(observation.scene.id).toBe("opened_manifest_echoes");
-    expect(observation.scene.text).toContain("footsteps under it");
-    expect(observation.state.flags.heard_manifest_ready).toBe(true);
-    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
-    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "confirm_ready_manifest_after_opened_echoes"
-    ]);
-
-    openedDoorReadyState = choose(
-      story,
-      openedDoorReadyState,
-      "confirm_ready_manifest_after_opened_echoes"
-    );
-    observation = observe(story, openedDoorReadyState);
-
     expect(observation.scene.id).toBe("passenger_manifest_ready_intercom");
     expect(observation.scene.text).toContain("Every kept name is aboard");
+    expect(observation.scene.text).toContain("passenger list instead of a sentence");
     expect(observation.state.flags.heard_manifest_ready).toBe(true);
+    expect(observation.state.flags.heard_passenger_echoes).toBeUndefined();
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_mara_finish_ready_manifest",

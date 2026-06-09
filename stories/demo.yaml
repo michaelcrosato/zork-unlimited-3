@@ -2879,7 +2879,7 @@ scenes:
       - id: board_and_confirm_opened_manifest_ready
         label: Board and confirm every manifest passenger is aboard
         choiceGroup: Counts / answers
-        to: opened_manifest_echoes
+        to: passenger_manifest_ready_intercom
         requires:
           all:
             - notFlag: heard_manifest_ready
@@ -2894,7 +2894,6 @@ scenes:
         effects:
           set:
             heard_manifest_ready: true
-            heard_passenger_echoes: true
       - id: pull_release_for_every_opened_manifest_name
         label: Pull the release now for every opened manifest name
         choiceGroup: Board / release

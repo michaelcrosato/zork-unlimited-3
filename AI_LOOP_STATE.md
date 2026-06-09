@@ -7,6 +7,53 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 54 Direct Ready Manifest Confirmation
+
+- Date: 2026-06-09
+- Main objective: Make the explicit "Board and confirm every manifest
+  passenger is aboard" action pay off at the ready-manifest intercom
+  immediately.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 54 evidence showed no unfinished runs and full coverage, while
+  normal random samples still under-sampled some late passenger payoffs such as
+  `passenger_manifest_ready_intercom`.
+- Why this matters: When a player chooses to confirm that every opened
+  manifest passenger is aboard, the next scene now confirms exactly that:
+  Mara says every kept name is aboard and offers the release. The door-echo
+  route remains available for players who choose to listen to echoes, but this
+  action no longer inserts an unrelated echo beat first.
+- Completed work:
+  - Routed `board_and_confirm_opened_manifest_ready` directly to
+    `passenger_manifest_ready_intercom`.
+  - Removed the incidental `heard_passenger_echoes` flag from that route so it
+    no longer marks the echo branch as heard.
+  - Updated the route regression for the opened-manifest ready confirmation.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "opened manifest count"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_manifest_true_ending`, score
+    270, through `board_and_confirm_opened_manifest_ready`,
+    `passenger_manifest_ready_intercom`, and `pull_release_with_ready_manifest`;
+    final objectives were empty.
+- Playtest feedback:
+  - What felt better: the route now reads as a clean promise and payoff. The
+    player boards, confirms every kept name is aboard, hears Mara confirm the
+    manifest is ready, and can pull immediately.
+  - What still feels risky: this improves clarity and pacing more than it
+    proves a large frequency shift. The separate echo route still needs blind
+    feedback to confirm it feels like a deliberate alternate branch.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue tightening low-frequency passenger payoffs where a visible choice
+    implies a stronger action than the current route delivers.
+- Risks:
+  - Low. The change is one story edge with a focused regression, and full
+    validation still shows every scene reachable.
+- Status: Complete.
+
 # Cycle 53 Direct Morning Stop Confirmation
 
 - Date: 2026-06-09
