@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 43 Opened-Manifest Objective Scanability
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest hub easier to understand in the
+  player view without changing its route structure.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 42 playtest feedback called out the opened-manifest objective
+  as accurate but too long to scan.
+- Why this matters: The late hub offers many good proof routes, but the old
+  objective tried to list nearly all of them in one sentence. That made the
+  next step feel heavier than it is: get the opened passengers moving together,
+  then pull the release.
+- Planned work:
+  - Replace the long opened-manifest objective with one concise player-facing
+    direction.
+  - Add a regression expectation that the player-view objective stays concise.
+  - Run focused tests, full health, and a real CLI playthrough through the
+    opened-manifest hub.
+- Risks:
+  - A shorter objective may be less exhaustive, so the existing choice labels
+    and grouped choices still need to carry the optional route detail.
+- Status:
+  - Completed and ready for commit/push.
+  - Replaced the long opened-manifest objective with: "Get the opened
+    passengers moving together, then pull the third-car release."
+  - Added a focused regression expectation that this objective remains at or
+    below 90 characters in the player view.
+  - Focused route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest-specific platform beat|direct manifest boarders"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, random had `ended: 100`
+    / `unfinished: 0`, coverage stayed complete, actual MCP play reached
+    `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough to `passengers_released` now shows one short hub
+    objective: "Get the opened passengers moving together, then pull the
+    third-car release."
+  - The same route then used the threshold proof path and reached
+    `passenger_threshold_checked_true_ending` with score 265 and no remaining
+    objectives.
+  - What felt better: the hub still has many choices, but the objective no
+    longer competes with the choice list. It now states the late-game job in
+    plain terms.
+  - What still feels risky: the hub still exposes 64 choices, so blind players
+    may need more grouping/priority help after the concise objective.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available.
+    Otherwise, improve normal-play discovery for one under-sampled late proof
+    route, especially `mara_manifest_thumbprint_receipt`,
+    `passenger_manifest_handoff_release`, or `passenger_threshold_boarding`.
+
 # Cycle 42 Mara Sign-Off Boarding Proof
 
 - Date: 2026-06-09

@@ -18,7 +18,7 @@ const ECHO_SEAT_RECEIPT_OBJECTIVE =
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull the release after the gathered passengers pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board together after Mara's sign-off, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Get the opened passengers moving together, then pull the third-car release.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -14835,6 +14835,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("less like an interruption than the next beat");
     expect(observation.state.flags.freed_mara).toBe(true);
     expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
+    expect(observation.objectives[0]?.length).toBeLessThanOrEqual(90);
     expect(choiceIds).toEqual([
       "watch_mara_open_manifest",
       "carry_mara_handoff_as_doors_open",
