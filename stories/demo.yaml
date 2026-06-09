@@ -124,11 +124,24 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Pull the release after the gathered passengers pass the handle hand to hand.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - notFlag: made_room_for_passengers
+        - notFlag: matched_manifest_keepsakes
+        - notFlag: returned_lost_mitten
+        - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: checked_answered_passengers
+        - notFlag: confirmed_echoed_manifest_seats
   - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names to the speaker and pull the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
+        - notFlag: helped_passengers_gather
         - notFlag: made_room_for_passengers
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
@@ -136,7 +149,6 @@ objectives:
         - any:
             - notFlag: saw_mara_manifest_handoff
             - flag: heard_passenger_answers
-            - flag: helped_passengers_gather
             - flag: read_mara_thumbprint
             - flag: read_manifest_thumbprint
   - text: Pull the emergency release while the opened passengers hold room for one another.
@@ -4182,8 +4194,11 @@ scenes:
           set:
             heard_gathered_passengers: true
       - id: pull_release_after_gathered_boarding
-        label: Move the release hand to hand once every passenger is ready
-        to: passenger_gathered_release
+        label: Listen once more before the gathered passengers share the release
+        to: passenger_gathered_intercom
+        effects:
+          set:
+            heard_gathered_passengers: true
 
   passenger_lunch_tin_boarding:
     routeImportance: optional
@@ -4749,8 +4764,8 @@ scenes:
             - flag: reviewed_open_manifest_count
             - notFlag: helped_passengers_gather
       - id: pull_release_after_gathering_passengers
-        label: Move the release hand to hand once every passenger is ready
-        to: passenger_gathered_release
+        label: Watch the gathered passengers board before sharing the release
+        to: passenger_gathered_boarding
         requires:
           all:
             - flag: freed_mara

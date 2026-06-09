@@ -7,6 +7,74 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 37 Gathered Passenger Boarding Proof
+
+- Date: 2026-06-09
+- Main objective: Make the gathered-passenger route easier to understand in
+  normal play by pausing common gathered-release shortcuts on the existing
+  boarding and intercom proof beats before the shared release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 37 evidence is green, but normal random play under-sampled
+  `passenger_gathered_boarding`, `passenger_gathered_intercom`,
+  `passenger_gathered_release`, and `passenger_helped_true_ending` compared
+  with coverage.
+- Why this matters: The gathered route is the clearest passenger-focused
+  version of the rescue: people help one another board instead of being carried
+  by Mara or by a single clue. A shortcut from the third car could skip the
+  boarding proof and land directly on the handle, making the ending less
+  readable.
+- Planned work:
+  - Route the train-car gathered shortcut through `passenger_gathered_boarding`
+    instead of directly to `passenger_gathered_release`.
+  - Route the direct gathered-boarding release option through
+    `passenger_gathered_intercom` before the shared-release check.
+  - Add a focused gathered-passenger objective so the branch no longer shows
+    the huge opened-manifest checklist after the player commits to gathering.
+  - Add regression tests for the new pauses and objective.
+  - Run focused tests, full health, evidence generation, and an actual
+    CLI/MCP-style playthrough of the revised route.
+- Risks:
+  - This adds one click to the common gathered-boarding release path and one
+    click to a late gathered-passenger shortcut, so the labels and objective
+    must make the pauses feel like proof of boarding rather than delay.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_gathered_boarding` now routes to
+    `passenger_gathered_intercom`, sets `heard_gathered_passengers`, and then
+    continues to `passenger_gathered_release`.
+  - `pull_release_after_gathering_passengers` now routes to
+    `passenger_gathered_boarding` instead of skipping directly to the shared
+    release.
+  - A focused objective now appears after the player commits to the generic
+    gathered-passenger branch: "Pull the release after the gathered passengers
+    pass the handle hand to hand." The broad opened-manifest checklist is
+    suppressed for that branch.
+  - Focused gathered tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route reached
+    `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `help_opened_passengers_gather` now visits
+    `passenger_gathered_boarding` -> `passenger_gathered_intercom` ->
+    `passenger_gathered_release` -> `passenger_helped_true_ending`.
+  - The added intercom pause reads coherently: passengers now audibly gather
+    themselves before the handle is shared, and the final ending's "No one
+    crosses alone" line has visible setup.
+  - No invalid choice, stale objective, unreachable scene, unfinished run, or
+    ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining under-sampled proof
+    beats such as `mara_manifest_thumbprint_receipt`,
+    `passenger_answered_boarding_true_ending`, `passenger_room_boarding`, or
+    `passenger_threshold_boarding`.
+
 # Cycle 36 Mara Handoff Visibility
 
 - Date: 2026-06-09
