@@ -4250,7 +4250,11 @@ scenes:
     choices:
       - id: pull_release_after_lunch_tin_boarding
         label: Pull the release while the lunch-tin count holds
-        to: passenger_lunch_tin_true_ending
+        to: passenger_lunch_tin_self_count
+        effects:
+          set:
+            heard_gathered_passengers: true
+            counted_lunch_tin_worker_self: true
       - id: let_lunch_tin_worker_count_himself_from_boarding
         label: Let the lunch-tin worker count himself before the release
         to: passenger_lunch_tin_self_count

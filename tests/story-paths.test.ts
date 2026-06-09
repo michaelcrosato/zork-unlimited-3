@@ -6895,6 +6895,17 @@ describe("demo story critical paths", () => {
     );
     observation = observe(story, directLunchTinState);
 
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.scene.text).toContain("the person doing the counting");
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+
+    directLunchTinState = choose(
+      story,
+      directLunchTinState,
+      "pull_release_after_lunch_tin_self_count"
+    );
+    observation = observe(story, directLunchTinState);
+
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("lunch-tin worker's count");
@@ -9115,6 +9126,18 @@ describe("demo story critical paths", () => {
     state = choose(story, boardingState, "pull_release_after_lunch_tin_boarding");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.scene.text).toContain("the person doing the counting");
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_lunch_tin_self_count",
+      "check_lunch_tin_passengers_after_self_count"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_self_count");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.text).toContain("lunch-tin worker's count");
     expect(observation.scene.text).toContain("no longer a counter and no longer counted");
@@ -9591,6 +9614,12 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_after_lunch_tin_boarding");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_self_count");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
@@ -11369,6 +11398,12 @@ describe("demo story critical paths", () => {
     openedState = choose(story, openedState, "pull_release_after_lunch_tin_boarding");
     observation = observe(story, openedState);
 
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+
+    openedState = choose(story, openedState, "pull_release_after_lunch_tin_self_count");
+    observation = observe(story, openedState);
+
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("lunch-tin worker's count");
@@ -11409,6 +11444,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
 
     platformState = choose(story, platformState, "pull_release_after_lunch_tin_boarding");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_self_count");
+    expect(observation.state.flags.counted_lunch_tin_worker_self).toBe(true);
+
+    platformState = choose(story, platformState, "pull_release_after_lunch_tin_self_count");
     observation = observe(story, platformState);
 
     expect(observation.scene.id).toBe("passenger_lunch_tin_true_ending");
@@ -12639,7 +12680,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("lets the lunch-tin boarding count release directly without losing full score", async () => {
+  it("lets the lunch-tin boarding count include the worker without losing full score", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -12664,7 +12705,8 @@ describe("demo story critical paths", () => {
       "listen_to_passenger_answers",
       "let_lunch_tin_worker_keep_count",
       "return_from_passenger_farewell",
-      "pull_release_after_lunch_tin_boarding"
+      "pull_release_after_lunch_tin_boarding",
+      "pull_release_after_lunch_tin_self_count"
     ]) {
       state = choose(story, state, choiceId);
     }

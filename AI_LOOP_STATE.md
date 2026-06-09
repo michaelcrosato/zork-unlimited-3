@@ -7,6 +7,60 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 52 Lunch-Tin Self-Count Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the first lunch-tin boarding release action show the
+  worker counting himself before the ending, instead of letting the player skip
+  that payoff.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall and points at optional
+  late-game discovery/payoff misses, including `passenger_lunch_tin_self_count`
+  and `passenger_lunch_tin_true_ending`.
+- Why this matters: The lunch-tin route is about a worker whose count normally
+  erases him. A player who pulls the release as soon as the lunch-tin count
+  holds should still see the key emotional beat where he includes himself in
+  the count before the tunnel lets everyone go.
+- Planned work:
+  - Keep `pull_release_after_lunch_tin_boarding` stable for playtest history.
+  - Route it to `passenger_lunch_tin_self_count`.
+  - Set `heard_gathered_passengers` and `counted_lunch_tin_worker_self` so the
+    state matches the scene.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This adds one extra screen before the lunch-tin ending for the direct
+    boarding release. It improves payoff clarity, but could feel like a pause
+    if the player expected an immediate ending.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_lunch_tin_boarding` now routes to
+    `passenger_lunch_tin_self_count` and sets
+    `heard_gathered_passengers` plus `counted_lunch_tin_worker_self`.
+  - Focused lunch-tin regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 330 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI playthrough used `let_lunch_tin_worker_keep_count` ->
+    `return_from_passenger_farewell` -> `pull_release_after_lunch_tin_boarding`
+    -> `pull_release_after_lunch_tin_self_count`.
+  - Final scene was `passenger_lunch_tin_true_ending`, score 331, with no
+    remaining choices.
+  - What felt better: the first release attempt now stops on the worker
+    including himself in the count, so the branch's emotional premise is
+    visible before the ending.
+  - What still feels risky: the boarding scene still offers both a direct
+    release and an explicit self-count choice. They now share the payoff beat,
+    but the choice list may remain a little dense.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery/payoff work for another current random miss
+    such as `passenger_morning_chorus` or late opened-manifest choice density.
+
 # Cycle 51 Gathered Release Direct Payoff
 
 - Date: 2026-06-09
