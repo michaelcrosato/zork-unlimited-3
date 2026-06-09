@@ -2172,6 +2172,24 @@ scenes:
             heard_passenger_echoes: true
             echoed_manifest_boarded: true
             checked_echoed_passengers: true
+      - id: carry_checked_opened_echoes_to_speaker
+        label: Carry the checked door-echoes to Mara's speaker before release
+        choiceGroup: Door echoes
+        to: passenger_echoed_manifest_intercom
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: checked_echoed_passengers
+            - notFlag: confirmed_echoed_manifest_seats
+            - notFlag: heard_mara_goodbye
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
+            checked_echoed_passengers: true
+            heard_mara_goodbye: true
       - id: board_with_passenger_morning_chorus
         label: Board with the passengers' remembered mornings in the speaker
         choiceGroup: Morning stops

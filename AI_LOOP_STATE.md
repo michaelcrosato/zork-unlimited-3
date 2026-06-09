@@ -7,6 +7,53 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 23 Checked Echo Speaker Route
+
+- Date: 2026-06-09
+- Main objective: Make the checked door-echo speaker route visible from the
+  opened-manifest hub instead of requiring players to infer it through a
+  boarding or post-check detour.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 23 evidence named `passenger_echoed_check` and
+  `passenger_echoed_manifest_intercom` as normal-play discoverability misses
+  while coverage could still reach every scene.
+- Why this matters: Players scanning the large late-game hub can now see a
+  direct `Door echoes` option that carries the checked echoes to Mara's speaker
+  before the release, making the passenger-echo payoff read as a deliberate
+  rescue route rather than incidental flavor.
+- Completed work:
+  - Added a direct opened-manifest choice:
+    `Carry the checked door-echoes to Mara's speaker before release`.
+  - Routed that choice into the existing `passenger_echoed_manifest_intercom`
+    scene with checked, boarded echoes and the seat-confirmation objective.
+  - Updated regression coverage for the opened-manifest hub order and the new
+    direct route into the echoed-passenger true ending.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "door-echo|manifest-specific platform beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 334 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_echoed_true_ending`, score 298, through
+    `carry_checked_opened_echoes_to_speaker`,
+    `pull_release_after_echoed_manifest_goodbye`, and
+    `pull_release_after_echoed_seat_receipt`.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now names the checked echo
+    speaker route directly, and the next scene clearly turns the sounds from
+    clues into passengers leaving.
+  - What still feels risky: the late-game hub remains large; this improves
+    scanability for one branch but does not reduce total menu size.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving undersampled normal-play branches such as
+    `passenger_gathered_boarding`, `passenger_threshold_boarding`, or
+    `passenger_room_boarding`.
+- Risks:
+  - The opened-manifest hub gains one more choice; keeping it inside the Door
+    echoes group should preserve scanability.
+- Status: Complete.
+
 # Cycle 22 Lunch-Tin Self-Count Hub Route
 
 - Date: 2026-06-09

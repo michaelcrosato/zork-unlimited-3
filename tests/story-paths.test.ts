@@ -7849,6 +7849,57 @@ describe("demo story critical paths", () => {
     ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
+  it("lets opened-manifest players carry checked door-echoes straight to Mara's speaker", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "carry_checked_opened_echoes_to_speaker"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
+    expect(observation.scene.text).toContain("the same small sounds you heard");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_echoed_manifest_seats).toBeUndefined();
+    expect(observation.objectives).toEqual([CHECKED_ECHO_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_echoed_manifest_seats",
+      "pull_release_after_echoed_manifest_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
+    ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
+
+    expect(observation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
   it("pays off a direct release after reviewing Mara's opened manifest count", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -15149,6 +15200,7 @@ describe("demo story critical paths", () => {
       "pull_release_for_opened_manifest",
       "pause_on_opened_door_echoes",
       "check_opened_manifest_echoes",
+      "carry_checked_opened_echoes_to_speaker",
       "board_with_passenger_morning_chorus",
       "follow_lunch_tin_latch",
       "listen_to_lunch_tin_latch_from_opened_manifest",
@@ -15259,10 +15311,10 @@ describe("demo story critical paths", () => {
       renderedPlayerView.indexOf("  Door echoes:")
     );
     expect(renderedPlayerView).toContain(
-      "  Morning stops:\n    55. Listen for what the opened passengers remember about morning"
+      "  Morning stops:\n    56. Listen for what the opened passengers remember about morning"
     );
     expect(renderedPlayerView).toContain(
-      "  Keepsakes / memories:\n    58. Return the opened manifest's lost mitten to the child"
+      "  Keepsakes / memories:\n    59. Return the opened manifest's lost mitten to the child"
     );
     expect(renderedPlayerView.indexOf("  Threshold holding:")).toBeLessThan(
       renderedPlayerView.indexOf("  Morning stops:")
