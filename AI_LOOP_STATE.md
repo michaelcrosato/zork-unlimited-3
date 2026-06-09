@@ -7,6 +7,64 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 64 Threshold Objective Pass
+
+- Date: 2026-06-09
+- Main objective: Make the passenger threshold branch describe each next action
+  as the player holds the doorway, listens to Mara, confirms clearance, and
+  pulls.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_threshold_boarding` as a
+  normal-play proof beat worth surfacing, and the prior state file called it a
+  likely next target.
+- Why this matters: The threshold route is about holding space until every
+  passenger crosses, but it previously inherited the broad opened-manifest
+  objective. Players should see whether the next task is to let Mara talk them
+  through the threshold, confirm it is clear, or pull after the clearance check.
+- Planned work:
+  - Add threshold-specific objective rules for boarding, intercom, and
+    clearance stages.
+  - Suppress stale opened-manifest and Mara handoff objectives after the player
+    commits to holding the threshold.
+  - Add focused regression assertions for platform, opened-manifest, and Mara
+    handoff threshold routes.
+  - Run focused tests, full health, and an actual CLI playthrough.
+- Risks:
+  - This improves clarity once players choose the threshold route. It does not
+    directly increase random selection of that optional branch.
+- Status:
+  - Completed and ready for commit/push.
+  - `passenger_threshold_boarding` now shows
+    `Let Mara talk you through the held threshold, or confirm it is clear.`
+  - `passenger_threshold_intercom` now shows
+    `Confirm the held threshold is clear, or pull while it stays open.`
+  - `passenger_threshold_clearance_check` now shows
+    `Pull after the third-car threshold is clear.`
+  - The broad opened-manifest objective and Mara handoff objective no longer
+    overlap after the player chooses the threshold branch.
+  - Focused threshold tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "threshold"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - Actual CLI route reached `passenger_threshold_boarding`,
+    `passenger_threshold_intercom`, `passenger_threshold_clearance_check`, and
+    `passenger_threshold_checked_true_ending`.
+  - The branch showed the new objectives in sequence: let Mara talk through the
+    held threshold, confirm or pull while it stays open, then pull after the
+    threshold is clear.
+  - Final CLI scene: `passenger_threshold_checked_true_ending`, score 277, with
+    no remaining objectives.
+  - What felt better: the route now reads as a deliberate doorway-clearance
+    sequence instead of a generic opened-passenger prompt.
+  - What still feels risky: random play may still undersample this optional
+    branch; this pass improves clarity once reached.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving late optional proof beats that random play undersamples,
+    with manifest thumbprint receipt as the likely next target.
+
 # Cycle 63 Room-Making Objective Pass
 
 - Date: 2026-06-09

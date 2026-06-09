@@ -109,6 +109,8 @@ objectives:
         - flag: read_passenger_manifest
         - flag: saw_mara_manifest_handoff
         - notFlag: manifest_handoff_reached_doors
+        - notFlag: held_passenger_threshold
+        - notFlag: confirmed_threshold_clearance
         - notFlag: heard_passenger_morning_boarding
         - notFlag: confirmed_morning_stops
         - notFlag: heard_passenger_answers
@@ -116,6 +118,29 @@ objectives:
         - notFlag: made_room_for_passengers
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
+  - text: Let Mara talk you through the held threshold, or confirm it is clear.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: held_passenger_threshold
+        - notFlag: heard_mara_goodbye
+        - notFlag: confirmed_threshold_clearance
+  - text: Confirm the held threshold is clear, or pull while it stays open.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: held_passenger_threshold
+        - flag: heard_mara_goodbye
+        - notFlag: confirmed_threshold_clearance
+  - text: Pull after the third-car threshold is clear.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: held_passenger_threshold
+        - flag: confirmed_threshold_clearance
   - text: Pull the release after the opened passengers receive Mara's thumbprint oath.
     requires:
       all:
@@ -266,6 +291,8 @@ objectives:
         - notFlag: helped_passengers_gather
         - notFlag: passengers_finished_reviewed_count
         - notFlag: made_room_for_passengers
+        - notFlag: held_passenger_threshold
+        - notFlag: confirmed_threshold_clearance
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: heard_passenger_morning_boarding

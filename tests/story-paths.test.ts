@@ -8,6 +8,11 @@ const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
 const ROOM_BOARDING_OBJECTIVE = "Pass the release hand to hand through the room you made.";
 const ROOM_RELEASE_OBJECTIVE = "Let the shared release reach the back row before pulling.";
 const ROOM_RECEIPT_OBJECTIVE = "Pull together after every hand receives the release.";
+const THRESHOLD_BOARDING_OBJECTIVE =
+  "Let Mara talk you through the held threshold, or confirm it is clear.";
+const THRESHOLD_INTERCOM_OBJECTIVE =
+  "Confirm the held threshold is clear, or pull while it stays open.";
+const THRESHOLD_RELEASE_OBJECTIVE = "Pull after the third-car threshold is clear.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const MANIFEST_HANDOFF_RELEASE_OBJECTIVE =
@@ -4451,6 +4456,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Each person leaves room for the next shoulder");
     expect(observation.scene.text).toContain("becoming a crowd");
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_threshold_from_boarding",
       "confirm_threshold_clearance_from_boarding",
@@ -4465,6 +4471,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("threshold you held");
     expect(observation.scene.text).toContain("each cleared inch becoming an invitation");
     expect(observation.scene.text).toContain("before the threshold remembers how to close");
+    expect(observation.objectives).toEqual([THRESHOLD_INTERCOM_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_threshold_clearance_before_release",
       "pull_release_after_threshold_manifest"
@@ -4517,6 +4524,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
     expect(observation.scene.text).toContain("Threshold clear");
     expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_threshold_clearance"
     ]);
@@ -4562,6 +4570,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Threshold clear");
     expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
@@ -4604,6 +4613,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
@@ -4643,6 +4653,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Each person leaves room for the next shoulder");
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.objectives).toEqual([THRESHOLD_BOARDING_OBJECTIVE]);
 
     state = choose(story, state, "listen_to_threshold_from_boarding");
     observation = observe(story, state);
@@ -4651,6 +4662,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("threshold you held");
     expect(observation.scene.text).toContain("each cleared inch becoming an invitation");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
     observation = observe(story, state);
@@ -4691,6 +4703,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
     observation = observe(story, state);
@@ -4730,6 +4743,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
     expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_threshold_clearance"
     ]);
@@ -15098,6 +15112,20 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_during_mara_manifest_handoff"
     );
+
+    const handoffThresholdState = choose(
+      story,
+      firstHandoffState,
+      "hold_threshold_after_mara_manifest_handoff"
+    );
+    observation = observe(story, handoffThresholdState);
+
+    expect(observation.scene.id).toBe("passenger_threshold_boarding");
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.objectives).toEqual([THRESHOLD_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(MANIFEST_HANDOFF_OBJECTIVE);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
 
     const returnedHandoffState = choose(
       story,
