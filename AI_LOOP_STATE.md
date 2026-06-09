@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 32 Gathered Intercom Lunch-Tin Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin farewell/self-count route recoverable from
+  the common gathered-passenger intercom path.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 32 evidence showed healthy validation and complete coverage,
+  while normal random play under-sampled late passenger branches including
+  `passenger_farewell`, `passenger_gathered_boarding`, and
+  `passenger_lunch_tin_true_ending`.
+- Why this matters: Players who naturally choose to gather the opened
+  passengers can now follow the lunch-tin worker cue after hearing the gathered
+  intercom, instead of losing the farewell beat once they commit to the shared
+  release route.
+- Completed work:
+  - Added `let_lunch_tin_worker_set_pace_from_gathered_intercom` from
+    `passenger_gathered_intercom` to `passenger_farewell`.
+  - Set the existing lunch-tin pace flags on that bridge so the farewell
+    cleanly flows into `passenger_lunch_tin_boarding`.
+  - Added regression coverage proving the new intercom bridge reaches
+    `passenger_lunch_tin_true_ending`.
+  - Updated exact gathered-intercom menu expectations to include the new
+    intentional route.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered intercom|gathered passengers"`.
+  - Full `npm test` passed with 337 tests.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 335, via
+    `listen_as_opened_passengers_gather`,
+    `let_lunch_tin_worker_set_pace_from_gathered_intercom`,
+    `return_from_passenger_farewell`,
+    `pull_release_after_lunch_tin_boarding`, and
+    `pull_release_after_lunch_tin_self_count`.
+  - Full `npm run health` passed: format check, TypeScript, 337 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the gathered intercom text already names the lunch-tin
+    worker, and the new choice makes that visible cue actionable before the
+    player locks into the shared-release ending.
+  - What still feels risky: this is a late optional bridge, so blind sessions
+    should confirm whether normal players notice it instead of continuing to
+    the first shared release option.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled branch that disappears after intuitive
+    boarding choices, especially `passenger_room_boarding`,
+    `passenger_threshold_boarding`, or `passenger_echoed_check`.
+- Risks:
+  - Low. This reuses existing scenes, endings, flags, and objectives, and adds
+    one guarded choice from an already optional late-game scene.
+- Status: Complete.
+
 # Cycle 31 Handoff Thumbprint Receipt Bridge
 
 - Date: 2026-06-09

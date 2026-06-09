@@ -4,6 +4,37 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Gathered Intercom Lunch-Tin Bridge
+
+### Current Plan
+
+- Main objective: Make the lunch-tin farewell route recoverable after players
+  choose the natural gathered-passenger intercom path.
+- Why this matters: Cycle 32 evidence showed complete coverage and no health
+  failures, so the best next improvement was richer late-game branch
+  discoverability rather than stability work.
+
+### Work Completed
+
+- Added a gathered-intercom choice that follows the lunch-tin worker cue into
+  `passenger_farewell`.
+- Reused existing lunch-tin pace flags so the route continues to
+  `passenger_lunch_tin_boarding` and the self-count release.
+- Added a regression that reaches `passenger_lunch_tin_true_ending` through the
+  new bridge.
+
+### Playtest Notes
+
+- Focused gathered-intercom tests passed.
+- `npm test` passed with 337 tests.
+- CLI playthrough reached `passenger_lunch_tin_true_ending`, score 335, via the
+  new intercom bridge.
+- `npm run health` passed with format check, TypeScript, 337 tests, story
+  validation, and complete coverage playtest.
+- Next target if no blind-play issue appears: continue improving under-sampled
+  late passenger branches such as `passenger_room_boarding`,
+  `passenger_threshold_boarding`, or `passenger_echoed_check`.
+
 ## 2026-06-09 - Mara Thumbprint Receipt Split
 
 ### Current Plan

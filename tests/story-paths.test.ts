@@ -11687,6 +11687,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
     expect(
@@ -13089,6 +13090,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -13185,6 +13187,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
   });
@@ -16000,6 +16003,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -16067,6 +16071,68 @@ describe("demo story critical paths", () => {
     ({ observation } = releaseAfterLunchTinSelfCount(story, state));
   });
 
+  it("lets gathered intercom listeners recover the lunch-tin farewell route", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "listen_as_opened_passengers_gather"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("the lunch-tin worker steadies");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom"
+    );
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "let_lunch_tin_worker_set_pace_from_gathered_intercom"
+      )?.label
+    ).toBe("Let the lunch-tin worker set the boarding pace from here");
+
+    state = choose(story, state, "let_lunch_tin_worker_set_pace_from_gathered_intercom");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("packed for a double shift");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_farewell"
+    ]);
+
+    state = choose(story, state, "return_from_passenger_farewell");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.objectives).toEqual([LUNCH_TIN_COUNT_OBJECTIVE]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_boarding");
+    ({ observation } = releaseAfterLunchTinSelfCount(story, state));
+  });
+
   it("lets players hear the gathered-passenger intercom directly from opened manifest doors", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -16104,6 +16170,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
@@ -16168,6 +16235,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "check_shared_release_from_gathered_intercom",
       "hear_final_passenger_roll_call",
+      "let_lunch_tin_worker_set_pace_from_gathered_intercom",
       "pull_release_after_gathered_intercom"
     ]);
 
