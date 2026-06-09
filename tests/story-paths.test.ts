@@ -5,8 +5,9 @@ import type { GameState, Story } from "../src/schema.js";
 import { loadStory } from "../src/story.js";
 
 const RELEASE_OBJECTIVE = "Pull the emergency release in the third car.";
-const ROOM_RELEASE_OBJECTIVE =
-  "Pull the emergency release while the opened passengers hold room for one another.";
+const ROOM_BOARDING_OBJECTIVE = "Pass the release hand to hand through the room you made.";
+const ROOM_RELEASE_OBJECTIVE = "Let the shared release reach the back row before pulling.";
+const ROOM_RECEIPT_OBJECTIVE = "Pull together after every hand receives the release.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
 const MANIFEST_HANDOFF_RELEASE_OBJECTIVE =
@@ -167,6 +168,7 @@ function releaseAfterSharedRoomReceipt(
   expect(observation.scene.id).toBe("passenger_room_release");
   expect(observation.scene.text).toContain("room no one has to earn");
   expect(observation.state.flags.shared_release_reached).toBe(true);
+  expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
   expect(observation.choices.map((choice) => choice.id)).toEqual([
     "pull_shared_release_after_making_room",
     "confirm_shared_room_release"
@@ -179,6 +181,7 @@ function releaseAfterSharedRoomReceipt(
   expect(observation.scene.text).toContain("the back row");
   expect(observation.scene.text).toContain("No hand is left out");
   expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+  expect(observation.objectives).toEqual([ROOM_RECEIPT_OBJECTIVE]);
   expect(observation.choices.map((choice) => choice.id)).toEqual([
     "pull_release_after_confirmed_shared_room_release"
   ]);
@@ -4803,6 +4806,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the first seat has become more than");
     expect(observation.scene.text).toContain("crowded instead of haunted");
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
@@ -4820,6 +4824,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("You do not pull the release alone");
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_shared_release_after_making_room",
       "confirm_shared_room_release"
@@ -4836,6 +4841,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the back row");
     expect(observation.scene.text).toContain("No hand is left out");
     expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RECEIPT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_shared_room_release"
     ]);
@@ -4857,6 +4863,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.objectives).not.toContain(ROOM_BOARDING_OBJECTIVE);
+    expect(observation.objectives).not.toContain(ROOM_RELEASE_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_on_conductor_signal",
       "confirm_conductor_clearance_from_signal",
@@ -4878,6 +4886,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Warden Street, then morning transfer");
     expect(observation.state.flags.heard_newspaper_memory).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.objectives).not.toContain(ROOM_BOARDING_OBJECTIVE);
+    expect(observation.objectives).not.toContain(ROOM_RELEASE_OBJECTIVE);
 
     state = choose(story, state, "study_newspaper_transfer_column");
     observation = observe(story, state);
@@ -4988,6 +4998,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
@@ -5003,6 +5014,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.scene.text).toContain("Proof that there is enough space");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
       "pull_release_after_making_room"
@@ -5014,6 +5026,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
 
     ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
@@ -5052,6 +5065,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.shared_release_reached).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_shared_release_after_making_room",
       "confirm_shared_room_release"
@@ -5104,6 +5118,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.shared_release_reached).toBe(true);
     expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_RECEIPT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_shared_room_release"
     ]);
@@ -5172,6 +5187,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.state.flags.shared_release_reached).toBeUndefined();
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
       "pull_release_after_making_room"
@@ -5183,6 +5199,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.scene.text).toContain("room no one has to earn");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
 
     ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
@@ -5227,12 +5244,14 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
 
     state = choose(story, state, "pass_room_release_after_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
 
     ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
@@ -5281,6 +5300,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.shared_release_reached).toBe(true);
     expect(observation.state.flags.confirmed_shared_room_release).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.objectives).toEqual([ROOM_RECEIPT_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_confirmed_shared_room_release");
     observation = observe(story, state);
@@ -5336,6 +5356,8 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_room_boarding");
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(MANIFEST_HANDOFF_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
@@ -5349,12 +5371,14 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_room_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
 
     state = choose(story, state, "pass_room_release_after_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
 
     ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
   });
@@ -15131,7 +15155,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
     expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
-    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_making_room",
       "listen_to_room_made_for_passengers",
@@ -15151,7 +15175,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("people making room for one another");
     expect(observation.scene.text).toContain("Proof that there is enough space");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
       "pull_release_after_making_room"

@@ -113,6 +113,7 @@ objectives:
         - notFlag: confirmed_morning_stops
         - notFlag: heard_passenger_answers
         - notFlag: helped_passengers_gather
+        - notFlag: made_room_for_passengers
         - notFlag: read_mara_thumbprint
         - notFlag: read_manifest_thumbprint
   - text: Pull the release after the opened passengers receive Mara's thumbprint oath.
@@ -277,12 +278,36 @@ objectives:
             - flag: heard_passenger_answers
             - flag: read_mara_thumbprint
             - flag: read_manifest_thumbprint
-  - text: Pull the emergency release while the opened passengers hold room for one another.
+  - text: Pass the release hand to hand through the room you made.
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: made_room_for_passengers
+        - notFlag: shared_release_reached
+        - notFlag: confirmed_shared_room_release
+        - notFlag: helped_passengers_gather
+        - notFlag: heard_newspaper_memory
+  - text: Let the shared release reach the back row before pulling.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: made_room_for_passengers
+        - flag: shared_release_reached
+        - notFlag: confirmed_shared_room_release
+        - notFlag: helped_passengers_gather
+        - notFlag: heard_newspaper_memory
+  - text: Pull together after every hand receives the release.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: made_room_for_passengers
+        - flag: shared_release_reached
+        - flag: confirmed_shared_room_release
+        - notFlag: helped_passengers_gather
+        - notFlag: heard_newspaper_memory
   - text: Pull the emergency release in the third car.
     requires:
       all:

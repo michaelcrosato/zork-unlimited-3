@@ -7,6 +7,68 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 63 Room-Making Objective Pass
+
+- Date: 2026-06-09
+- Main objective: Make the passenger room-making branch describe each next
+  action as the player boards, passes the release, and confirms receipt.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_room_boarding` and
+  `passenger_room_intercom` as normal-play proof beats worth surfacing, and the
+  prior state file called passenger-room boarding a likely next target.
+- Why this matters: The branch is about passengers making space for one another,
+  but it previously used the same broad prompt before the handle moved, while it
+  moved, and after receipt confirmation. Players should always know whether the
+  next task is to pass the release, let it reach the back row, or pull together.
+- Planned work:
+  - Split the room-making objective into boarding, shared-release, and receipt
+    stages.
+  - Suppress stale Mara handoff and room prompts once the player commits to a
+    different proof beat.
+  - Add focused regression assertions for direct, opened-manifest, platform, and
+    Mara-handoff room routes.
+  - Run focused tests, full health, evidence-only cycle, and an actual CLI
+    playthrough.
+- Risks:
+  - This improves clarity once players reach the room-making route. It does not
+    directly increase random selection of that optional branch.
+- Status:
+  - Completed and ready for commit/push.
+  - `passenger_room_boarding` and `passenger_room_intercom` now show
+    `Pass the release hand to hand through the room you made.`
+  - `passenger_room_release` now shows
+    `Let the shared release reach the back row before pulling.`
+  - `passenger_room_release_receipt` now shows
+    `Pull together after every hand receives the release.`
+  - Mara's opened-manifest handoff objective no longer overlaps after the
+    player chooses the make-room branch.
+  - Focused room-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "room"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI route reached `passenger_room_boarding`,
+    `passenger_room_intercom`, `passenger_room_release`,
+    `passenger_room_release_receipt`, and
+    `passenger_shared_release_checked_true_ending`.
+  - The branch showed the new objectives in sequence: pass the release hand to
+    hand, let it reach the back row, then pull together after every hand
+    receives it.
+  - Final CLI scene: `passenger_shared_release_checked_true_ending`, score 273,
+    with no remaining objectives.
+  - What felt better: the route now reads like a three-step shared action
+    instead of one repeated release prompt.
+  - What still feels risky: random play may still undersample this branch; this
+    pass improves clarity once reached.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving late optional proof beats that random play undersamples,
+    with manifest thumbprint receipt or passenger threshold boarding as likely
+    candidates.
+
 # Cycle 62 Morning Chorus Objective Pass
 
 - Date: 2026-06-09
