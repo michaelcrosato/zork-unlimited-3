@@ -8161,16 +8161,29 @@ describe("demo story critical paths", () => {
       "return_from_manifest_thumbprint"
     ]);
 
-    const genericBoardingState = choose(story, state, "board_after_manifest_thumbprint");
-    observation = observe(story, genericBoardingState);
+    const receiptState = choose(story, state, "board_after_manifest_thumbprint");
+    observation = observe(story, receiptState);
 
-    expect(observation.scene.id).toBe("train_car");
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "listen_to_mara_manifest_thumbprint_intercom",
-      "pull_release_with_manifest"
+      "pull_release_after_manifest_thumbprint_receipt"
     ]);
+
+    const receiptEndingObservation = observe(
+      story,
+      choose(story, receiptState, "pull_release_after_manifest_thumbprint_receipt")
+    );
+
+    expect(receiptEndingObservation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(receiptEndingObservation.scene.ending).toBe(true);
+    expect(receiptEndingObservation.scene.text).toContain("received by the passengers themselves");
+    expectIdealScore(receiptEndingObservation.score);
 
     state = choose(story, state, "carry_manifest_thumbprint_to_third_car");
     observation = observe(story, state);

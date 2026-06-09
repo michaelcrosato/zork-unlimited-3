@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 49 Manifest Thumbprint Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the manifest-thumbprint boarding choice pay off with the
+  receipt proof it already promises instead of falling back to the generic
+  train-car hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is green overall and points at optional
+  late-game discovery misses, especially `mara_manifest_thumbprint_receipt` and
+  nearby opened-manifest branches.
+- Why this matters: A player who touches Mara's torn thumbprint and then boards
+  while Mara carries that oath forward should immediately see the opened
+  passengers receive it. The old route made the player ask for that proof again
+  from the broad train-car hub, which made the specific receipt ending easier to
+  miss.
+- Planned work:
+  - Keep `board_after_manifest_thumbprint` stable for playtest history.
+  - Route it to `mara_manifest_thumbprint_receipt`.
+  - Set `heard_mara_goodbye` and `confirmed_manifest_thumbprint_receipt` so the
+    proof state matches the receipt scene.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This improves payoff quality for one manifest-thumbprint branch. It does
+    not by itself reduce the opened-manifest hub's overall choice density.
+- Status:
+  - Completed and ready for commit/push.
+  - `board_after_manifest_thumbprint` now routes to
+    `mara_manifest_thumbprint_receipt` and sets `heard_mara_goodbye` plus
+    `confirmed_manifest_thumbprint_receipt`.
+  - The focused manifest-thumbprint regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "pays off Mara's manifest thumbprint oath"`.
+  - Full `npm run health` passed: format check, TypeScript, 330 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI playthrough used `touch_mara_manifest_thumbprint` ->
+    `board_after_manifest_thumbprint` ->
+    `pull_release_after_manifest_thumbprint_receipt`.
+  - Final scene was `mara_manifest_thumbprint_receipt_true_ending`, score 305,
+    with no remaining objectives.
+  - What felt better: after touching Mara's torn thumbprint, boarding now
+    immediately shows the passengers receiving the oath instead of detouring
+    through the generic train-car hub.
+  - What still feels risky: this fixes one promising optional payoff; other
+    opened-manifest proof branches can still be under-sampled by normal random
+    play.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery/payoff work for another current random miss
+    such as `passenger_gathered_intercom`, `passenger_lunch_tin_self_count`, or
+    `passenger_room_intercom`.
+
 # Cycle 48 Shared Room Release Payoff
 
 - Date: 2026-06-09

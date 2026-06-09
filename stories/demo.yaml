@@ -3151,7 +3151,11 @@ scenes:
             heard_mara_goodbye: true
       - id: board_after_manifest_thumbprint
         label: Board while Mara carries the oath forward
-        to: train_car
+        to: mara_manifest_thumbprint_receipt
+        effects:
+          set:
+            heard_mara_goodbye: true
+            confirmed_manifest_thumbprint_receipt: true
       - id: return_from_manifest_thumbprint
         label: Return to the opened manifest doors
         to: passengers_released
