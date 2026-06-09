@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 41 Gathered Conductor Clear-Call Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the plain `passenger_conductor_true_ending` easier to
+  discover after players listen to the gathered passengers move together.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 41 evidence showed healthy validation and full coverage, but
+  random play still under-sampled `passenger_conductor_true_ending` compared
+  with conductor clearance, transfer, and count variants.
+- Why this matters: The gathered-passenger intercom already says the old
+  conductor answers each door "clear." Players should be able to follow that
+  obvious cue into the conductor's simple clear-signal release instead of only
+  count, threshold, lunch-tin, roll-call, or shared-release payoffs.
+- Planned work:
+  - Add a guarded `passenger_gathered_intercom` choice to let the conductor's
+    clear calls lead to the release.
+  - Reuse the existing `passenger_conductor_roll_call` scene and
+    `passenger_conductor_true_ending`.
+  - Add regression coverage proving the gathered-intercom bridge reaches the
+    plain conductor ending.
+- Verification:
+  - Focused gathered-intercom test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered intercom"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_conductor_true_ending`, score 306,
+    via `listen_as_opened_passengers_gather`,
+    `let_conductor_clear_gathered_doors`, and
+    `pull_release_after_conductor_roll_call`.
+- Playtest feedback:
+  - What felt better: the gathered-passenger scene now pays off its own
+    conductor clue. The text says the conductor answers each open door
+    "clear," and the menu now lets players follow that exact signal into his
+    simple release ending.
+  - What still feels risky: the gathered-intercom menu is one option denser.
+    Blind sessions should confirm the conductor option reads as a distinct
+    clear-call payoff rather than another version of the count or shared
+    release.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch with a contextual bridge,
+    especially `passenger_manifest_thumbprint_true_ending`.
+- Risks:
+  - Low. This adds one late-game menu option to an already dense scene, but it
+    is anchored in text that already names the conductor's clear calls.
+- Status: Complete.
+
 # Cycle 40 Room-Made Passenger Release Bridge
 
 - Date: 2026-06-09
