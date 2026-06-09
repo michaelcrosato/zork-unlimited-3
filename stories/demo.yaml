@@ -356,6 +356,8 @@ objectives:
         - notFlag: confirmed_shared_room_release
         - notFlag: helped_passengers_gather
         - notFlag: heard_newspaper_memory
+        - notFlag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
   - text: Let the shared release reach the back row before pulling.
     requires:
       all:
@@ -366,6 +368,8 @@ objectives:
         - notFlag: confirmed_shared_room_release
         - notFlag: helped_passengers_gather
         - notFlag: heard_newspaper_memory
+        - notFlag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
   - text: Pull together after every hand receives the release.
     requires:
       all:
@@ -376,6 +380,8 @@ objectives:
         - flag: confirmed_shared_room_release
         - notFlag: helped_passengers_gather
         - notFlag: heard_newspaper_memory
+        - notFlag: checked_echoed_passengers
+        - notFlag: confirmed_echoed_manifest_seats
   - text: Pull the emergency release in the third car.
     requires:
       all:
@@ -5972,6 +5978,18 @@ scenes:
         effects:
           set:
             shared_release_reached: true
+      - id: check_room_sounds_against_familiar_echoes
+        label: Check the crowded-car sounds against the familiar echoes
+        to: passenger_echoed_check
+        requires:
+          all:
+            - notFlag: checked_echoed_passengers
+            - notFlag: confirmed_echoed_manifest_seats
+        effects:
+          set:
+            heard_passenger_echoes: true
+            echoed_manifest_boarded: true
+            checked_echoed_passengers: true
       - id: pull_release_after_making_room
         label: Move the release hand to hand while the car holds everyone
         to: passenger_room_release

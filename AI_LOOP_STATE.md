@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 33 Room-Echo Intercom Bridge
+
+- Date: 2026-06-09
+- Main objective: Make the checked door-echo payoff recoverable from the
+  natural shared-room intercom route.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 33 evidence showed healthy validation and full coverage, while
+  normal random play still under-sampled late passenger branches including
+  `passenger_echoed_check`.
+- Why this matters: A player who chooses to make room in the third car and then
+  listens to the crowded-car sounds now has an obvious way to connect the
+  newspaper, lunch tin, and mitten sounds back to the familiar door-echo proof,
+  instead of only continuing the shared-room release path.
+- Completed work:
+  - Added `check_room_sounds_against_familiar_echoes` from
+    `passenger_room_intercom` to `passenger_echoed_check`.
+  - Reused the existing echo flags and `passenger_echoed_true_ending` route so
+    this remains a bridge, not another ending variant.
+  - Tightened shared-room objective metadata so room-making objectives disappear
+    once the player pivots into the checked-echo route.
+  - Added regression coverage proving the new intercom bridge reaches
+    `passenger_echoed_true_ending` and shows the checked-echo objective instead
+    of stale room guidance.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "room|echo"`.
+  - Actual CLI route reached `passenger_echoed_true_ending`, score 273, via
+    `make_room_from_opened_manifest`, `listen_to_room_made_for_passengers`,
+    `check_room_sounds_against_familiar_echoes`,
+    `confirm_checked_echoed_manifest_seats`, and
+    `pull_release_after_echoed_seat_receipt`.
+  - Full `npm run health` passed: format check, TypeScript, 337 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the room intercom already asks the player to listen to
+    ordinary passenger sounds, and the new choice turns that text cue into an
+    actionable route to the echo proof.
+  - What still feels risky: this improves one listened-room branch. Players who
+    immediately pass the release hand to hand will still stay on the shared-room
+    payoff, which is intentional but should be checked in blind sessions.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another late branch that is still mostly discoverability-dependent,
+    especially `passenger_threshold_boarding` follow-through or direct
+    `passenger_roll_call_true_ending` discovery.
+- Risks:
+  - Low. This adds one guarded choice, reuses existing scenes/endings/flags, and
+    only suppresses room objectives after the player has explicitly moved into
+    checked echoes.
+- Status: Complete.
+
 # Cycle 32 Gathered Intercom Lunch-Tin Bridge
 
 - Date: 2026-06-09

@@ -4992,8 +4992,47 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
+      "check_room_sounds_against_familiar_echoes",
       "pull_release_after_making_room"
     ]);
+
+    const roomEchoState = choose(story, state, "check_room_sounds_against_familiar_echoes");
+    let roomEchoObservation = observe(story, roomEchoState);
+
+    expect(roomEchoObservation.scene.id).toBe("passenger_echoed_check");
+    expect(roomEchoObservation.scene.text).toContain("echoes are no longer clues");
+    expect(roomEchoObservation.state.flags.made_room_for_passengers).toBe(true);
+    expect(roomEchoObservation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(roomEchoObservation.state.flags.heard_passenger_echoes).toBe(true);
+    expect(roomEchoObservation.state.flags.echoed_manifest_boarded).toBe(true);
+    expect(roomEchoObservation.state.flags.checked_echoed_passengers).toBe(true);
+    expect(roomEchoObservation.objectives).toEqual([CHECKED_ECHO_OBJECTIVE]);
+    expect(roomEchoObservation.objectives).not.toContain(ROOM_BOARDING_OBJECTIVE);
+    expect(roomEchoObservation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_checked_echoed_manifest_seats",
+      "pull_release_after_checked_echoes"
+    ]);
+
+    let roomEchoReleaseState = choose(
+      story,
+      roomEchoState,
+      "confirm_checked_echoed_manifest_seats"
+    );
+    roomEchoObservation = observe(story, roomEchoReleaseState);
+
+    expect(roomEchoObservation.scene.id).toBe("passenger_echoed_seat_receipt");
+    expect(roomEchoObservation.objectives).toEqual([ECHO_SEAT_RECEIPT_OBJECTIVE]);
+
+    roomEchoReleaseState = choose(
+      story,
+      roomEchoReleaseState,
+      "pull_release_after_echoed_seat_receipt"
+    );
+    roomEchoObservation = observe(story, roomEchoReleaseState);
+
+    expect(roomEchoObservation.scene.id).toBe("passenger_echoed_true_ending");
+    expect(roomEchoObservation.scene.ending).toBe(true);
+    expectIdealScore(roomEchoObservation.score);
 
     state = choose(story, state, "pass_room_release_after_intercom");
     observation = observe(story, state);
@@ -5091,6 +5130,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
+      "check_room_sounds_against_familiar_echoes",
       "pull_release_after_making_room"
     ]);
 
@@ -5264,6 +5304,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
+      "check_room_sounds_against_familiar_echoes",
       "pull_release_after_making_room"
     ]);
 
@@ -15619,6 +15660,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pass_room_release_after_intercom",
+      "check_room_sounds_against_familiar_echoes",
       "pull_release_after_making_room"
     ]);
 
