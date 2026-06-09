@@ -1747,7 +1747,7 @@ scenes:
       - id: let_opened_lunch_tin_worker_set_pace
         label: Let the lunch-tin worker set the opened boarding pace
         choiceGroup: Lunch tin / shift count
-        to: passenger_lunch_tin_boarding
+        to: passenger_farewell
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -3331,7 +3331,7 @@ scenes:
             set_lunch_tin_pace: true
       - id: board_behind_lunch_tin_worker_pace
         label: Board behind the lunch-tin worker's count
-        to: passenger_lunch_tin_boarding
+        to: passenger_farewell
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -4122,6 +4122,8 @@ scenes:
       - id: lead_gathered_passengers_without_lunch_tin_pace
         label: Board the gathered passengers without waiting for his count
         to: train_car
+        requires:
+          notFlag: set_lunch_tin_pace
 
   passenger_gathered_boarding:
     routeImportance: optional

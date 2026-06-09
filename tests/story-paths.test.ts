@@ -9031,6 +9031,9 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("packed for a double shift");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_farewell"
+    ]);
 
     state = choose(story, state, "return_from_passenger_farewell");
     observation = observe(story, state);
@@ -11215,7 +11218,7 @@ describe("demo story critical paths", () => {
     ]);
   });
 
-  it("surfaces the lunch-tin boarding pace directly from the opened passenger hubs", async () => {
+  it("surfaces the lunch-tin farewell before boarding from the opened passenger hubs", async () => {
     const story = await loadStory("stories/demo.yaml");
     const basePath = [
       "read_notice",
@@ -11256,10 +11259,20 @@ describe("demo story critical paths", () => {
     openedState = choose(story, openedState, "let_opened_lunch_tin_worker_set_pace");
     observation = observe(story, openedState);
 
-    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("packed for a double shift");
+    expect(observation.scene.text).toContain("boarding has become ordinary work again");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_farewell"
+    ]);
+
+    openedState = choose(story, openedState, "return_from_passenger_farewell");
+    observation = observe(story, openedState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
     expect(observation.choices.map((choice) => choice.id)).toContain(
       "pull_release_after_lunch_tin_boarding"
     );
@@ -11292,10 +11305,19 @@ describe("demo story critical paths", () => {
     platformState = choose(story, platformState, "board_behind_lunch_tin_worker_pace");
     observation = observe(story, platformState);
 
-    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
+    expect(observation.scene.id).toBe("passenger_farewell");
+    expect(observation.scene.text).toContain("packed for a double shift");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
     expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "return_from_passenger_farewell"
+    ]);
+
+    platformState = choose(story, platformState, "return_from_passenger_farewell");
+    observation = observe(story, platformState);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_boarding");
 
     platformState = choose(story, platformState, "pull_release_after_lunch_tin_boarding");
     observation = observe(story, platformState);

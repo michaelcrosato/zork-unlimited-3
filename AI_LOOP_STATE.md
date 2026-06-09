@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 33 Lunch-Tin Farewell Discovery
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin worker's farewell/payoff scene appear on
+  the normal opened-manifest and platform pace routes before players board for
+  the lunch-tin ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 33 evidence is green overall, but random normal-play samples
+  still under-sample `passenger_farewell` and `passenger_lunch_tin_true_ending`
+  compared with coverage.
+- Why this matters: The lunch-tin branch is about an ordinary worker turning a
+  trapped passenger count back into humane boarding rhythm. If normal play
+  skips directly to the car, the ending still works mechanically but loses the
+  clearest character beat that explains why his count matters.
+- Planned work:
+  - Route the opened-manifest lunch-tin pace shortcut through
+    `passenger_farewell` before `passenger_lunch_tin_boarding`.
+  - Route the platform lunch-tin boarding shortcut through
+    `passenger_farewell` before `passenger_lunch_tin_boarding`.
+  - Hide the contradictory "board without waiting for his count" fallback once
+    the player has already committed to the lunch-tin pace.
+  - Update regression tests so the added farewell pause is intentional.
+  - Run focused tests, full health, and an actual CLI/MCP-style playthrough.
+- Risks:
+  - This adds one click to two lunch-tin pace routes, so the farewell scene must
+    read as payoff and not as a detour.
+- Status:
+  - Completed and ready for commit/push.
+  - The two lunch-tin pace shortcuts now route to `passenger_farewell`.
+  - `passenger_farewell` now offers only the lunch-tin boarding continuation
+    once `set_lunch_tin_pace` is already true, preventing random or human play
+    from undercutting the selected branch immediately.
+  - Focused lunch-tin tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 191 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, coverage stayed complete, actual MCP play
+    reached `true_ending`, and the adaptive MCP route ended at
+    `passenger_conductor_clearance_checked_true_ending`.
+  - The evidence cycle's 100-run random sample visited both
+    `passenger_farewell` and `passenger_lunch_tin_boarding`, but still missed
+    `passenger_lunch_tin_true_ending`; the larger 250-run MCP random sample
+    reached `passenger_lunch_tin_true_ending` 3 times and
+    `passenger_lunch_tin_checked_true_ending` 3 times. Treat this as a route
+    continuity and payoff-visibility improvement, not a fully solved
+    lunch-tin ending frequency issue.
+- Playtest feedback:
+  - Actual CLI playthrough through
+    `let_opened_lunch_tin_worker_set_pace` reached `passenger_farewell`, showed
+    only `return_from_passenger_farewell`, continued to
+    `passenger_lunch_tin_boarding`, then reached
+    `passenger_lunch_tin_true_ending` with no remaining objectives.
+  - The farewell beat read coherently because it introduces the latch rhythm
+    before the ending depends on that count.
+  - No invalid choice, unreachable scene, stale objective, unfinished playtest,
+    or ending-classification issue appeared.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available;
+    otherwise continue normal-play discovery for remaining random misses such
+    as `passenger_lunch_tin_true_ending`, `passenger_morning_chorus`,
+    `passenger_answered_check`, or `mara_manifest_handoff`.
+
 # Cycle 32 Manifest Thumbprint Receipt Discovery
 
 - Date: 2026-06-09
