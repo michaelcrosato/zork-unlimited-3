@@ -7,6 +7,65 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 58 Checked Roll-Call Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the final passenger roll-call proof appear during normal
+  play instead of staying mostly coverage-only.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current random evidence reached `passenger_roll_call_epilogue` but
+  missed `passenger_roll_call_answer_check` and
+  `passenger_roll_call_checked_true_ending`.
+- Why this matters: This route is about passengers proving one another present,
+  not just answering names. A player who pulls after every answer should now see
+  the final witness check before the ending claims no echo was left alone.
+- Planned work:
+  - Keep `pull_release_after_final_roll_call` stable for playtest history.
+  - Route it through `passenger_roll_call_answer_check` and set
+    `confirmed_roll_call_answers`.
+  - Preserve the simpler roll-call ending behind a new immediate-release choice.
+  - Add specific final roll-call objectives so the gathered-release objective
+    does not linger once the roll call has begun.
+  - Update focused roll-call tests, run health, and actually play the revised
+    route.
+- Risks:
+  - The deterministic 100-run random sample now visits the checked roll-call
+    ending instead of the simpler `passenger_roll_call_true_ending`. Coverage
+    still reaches both endings, so this is a normal-play emphasis shift rather
+    than a reachability regression.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_final_roll_call` now stops at
+    `passenger_roll_call_answer_check` before the checked ending.
+  - `pull_release_on_finished_roll_call` preserves the simpler roll-call
+    ending.
+  - Final roll-call objective text now points players toward either immediate
+    release or the witness check, and the checked scene has its own release
+    objective.
+  - Focused roll-call tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "roll call|gathered-passenger|opened passengers answer"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Post-change deterministic 100-run random play now visits
+    `passenger_roll_call_answer_check` and reaches
+    `passenger_roll_call_checked_true_ending` once.
+- Playtest feedback:
+  - Actual CLI playthrough used `hear_final_passenger_roll_call` ->
+    `pull_release_after_final_roll_call` ->
+    `pull_release_after_confirmed_roll_call_answers`.
+  - Final scene was `passenger_roll_call_checked_true_ending`, score 347, with
+    no remaining choices or objectives.
+  - What felt better: the player now sees the aisle-level witness check before
+    the ending says every answer has a face.
+  - What still feels risky: the branch is still optional and deep; blind-play
+    feedback should decide whether more early guidance is needed.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue surfacing late proof beats that random play misses, with
+    `passenger_counted_true_ending` or the echoed-seat check branch as likely
+    candidates.
+
 # Cycle 57 Manifest Handoff Release Payoff
 
 - Date: 2026-06-09

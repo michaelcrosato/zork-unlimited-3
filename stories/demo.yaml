@@ -131,12 +131,30 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Pull after the passengers' final roll call, or hold the release until every answer has a witness.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: heard_final_roll_call
+        - notFlag: confirmed_roll_call_answers
+        - notFlag: returned_lost_mitten
+  - text: Pull the release after every final roll-call answer has a witness.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: confirmed_roll_call_answers
+        - notFlag: returned_lost_mitten
   - text: Pull the release after the gathered passengers pass the handle hand to hand.
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: helped_passengers_gather
+        - notFlag: heard_final_roll_call
         - notFlag: made_room_for_passengers
         - notFlag: matched_manifest_keepsakes
         - notFlag: returned_lost_mitten
@@ -6746,7 +6764,15 @@ scenes:
       crowd telling the line who belongs to the morning.
     choices:
       - id: pull_release_after_final_roll_call
-        label: Pull the release after every answer
+        label: Hold the release while every answer finds a witness
+        to: passenger_roll_call_answer_check
+        requires:
+          notFlag: returned_lost_mitten
+        effects:
+          set:
+            confirmed_roll_call_answers: true
+      - id: pull_release_on_finished_roll_call
+        label: Pull as soon as the final roll call finishes
         to: passenger_roll_call_true_ending
         requires:
           notFlag: returned_lost_mitten

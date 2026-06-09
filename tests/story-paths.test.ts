@@ -17,6 +17,10 @@ const ANSWERED_CHECK_OBJECTIVE =
   "Pull the release after every answered passenger has a face behind the name.";
 const ECHO_SEAT_RECEIPT_OBJECTIVE =
   "Pull the release after every familiar passenger echo has a seat aboard.";
+const ROLL_CALL_OBJECTIVE =
+  "Pull after the passengers' final roll call, or hold the release until every answer has a witness.";
+const ROLL_CALL_CHECK_OBJECTIVE =
+  "Pull the release after every final roll-call answer has a witness.";
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull the release after the gathered passengers pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
@@ -12869,15 +12873,19 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the passengers finish the roll call for her");
     expect(observation.scene.text).toContain("who belongs to the morning");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_final_roll_call",
+      "pull_release_on_finished_roll_call",
       "confirm_roll_call_answers_before_release"
     ]);
 
     const rollCallState = state;
 
-    state = choose(story, rollCallState, "pull_release_after_final_roll_call");
-    observation = observe(story, state);
+    observation = observe(
+      story,
+      choose(story, rollCallState, "pull_release_on_finished_roll_call")
+    );
 
     expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -12885,13 +12893,14 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the manifest has become a chorus");
     expectIdealScore(observation.score);
 
-    state = choose(story, rollCallState, "confirm_roll_call_answers_before_release");
+    state = choose(story, rollCallState, "pull_release_after_final_roll_call");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_roll_call_answer_check");
     expect(observation.scene.text).toContain("No name is allowed to hang alone");
     expect(observation.scene.text).toContain("Every answer has someone standing with it");
     expect(observation.state.flags.confirmed_roll_call_answers).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_CHECK_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_roll_call_answers"
     ]);
@@ -15415,19 +15424,29 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_roll_call_epilogue");
     expect(observation.scene.text).toContain("the passengers finish the roll call for her");
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_final_roll_call",
+      "pull_release_on_finished_roll_call",
       "confirm_roll_call_answers_before_release"
     ]);
 
     const rollCallEnding = observe(
       story,
-      choose(story, rollCallState, "pull_release_after_final_roll_call")
+      choose(story, rollCallState, "pull_release_on_finished_roll_call")
     );
 
     expect(rollCallEnding.scene.id).toBe("passenger_roll_call_true_ending");
     expect(rollCallEnding.scene.ending).toBe(true);
     expectIdealScore(rollCallEnding.score);
+
+    observation = observe(
+      story,
+      choose(story, rollCallState, "pull_release_after_final_roll_call")
+    );
+    expect(observation.scene.id).toBe("passenger_roll_call_answer_check");
+    expect(observation.state.flags.confirmed_roll_call_answers).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_CHECK_OBJECTIVE]);
 
     const checkedRollCallState = choose(
       story,
@@ -16089,8 +16108,10 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.state.flags.heard_final_roll_call).toBe(true);
     expect(observation.state.flags.confirmed_roll_call_answers).toBeUndefined();
+    expect(observation.objectives).toEqual([ROLL_CALL_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_final_roll_call",
+      "pull_release_on_finished_roll_call",
       "confirm_roll_call_answers_before_release"
     ]);
 
@@ -16098,7 +16119,7 @@ describe("demo story critical paths", () => {
 
     observation = observe(
       story,
-      choose(story, rollCallState, "pull_release_after_final_roll_call")
+      choose(story, rollCallState, "pull_release_on_finished_roll_call")
     );
 
     expect(observation.scene.id).toBe("passenger_roll_call_true_ending");
@@ -16106,11 +16127,12 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("passengers' own roll call");
     expectIdealScore(observation.score);
 
-    state = choose(story, rollCallState, "confirm_roll_call_answers_before_release");
+    state = choose(story, rollCallState, "pull_release_after_final_roll_call");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_roll_call_answer_check");
     expect(observation.state.flags.confirmed_roll_call_answers).toBe(true);
+    expect(observation.objectives).toEqual([ROLL_CALL_CHECK_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_roll_call_answers"
     ]);
