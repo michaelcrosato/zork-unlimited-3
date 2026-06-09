@@ -3806,7 +3806,11 @@ scenes:
             heard_mara_goodbye: true
       - id: reach_release_after_threshold_boarding
         label: Reach the release after the last passenger clears the threshold
-        to: train_car
+        to: passenger_threshold_clearance_check
+        effects:
+          set:
+            confirmed_threshold_clearance: true
+            heard_mara_goodbye: true
 
   passenger_room_boarding:
     routeImportance: optional
@@ -3852,7 +3856,10 @@ scenes:
             heard_newspaper_memory: true
       - id: reach_release_after_making_room
         label: Reach the release once every passenger has room
-        to: train_car
+        to: passenger_room_release
+        effects:
+          set:
+            shared_release_reached: true
 
   passenger_newspaper_memory:
     routeImportance: optional

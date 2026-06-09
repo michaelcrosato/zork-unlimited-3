@@ -4636,13 +4636,21 @@ describe("demo story critical paths", () => {
     }
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_threshold_manifest_intercom"
-    );
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "listen_to_mara_manifest_intercom"
-    );
+    expect(observation.scene.id).toBe("passenger_threshold_clearance_check");
+    expect(observation.scene.text).toContain("the threshold makes one last count without numbers");
+    expect(observation.state.flags.confirmed_threshold_clearance).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_threshold_clearance"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_threshold_clearance");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_threshold_checked_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("threshold has been cleared passenger by passenger");
+    expectIdealScore(observation.score);
   });
 
   it("lets direct manifest boarders make room for the passenger crowd", async () => {
@@ -4855,22 +4863,16 @@ describe("demo story critical paths", () => {
     state = choose(story, roomState, "reach_release_after_making_room");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.state.flags.made_room_for_passengers).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toContain("pass_release_hand_to_hand");
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "listen_to_mara_manifest_intercom"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
-
-    state = choose(story, state, "pass_release_hand_to_hand");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_room_release");
     expect(observation.scene.text).toContain("You do not pull the release alone");
     expect(observation.scene.text).toContain("everyone is allowed to share");
     expect(observation.scene.text).toContain("room no one has to earn");
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
     expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_shared_release_after_making_room",
+      "confirm_shared_room_release"
+    ]);
 
     state = choose(story, state, "pull_shared_release_after_making_room");
     observation = observe(story, state);

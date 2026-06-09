@@ -7,6 +7,109 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 48 Shared Room Release Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the room-making release choice keep its shared-release
+  payoff instead of falling back to the generic train-car hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence continues to point at optional late-game
+  discoverability and payoff branches, especially opened-manifest room,
+  threshold, and handoff routes.
+- Why this matters: A player who boards to make room around the emergency
+  release should immediately see the passengers pass the handle through that
+  room. The old route sent `reach_release_after_making_room` back to the
+  generic train-car scene, which weakened the specific choice they just made.
+- Planned work:
+  - Keep `reach_release_after_making_room` stable for playtest history.
+  - Route it to `passenger_room_release`.
+  - Set `shared_release_reached` so the proof state matches the scene.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This improves payoff quality for one room-making branch. It does not reduce
+    the opened-manifest hub's overall choice density.
+- Status:
+  - Completed and ready for commit/push.
+  - `reach_release_after_making_room` now routes to `passenger_room_release`
+    and sets `shared_release_reached`.
+  - The focused room-making regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "direct manifest boarders make room"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI playthrough used `pull_release_for_opened_manifest` ->
+    `reach_release_after_making_room` ->
+    `pull_shared_release_after_making_room`.
+  - Final scene was `passenger_true_ending`, score 266, with no remaining
+    objectives.
+  - What felt better: the "make room" route now preserves its physical
+    passenger-room beat and lands on the shared handle scene before release.
+  - What still feels risky: the fastest pull still uses the broad
+    `passenger_true_ending`; the checked shared-release ending remains an
+    optional confirmation branch.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery/payoff work for another current random miss
+    such as `mara_manifest_thumbprint_receipt`, `passenger_gathered_intercom`,
+    or `passenger_room_intercom`.
+
+# Cycle 47 Threshold Clearance Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the threshold-boarding release choice pay off with the
+  threshold clearance proof it already promises.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 47 evidence had healthy core guidance and pointed at optional
+  late-game discoverability, including threshold boarding and other opened
+  manifest proof branches.
+- Why this matters: A player who pauses at the third-car threshold and then
+  chooses to reach the release after the last passenger clears it should get
+  the threshold-specific confirmation and ending, not a generic train-car
+  fallback.
+- Planned work:
+  - Keep `reach_release_after_threshold_boarding` stable for playtest history.
+  - Route it to `passenger_threshold_clearance_check`.
+  - Set `confirmed_threshold_clearance` and `heard_mara_goodbye` so the proof
+    state matches the scene.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This improves payoff quality for an existing branch. It does not by itself
+    reduce the opened-manifest hub's choice density.
+- Status:
+  - Completed and ready for commit/push.
+  - `reach_release_after_threshold_boarding` now routes to
+    `passenger_threshold_clearance_check` and sets
+    `confirmed_threshold_clearance` plus `heard_mara_goodbye`.
+  - The focused threshold regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "threshold beat"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/`; its health section was green and its
+    random sample had `ended: 100` / `unfinished: 0`.
+- Playtest feedback:
+  - Actual CLI playthrough used `hold_opened_manifest_threshold` ->
+    `reach_release_after_threshold_boarding` ->
+    `pull_release_after_confirmed_threshold_clearance`.
+  - Final scene was `passenger_threshold_checked_true_ending`, score 266, with
+    no remaining objectives.
+  - What felt better: the route now preserves the threshold-boarding beat and
+    then pays it off with the threshold-specific proof scene and ending.
+  - What still feels risky: optional proof routes remain numerous in the
+    opened-manifest hub, so the next cycle should keep favoring direct payoff
+    fixes for branches that random play misses.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery work for another current random miss such
+    as `mara_manifest_thumbprint_receipt`, `passenger_gathered_intercom`, or
+    `passenger_room_boarding`.
+
 # Cycle 46 Manifest Handoff Count Chorus
 
 - Date: 2026-06-09
