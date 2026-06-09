@@ -4222,6 +4222,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "read_manifest_marginal_notes",
       "listen_to_manifest_doors_from_manifest",
+      "open_manifest_and_let_names_answer",
       "return_to_signal_ledger_from_manifest"
     ]);
 
@@ -16920,6 +16921,81 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_mitten_true_ending");
     expect(observation.scene.ending).toBe(true);
+    expectIdealScore(observation.score);
+  });
+
+  it("surfaces manifest answers from the prepared passenger manifest", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest");
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "read_manifest_marginal_notes",
+      "listen_to_manifest_doors_from_manifest",
+      "open_manifest_and_let_names_answer",
+      "return_to_signal_ledger_from_manifest"
+    ]);
+
+    const { masked, choiceIds: playerChoiceIds } = maskObservation(observation);
+    const renderedPlayerView = renderMaskedScene(masked);
+
+    expect(playerChoiceIds).toEqual([
+      "read_manifest_marginal_notes",
+      "listen_to_manifest_doors_from_manifest",
+      "open_manifest_and_let_names_answer",
+      "return_to_signal_ledger_from_manifest"
+    ]);
+    expect(renderedPlayerView).toContain(
+      "2. Open the kept doors and let the manifest names answer once"
+    );
+    expect(renderedPlayerView).not.toContain("open_manifest_and_let_names_answer");
+
+    state = choose(story, state, "open_manifest_and_let_names_answer");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_answers");
+    expect(observation.scene.text).toContain("a car full of people proving");
+    expect(observation.state.flags.freed_mara).toBe(true);
+    expect(observation.state.flags.inspected_signal_ledger).toBe(true);
+    expect(observation.state.flags.manifest_names_answered_once).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "carry_manifest_answers_to_platform",
+      "hand_manifest_answers_to_mara",
+      "let_manifest_answers_become_final_roll_call",
+      "let_manifest_answers_keep_door_rhythm",
+      "check_manifest_answers_against_echoes",
+      "pull_release_after_manifest_answers"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_answers");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_manifest_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("opened manifest is still answering");
     expectIdealScore(observation.score);
   });
 

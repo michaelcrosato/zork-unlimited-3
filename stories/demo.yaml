@@ -1446,6 +1446,20 @@ scenes:
         effects:
           set:
             heard_passenger_echoes: true
+      - id: open_manifest_and_let_names_answer
+        label: Open the kept doors and let the manifest names answer once
+        to: passenger_manifest_answers
+        requires:
+          all:
+            - item: badge
+            - item: map
+            - notFlag: manifest_names_answered_once
+        effects:
+          set:
+            freed_mara: true
+            inspected_signal_ledger: true
+            manifest_names_answered_once: true
+            heard_mara_goodbye: true
       - id: return_to_signal_ledger_from_manifest
         label: Turn from the manifest to Mara's ledger row
         to: signal_ledger

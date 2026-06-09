@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 47 Prepared Manifest Answers
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_manifest_answers` easier to discover during
+  normal play by surfacing it directly from the prepared passenger manifest.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 47 MCP random evidence had clean runs but still missed
+  `passenger_manifest_answers`, making it the clearest normal-play discovery
+  gap in the supplied sample.
+- Why this matters: A player who has the badge and map, reads the
+  kept-passenger manifest, and wants to open the kept doors should not have to
+  bounce back through the ledger and a crowded opened-manifest menu before
+  hearing the names answer. The new choice exposes that payoff where the
+  player is already looking at the names.
+- Planned work:
+  - Add a prepared-only manifest choice that opens the kept doors and routes to
+    `passenger_manifest_answers`.
+  - Reuse the existing manifest-answer scene and ending path instead of adding
+    another branch.
+  - Add regression coverage for the player-visible menu and resulting route.
+- Verification:
+  - Focused manifest tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest margin notes|manifest answers"`.
+  - Full `npm run health` passed: format check, TypeScript, 341 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_manifest_true_ending`, score 254, via
+    `open_manifest_and_let_names_answer` and
+    `pull_release_after_manifest_answers`.
+  - A 250-run random sample ended cleanly every run and now visited
+    `passenger_manifest_answers`; the supplied pre-change MCP random sample had
+    missed that scene.
+- Playtest feedback:
+  - What felt better: the passenger manifest now has a visible, direct
+    "open the kept doors and let the names answer" action as soon as the
+    player has the needed proof. The route reads like a deliberate rescue
+    choice, not a hidden branch behind the later giant menu.
+  - What still feels risky: this creates a very efficient passenger-manifest
+    route that skips some slower opened-door texture. That is acceptable for
+    this branch, but blind feedback should confirm it feels like a satisfying
+    direct payoff rather than a shortcut past the story.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving under-sampled late passenger scenes in the 250-run
+    random sample, especially `passenger_gathered_boarding`,
+    `passenger_keepsake_handoff`, and `passenger_keepsake_roll_call`.
+- Risks:
+  - Low. The new choice is gated by badge and map, sets the same core rescue
+    flags as opening the passenger doors, and does not remove any existing
+    route.
+- Status: Complete.
+
 # Cycle 46 Opened Manifest Direct Release
 
 - Date: 2026-06-09
