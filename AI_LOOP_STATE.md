@@ -7,6 +7,55 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 52 Direct Gathered Boarding Release
+
+- Date: 2026-06-09
+- Main objective: Make the visible gathered-passenger boarding release resolve
+  to the core passenger rescue ending instead of forcing an extra shared-
+  handle beat.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 52 evidence showed all scenes reachable and no unfinished
+  playtests, but `passenger_true_ending` remains a low-frequency core passenger
+  payoff in normal random play.
+- Why this matters: When players choose to gather everyone, board together, and
+  pull once everyone is aboard, the result should be the broad "the crowd makes
+  room for itself" passenger ending. The explicit hand-to-hand release route
+  still exists for players who choose to inspect how the handle is shared.
+- Completed work:
+  - Changed `pull_release_after_gathered_boarding` to go directly to
+    `passenger_true_ending`.
+  - Updated the gathered-passenger objective text so it covers either pulling
+    once everyone is aboard or checking the shared handle.
+  - Preserved the separate `passenger_gathered_release` route through the
+    existing shared-release choices.
+  - Added/updated route regressions for the direct gathered-boarding release.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "gathered"`.
+  - Actual CLI playthrough reached `passenger_true_ending`, score 294, through
+    `help_opened_passengers_gather` and `pull_release_after_gathered_boarding`;
+    final objectives were empty.
+  - A post-change 250-run random sample ended every run, kept
+    `unvisitedScenes: []`, and still visited `passenger_true_ending`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: the direct gathered-boarding choice now pays off exactly
+    what it says: everyone has boarded together, so pulling the release opens
+    the broad passenger rescue ending immediately.
+  - What still feels risky: deterministic random distribution did not visibly
+    shift in this sample, so this is a targeted UX/route-semantics improvement
+    rather than a proven ending-frequency improvement.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    keep improving low-frequency core passenger payoffs, especially routes that
+    normal play samples can actually move.
+- Risks:
+  - Low. The changed edge is optional, has a focused regression, and leaves the
+    explicit shared-release route intact.
+- Status: Complete.
+
 # Cycle 51 Passenger Sign-Off Discovery
 
 - Date: 2026-06-09

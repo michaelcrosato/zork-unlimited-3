@@ -50,7 +50,7 @@ const ROLL_CALL_OBJECTIVE =
 const ROLL_CALL_CHECK_OBJECTIVE =
   "Pull the release after every final roll-call answer has a witness.";
 const GATHERED_RELEASE_OBJECTIVE =
-  "Pull the release after the gathered passengers pass the handle hand to hand.";
+  "Pull once the gathered passengers are aboard, or pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Get the opened passengers moving together, then pull the third-car release.";
 
@@ -16409,6 +16409,19 @@ describe("demo story critical paths", () => {
       "pull_release_after_gathered_boarding"
     ]);
 
+    const directGatheredEnding = observe(
+      story,
+      choose(story, state, "pull_release_after_gathered_boarding")
+    );
+
+    expect(directGatheredEnding.scene.id).toBe("passenger_true_ending");
+    expect(directGatheredEnding.scene.ending).toBe(true);
+    expect(directGatheredEnding.scene.text).toContain("the crowd leaves by making room");
+    expect(directGatheredEnding.state.flags.heard_gathered_passengers).toBe(true);
+    expect(directGatheredEnding.state.flags.watched_gathered_boarding).toBe(true);
+    expect(directGatheredEnding.state.flags.shared_release_reached).toBeUndefined();
+    expectIdealScore(directGatheredEnding.score);
+
     const rollCallState = choose(story, state, "answer_final_roll_call_from_gathered_boarding");
     observation = observe(story, rollCallState);
 
@@ -17975,15 +17988,9 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.scene.id).toBe("passenger_true_ending");
+    expect(observation.scene.text).toContain("the crowd leaves by making room");
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
-
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
     expect(observation.scene.ending).toBe(true);
     expectIdealScore(observation.score);
   });
