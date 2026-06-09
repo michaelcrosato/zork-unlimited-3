@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 45 Lunch-Tin Intercom Direct Release
+
+- Date: 2026-06-09
+- Main objective: Make the plain `passenger_lunch_tin_true_ending` pay off
+  directly when Mara's speaker tells the player to pull while the lunch-tin
+  count is moving.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 45 evidence showed full coverage and healthy random play, but
+  normal random samples continued to under-sample some late passenger endings,
+  including the plain lunch-tin payoff.
+- Why this matters: The lunch-tin intercom already says "Pull the release while
+  they are moving together." The old choice made players take another self-count
+  setup scene first. The direct command now does exactly what the scene asks,
+  while explicit self-count, checked-count, and roster routes remain available.
+- Planned work:
+  - Change `pull_release_after_lunch_tin_intercom` to reach
+    `passenger_lunch_tin_true_ending` directly.
+  - Preserve the explicit `passenger_lunch_tin_self_count` route from the
+    farewell, boarding, and checked-count scenes.
+  - Update lunch-tin route regression tests for the direct intercom payoff.
+- Verification:
+  - Focused lunch-tin test slice passed:
+    `npx vitest run tests\story-paths.test.ts -t "lunch-tin"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_lunch_tin_true_ending`, score 293, via
+    `listen_to_lunch_tin_latch_from_opened_manifest` and
+    `pull_release_after_lunch_tin_intercom`.
+  - A 250-run random sample ended cleanly every run and reached
+    `passenger_lunch_tin_true_ending` four times.
+- Playtest feedback:
+  - What felt better: the speaker beat now has a clean cause and effect. Mara
+    says to pull while the lunch-tin count is moving, and that pull immediately
+    opens the lunch-tin ending.
+  - What still feels risky: the objective still names the self-count as the
+    careful version of the lunch-tin route. That is accurate for the explicit
+    self-count paths, but blind sessions should confirm the direct intercom pull
+    does not make the self-count beat feel skipped.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue improving under-sampled late passenger endings where a scene text
+    tells the player to pull but the route still detours.
+- Risks:
+  - Low. This changes one late-game transition and keeps the slower proof
+    variants reachable.
+- Status: Complete.
+
 # Cycle 44 Answered Roll Call Direct Release
 
 - Date: 2026-06-09

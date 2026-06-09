@@ -6807,8 +6807,8 @@ scenes:
             heard_final_roll_call: true
             read_lunch_tin_roster: true
       - id: pull_release_after_lunch_tin_intercom
-        label: Let the lunch-tin worker count himself before the release
-        to: passenger_lunch_tin_self_count
+        label: Pull while the lunch-tin count is moving together
+        to: passenger_lunch_tin_true_ending
         requires:
           all:
             - notFlag: checked_lunch_tin_passengers
