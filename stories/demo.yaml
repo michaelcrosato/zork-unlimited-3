@@ -96,12 +96,19 @@ objectives:
             - notFlag: inspected_signal_ledger
             - notItem: map
             - notItem: badge
+  - text: Pull after Mara's handoff reaches the opened manifest doors.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: manifest_handoff_reached_doors
   - text: "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving."
     requires:
       all:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: saw_mara_manifest_handoff
+        - notFlag: manifest_handoff_reached_doors
         - notFlag: heard_passenger_answers
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
@@ -1612,9 +1619,9 @@ scenes:
             saw_mara_manifest_handoff: true
             heard_mara_goodbye: true
       - id: pull_release_as_mara_calls_opened_doors
-        label: Let Mara call the opened doors before you pull
+        label: Let Mara's handoff reach the opened doors before you pull
         choiceGroup: Finish Mara's handoff
-        to: mara_manifest_handoff
+        to: passenger_manifest_handoff_release
         requires:
           all:
             - notFlag: saw_mara_manifest_handoff
@@ -1626,6 +1633,8 @@ scenes:
         effects:
           set:
             saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
+            manifest_handoff_reached_doors: true
       - id: ask_mara_to_sign_off_opened_manifest
         label: Ask Mara to sign off before the opened passengers board
         choiceGroup: Mara and manifest
@@ -2169,6 +2178,7 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+            manifest_handoff_reached_doors: true
       - id: let_opened_passengers_finish_count
         label: Listen as the opened passengers finish the count together
         choiceGroup: Manifest count
@@ -2965,6 +2975,7 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+            manifest_handoff_reached_doors: true
       - id: board_after_mara_manifest_thumbprint_handoff
         label: Board while Mara carries the thumbprint oath through the opened names
         choiceGroup: Mara and manifest

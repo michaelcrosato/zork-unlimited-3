@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 44 Direct Manifest Handoff Release
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest "before you pull" handoff choice
+  reach its promised release-prep beat directly.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 44 evidence showed normal random play still under-sampling
+  late proof routes; `passenger_manifest_handoff_release` and its true ending
+  were good high-value targets because coverage could reach them but the
+  250-run random MCP sample missed the release scene.
+- Why this matters: The player-facing choice already sounded like a direct
+  pull path, but it previously sent players into another broad handoff hub with
+  many options. The revised route lets normal players see Mara's handoff reach
+  the opened doors, then pull the release without extra route sorting.
+- Planned work:
+  - Keep the existing choice id stable while routing it to the handoff
+    release-prep scene.
+  - Add a concise objective once the handoff has reached the doors.
+  - Preserve the exploratory `watch_mara_open_manifest` route and existing
+    returned-handoff options.
+  - Add/update regression coverage for the direct route and objective.
+- Risks:
+  - This makes one hub option less exploratory by design. Players who want the
+    broader handoff hub still have the adjacent "Watch Mara call the opened
+    doors" choice.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_as_mara_calls_opened_doors` now routes directly to
+    `passenger_manifest_handoff_release`, sets
+    `manifest_handoff_reached_doors`, and presents the concise objective:
+    "Pull after Mara's handoff reaches the opened manifest doors."
+  - Existing handoff choices from the exploratory hub and returned hub also set
+    `manifest_handoff_reached_doors` when they enter the release-prep beat.
+  - Focused route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-manifest count|opened-door handoff|manifest handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, random had `ended: 100`
+    / `unfinished: 0`, random now visited
+    `passenger_manifest_handoff_release` and reached
+    `passenger_manifest_handoff_true_ending`, coverage stayed complete, the
+    standard MCP smoke route reached `true_ending`, and the adaptive MCP route
+    reached `passenger_conductor_clearance_checked_true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through the opened-manifest hub now goes
+    `passengers_released` ->
+    `pull_release_as_mara_calls_opened_doors` ->
+    `passenger_manifest_handoff_release` ->
+    `passenger_manifest_handoff_true_ending` with score 298.
+  - What felt better: the choice label now matches the result. The player sees
+    Mara's call reach the opened doors, then has exactly one clear release
+    action.
+  - What still feels risky: the opened-manifest hub remains large, so later
+    cycles should continue improving normal-play discovery for remaining
+    under-sampled routes.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available.
+    Otherwise, continue discovery work for another random-missed late route,
+    especially `mara_manifest_thumbprint_receipt`,
+    `passenger_lunch_tin_true_ending`, or `passenger_threshold_boarding`.
+
 # Cycle 43 Opened-Manifest Objective Scanability
 
 - Date: 2026-06-09

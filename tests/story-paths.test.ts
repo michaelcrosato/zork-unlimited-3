@@ -9,6 +9,8 @@ const ROOM_RELEASE_OBJECTIVE =
   "Pull the emergency release while the opened passengers hold room for one another.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath to the speaker, pull with the oath, or pull the release while the handoff is moving.";
+const MANIFEST_HANDOFF_RELEASE_OBJECTIVE =
+  "Pull after Mara's handoff reaches the opened manifest doors.";
 const THUMBPRINT_RECEIPT_OBJECTIVE =
   "Pull the release after the opened passengers receive Mara's thumbprint oath.";
 const ANSWERED_CHECK_OBJECTIVE =
@@ -88,6 +90,8 @@ function releaseAfterManifestHandoffProof(
   expect(observation.scene.text).toContain("the handoff is moving faster than the ledger");
   expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
   expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+  expect(observation.state.flags.manifest_handoff_reached_doors).toBe(true);
+  expect(observation.objectives).toEqual([MANIFEST_HANDOFF_RELEASE_OBJECTIVE]);
   expect(observation.choices.map((choice) => choice.id)).toEqual([
     "pull_release_after_manifest_handoff_reaches_doors"
   ]);
@@ -6111,24 +6115,9 @@ describe("demo story critical paths", () => {
     expect(choiceIds[1]).toBe("carry_mara_handoff_as_doors_open");
     expect(choiceIds[2]).toBe("pull_release_as_mara_calls_opened_doors");
 
-    const firstHandoffState = choose(story, state, "pull_release_as_mara_calls_opened_doors");
-    const firstHandoffObservation = observe(story, firstHandoffState);
-
-    expect(firstHandoffObservation.scene.id).toBe("mara_manifest_handoff");
-    expect(firstHandoffObservation.scene.ending).toBe(false);
-    expect(firstHandoffObservation.scene.text).toContain(
-      "steadiness can be handed from name to name"
-    );
-    expect(firstHandoffObservation.objectives).toEqual([MANIFEST_HANDOFF_OBJECTIVE]);
-    expect(firstHandoffObservation.state.flags.saw_mara_manifest_handoff).toBe(true);
-    expect(firstHandoffObservation.state.flags.heard_mara_goodbye).toBeUndefined();
-    expect(firstHandoffObservation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_during_mara_manifest_handoff"
-    );
-
     const { observation: firstDirectReleaseObservation } = releaseAfterManifestHandoffProof(
       story,
-      choose(story, firstHandoffState, "pull_release_during_mara_manifest_handoff")
+      choose(story, state, "pull_release_as_mara_calls_opened_doors")
     );
 
     expect(firstDirectReleaseObservation.scene.id).toBe("passenger_manifest_handoff_true_ending");
@@ -6720,7 +6709,9 @@ describe("demo story critical paths", () => {
     expect(observation.choices[1]?.label).toBe("Carry Mara's opened-door handoff to the third car");
     expect(observation.choices[1]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[2]).toBe("pull_release_as_mara_calls_opened_doors");
-    expect(observation.choices[2]?.label).toBe("Let Mara call the opened doors before you pull");
+    expect(observation.choices[2]?.label).toBe(
+      "Let Mara's handoff reach the opened doors before you pull"
+    );
     expect(observation.choices[2]?.choiceGroup).toBe("Finish Mara's handoff");
     expect(choiceIds[3]).toBe("ask_mara_to_sign_off_opened_manifest");
     expect(observation.choices[3]?.label).toBe(
