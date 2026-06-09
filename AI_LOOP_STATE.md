@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 60 Opened Conductor Clear-Call Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest conductor shortcut pay off the old
+  conductor's final aisle call before the release ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 60 evidence showed healthy coverage and no unfinished runs,
+  while normal random play still under-sampled several late passenger payoff
+  scenes, including the conductor's checked/clear endings.
+- Why this matters: The player-facing choice now says the conductor carries the
+  opened-door clear signal to the release, then the game shows him walking the
+  aisle and calling each opened door clear before the player pulls. The route
+  keeps the same ideal conductor ending, but the late-game payoff is less
+  abrupt.
+- Completed work:
+  - Routed `pull_release_on_opened_conductor_signal` to
+    `passenger_conductor_roll_call` instead of directly to
+    `passenger_conductor_true_ending`.
+  - Renamed the choice label from a direct pull to carrying the opened-door
+    clear signal to the release.
+  - Updated the opened-passenger conductor regression to prove:
+    shortcut -> `passenger_conductor_roll_call` ->
+    `pull_release_after_conductor_roll_call` ->
+    `passenger_conductor_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "conductor clearance"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_conductor_true_ending`, score
+    303, through `pull_release_on_opened_conductor_signal`,
+    `passenger_conductor_roll_call`, and
+    `pull_release_after_conductor_roll_call`; final objectives were empty.
+  - A post-change 100-run random sample ended every run with `unfinished: 0`.
+- Playtest feedback:
+  - What felt better: the route now reads like a complete conductor action
+    instead of a compressed ending jump. The old conductor does one visible job
+    before Mara lets another worker's signal close the line.
+  - What still feels risky: the deterministic 100-run random sample still did
+    not hit `passenger_conductor_true_ending`; this is a clarity improvement,
+    not a proven frequency lift. Coverage and the manual route prove the path
+    is intact.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late shortcut where the label promises a specific sensory
+    or confirmation beat but routes around that scene.
+- Risks:
+  - Low. The branch adds one deliberate confirmation beat before the existing
+    ideal ending, and the health gate remains green.
+- Status: Complete.
+
 # Cycle 59 Threshold Intercom Shortcut Payoff
 
 - Date: 2026-06-09

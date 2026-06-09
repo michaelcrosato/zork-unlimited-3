@@ -1991,9 +1991,9 @@ scenes:
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
       - id: pull_release_on_opened_conductor_signal
-        label: Pull the release on the conductor's opened-door clear signal
+        label: Let the conductor carry the opened-door clear signal to the release
         choiceGroup: Passenger gathering
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_roll_call
         requires:
           all:
             - notFlag: helped_passengers_gather

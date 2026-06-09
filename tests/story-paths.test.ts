@@ -7076,7 +7076,7 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[13]).toBe("pull_release_on_opened_conductor_signal");
     expect(observation.choices[13]?.label).toBe(
-      "Pull the release on the conductor's opened-door clear signal"
+      "Let the conductor carry the opened-door clear signal to the release"
     );
     expect(observation.choices[13]?.choiceGroup).toBe("Passenger gathering");
     expect(choiceIds[14]).toBe("confirm_opened_conductor_clearance");
@@ -11176,6 +11176,20 @@ describe("demo story critical paths", () => {
     );
 
     let directSignalState = choose(story, openedState, "pull_release_on_opened_conductor_signal");
+    observation = observe(story, directSignalState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_roll_call");
+    expect(observation.scene.text).toContain("The conductor walks the aisle one last time");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_roll_call",
+      "confirm_conductor_clearance_before_release"
+    ]);
+
+    directSignalState = choose(story, directSignalState, "pull_release_after_conductor_roll_call");
     observation = observe(story, directSignalState);
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
