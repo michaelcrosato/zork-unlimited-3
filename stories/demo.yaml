@@ -109,6 +109,8 @@ objectives:
         - flag: read_passenger_manifest
         - flag: saw_mara_manifest_handoff
         - notFlag: manifest_handoff_reached_doors
+        - notFlag: heard_passenger_morning_boarding
+        - notFlag: confirmed_morning_stops
         - notFlag: heard_passenger_answers
         - notFlag: helped_passengers_gather
         - notFlag: read_mara_thumbprint
@@ -131,6 +133,20 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Confirm the morning chorus's remembered stops before pulling the release.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: heard_passenger_morning_boarding
+        - notFlag: confirmed_morning_stops
+  - text: Pull after the remembered morning stops answer in full.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: heard_passenger_morning_boarding
+        - flag: confirmed_morning_stops
   - text: Seat the checked passenger echoes before pulling the release.
     requires:
       all:
@@ -251,6 +267,8 @@ objectives:
         - notFlag: made_room_for_passengers
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt
+        - notFlag: heard_passenger_morning_boarding
+        - notFlag: confirmed_morning_stops
         - notFlag: checked_answered_passengers
         - notFlag: checked_echoed_passengers
         - notFlag: confirmed_echoed_manifest_seats

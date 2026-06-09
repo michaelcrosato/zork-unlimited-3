@@ -18,6 +18,9 @@ const ANSWERED_CHECK_OBJECTIVE =
 const ECHO_SEAT_RECEIPT_OBJECTIVE =
   "Pull the release after every familiar passenger echo has a seat aboard.";
 const CHECKED_ECHO_OBJECTIVE = "Seat the checked passenger echoes before pulling the release.";
+const MORNING_BOARDING_OBJECTIVE =
+  "Confirm the morning chorus's remembered stops before pulling the release.";
+const MORNING_STOP_OBJECTIVE = "Pull after the remembered morning stops answer in full.";
 const LUNCH_TIN_COUNT_OBJECTIVE =
   "Let the lunch-tin count reach the worker himself before pulling the release.";
 const LUNCH_TIN_SELF_COUNT_OBJECTIVE =
@@ -138,6 +141,7 @@ function releaseAfterMorningStopCheck(
   expect(observation.scene.text).toContain("Warden Street");
   expect(observation.scene.text).toContain("the sign answers");
   expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+  expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
   expect(observation.choices.map((choice) => choice.id)).toEqual([
     "pull_release_after_confirmed_morning_stops"
   ]);
@@ -16449,6 +16453,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_morning_intercom");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.scene.text).toContain("the kettle before it boils dry");
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -16594,6 +16600,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -16638,6 +16646,8 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -16650,6 +16660,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Warden Street");
     expect(observation.scene.text).toContain("the sign answers");
     expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_morning_stops"
     ]);
@@ -16721,6 +16732,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Warden Street");
     expect(observation.scene.text).toContain("the sign answers");
     expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_morning_stops"
     ]);
@@ -16754,12 +16766,15 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
 
     platformState = choose(story, platformState, "confirm_morning_stops_before_release");
     observation = observe(story, platformState);
 
     expect(observation.scene.id).toBe("passenger_morning_stop_check");
     expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
 
     platformState = choose(story, platformState, "pull_release_after_confirmed_morning_stops");
     observation = observe(story, platformState);
@@ -16803,7 +16818,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the kettle before it boils dry");
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
-    expect(observation.objectives).toEqual([OPENED_MANIFEST_OBJECTIVE]);
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -16819,6 +16835,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("Warden Street");
     expect(observation.scene.text).toContain("the sign answers");
     expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_confirmed_morning_stops"
     ]);
@@ -16861,6 +16878,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_morning_intercom");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
     expect(observation.state.flags.confirmed_morning_stops).toBeUndefined();
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
 
     directConfirmedState = choose(
       story,
@@ -16871,6 +16890,7 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_morning_stop_check");
     expect(observation.state.flags.confirmed_morning_stops).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_STOP_OBJECTIVE]);
 
     directConfirmedState = choose(
       story,
@@ -16927,6 +16947,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_morning_chorus_boarding",
       "confirm_morning_stops_before_release"
@@ -17050,6 +17072,8 @@ describe("demo story critical paths", () => {
     expect(observation.scene.id).toBe("passenger_morning_intercom");
     expect(observation.scene.text).toContain("stops with real streets again");
     expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
 
     state = choose(story, state, "pull_release_after_morning_chorus_boarding");
     ({ state, observation } = releaseAfterMorningStopCheck(story, state));

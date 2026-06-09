@@ -7,6 +7,60 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 62 Morning Chorus Objective Pass
+
+- Date: 2026-06-09
+- Main objective: Make the passenger morning-chorus branch describe its own
+  late-route tasks instead of falling back to the broad opened-manifest prompt.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence remains healthy, and suggested actions named
+  `passenger_morning_chorus` as a normal-play proof beat worth surfacing.
+- Why this matters: Once players board with the remembered morning chorus, the
+  next task is no longer "get the opened passengers moving together." The game
+  should tell them to confirm the real stops, then pull once those stops answer.
+- Planned work:
+  - Add morning-boarding and morning-stop objective rules.
+  - Suppress stale opened-manifest and handoff objectives once morning boarding
+    or stop confirmation takes over.
+  - Add focused regression assertions across morning route entry points.
+  - Run focused tests, full health, evidence-only cycle, and an actual CLI
+    playthrough.
+- Risks:
+  - This improves clarity after the morning branch is chosen. It does not
+    directly increase how often random play selects the branch.
+- Status:
+  - Completed and ready for commit/push.
+  - `passenger_morning_intercom` now shows
+    `Confirm the morning chorus's remembered stops before pulling the release.`
+  - `passenger_morning_stop_check` now shows
+    `Pull after the remembered morning stops answer in full.`
+  - The broad opened-manifest objective no longer appears after morning
+    boarding, and Mara's handoff objective no longer overlaps the morning stop
+    confirmation route.
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI route reached `passenger_morning_intercom` and showed only the
+    new morning-boarding objective.
+  - Continuing to `passenger_morning_stop_check` showed only the new stop-check
+    objective.
+  - Pulling the release reached `passenger_morning_stop_checked_true_ending`,
+    score 275, with no remaining objectives.
+  - What felt better: the branch now keeps the player's attention on confirming
+    named stops, which matches the route's emotional payoff.
+  - What still feels risky: normal random play may still undersample this
+    optional branch; this pass improves clarity once reached.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving late optional proof beats that random play undersamples,
+    with manifest thumbprint receipt or passenger-room boarding as likely
+    candidates.
+
 # Cycle 61 Lunch-Tin Objective Pass
 
 - Date: 2026-06-09
