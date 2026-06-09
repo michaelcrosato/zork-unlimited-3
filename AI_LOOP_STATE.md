@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 61 Lunch-Tin Roster Proof Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the lunch-tin roster intercom route show the roster
+  proof before the final roster ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 61 evidence showed healthy coverage and no unfinished runs,
+  while normal random play still under-sampled several late passenger payoff
+  scenes, including lunch-tin roster beats.
+- Why this matters: When the player reads the lunch-tin roster, carries it to
+  Mara's speaker, and chooses the release path, the game now shows every proof
+  being closed before the final pull. The same ideal roster ending remains, but
+  the player sees the promised "clock everyone out" action instead of jumping
+  straight to the result.
+- Completed work:
+  - Routed `pull_release_after_roster_lunch_tin_intercom` to
+    `passenger_lunch_tin_roster_proof` instead of directly to
+    `passenger_lunch_tin_roster_true_ending`.
+  - Renamed the choice label to `Close every roster proof before pulling the
+release`.
+  - Set `heard_final_roll_call` and `confirmed_lunch_tin_roster_proof` on that
+    transition so objectives move cleanly to the final pull.
+  - Updated the lunch-tin roster regression to prove:
+    intercom -> roster proof -> roster true ending.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin roster"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `passenger_lunch_tin_roster_true_ending`, score 318, through
+    `call_lunch_tin_roster_from_opened_manifest`,
+    `listen_after_reading_lunch_tin_roster`,
+    `pull_release_after_roster_lunch_tin_intercom`, and
+    `pull_release_after_confirmed_lunch_tin_roster`; final objectives were
+    empty.
+- Playtest feedback:
+  - What felt better: the roster path now reads as a completed ritual. The
+    worker's roster is read, Mara carries it on the speaker, every proof is
+    closed in the car, and only then does the ending say the shift is finished.
+  - What still feels risky: this improves one late optional branch, not overall
+    branch density. Random play may still under-sample other late payoffs such
+    as answered-passenger boarding or manifest handoff variants.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late shortcut where a release label promises a concrete
+    proof, receipt, or sensory beat but routes around the scene that shows it.
+- Risks:
+  - Low. The route adds one existing confirmation scene before the same ideal
+    ending, and the health gate remains green.
+- Status: Complete.
+
 # Cycle 60 Opened Conductor Clear-Call Payoff
 
 - Date: 2026-06-09

@@ -9814,6 +9814,18 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_roster_lunch_tin_intercom");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roster_proof");
+    expect(observation.scene.text).toContain("All time cards closed");
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_lunch_tin_roster_proof).toBe(true);
+    expect(observation.objectives).toEqual([LUNCH_TIN_ROSTER_PROOF_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_confirmed_lunch_tin_roster"
+    ]);
+
+    state = choose(story, state, "pull_release_after_confirmed_lunch_tin_roster");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_lunch_tin_roster_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("after the roster clocks everyone out");

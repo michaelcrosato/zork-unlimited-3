@@ -6941,10 +6941,14 @@ scenes:
             - flag: checked_lunch_tin_passengers
             - notFlag: read_lunch_tin_roster
       - id: pull_release_after_roster_lunch_tin_intercom
-        label: Pull the release after the roster clocks everyone out
-        to: passenger_lunch_tin_roster_true_ending
+        label: Close every roster proof before pulling the release
+        to: passenger_lunch_tin_roster_proof
         requires:
           flag: read_lunch_tin_roster
+        effects:
+          set:
+            heard_final_roll_call: true
+            confirmed_lunch_tin_roster_proof: true
 
   passenger_lunch_tin_check:
     routeImportance: optional
