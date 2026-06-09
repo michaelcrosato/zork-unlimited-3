@@ -4495,9 +4495,33 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([THRESHOLD_BOARDING_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_threshold_from_boarding",
+      "make_room_after_holding_threshold",
       "confirm_threshold_clearance_from_boarding",
       "reach_release_after_threshold_boarding"
     ]);
+
+    const thresholdBoardingState = state;
+
+    state = choose(story, thresholdBoardingState, "make_room_after_holding_threshold");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_boarding");
+    expect(observation.scene.text).toContain("the first seat has become more than");
+    expect(observation.state.flags.held_passenger_threshold).toBe(true);
+    expect(observation.state.flags.made_room_for_passengers).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(THRESHOLD_BOARDING_OBJECTIVE);
+
+    state = choose(story, state, "pass_room_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.objectives).toEqual([ROOM_RELEASE_OBJECTIVE]);
+
+    ({ state, observation } = releaseAfterSharedRoomReceipt(story, state));
+
+    state = thresholdBoardingState;
 
     state = choose(story, state, "listen_to_threshold_from_boarding");
     observation = observe(story, state);
@@ -6644,6 +6668,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.held_passenger_threshold).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "listen_to_threshold_from_boarding",
+      "make_room_after_holding_threshold",
       "confirm_threshold_clearance_from_boarding",
       "reach_release_after_threshold_boarding"
     ]);

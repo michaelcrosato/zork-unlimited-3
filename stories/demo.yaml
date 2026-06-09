@@ -124,6 +124,7 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: held_passenger_threshold
+        - notFlag: made_room_for_passengers
         - notFlag: heard_mara_goodbye
         - notFlag: confirmed_threshold_clearance
   - text: Confirm the held threshold is clear, or pull while it stays open.
@@ -4092,6 +4093,14 @@ scenes:
         effects:
           set:
             heard_mara_goodbye: true
+      - id: make_room_after_holding_threshold
+        label: Make room inside the car while you hold the threshold
+        to: passenger_room_boarding
+        requires:
+          notFlag: made_room_for_passengers
+        effects:
+          set:
+            made_room_for_passengers: true
       - id: confirm_threshold_clearance_from_boarding
         label: Confirm the threshold is clear before reaching the release
         to: passenger_threshold_clearance_check

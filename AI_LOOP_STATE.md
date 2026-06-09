@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 27 Threshold-To-Room Recovery
+
+- Date: 2026-06-09
+- Main objective: Let players who hold the third-car threshold naturally
+  continue into the shared room-making release path.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 27 evidence showed overall route health was strong, so this
+  pass targeted late passenger boarding variants that normal random play can
+  miss despite full coverage reachability.
+- Why this matters: The threshold scene already says passengers are leaving
+  room for the next person. Players can now act on that visible beat by making
+  room inside the car, which connects the threshold branch to the stronger
+  shared-release payoff instead of forcing only threshold-specific endings.
+- Completed work:
+  - Added `make_room_after_holding_threshold` from
+    `passenger_threshold_boarding` to `passenger_room_boarding`.
+  - Set `made_room_for_passengers` on that transition so the existing
+    shared-room release objectives and endings take over.
+  - Updated the held-threshold objective rule so it clears once the player
+    changes focus to making room.
+  - Added regression coverage proving the new threshold-to-room route reaches
+    `passenger_shared_release_checked_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "threshold beat|manifest handoff lead directly into the threshold|shared room"`.
+  - Full `npm run health` passed: format check, TypeScript, 335 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_shared_release_checked_true_ending`,
+    score 273, through `hold_third_car_threshold`,
+    `make_room_after_holding_threshold`,
+    `pass_room_release_after_making_room`,
+    `confirm_shared_room_release`, and
+    `pull_release_after_confirmed_shared_room_release`.
+- Playtest feedback:
+  - What felt better: the threshold prose now has an immediate verb that
+    matches it. "Each person leaves room" can become "make room inside the
+    car" before the player commits to the release.
+  - What still feels risky: this adds one more choice to an already-important
+    late scene. The choice is tightly related to the text, but future blind
+    feedback should still watch for menu fatigue in late passenger hubs.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    continue smoothing undersampled late boarding variants, especially
+    `passenger_lunch_tin_boarding`, `passenger_gathered_boarding`, and
+    `passenger_morning_chorus`.
+- Risks:
+  - Low. The change reuses existing scenes, flags, objective rules, and an
+    existing ideal ending without adding new engine behavior.
+- Status: Complete.
+
 # Cycle 26 Answered Roll Call Recovery
 
 - Date: 2026-06-09
