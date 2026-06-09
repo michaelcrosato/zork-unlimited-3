@@ -4854,6 +4854,17 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "pull_release_after_making_room");
     observation = observe(story, state);
 
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("You do not pull the release alone");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_shared_release_after_making_room",
+      "confirm_shared_room_release"
+    ]);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
+    observation = observe(story, state);
+
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);
     expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
@@ -5121,6 +5132,13 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_making_room");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.text).toContain("room no one has to earn");
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    state = choose(story, state, "pull_shared_release_after_making_room");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
@@ -15018,10 +15036,23 @@ describe("demo story critical paths", () => {
       "pull_release_after_making_room"
     ]);
 
-    observation = observe(
+    let directIntercomReleaseState = choose(
       story,
-      choose(story, directIntercomState, "pull_release_after_making_room")
+      directIntercomState,
+      "pull_release_after_making_room"
     );
+    observation = observe(story, directIntercomReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_room_release");
+    expect(observation.scene.ending).toBe(false);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+
+    directIntercomReleaseState = choose(
+      story,
+      directIntercomReleaseState,
+      "pull_shared_release_after_making_room"
+    );
+    observation = observe(story, directIntercomReleaseState);
 
     expect(observation.scene.id).toBe("passenger_true_ending");
     expect(observation.scene.ending).toBe(true);

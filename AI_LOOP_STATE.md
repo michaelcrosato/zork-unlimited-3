@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 50 Room-Making Intercom Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the room-making intercom's immediate release action pay
+  off with the shared-release scene instead of jumping straight to the generic
+  passenger ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is healthy overall and points at optional
+  late-game discovery misses, including `passenger_room_intercom` and nearby
+  room-making branches.
+- Why this matters: A player who chooses to listen as the opened passengers
+  make room has already committed to the shared-space story beat. Their next
+  release action should show the handle moving hand to hand before the ending,
+  not skip that payoff.
+- Planned work:
+  - Keep `pull_release_after_making_room` stable for playtest history.
+  - Route it from `passenger_room_intercom` to `passenger_room_release`.
+  - Set `shared_release_reached` so the state matches the payoff scene.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - This improves one room-making payoff branch. It does not reduce the broader
+    opened-manifest hub's choice density.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_after_making_room` now routes to `passenger_room_release` and
+    sets `shared_release_reached`.
+  - The focused room-making regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "room-making intercom|direct manifest boarders make room"`.
+  - Full `npm run health` passed: format check, TypeScript, 330 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/`.
+- Playtest feedback:
+  - Actual CLI playthrough used `pull_release_for_opened_manifest` ->
+    `listen_to_room_made_for_passengers` -> `pull_release_after_making_room`
+    -> `pull_shared_release_after_making_room`.
+  - Final scene was `passenger_true_ending`, score 295, with no remaining
+    objectives.
+  - What felt better: after hearing Mara name the room-making proof, the
+    immediate release action now shows the handle moving hand to hand before
+    the ending.
+  - What still feels risky: this fixes one room-making payoff path; the
+    opened-manifest hub still has many optional proof routes competing for
+    normal-player attention.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue normal-play discovery/payoff work for another current random miss
+    such as `passenger_gathered_intercom`, `passenger_lunch_tin_self_count`, or
+    `passenger_morning_chorus`.
+
 # Cycle 49 Manifest Thumbprint Receipt Payoff
 
 - Date: 2026-06-09
