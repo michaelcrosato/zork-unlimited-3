@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 56 Gathered Intercom Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the answered-passenger and Mara sign-off gather actions
+  show the gathered intercom before the shared release payoff.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Fresh random evidence is stable with `unfinished: 0`, but it still
+  misses `passenger_gathered_intercom`, `passenger_gathered_release`, and
+  `passenger_helped_true_ending` in normal random play even though it reaches
+  `passenger_gathered_boarding`.
+- Why this matters: The gathered route is about passengers moving together
+  instead of being rescued one at a time. A player who chooses to gather the
+  answered passengers should hear the crowd take over the speaker before the
+  release becomes a shared action.
+- Planned work:
+  - Keep `gather_answered_passengers` stable for playtest history.
+  - Keep `gather_after_mara_signoff` and `board_after_passenger_mara_signoff`
+    stable for playtest history.
+  - Route it to `passenger_gathered_intercom` instead of jumping directly to
+    boarding.
+  - Set `heard_gathered_passengers` on that route so objectives and follow-up
+    choices match the visible intercom beat.
+  - Update focused gathered-route tests, run health, and actually play the
+    revised route.
+- Risks:
+  - Some tests may expect the old immediate boarding scene. The intended
+    behavior is now one proof beat longer, with existing boarding still
+    reachable from other opened-manifest gathering paths.
+- Status:
+  - Completed and ready for commit/push.
+  - `gather_answered_passengers`, `gather_after_mara_signoff`, and
+    `board_after_passenger_mara_signoff` now route through
+    `passenger_gathered_intercom` and set `heard_gathered_passengers`.
+  - Focused gathered/sign-off tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered passengers|Mara sign-off|answer listeners hear|shared release"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/`.
+  - Post-change random sample now visits `passenger_gathered_intercom`,
+    `passenger_gathered_release`, and `passenger_helped_true_ending` once.
+- Playtest feedback:
+  - Actual CLI playthrough used `ask_mara_to_sign_off_opened_manifest` ->
+    `board_after_passenger_mara_signoff` ->
+    `check_shared_release_from_gathered_intercom` ->
+    `pull_release_after_shared_gathered_check`.
+  - Final scene was `passenger_helped_true_ending`, score 300, with no
+    remaining choices or objectives.
+  - What felt better: Mara's sign-off now flows into the passengers taking over
+    the speaker before the release reaches every hand, so the helped ending is
+    earned on-screen.
+  - Tradeoff: the deterministic 100-run random sample now misses
+    `passenger_gathered_boarding` and `passenger_roll_call_checked_true_ending`
+    because the same run moves into the helped route. Coverage still reaches
+    every scene, so this is a normal-play emphasis shift rather than a
+    reachability regression.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    inspect whether the checked roll-call proof should be surfaced from another
+    common route now that the sign-off route carries the helped-passenger
+    payoff.
+
 # Cycle 55 Shared-Room Receipt Payoff
 
 - Date: 2026-06-09

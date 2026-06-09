@@ -6100,10 +6100,12 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "gather_after_mara_signoff");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("The passengers gather themselves");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_gathered_boarding"
+      "pull_release_after_gathered_intercom"
     );
   });
 
@@ -11249,7 +11251,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
-  it("lets answer listeners gather passengers directly into a broad boarding beat", async () => {
+  it("lets answer listeners hear gathered passengers before the shared release", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -11278,23 +11280,24 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
-    expect(observation.scene.text).toContain("every passenger helped the next one move");
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("The passengers gather themselves");
+    expect(observation.scene.text).toContain("making room for one another");
+    expect(observation.scene.text).toContain("they can move together");
     expect(observation.state.flags.heard_passenger_answers).toBe(true);
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "check_shared_release_from_gathered_boarding",
-      "answer_final_roll_call_from_gathered_boarding",
-      "listen_to_gathered_passengers_from_boarding",
-      "pull_release_after_gathered_boarding"
+      "check_shared_release_from_gathered_intercom",
+      "hear_final_passenger_roll_call",
+      "pull_release_after_gathered_intercom"
     ]);
     expect(
-      observation.choices.find((choice) => choice.id === "pull_release_after_gathered_boarding")
+      observation.choices.find((choice) => choice.id === "pull_release_after_gathered_intercom")
         ?.label
-    ).toBe("Pass the release hand to hand with the gathered passengers");
+    ).toBe("Move the release hand to hand while the passengers hold the doors");
 
-    state = choose(story, state, "pull_release_after_gathered_boarding");
+    state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_release");
@@ -15569,17 +15572,18 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "gather_after_mara_signoff");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("The passengers gather themselves");
+    expect(observation.scene.text).toContain("they can move together");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "check_shared_release_from_gathered_boarding",
-      "answer_final_roll_call_from_gathered_boarding",
-      "listen_to_gathered_passengers_from_boarding",
-      "pull_release_after_gathered_boarding"
+      "check_shared_release_from_gathered_intercom",
+      "hear_final_passenger_roll_call",
+      "pull_release_after_gathered_intercom"
     ]);
 
-    state = choose(story, state, "pull_release_after_gathered_boarding");
+    state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_release");
@@ -17074,12 +17078,14 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "board_after_passenger_mara_signoff");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_boarding");
-    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.scene.id).toBe("passenger_gathered_intercom");
+    expect(observation.scene.text).toContain("The passengers gather themselves");
+    expect(observation.scene.text).toContain("they can move together");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
-    state = choose(story, state, "pull_release_after_gathered_boarding");
+    state = choose(story, state, "pull_release_after_gathered_intercom");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_release");

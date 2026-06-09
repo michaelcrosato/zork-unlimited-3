@@ -2678,12 +2678,13 @@ scenes:
             heard_passenger_morning_chorus: true
       - id: gather_after_mara_signoff
         label: Let Mara's sign-off gather the passengers into the third car
-        to: passenger_gathered_boarding
+        to: passenger_gathered_intercom
         requires:
           notFlag: helped_passengers_gather
         effects:
           set:
             helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: return_from_passenger_mara_signoff
         label: Return to the opened manifest doors
         to: passengers_released
@@ -2692,12 +2693,13 @@ scenes:
         to: passenger_platform
       - id: board_after_passenger_mara_signoff
         label: Board together after Mara signs off
-        to: passenger_gathered_boarding
+        to: passenger_gathered_intercom
         requires:
           notFlag: heard_passenger_echoes
         effects:
           set:
             helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: board_after_echoed_passenger_mara_signoff
         label: Board with the familiar echoes after Mara signs off
         to: passenger_echoed_boarding
@@ -3183,12 +3185,13 @@ scenes:
             heard_newspaper_memory: true
       - id: gather_answered_passengers
         label: Help the answered passengers gather for the third car
-        to: passenger_gathered_boarding
+        to: passenger_gathered_intercom
         requires:
           notFlag: helped_passengers_gather
         effects:
           set:
             helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: let_lunch_tin_worker_keep_count
         label: Let the lunch-tin worker count the answered passengers aboard
         to: passenger_farewell
