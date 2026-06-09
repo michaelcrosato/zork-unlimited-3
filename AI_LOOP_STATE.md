@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 42 Mara Manifest Thumbprint Readout Bridge
+
+- Date: 2026-06-09
+- Main objective: Make `passenger_manifest_thumbprint_true_ending` easier to
+  discover from Mara's direct opened-manifest readout.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 42 evidence showed full coverage and healthy random play, but
+  `passenger_manifest_thumbprint_true_ending` remained under-sampled in normal
+  random routes compared with nearby manifest, receipt, and handoff endings.
+- Why this matters: When players ask Mara to read the opened manifest, the
+  scene already says her torn thumbprint darkens under the passenger answers.
+  That clue should offer an immediate pull-with-the-oath payoff instead of
+  only the slower receipt branch or the plain manifest release.
+- Planned work:
+  - Add a `mara_manifest_intercom` choice that pulls while Mara's thumbprint
+    oath moves through the manifest.
+  - Reuse the existing `passenger_manifest_thumbprint_true_ending` and set the
+    same thumbprint/handoff flags as neighboring proof routes.
+  - Extend regression coverage for the direct Mara readout menu and ending.
+- Verification:
+  - Focused direct-readout test passed:
+    `npx vitest run tests\story-paths.test.ts -t "direct third-car readout"`.
+  - Full `npm run health` passed: format check, TypeScript, 340 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_manifest_thumbprint_true_ending`,
+    score 291, through `ask_mara_to_read_opened_manifest` and
+    `pull_release_with_manifest_thumbprint_from_manifest_intercom`.
+  - A 250-run random sample ended cleanly every run and reached
+    `passenger_manifest_thumbprint_true_ending` twice, compared with one hit in
+    the supplied 250-run baseline.
+- Playtest feedback:
+  - What felt better: Mara's direct opened-manifest readout now pays off the
+    exact thumbprint clue it describes. The player can choose a simple
+    pull-with-the-oath action immediately instead of routing through receipt
+    confirmation or the plain manifest release.
+  - What still feels risky: the 100-run seeded random sample still missed this
+    ending, so the branch remains uncommon. Blind sessions should confirm the
+    new label reads as a distinct thumbprint payoff rather than another receipt
+    variant.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    watch whether `passenger_manifest_thumbprint_true_ending` stabilizes in
+    random samples; if it remains rare, consider moving the thumbprint oath
+    choice earlier in the opened-manifest menu order.
+- Risks:
+  - Low. This adds one option to a late-game scene that already discusses the
+    thumbprint, but the scene's menu becomes slightly denser.
+- Status: Complete.
+
 # Cycle 41 Gathered Conductor Clear-Call Bridge
 
 - Date: 2026-06-09

@@ -5824,6 +5824,15 @@ scenes:
             read_manifest_thumbprint: true
             saw_mara_manifest_handoff: true
             confirmed_manifest_thumbprint_receipt: true
+      - id: pull_release_with_manifest_thumbprint_from_manifest_intercom
+        label: Pull while Mara's thumbprint oath moves through the manifest
+        choiceGroup: Thumbprint oath
+        to: passenger_manifest_thumbprint_true_ending
+        effects:
+          set:
+            read_manifest_thumbprint: true
+            saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
       - id: let_manifest_names_answer_once
         label: Let the opened names answer once before the release
         to: passenger_manifest_answers

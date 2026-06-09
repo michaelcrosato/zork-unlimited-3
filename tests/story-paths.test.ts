@@ -5635,6 +5635,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -5693,6 +5694,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -5706,6 +5708,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -14060,6 +14063,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -17317,6 +17321,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "confirm_manifest_thumbprint_receipt_from_manifest_intercom",
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom",
       "let_manifest_names_answer_once",
       "pull_release_after_manifest_goodbye"
     ]);
@@ -17325,6 +17330,25 @@ describe("demo story critical paths", () => {
         (choice) => choice.id === "confirm_manifest_thumbprint_receipt_from_manifest_intercom"
       )?.choiceGroup
     ).toBe("Thumbprint receipt");
+    expect(
+      observation.choices.find(
+        (choice) => choice.id === "pull_release_with_manifest_thumbprint_from_manifest_intercom"
+      )?.choiceGroup
+    ).toBe("Thumbprint oath");
+
+    const thumbprintReleaseState = choose(
+      story,
+      state,
+      "pull_release_with_manifest_thumbprint_from_manifest_intercom"
+    );
+    observation = observe(story, thumbprintReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expectIdealScore(observation.score);
 
     let receiptState = choose(
       story,
