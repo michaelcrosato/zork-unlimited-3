@@ -7,6 +7,71 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 42 Mara Sign-Off Boarding Proof
+
+- Date: 2026-06-09
+- Main objective: Make Mara's opened-manifest sign-off deliver on "no one
+  boards alone" when the player takes the direct boarding choice.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 42 evidence was green, but the 100-run random sample still
+  under-sampled the gathered-passenger proof chain:
+  `passenger_gathered_boarding`, `passenger_gathered_intercom`,
+  `passenger_gathered_release`, and `passenger_helped_true_ending`.
+- Why this matters: The sign-off tells players the passengers should board
+  together, but the stable direct board choice could previously detour into
+  the generic train-car manifest release. This made the promise readable in
+  prose but optional in play.
+- Planned work:
+  - Keep `board_after_passenger_mara_signoff` stable, but route ordinary
+    sign-off boarding through `passenger_gathered_boarding`.
+  - Preserve echo-specific sign-off boarding by adding a state-gated route to
+    `passenger_echoed_boarding`.
+  - Update the opened-manifest objective and focused path tests.
+  - Run full health, evidence generation, and a real CLI playthrough.
+- Risks:
+  - The opened-manifest objective remains too long in the player view. This
+    cycle did not expand scope to redesign objective presentation, but the
+    manual playthrough made that follow-up visible again.
+- Status:
+  - Completed and ready for commit/push.
+  - `board_after_passenger_mara_signoff` now goes directly to
+    `passenger_gathered_boarding`, sets `helped_passengers_gather`, and
+    presents the gathered release objective.
+  - Added `board_after_echoed_passenger_mara_signoff` so players who already
+    heard the door echoes board through `passenger_echoed_boarding` instead of
+    losing that thread.
+  - Updated the opened-manifest objective wording from generic "board now" to
+    "board together after Mara's sign-off."
+  - Updated regression tests for the gathered sign-off route and the echo-aware
+    sign-off route.
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "Mara sign-off|echoed passengers directly|sign-off intercom|gathered-passenger boarding"`.
+  - Full `npm run health` passed: format check, TypeScript, 329 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation. Evidence stayed green: health passed, 100-run random had
+    `ended: 100` / `unfinished: 0`, random now visited
+    `passenger_gathered_boarding` and `passenger_echoed_boarding`, coverage
+    stayed complete, and the standard MCP smoke route still reached
+    `true_ending`.
+- Playtest feedback:
+  - Actual CLI playthrough through `ask_mara_to_sign_off_opened_manifest` and
+    `board_after_passenger_mara_signoff` now visits
+    `passenger_gathered_boarding` -> `passenger_gathered_intercom` ->
+    `passenger_gathered_release` -> `passenger_helped_true_ending` with score
+    327 and no remaining objectives.
+  - The route now reads coherently: Mara says no one boards alone, the next
+    boarding click shows passengers passing steadiness hand to hand, and the
+    ending pays off with passengers helping one another down.
+  - The only bad/confusing feel was the very long opened-manifest objective
+    before choosing sign-off; it is accurate but hard to scan.
+- Next step:
+  - Prefer the next consolidated blind-play S0-S2 issue when available.
+    Otherwise, reduce objective verbosity for the opened-manifest hub or
+    continue discovery work for `mara_manifest_thumbprint_receipt` and
+    `passenger_threshold_boarding`.
+
 # Cycle 41 Answered-Name Boarding Proof
 
 - Date: 2026-06-09

@@ -136,7 +136,7 @@ objectives:
         - notFlag: confirmed_manifest_thumbprint_receipt
         - notFlag: checked_answered_passengers
         - notFlag: confirmed_echoed_manifest_seats
-  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
+  - text: Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board together after Mara's sign-off, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.
     requires:
       all:
         - flag: freed_mara
@@ -2683,8 +2683,21 @@ scenes:
         label: Cross the platform after Mara's sign-off
         to: passenger_platform
       - id: board_after_passenger_mara_signoff
-        label: Board the third car after Mara signs off
-        to: train_car
+        label: Board together after Mara signs off
+        to: passenger_gathered_boarding
+        requires:
+          notFlag: heard_passenger_echoes
+        effects:
+          set:
+            helped_passengers_gather: true
+      - id: board_after_echoed_passenger_mara_signoff
+        label: Board with the familiar echoes after Mara signs off
+        to: passenger_echoed_boarding
+        requires:
+          flag: heard_passenger_echoes
+        effects:
+          set:
+            echoed_manifest_boarded: true
 
   opened_manifest_echoes:
     routeImportance: optional

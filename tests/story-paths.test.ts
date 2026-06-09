@@ -18,7 +18,7 @@ const ECHO_SEAT_RECEIPT_OBJECTIVE =
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull the release after the gathered passengers pass the handle hand to hand.";
 const OPENED_MANIFEST_OBJECTIVE =
-  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board now, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
+  "Start Mara's opened-door handoff, let her call the doors and pull the release, pull with, carry, or confirm the darkened thumbprint oath, board together after Mara's sign-off, make room around the shared release, carry remembered mornings to the speaker, confirm remembered morning stops, check the door-echo seats, finish the shared passenger count and pull the release, confirm the answered handoff crosses, carry answered names into the third car before the release, let answered passengers board, check them, and pull the release, hear or confirm the passengers' final roll call, confirm the threshold clears, carry the conductor's clear signal to the speaker or confirm it reaches every door, carry the lunch-tin count to the speaker, let the worker count himself, and pull the release, or choose an optional opened-passenger thread such as the keepsake owner check, lunch-tin pace, or lunch-tin roster proof.";
 
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
@@ -5806,7 +5806,7 @@ describe("demo story critical paths", () => {
     ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
-  it("recovers echoed passenger boarding after a Mara sign-off train-car detour", async () => {
+  it("boards echoed passengers directly after a Mara sign-off", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -5829,49 +5829,32 @@ describe("demo story critical paths", () => {
       "return_from_passenger_echoes",
       "clear_manifest_and_mara_from_ledger",
       "ask_mara_to_sign_off_opened_manifest",
-      "board_after_passenger_mara_signoff"
+      "board_after_echoed_passenger_mara_signoff"
     ]) {
       state = choose(story, state, choiceId);
     }
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "follow_echoes_back_to_boarding"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "listen_to_echoed_manifest_intercom"
-    );
-
-    state = choose(story, state, "follow_echoes_back_to_boarding");
-    observation = observe(story, state);
-
     expect(observation.scene.id).toBe("passenger_echoed_boarding");
+    expect(observation.state.flags.heard_passenger_echoes).toBe(true);
     expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
-    expect(observation.scene.text).toContain("waiting has turned into boarding");
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "listen_to_echoed_manifest_from_boarding"
+    );
 
-    state = choose(story, state, "reach_release_with_echoed_manifest");
+    state = choose(story, state, "listen_to_echoed_manifest_from_boarding");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "follow_echoes_back_to_boarding"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "pull_release_after_echoed_boarding"
-    );
-    expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "pull_release_with_manifest"
-    );
+    expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.scene.text).toContain("Now let the line hear them leaving");
 
-    state = choose(story, state, "listen_to_echoed_manifest_intercom");
     state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
     ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
-  it("recovers echoed passenger boarding after hearing the train-car intercom first", async () => {
+  it("keeps echoed boarding stable after hearing its sign-off intercom first", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
 
@@ -5894,8 +5877,8 @@ describe("demo story critical paths", () => {
       "return_from_passenger_echoes",
       "clear_manifest_and_mara_from_ledger",
       "ask_mara_to_sign_off_opened_manifest",
-      "board_after_passenger_mara_signoff",
-      "listen_to_echoed_manifest_intercom"
+      "board_after_echoed_passenger_mara_signoff",
+      "listen_to_echoed_manifest_from_boarding"
     ]) {
       state = choose(story, state, choiceId);
     }
@@ -5904,33 +5887,16 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_echoed_manifest_intercom");
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toContain("pause_for_echoed_boarding");
-
-    state = choose(story, state, "pause_for_echoed_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_boarding");
     expect(observation.state.flags.echoed_manifest_boarded).toBe(true);
     expect(observation.choices.map((choice) => choice.id)).not.toContain(
-      "listen_to_echoed_manifest_from_boarding"
+      "pause_for_echoed_boarding"
     );
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "check_echoed_passengers_before_release",
-      "pull_release_after_echoed_boarding"
+      "confirm_echoed_manifest_seats",
+      "pull_release_after_echoed_manifest_goodbye"
     ]);
 
-    state = choose(story, state, "pull_release_after_echoed_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_echoed_check");
-    expect(observation.scene.text).toContain("echoes are no longer clues");
-    expect(observation.state.flags.checked_echoed_passengers).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "confirm_checked_echoed_manifest_seats",
-      "pull_release_after_checked_echoes"
-    ]);
-
-    state = choose(story, state, "pull_release_after_checked_echoes");
+    state = choose(story, state, "pull_release_after_echoed_manifest_goodbye");
     ({ state, observation } = releaseAfterEchoSeatReceipt(story, state));
   });
 
@@ -17048,18 +17014,16 @@ describe("demo story critical paths", () => {
     state = choose(story, state, "board_after_passenger_mara_signoff");
     observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("train_car");
-    expect(observation.choices.map((choice) => choice.id)).toContain(
-      "carry_mara_signoff_to_gathered_passengers"
-    );
-    expect(observation.choices.map((choice) => choice.id)).toContain("pull_release_with_manifest");
+    expect(observation.scene.id).toBe("passenger_gathered_boarding");
+    expect(observation.scene.text).toContain("passing steadiness from hand to hand");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
-    state = choose(story, state, "carry_mara_signoff_to_gathered_passengers");
+    state = choose(story, state, "pull_release_after_gathered_boarding");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_gathered_intercom");
     expect(observation.scene.text).toContain("passengers gather themselves");
-    expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
