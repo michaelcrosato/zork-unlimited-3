@@ -1992,9 +1992,9 @@ scenes:
             conductor_cleared_platform: true
             heard_conductor_punch_memory: true
       - id: pull_release_on_opened_conductor_signal
-        label: Carry the conductor's clear signal to the third-car speaker
+        label: Pull the release on the conductor's opened-door clear signal
         choiceGroup: Passenger gathering
-        to: passenger_conductor_intercom
+        to: passenger_conductor_true_ending
         requires:
           all:
             - notFlag: helped_passengers_gather
@@ -2005,6 +2005,7 @@ scenes:
             helped_passengers_gather: true
             conductor_cleared_platform: true
             heard_conductor_clearance: true
+            heard_final_roll_call: true
       - id: confirm_opened_conductor_clearance
         label: Ask the conductor to clear every opened door before boarding
         choiceGroup: Passenger gathering

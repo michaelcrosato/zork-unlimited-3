@@ -7037,7 +7037,7 @@ describe("demo story critical paths", () => {
     );
     expect(choiceIds[13]).toBe("pull_release_on_opened_conductor_signal");
     expect(observation.choices[13]?.label).toBe(
-      "Carry the conductor's clear signal to the third-car speaker"
+      "Pull the release on the conductor's opened-door clear signal"
     );
     expect(observation.choices[13]?.choiceGroup).toBe("Passenger gathering");
     expect(choiceIds[14]).toBe("confirm_opened_conductor_clearance");
@@ -11139,54 +11139,14 @@ describe("demo story critical paths", () => {
     let directSignalState = choose(story, openedState, "pull_release_on_opened_conductor_signal");
     observation = observe(story, directSignalState);
 
-    expect(observation.scene.id).toBe("passenger_conductor_intercom");
-    expect(observation.scene.ending).toBe(false);
-    expect(observation.scene.text).toContain("The conductor's borrowed signal");
-    expect(observation.scene.text).toContain("Pull the release on his clear");
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("conductor's clear signal");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.conductor_cleared_platform).toBe(true);
     expect(observation.state.flags.heard_conductor_clearance).toBe(true);
-    expect(observation.state.flags.heard_final_roll_call).toBeUndefined();
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_on_conductor_clear",
-      "confirm_intercom_conductor_clearance",
-      "hear_final_conductor_roll_call",
-      "ask_conductor_to_punch_transfer",
-      "hold_for_conductor_roll_call_before_release"
-    ]);
-
-    let directReleaseEnding = observe(
-      story,
-      choose(story, directSignalState, "pull_release_on_conductor_clear")
-    );
-
-    expect(directReleaseEnding.scene.id).toBe("passenger_conductor_true_ending");
-    expect(directReleaseEnding.scene.ending).toBe(true);
-    expect(directReleaseEnding.scene.text).toContain("conductor's clear signal");
-    expectIdealScore(directReleaseEnding.score);
-
-    const directClearanceState = choose(
-      story,
-      directSignalState,
-      "confirm_intercom_conductor_clearance"
-    );
-    observation = observe(story, directClearanceState);
-
-    expect(observation.scene.id).toBe("passenger_conductor_clearance_check");
-    expect(observation.scene.text).toContain("every open door has answered clear");
-    expect(observation.state.flags.confirmed_conductor_clearance).toBe(true);
-    expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "pull_release_after_confirmed_conductor_clearance"
-    ]);
-
-    directReleaseEnding = observe(
-      story,
-      choose(story, directClearanceState, "pull_release_after_confirmed_conductor_clearance")
-    );
-
-    expect(directReleaseEnding.scene.id).toBe("passenger_conductor_clearance_checked_true_ending");
-    expect(directReleaseEnding.scene.ending).toBe(true);
-    expectIdealScore(directReleaseEnding.score);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expectIdealScore(observation.score);
 
     openedState = choose(story, openedState, "confirm_opened_conductor_clearance");
     observation = observe(story, openedState);

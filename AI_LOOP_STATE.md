@@ -7,6 +7,54 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 55 Direct Opened-Conductor Release
+
+- Date: 2026-06-09
+- Main objective: Make the opened-manifest conductor clear-signal choice pay
+  off immediately as a conductor rescue ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 55 evidence showed full coverage and no unfinished runs, while
+  normal random samples still under-sampled low-frequency passenger roll-call
+  payoffs such as `passenger_conductor_true_ending`.
+- Why this matters: When the opened passengers are already released and the
+  player chooses the conductor's clear signal, the choice now does what it
+  promises at the hub: pulls the release on that clear signal. Players who want
+  the slower confirmation path can still choose the separate every-door
+  clearance option, and the conductor punch/transfer branch remains available.
+- Completed work:
+  - Route `pull_release_on_opened_conductor_signal` directly to
+    `passenger_conductor_true_ending`.
+  - Mark the conductor signal and final roll call flags on that direct route.
+  - Update the opened-manifest conductor route regression.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "conductor clearance directly"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_conductor_true_ending`, score
+    283, through `pull_release_on_opened_conductor_signal`; final objectives
+    were empty.
+  - A post-change 100-run random sample ended every run. It did not hit
+    `passenger_conductor_true_ending` in that deterministic sample, so this
+    cycle should be treated as a targeted clarity/payoff fix rather than a
+    proven frequency shift.
+- Playtest feedback:
+  - What felt better: the opened-manifest hub now has a conductor choice that
+    is a true immediate release action. The transcript reads as one clean
+    promise and payoff: clear the manifest, trust the conductor's signal, pull.
+  - What still feels risky: the opened-manifest hub is still large, and
+    low-frequency roll-call variants may need stronger grouping or ordering if
+    blind playtests continue to miss them.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    keep tightening low-frequency opened-manifest payoffs where a visible
+    release choice still asks for another confirmation beat.
+- Risks:
+  - Low. This is one story edge with existing alternate routes preserving the
+    conductor intercom, clearance check, and punched-transfer variants.
+- Status: Complete.
+
 # Cycle 54 Direct Ready Manifest Confirmation
 
 - Date: 2026-06-09
