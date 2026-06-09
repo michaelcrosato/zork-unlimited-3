@@ -7,6 +7,69 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 53 Opened-Door Handoff Payoff
+
+- Date: 2026-06-09
+- Main objective: Make the normal opened-manifest release route show Mara's
+  opened-door handoff before the player reaches the release proof.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. At planning time, fresh seeded random evidence in this checkout still missed
+  `mara_manifest_handoff`, `mara_manifest_thumbprint_receipt`, and
+  `passenger_manifest_handoff_true_ending` variants, while core health stayed
+  stable.
+- Why this matters: The opened-manifest route is one of the game's strongest
+  late rescues, but a normal player could choose the release-facing handoff
+  option and skip the visible beat where Mara passes steadiness from name to
+  name. This change makes that emotional handoff visible before the release
+  proof without adding another ending.
+- Planned work:
+  - Keep `pull_release_as_mara_calls_opened_doors` stable for playtest history.
+  - Route it to `mara_manifest_handoff` first, setting only
+    `saw_mara_manifest_handoff`.
+  - Let the existing `pull_release_during_mara_manifest_handoff` path continue
+    into `passenger_manifest_handoff_release` and
+    `passenger_manifest_handoff_true_ending`.
+  - Update focused route coverage, run health, and actually play the revised
+    route.
+- Risks:
+  - The opened-manifest hub now has two visible actions that enter Mara's
+    handoff scene. That is acceptable for this cycle because the second action
+    preserves a release-minded player intent while still showing the missing
+    payoff.
+- Status:
+  - Completed and ready for commit/push.
+  - `pull_release_as_mara_calls_opened_doors` now routes to
+    `mara_manifest_handoff` first and sets only
+    `saw_mara_manifest_handoff`.
+  - The existing handoff release continuation still reaches
+    `passenger_manifest_handoff_release` and
+    `passenger_manifest_handoff_true_ending`.
+  - Focused handoff tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "opened-door handoff|manifest handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 330 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence/prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI playthrough used `pull_release_as_mara_calls_opened_doors` ->
+    `pull_release_during_mara_manifest_handoff` ->
+    `pull_release_after_manifest_handoff_reaches_doors`.
+  - Final scene was `passenger_manifest_handoff_true_ending`, score 317, with
+    no remaining choices or objectives.
+  - What felt better: the release-minded opened-manifest action now shows Mara
+    handing names forward before the proof scene, so the player sees why the
+    release is no longer a single-person interruption.
+  - What still feels risky: the seeded random sample now visits
+    `mara_manifest_handoff`, but it can still miss
+    `passenger_manifest_handoff_release` when random play wanders into a
+    different handoff follow-up. The manual route and coverage strategy verify
+    the ending remains reachable.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue reducing late opened-manifest choice density, especially handoff
+    follow-up choice pressure.
+
 # Cycle 52 Lunch-Tin Self-Count Payoff
 
 - Date: 2026-06-09
