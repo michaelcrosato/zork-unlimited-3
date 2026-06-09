@@ -8889,11 +8889,25 @@ describe("demo story critical paths", () => {
     );
     observation = observe(story, pulledState);
 
-    expect(observation.scene.id).toBe("passenger_manifest_thumbprint_true_ending");
-    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt");
+    expect(observation.scene.ending).not.toBe(true);
     expect(observation.state.flags.read_manifest_thumbprint).toBe(true);
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
-    expect(observation.scene.text).toContain("Mara's torn thumbprint lifts");
+    expect(observation.state.flags.confirmed_manifest_thumbprint_receipt).toBe(true);
+    expect(observation.scene.text).toContain("Received by the passengers");
+    expect(observation.objectives).toEqual([THUMBPRINT_RECEIPT_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_manifest_thumbprint_receipt"
+    ]);
+
+    observation = observe(
+      story,
+      choose(story, pulledState, "pull_release_after_manifest_thumbprint_receipt")
+    );
+
+    expect(observation.scene.id).toBe("mara_manifest_thumbprint_receipt_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("received by the passengers themselves");
     expectIdealScore(observation.score);
 
     state = choose(story, state, "board_after_mara_manifest_thumbprint_handoff");

@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 62 Manifest Thumbprint Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Make Mara's direct manifest-thumbprint handoff show the
+  passenger receipt proof before the final release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 62 evidence showed healthy coverage and no unfinished runs,
+  while normal random play still under-sampled several late payoff scenes,
+  including Mara/manifest thumbprint intercom and receipt variants.
+- Why this matters: When the player has already studied Mara's torn
+  thumbprint and chooses the direct handoff pull, the game now stops at the
+  existing receipt scene: the opened passengers receive the oath in passenger
+  order before the player pulls. This turns a compressed ideal ending into a
+  visible proof chain without adding new systems or new unreachable content.
+- Completed work:
+  - Routed `pull_release_during_mara_manifest_thumbprint_handoff` to
+    `mara_manifest_thumbprint_receipt` instead of directly to
+    `passenger_manifest_thumbprint_true_ending`.
+  - Renamed the choice label to `Let Mara's thumbprint oath reach the opened
+names before pulling`.
+  - Moved that choice into the `Thumbprint receipt` group and set
+    `confirmed_manifest_thumbprint_receipt` on the transition.
+  - Updated the manifest-thumbprint regression to prove:
+    handoff choice -> `mara_manifest_thumbprint_receipt` ->
+    `pull_release_after_manifest_thumbprint_receipt` ->
+    `mara_manifest_thumbprint_receipt_true_ending`.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "manifest thumbprint"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached
+    `mara_manifest_thumbprint_receipt_true_ending`, score 321, through
+    `pull_release_during_mara_manifest_thumbprint_handoff`,
+    `mara_manifest_thumbprint_receipt`, and
+    `pull_release_after_manifest_thumbprint_receipt`; final objectives were
+    empty.
+- Playtest feedback:
+  - What felt better: the direct thumbprint handoff no longer jumps over the
+    proof it implies. The route now clearly says Mara's oath is received by
+    the opened passengers before the doors open.
+  - What still feels risky: this improves one late optional branch. Normal
+    random play may still under-sample other direct payoff scenes such as
+    answered-passenger boarding or manifest-ready intercom.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull branch where the label promises a
+    concrete proof, receipt, or passenger action but routes around the scene
+    that shows it.
+- Risks:
+  - Low. The route uses existing scenes and ending metadata, keeps all scenes
+    reachable, and the health gate remains green.
+- Status: Complete.
+
 # Cycle 61 Lunch-Tin Roster Proof Payoff
 
 - Date: 2026-06-09

@@ -3334,9 +3334,9 @@ scenes:
           set:
             confirmed_manifest_handoff_doors: true
       - id: pull_release_during_mara_manifest_thumbprint_handoff
-        label: Pull the release while Mara carries the thumbprint oath through the opened names
-        choiceGroup: Thumbprint oath
-        to: passenger_manifest_thumbprint_true_ending
+        label: Let Mara's thumbprint oath reach the opened names before pulling
+        choiceGroup: Thumbprint receipt
+        to: mara_manifest_thumbprint_receipt
         requires:
           all:
             - any:
@@ -3349,6 +3349,7 @@ scenes:
           set:
             read_manifest_thumbprint: true
             heard_mara_goodbye: true
+            confirmed_manifest_thumbprint_receipt: true
       - id: pull_release_during_mara_manifest_handoff
         label: Pull the release while Mara is still handing names forward
         choiceGroup: Finish Mara's handoff
