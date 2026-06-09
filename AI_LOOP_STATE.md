@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 59 Counted-Chorus Objective
+
+- Date: 2026-06-09
+- Main objective: Make the opened-passenger counted chorus give the player a
+  precise release objective instead of leaving the broader opened-manifest
+  guidance active.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current evidence is healthy overall, but recent loop notes named
+  `passenger_counted_true_ending` as a likely next proof beat to surface.
+- Why this matters: The counted route is about passengers keeping track of one
+  another, not just "moving together." Once the count becomes a chorus, the
+  player should see an objective that matches the only meaningful next action.
+- Planned work:
+  - Add a shared-count release objective for
+    `passengers_finished_reviewed_count + shared_count_release_ready`.
+  - Add a separate reviewed-count objective for the Mara-reviewed-count variant.
+  - Suppress the broader opened-manifest objective once the reviewed count has
+    already finished.
+  - Update path tests for both counted variants.
+  - Run focused tests, full health, an evidence-only loop cycle, and an actual
+    CLI playthrough.
+- Risks:
+  - This does not make the branch structurally shorter. It improves the
+    player-facing objective once the branch is reached. Blind-play feedback
+    should decide whether earlier menu ordering or copy needs a later pass.
+- Status:
+  - Completed and ready for commit/push.
+  - Added `Pull after the opened passengers finish counting one another.` at
+    `passenger_counted_chorus` for the shared-count route.
+  - Added `Pull while Mara's reviewed count still holds.` for the reviewed
+    count route.
+  - The broad `Get the opened passengers moving together...` objective now
+    clears once `passengers_finished_reviewed_count` is set.
+  - Focused tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "count|opened manifest"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests,
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/` and appended the cycle metrics record.
+- Playtest feedback:
+  - Actual CLI route stopped at `passenger_counted_chorus` and showed the new
+    counted-count release objective.
+  - Continuing with `pull_release_after_counted_chorus` reached
+    `passenger_counted_true_ending`, score 270, with no remaining objectives or
+    choices.
+  - What felt better: after the count becomes a chorus, the route no longer
+    asks the player to interpret a broad manifest objective.
+  - What still feels risky: normal random play may still undersample this deep
+    optional branch even though coverage and manual play confirm it is healthy.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue surfacing late proof beats that random play misses, with the
+    echoed-seat check or lunch-tin checked route as likely candidates.
+
 # Cycle 58 Checked Roll-Call Payoff
 
 - Date: 2026-06-09

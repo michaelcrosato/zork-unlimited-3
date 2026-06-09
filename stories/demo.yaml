@@ -131,6 +131,20 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - flag: confirmed_echoed_manifest_seats
+  - text: Pull after the opened passengers finish counting one another.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: passengers_finished_reviewed_count
+        - flag: shared_count_release_ready
+  - text: Pull while Mara's reviewed count still holds.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: passengers_finished_reviewed_count
+        - flag: reviewed_count_release_ready
   - text: Pull after the passengers' final roll call, or hold the release until every answer has a witness.
     requires:
       all:
@@ -167,6 +181,7 @@ objectives:
         - flag: freed_mara
         - flag: read_passenger_manifest
         - notFlag: helped_passengers_gather
+        - notFlag: passengers_finished_reviewed_count
         - notFlag: made_room_for_passengers
         - notFlag: manifest_handoff_reached_doors
         - notFlag: confirmed_manifest_thumbprint_receipt

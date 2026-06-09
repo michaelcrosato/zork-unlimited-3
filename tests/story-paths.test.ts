@@ -17,6 +17,9 @@ const ANSWERED_CHECK_OBJECTIVE =
   "Pull the release after every answered passenger has a face behind the name.";
 const ECHO_SEAT_RECEIPT_OBJECTIVE =
   "Pull the release after every familiar passenger echo has a seat aboard.";
+const COUNTED_SHARED_COUNT_OBJECTIVE =
+  "Pull after the opened passengers finish counting one another.";
+const REVIEWED_COUNT_OBJECTIVE = "Pull while Mara's reviewed count still holds.";
 const ROLL_CALL_OBJECTIVE =
   "Pull after the passengers' final roll call, or hold the release until every answer has a witness.";
 const ROLL_CALL_CHECK_OBJECTIVE =
@@ -7141,6 +7144,7 @@ describe("demo story critical paths", () => {
     expect(observation.scene.text).toContain("the count has become a chorus");
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBe(true);
+    expect(observation.objectives).toEqual([REVIEWED_COUNT_OBJECTIVE]);
 
     state = choose(story, countedState, "listen_after_manifest_count");
     observation = observe(story, state);
@@ -7289,6 +7293,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.reviewed_count_release_ready).toBeUndefined();
     expect(observation.state.flags.shared_count_release_ready).toBe(true);
     expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
+    expect(observation.objectives).toEqual([COUNTED_SHARED_COUNT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_counted_chorus"
     ]);
@@ -15127,6 +15132,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.passengers_finished_reviewed_count).toBe(true);
     expect(observation.state.flags.reviewed_count_release_ready).toBeUndefined();
     expect(observation.state.flags.shared_count_release_ready).toBe(true);
+    expect(observation.objectives).toEqual([COUNTED_SHARED_COUNT_OBJECTIVE]);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
       "pull_release_after_counted_chorus"
     ]);
