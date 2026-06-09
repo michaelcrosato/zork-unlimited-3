@@ -126,6 +126,12 @@ describe("transcript rendering", () => {
       "- Let Mara's thumbprint oath reach the opened names before release"
     );
     expect(transcript).toContain("Manifest count:\n- Review the opened count");
+    expect(transcript).toContain(
+      "Shared count:\n- Board after the opened passengers finish the count together"
+    );
+    expect(transcript).toContain(
+      "- Let the opened passengers finish the count, then pull the release"
+    );
     expect(transcript).toContain("Counts / answers:");
     expect(transcript).toContain(
       "Lunch tin / shift count:\n- Check the lunch-tin worker's passenger count before boarding"
@@ -137,7 +143,8 @@ describe("transcript rendering", () => {
     );
     expect(transcript).toContain("Door echoes / threshold:");
     expect(transcript).toContain("Morning / keepsakes:");
-    expect(transcript.indexOf("Manifest count:")).toBeLessThan(
+    expect(transcript.indexOf("Manifest count:")).toBeLessThan(transcript.indexOf("Shared count:"));
+    expect(transcript.indexOf("Shared count:")).toBeLessThan(
       transcript.indexOf("Lunch tin / shift count:")
     );
     expect(transcript.indexOf("Lunch tin / shift count:")).toBeLessThan(

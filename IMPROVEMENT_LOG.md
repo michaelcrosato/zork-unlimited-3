@@ -4,6 +4,36 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-09 - Shared Count Grouping Pass
+
+### Current Plan
+
+- Main objective: Make the opened-passenger shared-count route easier to spot
+  in the large late-game hub.
+- Why this matters: `passenger_counted_true_ending` was reachable but still
+  undersampled in normal random play, and its choices were mixed into broader
+  manifest-count actions.
+
+### Work Completed
+
+- Added `Shared count` to grouped-choice display order.
+- Moved direct shared-count choices from `Manifest count` into the new group.
+- Updated transcript and player-view tests so reports show the route between
+  manifest review and lunch-tin count routes.
+
+### Playtest Notes
+
+- Focused grouping/count tests passed.
+- `npm run health` passed with 332 tests, story validation, and complete
+  coverage playtest.
+- `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence generation.
+- CLI playthrough reached `passenger_counted_true_ending`, score 265. The
+  opened-manifest hub showed three `Shared count` choices, then narrowed to the
+  objective `Pull after the opened passengers finish counting one another.`
+- Next target if no blind-play issue appears: improve another undersampled
+  late-game branch such as `passenger_echoed_check` or
+  `passenger_threshold_boarding`.
+
 ## 2026-06-09 - Manifest Thumbprint Grouping Pass
 
 ### Current Plan

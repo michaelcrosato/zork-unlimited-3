@@ -6094,7 +6094,7 @@ describe("demo story critical paths", () => {
     expect(handoffGroups.get("hold_threshold_after_mara_manifest_handoff")).toBe(
       "Door echoes / threshold"
     );
-    expect(handoffGroups.get("finish_count_after_mara_manifest_handoff")).toBe("Manifest count");
+    expect(handoffGroups.get("finish_count_after_mara_manifest_handoff")).toBe("Shared count");
     expect(handoffGroups.get("continue_manifest_handoff_roll_call")).toBe("Counts / answers");
     expect(handoffGroups.get("board_with_mara_answered_handoff")).toBe("Counts / answers");
     expect(handoffGroups.get("return_from_mara_manifest_handoff")).toBe("Return");
@@ -6124,7 +6124,7 @@ describe("demo story critical paths", () => {
     expect(rendered).toContain("    6. Touch Mara's torn thumbprint");
     expect(rendered).toContain("  Mara and manifest:\n    7. Ask Mara to sign off");
     expect(rendered).toContain(
-      "  Manifest count:\n    8. Let the opened passengers finish Mara's count together"
+      "  Shared count:\n    8. Let the opened passengers finish Mara's count together"
     );
     expect(rendered).toContain(
       "  Counts / answers:\n    9. Keep listening as the opened passengers answer Mara"
@@ -6857,6 +6857,7 @@ describe("demo story critical paths", () => {
     expect(observation.choices[7]?.label).toBe(
       "Board after the opened passengers finish the count together"
     );
+    expect(observation.choices[7]?.choiceGroup).toBe("Shared count");
     expect(choiceIds[8]).toBe("board_with_opened_manifest_reviewed_count");
     expect(observation.choices[8]?.label).toBe(
       "Review Mara's opened count before carrying it to the speaker"
@@ -7421,7 +7422,7 @@ describe("demo story critical paths", () => {
     expect(directCountRelease?.label).toBe(
       "Let the opened passengers finish the count, then pull the release"
     );
-    expect(directCountRelease?.choiceGroup).toBe("Manifest count");
+    expect(directCountRelease?.choiceGroup).toBe("Shared count");
     expect(choiceIds.indexOf("pull_release_after_opened_shared_count")).toBe(
       choiceIds.indexOf("let_opened_passengers_finish_count") + 1
     );
@@ -15135,6 +15136,9 @@ describe("demo story critical paths", () => {
     const renderedPlayerView = renderMaskedScene(masked);
 
     expect(playerChoiceIds.indexOf("review_open_manifest_count")).toBeLessThan(
+      playerChoiceIds.indexOf("board_with_completed_opened_count")
+    );
+    expect(playerChoiceIds.indexOf("pull_release_after_opened_shared_count")).toBeLessThan(
       playerChoiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")
     );
     expect(playerChoiceIds.indexOf("check_lunch_tin_count_from_opened_manifest")).toBeLessThan(
@@ -15145,6 +15149,12 @@ describe("demo story critical paths", () => {
     );
     expect(renderedPlayerView.indexOf("  Lunch tin / shift count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Passenger gathering:")
+    );
+    expect(renderedPlayerView).toContain(
+      "  Shared count:\n    20. Board after the opened passengers finish the count together"
+    );
+    expect(renderedPlayerView.indexOf("  Shared count:")).toBeLessThan(
+      renderedPlayerView.indexOf("  Lunch tin / shift count:")
     );
     expect(renderedPlayerView.indexOf("  Lunch tin / shift count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Door echoes / threshold:")

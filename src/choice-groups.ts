@@ -18,6 +18,7 @@ const GROUP_ORDER = [
   "Mara and manifest",
   "Mara",
   "Manifest count",
+  "Shared count",
   "Lunch tin / shift count",
   "Counts / answers",
   "Passenger gathering",

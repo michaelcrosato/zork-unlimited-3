@@ -7,6 +7,52 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 15 Shared Count Grouping Pass
+
+- Date: 2026-06-09
+- Main objective: Make the opened-passenger shared-count route easier to spot
+  in the large late-game hub.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence named `passenger_counted_true_ending` as an
+  undersampled normal-play target while coverage can reach every scene.
+- Why this matters: The direct passenger-count payoff already existed, but its
+  choices were mixed into the broader `Manifest count` group alongside Mara's
+  reviewed-count, conductor-count, and blank-row checks. Players and blind
+  playtest reports should see "the passengers count one another" as a distinct
+  release route.
+- Completed work:
+  - Add `Shared count` to the canonical display order immediately after
+    `Manifest count`.
+  - Move the opened-manifest and Mara-handoff choices that directly finish the
+    passengers' shared count into that group.
+  - Update transcript and player-view regressions so the shared-count route is
+    visible between manifest review and lunch-tin count routes.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\transcript.test.ts tests\story-paths.test.ts -t "groups long final-state|story-authored|shared count|reviewed count|manifest handoff"`.
+  - Full `npm run health` passed: format check, TypeScript, 332 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - `AI_LOOP_EVIDENCE_ONLY=1 npm run ai:cycle` completed evidence and prompt
+    generation in ignored `ai-runs/`.
+  - Actual CLI route reached `passenger_counted_true_ending`, score 265. The
+    opened-manifest hub showed three `Shared count` choices, then the route
+    narrowed to its pull-after-count objective.
+- Playtest feedback:
+  - What felt better: the hub now separates "Mara reviews the manifest" from
+    "the passengers finish the count together," making the direct count payoff
+    much easier to scan.
+  - What still feels risky: this improves player-view and transcript
+    legibility, not random-choice probability in the 64-choice hub.
+- Next step:
+  - Prefer a consolidated blind-play S0-S2 issue when available. Otherwise,
+    continue improving undersampled late-game branches, especially
+    `passenger_echoed_check` and `passenger_threshold_boarding`.
+- Risks:
+  - No route mechanics changed, so this is a discoverability improvement rather
+    than a content expansion.
+- Status: Complete.
+
 # Cycle 14 Manifest Thumbprint Grouping Pass
 
 - Date: 2026-06-09
