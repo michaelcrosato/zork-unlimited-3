@@ -7,6 +7,57 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 30 Morning Choice Scan Order
+
+- Date: 2026-06-09
+- Main objective: Make the remembered-morning route visible earlier in
+  player-facing late-game menus.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 30 evidence showed validation, coverage, and actual MCP play
+  were healthy, but normal random play still under-sampled
+  `passenger_morning_chorus` and its related endings.
+- Why this matters: The opened manifest text explicitly says Mara can hold the
+  line while the passengers "find the morning," but the blind/player-view menu
+  previously sorted Morning stops after threshold and other late branches. The
+  route is now near the top of the visible grouped choices, where a normal
+  player is more likely to connect the text clue to the action.
+- Completed work:
+  - Raised the `Morning stops` display group immediately after
+    `Finish Mara's handoff` in player-facing grouped choice lists.
+  - Updated masked player-view and transcript regressions so the opened
+    manifest hub renders morning choices as options 3-5 instead of late in the
+    threshold/keepsake tail.
+  - Kept story graph, flags, objectives, scenes, and endings unchanged; this
+    is a scanability improvement for normal and blind play.
+- Verification:
+  - Focused tests passed:
+    `npx vitest run tests\story-paths.test.ts -t "manifest-specific platform beat|Mara's opened-door handoff lead into the morning chorus|passenger morning chorus"`,
+    `npx vitest run tests\blind-facade.test.ts`, and
+    `npx vitest run tests\transcript.test.ts -t "groups long final-state choice lists"`.
+  - Full `npm run health` passed: format check, TypeScript, 336 tests, story
+    validation with 192 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI route reached `passenger_morning_stop_checked_true_ending`,
+    score 293, through `listen_to_passenger_morning_chorus`,
+    `board_after_passenger_morning_chorus`,
+    `pull_release_after_morning_chorus_boarding`, and
+    `pull_release_after_confirmed_morning_stops`.
+- Playtest feedback:
+  - What felt better: the visible menu now matches the prose beat where Mara
+    says the passengers need to "find the morning." A player no longer has to
+    scan past threshold, echo, and keepsake clusters before seeing that route.
+  - What still feels risky: this improves UI/player-view discovery rather than
+    random engine selection. Future blind sessions should confirm whether
+    players choose the route more often.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    target another under-sampled late branch that is still mostly a
+    scanability problem, especially Mara's manifest thumbprint receipt route.
+- Risks:
+  - Low. This changes grouped display order only, not story reachability or
+    scoring.
+- Status: Complete.
+
 # Cycle 29 Morning Chorus Count Bridge
 
 - Date: 2026-06-09

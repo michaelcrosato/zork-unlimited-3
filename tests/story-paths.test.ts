@@ -6168,6 +6168,7 @@ describe("demo story critical paths", () => {
       "confirm_manifest_handoff_doors_from_handoff",
       "pull_release_during_mara_manifest_handoff",
       "board_after_mara_manifest_handoff",
+      "ask_mara_about_morning_after_manifest_handoff",
       "make_room_after_mara_manifest_handoff",
       "carry_darkened_manifest_thumbprint_to_speaker",
       "touch_mara_manifest_thumbprint",
@@ -6177,23 +6178,22 @@ describe("demo story critical paths", () => {
       "continue_manifest_handoff_roll_call",
       "board_with_mara_answered_handoff",
       "hold_threshold_after_mara_manifest_handoff",
-      "ask_mara_about_morning_after_manifest_handoff",
       "return_from_mara_manifest_handoff"
     ]);
     expect(rendered).toContain("  Finish Mara's handoff:\n    0. Listen through");
-    expect(rendered).toContain("  Shared room / release:\n    4. Make room in the third car");
-    expect(rendered).toContain("  Thumbprint oath:\n    5. Carry the darkened thumbprint");
-    expect(rendered).toContain("    6. Touch Mara's torn thumbprint");
-    expect(rendered).toContain("  Thumbprint receipt:\n    7. Confirm Mara's darkened thumbprint");
-    expect(rendered).toContain("  Mara and manifest:\n    8. Ask Mara to sign off");
+    expect(rendered).toContain("  Morning stops:\n    4. Ask Mara what morning means");
+    expect(rendered).toContain("  Shared room / release:\n    5. Make room in the third car");
+    expect(rendered).toContain("  Thumbprint oath:\n    6. Carry the darkened thumbprint");
+    expect(rendered).toContain("    7. Touch Mara's torn thumbprint");
+    expect(rendered).toContain("  Thumbprint receipt:\n    8. Confirm Mara's darkened thumbprint");
+    expect(rendered).toContain("  Mara and manifest:\n    9. Ask Mara to sign off");
     expect(rendered).toContain(
-      "  Shared count:\n    9. Let the opened passengers finish Mara's count together"
+      "  Shared count:\n    10. Let the opened passengers finish Mara's count together"
     );
     expect(rendered).toContain(
-      "  Counts / answers:\n    10. Keep listening as the opened passengers answer Mara"
+      "  Counts / answers:\n    11. Keep listening as the opened passengers answer Mara"
     );
-    expect(rendered).toContain("  Threshold holding:\n    12. Hold the third-car threshold");
-    expect(rendered).toContain("  Morning stops:\n    13. Ask Mara what morning means");
+    expect(rendered).toContain("  Threshold holding:\n    13. Hold the third-car threshold");
     expect(rendered).toContain("  Return:\n    14. Return to the opened manifest doors");
     expect(rendered).not.toContain("  Other:");
 
@@ -15407,31 +15407,31 @@ describe("demo story critical paths", () => {
       renderedPlayerView.indexOf("  Passenger gathering:")
     );
     expect(renderedPlayerView).toContain(
-      "  Shared count:\n    20. Board after the opened passengers finish the count together"
+      "  Shared count:\n    23. Board after the opened passengers finish the count together"
     );
     expect(renderedPlayerView.indexOf("  Shared count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin count:")
     );
     expect(renderedPlayerView).toContain(
-      "  Lunch tin count:\n    23. Check the lunch-tin worker's passenger count before boarding"
+      "  Lunch tin count:\n    26. Check the lunch-tin worker's passenger count before boarding"
     );
     expect(renderedPlayerView).toContain(
-      "  Lunch tin self-count:\n    28. Let the lunch-tin worker count himself before the opened release"
+      "  Lunch tin self-count:\n    31. Let the lunch-tin worker count himself before the opened release"
     );
     expect(renderedPlayerView.indexOf("  Lunch tin count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin self-count:")
     );
     expect(renderedPlayerView).toContain(
-      "  Lunch tin roster:\n    29. Read the lunch-tin worker's roster for the opened passengers"
+      "  Lunch tin roster:\n    32. Read the lunch-tin worker's roster for the opened passengers"
     );
     expect(renderedPlayerView.indexOf("  Lunch tin self-count:")).toBeLessThan(
       renderedPlayerView.indexOf("  Lunch tin roster:")
     );
     expect(renderedPlayerView).toContain(
-      "  Thumbprint receipt:\n    11. Let the opened passengers receive Mara's thumbprint oath before release"
+      "  Thumbprint receipt:\n    14. Let the opened passengers receive Mara's thumbprint oath before release"
     );
     expect(renderedPlayerView).toContain(
-      "    12. Confirm the opened passengers receive Mara's thumbprint oath"
+      "    15. Confirm the opened passengers receive Mara's thumbprint oath"
     );
     expect(renderedPlayerView.indexOf("  Thumbprint oath:")).toBeLessThan(
       renderedPlayerView.indexOf("  Thumbprint receipt:")
@@ -15458,16 +15458,16 @@ describe("demo story critical paths", () => {
       renderedPlayerView.indexOf("  Door echoes:")
     );
     expect(renderedPlayerView).toContain(
-      "  Morning stops:\n    56. Listen for what the opened passengers remember about morning"
+      "  Morning stops:\n    3. Listen for what the opened passengers remember about morning"
     );
     expect(renderedPlayerView).toContain(
       "  Keepsakes / memories:\n    59. Return the opened manifest's lost mitten to the child"
     );
-    expect(renderedPlayerView.indexOf("  Threshold holding:")).toBeLessThan(
+    expect(renderedPlayerView.indexOf("  Finish Mara's handoff:")).toBeLessThan(
       renderedPlayerView.indexOf("  Morning stops:")
     );
     expect(renderedPlayerView.indexOf("  Morning stops:")).toBeLessThan(
-      renderedPlayerView.indexOf("  Keepsakes / memories:")
+      renderedPlayerView.indexOf("  Board / release:")
     );
     expect(playerChoiceIds.indexOf("listen_to_passenger_morning_chorus")).toBeLessThan(
       playerChoiceIds.indexOf("return_opened_manifest_mitten")

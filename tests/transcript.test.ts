@@ -186,14 +186,14 @@ describe("transcript rendering", () => {
     expect(transcript.indexOf("Keepsake roll call:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")
     );
-    expect(transcript.indexOf("Door echoes:")).toBeLessThan(
-      transcript.indexOf("Threshold holding:")
-    );
-    expect(transcript.indexOf("Threshold holding:")).toBeLessThan(
+    expect(transcript.indexOf("Finish Mara's handoff:")).toBeLessThan(
       transcript.indexOf("Morning stops:")
     );
     expect(transcript.indexOf("Morning stops:")).toBeLessThan(
-      transcript.indexOf("Keepsakes / memories:")
+      transcript.indexOf("Board / release:")
+    );
+    expect(transcript.indexOf("Door echoes:")).toBeLessThan(
+      transcript.indexOf("Threshold holding:")
     );
     expect(transcript.indexOf("Lunch tin count:")).toBeLessThan(
       transcript.indexOf("Passenger gathering:")

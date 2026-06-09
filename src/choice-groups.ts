@@ -12,6 +12,7 @@ const MIN_GROUPED_CHOICE_COUNT = 8;
 
 const GROUP_ORDER = [
   "Finish Mara's handoff",
+  "Morning stops",
   "Board / release",
   "Shared room / release",
   "Thumbprint oath",
@@ -29,7 +30,6 @@ const GROUP_ORDER = [
   "Passenger gathering",
   "Door echoes",
   "Threshold holding",
-  "Morning stops",
   "Keepsakes / memories",
   "Passenger threads",
   "Return",
