@@ -53,6 +53,8 @@ const ROLL_CALL_CHECK_OBJECTIVE =
   "Pull the release after every final roll-call answer has a witness.";
 const GATHERED_RELEASE_OBJECTIVE =
   "Pull once the gathered passengers are aboard, or pass the handle hand to hand.";
+const GATHERED_BOARDING_RECEIPT_OBJECTIVE =
+  "Pull after the gathered passengers pass the release around the first seat.";
 const OPENED_MANIFEST_OBJECTIVE =
   "Get the opened passengers moving together, then pull the third-car release.";
 
@@ -258,6 +260,36 @@ function releaseAfterSharedRoomReceipt(
   expect(observation.scene.ending).toBe(true);
   expect(observation.scene.text).toContain("the handle has answered all");
   expect(observation.scene.text).toContain("Received by every hand");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
+function releaseAfterGatheredBoardingReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_gathered_boarding_receipt");
+  expect(observation.scene.text).toContain("the gathered passengers around the first");
+  expect(observation.scene.text).toContain("the circle has room for everyone");
+  expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+  expect(observation.state.flags.watched_gathered_boarding).toBe(true);
+  expect(observation.state.flags.shared_release_reached).toBe(true);
+  expect(observation.state.flags.confirmed_gathered_boarding_receipt).toBe(true);
+  expect(observation.objectives).toEqual([GATHERED_BOARDING_RECEIPT_OBJECTIVE]);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_gathered_boarding_receipt"
+  ]);
+
+  state = choose(story, state, "pull_release_after_gathered_boarding_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("the crowd leaves by making room");
+  expect(observation.objectives).toEqual([]);
   expectIdealScore(observation.score);
 
   return { state, observation };
@@ -16443,17 +16475,25 @@ describe("demo story critical paths", () => {
       "pull_release_after_gathered_boarding"
     ]);
 
+    const directGatheredReceiptState = choose(story, state, "pull_release_after_gathered_boarding");
+    const directGatheredReceipt = observe(story, directGatheredReceiptState);
+
+    expect(directGatheredReceipt.scene.id).toBe("passenger_gathered_boarding_receipt");
+    expect(directGatheredReceipt.scene.text).toContain("the circle has room for everyone");
+    expect(directGatheredReceipt.state.flags.heard_gathered_passengers).toBe(true);
+    expect(directGatheredReceipt.state.flags.watched_gathered_boarding).toBe(true);
+    expect(directGatheredReceipt.state.flags.shared_release_reached).toBe(true);
+    expect(directGatheredReceipt.state.flags.confirmed_gathered_boarding_receipt).toBe(true);
+    expect(directGatheredReceipt.objectives).toEqual([GATHERED_BOARDING_RECEIPT_OBJECTIVE]);
+
     const directGatheredEnding = observe(
       story,
-      choose(story, state, "pull_release_after_gathered_boarding")
+      choose(story, directGatheredReceiptState, "pull_release_after_gathered_boarding_receipt")
     );
 
     expect(directGatheredEnding.scene.id).toBe("passenger_true_ending");
     expect(directGatheredEnding.scene.ending).toBe(true);
     expect(directGatheredEnding.scene.text).toContain("the crowd leaves by making room");
-    expect(directGatheredEnding.state.flags.heard_gathered_passengers).toBe(true);
-    expect(directGatheredEnding.state.flags.watched_gathered_boarding).toBe(true);
-    expect(directGatheredEnding.state.flags.shared_release_reached).toBeUndefined();
     expectIdealScore(directGatheredEnding.score);
 
     const rollCallState = choose(story, state, "answer_final_roll_call_from_gathered_boarding");
@@ -18003,13 +18043,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_boarding");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.text).toContain("the crowd leaves by making room");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("carries the passenger morning chorus from the opened manifest hub", async () => {

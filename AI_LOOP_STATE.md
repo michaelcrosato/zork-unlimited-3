@@ -7,6 +7,50 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 65 Gathered Boarding Receipt Payoff
+
+- Date: 2026-06-09
+- Main objective: Give the gathered-passenger boarding route a visible receipt
+  beat before the generic passenger ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 65 evidence showed healthy validation, complete coverage, no
+  unfinished runs, and remaining value in richer late passenger payoff.
+- Why this matters: When players help the opened passengers gather and board,
+  the route no longer jumps straight from "everyone is aboard" to the ending.
+  It now pauses long enough to show the release passing through the conductor,
+  lunch-tin worker, child, newspaper woman, and player before the final pull.
+- Completed work:
+  - Add `passenger_gathered_boarding_receipt` as a non-ending scene.
+  - Route `pull_release_after_gathered_boarding` through that receipt before
+    `passenger_true_ending`.
+  - Add `confirmed_gathered_boarding_receipt` and a matching objective.
+  - Update story-path tests to prove boarding -> receipt -> passenger true
+    ending with no final objectives.
+- Verification so far:
+  - Focused test passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered-passenger boarding"`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 195 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `passenger_gathered_boarding_receipt`, then
+    `passenger_true_ending`, score 313, with final objectives empty.
+- Playtest feedback:
+  - What felt better: the gathered-passenger route now shows the release
+    passing through the conductor, lunch-tin worker, child, newspaper woman,
+    and player before the final pull. The ending reads as a payoff to a shared
+    action instead of an immediate jump from "everyone is aboard."
+  - What still feels risky: this deepens one late passenger branch. It does not
+    materially change normal random discovery of other under-sampled optional
+    routes.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull branch where a release label promises
+    concrete passenger proof but still routes straight into an ending.
+- Risks:
+  - Low. The new scene is reachable, non-ending, covered by tests, and all
+    health gates remain green.
+- Status: Complete.
+
 # Cycle 64 Manifest Ready Receipt Payoff
 
 - Date: 2026-06-09
