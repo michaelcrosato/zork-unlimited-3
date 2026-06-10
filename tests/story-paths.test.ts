@@ -373,9 +373,9 @@ function releaseAfterGatheredBoardingReceipt(
   state = choose(story, state, "pull_release_after_gathered_boarding_receipt");
   observation = observe(story, state);
 
-  expect(observation.scene.id).toBe("passenger_true_ending");
+  expect(observation.scene.id).toBe("passenger_helped_true_ending");
   expect(observation.scene.ending).toBe(true);
-  expect(observation.scene.text).toContain("the crowd leaves by making room");
+  expect(observation.scene.text).toContain("passengers helping one another down");
   expect(observation.objectives).toEqual([]);
   expectIdealScore(observation.score);
 
@@ -12051,15 +12051,7 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("passengers helping one another down");
-    expect(observation.scene.text).toContain("No one crosses alone");
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("keeps the lunch-tin pacing route available as its own explicit branch", async () => {
@@ -13511,14 +13503,7 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("thanks each passenger by name");
-    expect(observation.scene.text).toContain("No one crosses alone");
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("lets the lunch-tin boarding count include the worker without losing full score", async () => {
@@ -13648,11 +13633,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_shared_gathered_check");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("gives the optional final roll call its own true-ending payoff", async () => {
@@ -16423,14 +16404,7 @@ describe("demo story critical paths", () => {
     );
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("thanks each passenger by name");
-    expect(observation.scene.text).toContain("passengers helping one another down");
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("surfaces the gathered shared-release route directly from the opened manifest doors", async () => {
@@ -16462,18 +16436,21 @@ describe("demo story critical paths", () => {
 
     let observation = observe(story, state);
 
-    expect(observation.scene.id).toBe("passenger_gathered_release");
-    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.scene.id).toBe("passenger_gathered_boarding_receipt");
+    expect(observation.scene.text).toContain("the gathered passengers around the first");
+    expect(observation.scene.text).toContain("the circle has room for everyone");
     expect(observation.state.flags.helped_passengers_gather).toBe(true);
     expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
+    expect(observation.state.flags.watched_gathered_boarding).toBe(true);
+    expect(observation.state.flags.shared_release_reached).toBe(true);
+    expect(observation.state.flags.confirmed_gathered_boarding_receipt).toBe(true);
+    expect(observation.objectives).toEqual([GATHERED_BOARDING_RECEIPT_OBJECTIVE]);
     expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
     expect(observation.choices.map((choice) => choice.id)).toEqual([
-      "hear_final_roll_call_after_shared_release",
-      "pull_release_after_shared_gathered_check"
+      "pull_release_after_gathered_boarding_receipt"
     ]);
 
-    state = choose(story, state, "pull_release_after_shared_gathered_check");
+    state = choose(story, state, "pull_release_after_gathered_boarding_receipt");
     observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_helped_true_ending");
@@ -16542,9 +16519,9 @@ describe("demo story critical paths", () => {
       choose(story, directGatheredReceiptState, "pull_release_after_gathered_boarding_receipt")
     );
 
-    expect(directGatheredEnding.scene.id).toBe("passenger_true_ending");
+    expect(directGatheredEnding.scene.id).toBe("passenger_helped_true_ending");
     expect(directGatheredEnding.scene.ending).toBe(true);
-    expect(directGatheredEnding.scene.text).toContain("the crowd leaves by making room");
+    expect(directGatheredEnding.scene.text).toContain("passengers helping one another down");
     expectIdealScore(directGatheredEnding.score);
 
     const rollCallState = choose(story, state, "answer_final_roll_call_from_gathered_boarding");
@@ -16617,14 +16594,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("thanks each passenger by name");
-    expect(observation.scene.text).toContain("No one crosses alone");
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("lets gathered passengers follow the lunch-tin latch into its self-count release", async () => {
@@ -16796,13 +16766,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("No one crosses alone");
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("lets Mara's passenger sign-off gather the platform into a shared boarding", async () => {
@@ -16860,13 +16824,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("surfaces matched keepsakes directly from the opened manifest doors", async () => {
@@ -17999,11 +17957,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("lets the morning chorus flow into Mara's manifest handoff", async () => {
@@ -18673,13 +18627,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_gathered_intercom");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_helped_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
-    expect(observation.state.flags.shared_release_reached).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterGatheredBoardingReceipt(story, state));
   });
 
   it("keeps badge-less ledger states recoverable", async () => {

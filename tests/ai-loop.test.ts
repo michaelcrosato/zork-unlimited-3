@@ -2,12 +2,16 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import {
   agentAuthFailureExitCode,
+  agentChildEnvironment,
   cycleSavePath,
   exploratoryMaxSteps,
   formatIdealEndingBreakdown,
   getRestartSensitiveChangedPaths,
   idealEndingRate,
   isAgentAuthenticationFailure,
+  nestedLoopGuardEnv,
+  nestedLoopGuardMessage,
+  nestedLoopRefusedExitCode,
   normalizeProcessExitCode,
   parseMcpJsonResult,
   runLocalExploratoryRouteForStory,
@@ -16,6 +20,7 @@ import {
   restartRequestedExitCode,
   shellQuote,
   shouldCommitCycleObservation,
+  shouldRefuseNestedLoop,
   shouldStopAfterEvidenceCycle
 } from "../src/ai-loop.js";
 import type { Story } from "../src/schema.js";
@@ -45,6 +50,10 @@ describe("AI loop restart detection", () => {
     expect(agentAuthFailureExitCode).toBe(76);
   });
 
+  it("uses a stable nested-loop refusal exit code for child agent guards", () => {
+    expect(nestedLoopRefusedExitCode).toBe(77);
+  });
+
   it("keeps loop.sh from retrying failed cycles with a dirty tracked baseline", () => {
     const script = readFileSync("loop.sh", "utf8");
 
@@ -71,6 +80,19 @@ describe("AI loop restart detection", () => {
   it("stops evidence-only cycles after writing one prompt", () => {
     expect(shouldStopAfterEvidenceCycle(undefined)).toBe(true);
     expect(shouldStopAfterEvidenceCycle("codex exec -")).toBe(false);
+  });
+
+  it("marks child agent commands so nested AI loops refuse to start", () => {
+    const env = agentChildEnvironment({}, 12, "ai-runs/prompt.md", "ai-runs/report.md");
+
+    expect(env[nestedLoopGuardEnv]).toBe("1");
+    expect(env.AI_LOOP_CYCLE).toBe("12");
+    expect(env.AI_PROMPT_FILE).toBe("ai-runs/prompt.md");
+    expect(env.AI_REPORT_FILE).toBe("ai-runs/report.md");
+    expect(shouldRefuseNestedLoop(env)).toBe(true);
+    expect(shouldRefuseNestedLoop({ ...env, AI_LOOP_ALLOW_NESTED: "1" })).toBe(false);
+    expect(nestedLoopGuardMessage).toContain("npm run ai:cycle");
+    expect(nestedLoopGuardMessage).toContain("npm run ai:loop");
   });
 
   it("quotes shell arguments for the active platform", () => {

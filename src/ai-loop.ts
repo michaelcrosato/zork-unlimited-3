@@ -36,6 +36,10 @@ export {
 } from "./ai-loop-metrics.js";
 
 export const agentAuthFailureExitCode = 76;
+export const nestedLoopRefusedExitCode = 77;
+export const nestedLoopGuardEnv = "AI_LOOP_AGENT_CHILD";
+export const nestedLoopGuardMessage =
+  "Nested AI loop invocation refused: the outer AFK loop already owns cycle orchestration. Do not run npm run ai:cycle, npm run ai:loop, loop.sh, or src/ai-loop.ts from inside an active agent cycle.";
 const cycleObservationPath = "ai-loop-observations/cycles.jsonl";
 
 interface CommandResult {
@@ -131,6 +135,10 @@ process.on("SIGINT", () => {
 process.on("SIGTERM", () => {
   stopped = true;
 });
+
+export function shouldRefuseNestedLoop(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env[nestedLoopGuardEnv] === "1" && env.AI_LOOP_ALLOW_NESTED !== "1";
+}
 
 async function main(): Promise<void> {
   let cycle = 0;
@@ -544,6 +552,10 @@ async function renderAgentPrompt(cycle: number, report: string): Promise<string>
 
 ${contract}
 
+## Nested Loop Guard
+
+You are already running inside the AFK orchestrator. Do not run \`npm run ai:cycle\`, \`npm run ai:loop\`, \`./loop.sh\`, \`playtest_loop.sh\`, or \`node --import tsx src/ai-loop.ts\` from this agent session. Those commands are operator entry points for launching the outer loops, not verification steps inside a cycle. For this cycle, use \`npm run health\` plus one real MCP or CLI playthrough for verification.
+
 ## Current Evidence
 
 The loop has already run validation, automated playtests, and an actual MCP playthrough for this cycle. Use this evidence to choose the next improvement.
@@ -743,12 +755,7 @@ function runAgentCommand(
     const child = spawn(command, {
       shell: true,
       stdio: ["pipe", "pipe", "pipe"],
-      env: {
-        ...process.env,
-        AI_LOOP_CYCLE: String(cycle),
-        AI_PROMPT_FILE: promptPath,
-        AI_REPORT_FILE: reportPath
-      }
+      env: agentChildEnvironment(process.env, cycle, promptPath, reportPath)
     });
 
     let settled = false;
@@ -786,6 +793,21 @@ function runAgentCommand(
 
     child.stdin.end(prompt);
   });
+}
+
+export function agentChildEnvironment(
+  baseEnv: NodeJS.ProcessEnv,
+  cycle: number,
+  promptPath: string,
+  reportPath: string
+): NodeJS.ProcessEnv {
+  return {
+    ...baseEnv,
+    [nestedLoopGuardEnv]: "1",
+    AI_LOOP_CYCLE: String(cycle),
+    AI_PROMPT_FILE: promptPath,
+    AI_REPORT_FILE: reportPath
+  };
 }
 
 function renderAgentResult(result: AgentResult): string {
@@ -1469,5 +1491,10 @@ function sleep(ms: number): Promise<void> {
 }
 
 if (fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? "")) {
-  await main();
+  if (shouldRefuseNestedLoop()) {
+    console.error(nestedLoopGuardMessage);
+    process.exitCode = nestedLoopRefusedExitCode;
+  } else {
+    await main();
+  }
 }

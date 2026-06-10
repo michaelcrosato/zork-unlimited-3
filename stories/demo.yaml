@@ -2012,13 +2012,16 @@ scenes:
       - id: share_release_after_opened_passengers_gather
         label: Pass the release hand to hand after the opened passengers gather
         choiceGroup: Passenger gathering
-        to: passenger_gathered_release
+        to: passenger_gathered_boarding_receipt
         requires:
           notFlag: helped_passengers_gather
         effects:
           set:
             helped_passengers_gather: true
             heard_gathered_passengers: true
+            watched_gathered_boarding: true
+            shared_release_reached: true
+            confirmed_gathered_boarding_receipt: true
       - id: ask_conductor_punch_from_opened_manifest
         label: Ask the old conductor to punch a clear path for the opened passengers
         choiceGroup: Passenger gathering
@@ -4786,7 +4789,7 @@ scenes:
     choices:
       - id: pull_release_after_gathered_boarding_receipt
         label: Pull the release after it passes through every gathered hand
-        to: passenger_true_ending
+        to: passenger_helped_true_ending
 
   passenger_lunch_tin_boarding:
     routeImportance: optional
@@ -6989,14 +6992,16 @@ scenes:
             set_lunch_tin_pace: true
       - id: pull_release_after_gathered_intercom
         label: Move the release hand to hand while the passengers hold the doors
-        to: passenger_helped_true_ending
+        to: passenger_gathered_boarding_receipt
         requires:
           notFlag: returned_lost_mitten
         effects:
           set:
             helped_passengers_gather: true
             heard_gathered_passengers: true
+            watched_gathered_boarding: true
             shared_release_reached: true
+            confirmed_gathered_boarding_receipt: true
       - id: pull_release_after_mitten_intercom
         label: Pull the release while the mitten child holds the line
         to: passenger_mitten_true_ending
@@ -7024,8 +7029,15 @@ scenes:
           set:
             heard_final_roll_call: true
       - id: pull_release_after_shared_gathered_check
-        label: Pull the release once every hand is ready
-        to: passenger_helped_true_ending
+        label: Pass the release around the first seat once every hand is ready
+        to: passenger_gathered_boarding_receipt
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
+            watched_gathered_boarding: true
+            shared_release_reached: true
+            confirmed_gathered_boarding_receipt: true
 
   passenger_lunch_tin_intercom:
     routeImportance: optional

@@ -7,6 +7,80 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Orchestrator Nested Loop Guard
+
+- Date: 2026-06-10
+- Main objective: Prevent child agents from recursively starting AI loop entry
+  points while the AFK wrapper already owns cycle orchestration.
+- Why this matters: Cycle 69 completed useful story work, but the child agent
+  treated `npm run ai:cycle` from `AGENTS.md` as an in-cycle verification step.
+  That spawned a second `src/ai-loop.ts --once` process and began producing
+  competing ignored artifacts while tracked story/test edits were still dirty.
+- Completed work:
+  - Added explicit "Nested Loop Guard" instructions to generated cycle prompts.
+  - Marked spawned child-agent environments with `AI_LOOP_AGENT_CHILD=1`.
+  - Made `src/ai-loop.ts` refuse nested execution in that environment unless
+    `AI_LOOP_ALLOW_NESTED=1` is deliberately set.
+  - Added regression coverage for the child environment marker and refusal
+    logic.
+- Verification:
+  - `npx vitest run tests/ai-loop.test.ts` passed.
+  - Guard smoke test confirmed nested `npm run ai:cycle` exits with code `77`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Status: Complete.
+
+# Cycle 69 Gathered Release Receipt Routing
+
+- Date: 2026-06-10
+- Main objective: Make the opened-manifest "pass the release hand to hand"
+  choice visibly land on the gathered passengers' receipt beat and finish in
+  the passenger-helped ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 69 evidence was green overall, but the 250-run MCP random
+  sample still missed `passenger_gathered_boarding_receipt`; the suggested
+  next actions also listed `passenger_gathered_release` as normal-play weak.
+- Why this matters: A player who chooses a hand-to-hand release from the opened
+  manifest now sees the release pass around the first seat before the final
+  pull. The branch no longer lets a label promising shared release skip the
+  receipt payoff.
+- Completed work:
+  - Routed `share_release_after_opened_passengers_gather` directly to
+    `passenger_gathered_boarding_receipt`.
+  - Routed `pull_release_after_shared_gathered_check` through the same receipt
+    instead of ending immediately.
+  - Made `passenger_gathered_boarding_receipt` resolve to
+    `passenger_helped_true_ending`, matching the passenger-helping action.
+  - Updated story-path regressions so both the direct opened-manifest branch
+    and the shared-release check prove receipt -> helped true ending.
+- Verification:
+  - Focused gathered-route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "gathered"`.
+  - CLI playthrough reached the gathered boarding receipt and then
+    `passenger_helped_true_ending`, score 294.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_gathered_boarding_receipt` visited.
+  - `npm run ai:cycle` was attempted and wrote a fresh ignored evidence report,
+    but the command exceeded a 3-minute timeout while waiting on the nested
+    agent step after evidence generation.
+- Playtest feedback:
+  - What felt better: the choice text, intermediate receipt scene, and final
+    passenger-helped ending now tell the same hand-to-hand release story.
+  - What still feels risky: this improves one under-sampled branch but does not
+    broadly solve random discovery for all late optional passenger routes.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late branch from the random-missed list where a choice label
+    promises a concrete proof or receipt but still under-delivers in normal
+    play.
+- Risks:
+  - Low. The change is route-only, covered by focused tests and health, and
+    manually played through the changed route.
+- Status: Complete.
+
 # Cycle 68 Lunch-Tin Roll-Call Receipt
 
 - Date: 2026-06-10
