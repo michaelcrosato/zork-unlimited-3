@@ -7,6 +7,59 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 5 Gathered Release Platform Recovery
+
+- Date: 2026-06-10
+- Main objective: Make the gathered-passenger shared-release scene easier to
+  discover after players cross to the passenger platform with the opened
+  manifest crowd.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence was green, but the random MCP sample still
+  missed `passenger_gathered_release`, so this targets a normal-play
+  discoverability gap in a late passenger payoff route.
+- Why this matters: A player who has opened every passenger door and crossed
+  to the platform can now choose "Check how the gathered passengers will share
+  the release" directly. The route preserves the helping-one-another theme and
+  reaches the hand-to-hand release receipt without requiring the player to
+  infer it through the generic gather/board action first.
+- Completed work:
+  - Added `check_gathered_release_from_platform` to `passenger_platform`.
+  - Gated it to the plain opened-passenger platform state before answered,
+    echo, reviewed-count, room-making, or already-shared-release branches take
+    over.
+  - Extended the gathered-passenger route regression to prove the platform
+    choice reaches `passenger_gathered_release`, then
+    `passenger_gathered_boarding_receipt`, then
+    `passenger_helped_true_ending`.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "surfaces the gathered-passenger boarding route directly from the opened manifest doors"`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough followed the changed route:
+    opened manifest -> passenger platform -> check gathered release from
+    platform -> gathered boarding receipt -> `passenger_helped_true_ending`,
+    score 313, objectives empty. The route audit reported 20 steps, 16 unique
+    / 21 total scene visits, route importance `optional`, and ending type
+    `ideal`.
+- Playtest feedback:
+  - What felt better: the platform now offers a clear hand-to-hand release
+    continuation at the moment the player sees the gathered crowd, so the
+    strongest thematic payoff is less hidden behind a generic boarding choice.
+  - What still feels risky: this is still one route-specific recovery. The
+    story has many optional receipt variants, so random play can still
+    under-sample rare late branches even when coverage proves they are
+    reachable.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, inspect
+    remaining normal-play misses around Mara manifest handoff or lunch-tin
+    roster receipts and add only one similarly narrow recovery.
+- Risks:
+  - Low. The change is one gated story choice plus a regression, with full
+    health and a real CLI route green.
+- Status: Complete.
+
 # Cycle 4 Transcript Route Audit
 
 - Date: 2026-06-10

@@ -4018,6 +4018,22 @@ scenes:
         effects:
           set:
             helped_passengers_gather: true
+      - id: check_gathered_release_from_platform
+        label: Check how the gathered passengers will share the release
+        choiceGroup: Passenger gathering
+        to: passenger_gathered_release
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: made_room_for_passengers
+            - notFlag: shared_release_reached
+        effects:
+          set:
+            helped_passengers_gather: true
+            heard_gathered_passengers: true
       - id: board_third_car_with_passengers
         label: Board the third car and pull the emergency release
         to: train_car

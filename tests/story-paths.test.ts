@@ -16416,6 +16416,7 @@ describe("demo story critical paths", () => {
 
     expect(manifestPlatformChoiceIds).toContain("make_room_for_passengers_in_third_car");
     expect(manifestPlatformChoiceIds).toContain("hold_third_car_threshold");
+    expect(manifestPlatformChoiceIds).toContain("check_gathered_release_from_platform");
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
@@ -16432,6 +16433,26 @@ describe("demo story critical paths", () => {
       "confirm_platform_keepsake_owners",
       "help_passengers_gather"
     ]);
+
+    let directGatheredReleaseState = choose(story, state, "check_gathered_release_from_platform");
+    observation = observe(story, directGatheredReleaseState);
+
+    expect(observation.scene.id).toBe("passenger_gathered_release");
+    expect(observation.scene.text).toContain("refuse to make it one person's burden");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.heard_gathered_passengers).toBe(true);
+    expect(observation.objectives).toEqual([GATHERED_RELEASE_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "hear_final_roll_call_after_shared_release",
+      "pull_release_after_shared_gathered_check"
+    ]);
+
+    directGatheredReleaseState = choose(
+      story,
+      directGatheredReleaseState,
+      "pull_release_after_shared_gathered_check"
+    );
+    releaseAfterGatheredBoardingReceipt(story, directGatheredReleaseState);
 
     state = choose(story, state, "help_passengers_gather");
     observation = observe(story, state);
