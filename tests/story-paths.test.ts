@@ -5806,10 +5806,43 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.choices.map((choice) => choice.id)).toContain(
+      "confirm_platform_manifest_ready"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
       "ask_mara_finish_manifest_from_platform"
+    );
+    expect(
+      observation.choices.find((choice) => choice.id === "confirm_platform_manifest_ready")
+        ?.choiceGroup
+    ).toBe("Counts / answers");
+    expect(
+      observation.choices.map((choice) => choice.id).indexOf("confirm_platform_manifest_ready")
+    ).toBeLessThan(
+      observation.choices
+        .map((choice) => choice.id)
+        .indexOf("ask_mara_finish_manifest_from_platform")
     );
 
     const manifestPlatformState = state;
+
+    let platformReadyState = choose(
+      story,
+      manifestPlatformState,
+      "confirm_platform_manifest_ready"
+    );
+    observation = observe(story, platformReadyState);
+
+    expect(observation.scene.id).toBe("passenger_manifest_ready_intercom");
+    expect(observation.scene.text).toContain("Every kept name is aboard");
+    expect(observation.state.flags.heard_manifest_ready).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "listen_to_mara_finish_ready_manifest",
+      "pull_release_with_ready_manifest"
+    ]);
+
+    platformReadyState = choose(story, platformReadyState, "pull_release_with_ready_manifest");
+    ({ observation } = releaseAfterManifestReadyReceipt(story, platformReadyState));
 
     let platformIntercomState = choose(
       story,

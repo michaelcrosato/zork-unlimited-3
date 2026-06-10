@@ -31,6 +31,56 @@
     with `unfinished: 0` and `unvisitedScenes: []`.
 - Status: Complete.
 
+# Cycle 3 Platform Manifest-Ready Recovery
+
+- Date: 2026-06-10
+- Main objective: Let players who open the passenger manifest, cross to the
+  passenger platform, and then want the plain "everyone is aboard" payoff
+  recover the ready-manifest receipt route without first boarding through a
+  generic train-car scene.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is green overall, so this targets a
+  normal-play discoverability gap from the suggested late passenger payoff
+  list, especially `passenger_manifest_ready_intercom` and
+  `passenger_manifest_ready_receipt`.
+- Why this matters: The platform now preserves the player's active opened
+  manifest goal. After seeing the freed passengers gather, a player can choose
+  "Confirm from the platform that every kept manifest name is aboard" and stay
+  on the manifest-ready route through the receipt ending.
+- Completed work:
+  - Added `confirm_platform_manifest_ready` to `passenger_platform`.
+  - Gated it to the plain opened-manifest branch only: manifest read, no Mara
+    handoff, no passenger answers, no echoes, no threshold/room/count branch,
+    no prior manifest-ready confirmation, and no morning-chorus branch.
+  - Extended the opened-manifest count regression to prove the platform detour
+    reaches `passenger_manifest_ready_intercom`, then
+    `passenger_manifest_ready_receipt`, then `passenger_manifest_true_ending`.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "pays off Mara's opened manifest count"`.
+  - Actual CLI playthrough followed the changed route:
+    opened manifest -> cross platform -> confirm platform manifest ready ->
+    ready-manifest receipt -> `passenger_manifest_true_ending`, score 294,
+    objectives empty.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+- Playtest feedback:
+  - What felt better: after crossing to the platform, the player sees a direct
+    manifest-ready action instead of having to infer that generic boarding or
+    Mara's count is the only way to preserve the route.
+  - What still feels risky: this is another route-specific discoverability
+    improvement. The story remains broad, so random play can still under-sample
+    some receipt variants even though coverage proves they are reachable.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, inspect
+    the remaining rare late passenger payoffs where the platform or train-car
+    hub hides a specific receipt behind a generic action.
+- Risks:
+  - Low. The change is one gated choice and one regression in an existing route
+    family; health and a manual CLI route are green.
+- Status: Complete.
+
 # Cycle 2 Answered Platform Recovery
 
 - Date: 2026-06-10
