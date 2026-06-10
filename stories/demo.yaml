@@ -304,9 +304,16 @@ objectives:
         - flag: read_passenger_manifest
         - flag: helped_passengers_gather
         - flag: heard_final_roll_call
+        - notFlag: confirmed_conductor_signal_receipt
         - notFlag: confirmed_roll_call_answers
         - notFlag: returned_lost_mitten
         - notFlag: set_lunch_tin_pace
+  - text: Pull after the conductor's clear signal is witnessed at every door.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: confirmed_conductor_signal_receipt
   - text: Pull the release after every final roll-call answer has a witness.
     requires:
       all:
@@ -4467,14 +4474,15 @@ scenes:
       let another worker hold the line.
     choices:
       - id: pull_release_on_conductor_signal
-        label: Follow the conductor's clear signal and pull the release
-        to: passenger_conductor_true_ending
+        label: Let the conductor's clear signal reach every door before pulling
+        to: passenger_conductor_signal_receipt
         requires:
           notFlag: reviewed_open_manifest_count
         effects:
           set:
             heard_conductor_clearance: true
             heard_final_roll_call: true
+            confirmed_conductor_signal_receipt: true
       - id: confirm_conductor_clearance_from_signal
         label: Confirm the conductor's clear signal reaches every door
         to: passenger_conductor_clearance_check
@@ -6519,14 +6527,16 @@ scenes:
     choices:
       - id: pull_release_on_conductor_clear
         label: Pull the release on the conductor's clear signal
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_signal_receipt
         requires:
           all:
             - notFlag: punched_conductor_transfer
             - notFlag: reviewed_open_manifest_count
         effects:
           set:
+            heard_conductor_clearance: true
             heard_final_roll_call: true
+            confirmed_conductor_signal_receipt: true
       - id: confirm_intercom_conductor_clearance
         label: Confirm every door answered the conductor's clear signal
         to: passenger_conductor_clearance_check
@@ -6752,9 +6762,14 @@ scenes:
     choices:
       - id: pull_release_after_conductor_roll_call
         label: Pull the release after the conductor's final clear call
-        to: passenger_conductor_true_ending
+        to: passenger_conductor_signal_receipt
         requires:
           notFlag: punched_conductor_transfer
+        effects:
+          set:
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
+            confirmed_conductor_signal_receipt: true
       - id: confirm_conductor_clearance_before_release
         label: Confirm the conductor's clear signal reaches every door
         to: passenger_conductor_clearance_check
@@ -6780,6 +6795,22 @@ scenes:
         effects:
           set:
             punched_transfer_carried_forward: true
+
+  passenger_conductor_signal_receipt:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm while the conductor's clear call
+      reaches the doors instead of ending at his punch. The child repeats
+      "clear" from the threshold with both hands on the frame. The newspaper
+      woman folds her transfer around the word and passes it to the lunch-tin
+      worker, who answers with one quiet latch click instead of another count.
+      The conductor lowers the punch only after every open door has made the
+      signal its own. Mara lets the speaker stay silent because the line has
+      heard a worker, a child, and the passengers answer one another.
+    choices:
+      - id: pull_release_after_conductor_signal_receipt
+        label: Pull after every door answers the conductor's clear signal
+        to: passenger_conductor_true_ending
 
   passenger_conductor_clearance_check:
     routeImportance: optional

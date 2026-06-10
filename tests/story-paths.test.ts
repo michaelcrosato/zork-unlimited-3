@@ -49,6 +49,8 @@ const COUNTED_SHARED_COUNT_OBJECTIVE =
 const REVIEWED_COUNT_OBJECTIVE = "Pull while Mara's reviewed count still holds.";
 const ROLL_CALL_OBJECTIVE =
   "Pull after the passengers' final roll call, or hold the release until every answer has a witness.";
+const CONDUCTOR_SIGNAL_RECEIPT_OBJECTIVE =
+  "Pull after the conductor's clear signal is witnessed at every door.";
 const ROLL_CALL_CHECK_OBJECTIVE =
   "Pull the release after every final roll-call answer has a witness.";
 const GATHERED_RELEASE_OBJECTIVE =
@@ -61,6 +63,32 @@ const OPENED_MANIFEST_OBJECTIVE =
 function expectIdealScore(score: { score: number; awards: Array<{ id: string }> }): void {
   expect(score.score).toBeGreaterThan(0);
   expect(score.awards.some((award) => award.id === "flag_ideal_ending")).toBe(true);
+}
+
+function releaseAfterConductorSignalReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_conductor_signal_receipt");
+  expect(observation.scene.text).toContain("reaches the doors instead of ending at his punch");
+  expect(observation.scene.text).toContain("every open door has made the signal its own");
+  expect(observation.state.flags.confirmed_conductor_signal_receipt).toBe(true);
+  expect(observation.objectives).toEqual([CONDUCTOR_SIGNAL_RECEIPT_OBJECTIVE]);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_conductor_signal_receipt"
+  ]);
+
+  state = choose(story, state, "pull_release_after_conductor_signal_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("conductor's clear signal");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
 }
 
 function releaseAfterAnsweredBoardingReceipt(
@@ -5085,7 +5113,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_on_conductor_signal");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -10474,7 +10502,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, conductorRollCallState, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expectIdealScore(observation.score);
@@ -10516,7 +10544,7 @@ describe("demo story critical paths", () => {
     const conductorSignalState = state;
 
     state = choose(story, conductorSignalState, "pull_release_on_conductor_signal");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -10582,7 +10610,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -10604,7 +10632,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, conductorIntercomState, "pull_release_on_conductor_clear");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -10819,7 +10847,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -10840,7 +10868,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.text).toContain("conductor's clear signal");
@@ -11184,7 +11212,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -11270,7 +11298,10 @@ describe("demo story critical paths", () => {
     ]);
 
     directSignalState = choose(story, directSignalState, "pull_release_after_conductor_roll_call");
-    observation = observe(story, directSignalState);
+    ({ state: directSignalState, observation } = releaseAfterConductorSignalReceipt(
+      story,
+      directSignalState
+    ));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.ending).toBe(true);
@@ -13801,7 +13832,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_conductor_roll_call");
-    observation = observe(story, state);
+    ({ state, observation } = releaseAfterConductorSignalReceipt(story, state));
 
     expect(observation.scene.id).toBe("passenger_conductor_true_ending");
     expect(observation.scene.ending).toBe(true);

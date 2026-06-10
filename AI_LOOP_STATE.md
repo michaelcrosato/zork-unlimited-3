@@ -7,6 +7,56 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 66 Conductor Signal Receipt
+
+- Date: 2026-06-10
+- Main objective: Give the direct conductor-clear release a visible receipt
+  beat before the conductor ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 66 evidence showed complete coverage, no unfinished runs, and
+  remaining value in richer late passenger payoff scenes, including
+  under-sampled conductor branches.
+- Why this matters: When players trust the old conductor's clear signal, the
+  game now pauses before the ending to show the signal reaching the child,
+  newspaper woman, lunch-tin worker, and every open door. The conductor ending
+  now pays off a witnessed passenger action instead of jumping straight from
+  the clear call to release.
+- Completed work:
+  - Added `passenger_conductor_signal_receipt` as a non-ending scene before
+    `passenger_conductor_true_ending`.
+  - Routed the conductor signal, conductor intercom clear, and conductor final
+    roll-call direct pulls through the receipt.
+  - Added `confirmed_conductor_signal_receipt` and a matching objective while
+    suppressing the generic roll-call objective on the receipt scene.
+  - Updated story-path tests with a helper proving receipt -> conductor true
+    ending.
+- Verification:
+  - Focused conductor route tests passed:
+    `npx vitest run tests/story-paths.test.ts -t conductor`.
+  - Full story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 196 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_conductor_signal_receipt` visited.
+  - Actual CLI playthrough reached `passenger_conductor_signal_receipt`, then
+    `passenger_conductor_true_ending`, score 328, with final objectives empty.
+- Playtest feedback:
+  - What felt better: the conductor branch now clearly shows the call traveling
+    through real passengers before the release. The final ending reads as a
+    payoff to shared clearance rather than a one-person command.
+  - What still feels risky: this deepens the conductor path but does not by
+    itself increase normal random discovery of other under-sampled late
+    branches.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late optional passenger route where a direct release still
+    skips the promised proof beat.
+- Risks:
+  - Low. The new scene is reachable, covered by tests, health is green, and the
+    manually played route ended cleanly.
+- Status: Complete.
+
 # Cycle 65 Gathered Boarding Receipt Payoff
 
 - Date: 2026-06-09
