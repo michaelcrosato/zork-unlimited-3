@@ -7,6 +7,61 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 6 Platform Conductor Signal Receipt
+
+- Date: 2026-06-10
+- Main objective: Make the conductor's clear-signal receipt route easier to
+  discover after players open the passenger manifest and cross to the passenger
+  platform.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence was green, but normal random play still
+  under-sampled `passenger_conductor_signal_receipt` and
+  `passenger_conductor_true_ending`, so this targets a late optional payoff
+  that already had coverage reachability but weak plain-route surfacing.
+- Why this matters: A player who has done the larger rescue and crossed to the
+  passenger platform can now choose "Let the conductor carry the platform clear
+  signal to the release" directly. That keeps the conductor route visible at
+  the moment the player sees the gathered platform crowd, instead of requiring
+  them to find it from earlier opened-manifest hubs or answered-name branches.
+- Completed work:
+  - Added `carry_platform_conductor_signal_to_release` to
+    `passenger_platform`.
+  - Gated it to the plain opened-passenger platform state before answered,
+    echo, reviewed-count, transfer, or already-confirmed conductor routes take
+    over.
+  - Set the same conductor and receipt flags used by the longer clear-signal
+    route, then extended the conductor regression to prove the new platform
+    choice reaches `passenger_conductor_signal_receipt` and then
+    `passenger_conductor_true_ending`.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "confirms conductor clearance directly from the opened passenger hubs"`.
+  - Full story-path suite passed:
+    `npx vitest run tests/story-paths.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough followed the changed route:
+    opened manifest -> passenger platform -> conductor clear-signal receipt ->
+    `passenger_conductor_true_ending`, score 298, objectives empty. The route
+    audit reported 20 steps, 15 unique / 21 total scene visits, route
+    importance `optional`, and ending type `ideal`.
+- Playtest feedback:
+  - What felt better: the conductor's role now stays visible after crossing to
+    the platform, and the choice label makes it clear this is a release-ready
+    payoff rather than another preparatory check.
+  - What still feels risky: the passenger platform now has many strong optional
+    payoffs. It remains important to keep future additions tightly gated and to
+    prefer consolidating or clarifying choices over adding breadth.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, inspect
+    remaining normal-play misses around the lunch-tin roster receipt or Mara's
+    manifest handoff intercom and add only one similarly narrow recovery.
+- Risks:
+  - Low. The change is one gated story choice plus a regression, with full
+    health and a real CLI route green.
+- Status: Complete.
+
 # Cycle 5 Gathered Release Platform Recovery
 
 - Date: 2026-06-10

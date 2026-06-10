@@ -3933,6 +3933,26 @@ scenes:
             heard_conductor_clearance: true
             heard_final_roll_call: true
             confirmed_conductor_clearance: true
+      - id: carry_platform_conductor_signal_to_release
+        label: Let the conductor carry the platform clear signal to the release
+        choiceGroup: Passenger gathering
+        to: passenger_conductor_signal_receipt
+        requires:
+          all:
+            - notFlag: heard_passenger_echoes
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: punched_conductor_transfer
+            - notFlag: confirmed_conductor_clearance
+            - notFlag: confirmed_conductor_signal_receipt
+        effects:
+          set:
+            helped_passengers_gather: true
+            conductor_cleared_platform: true
+            heard_conductor_clearance: true
+            heard_final_roll_call: true
+            confirmed_conductor_signal_receipt: true
       - id: confirm_platform_answered_handoff_thresholds
         label: Ask Mara to hand off the answered names and check each threshold
         to: passenger_answered_handoff_check

@@ -11416,12 +11416,45 @@ describe("demo story critical paths", () => {
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(choiceIds).toContain("confirm_platform_conductor_clearance");
+    expect(choiceIds).toContain("carry_platform_conductor_signal_to_release");
     expect(choiceIds.indexOf("confirm_platform_lunch_tin_roster_proof")).toBeLessThan(
       choiceIds.indexOf("confirm_platform_conductor_clearance")
     );
     expect(choiceIds.indexOf("confirm_platform_conductor_clearance")).toBeLessThan(
+      choiceIds.indexOf("carry_platform_conductor_signal_to_release")
+    );
+    expect(choiceIds.indexOf("carry_platform_conductor_signal_to_release")).toBeLessThan(
       choiceIds.indexOf("return_lost_mitten")
     );
+
+    let platformSignalState = choose(
+      story,
+      platformState,
+      "carry_platform_conductor_signal_to_release"
+    );
+    observation = observe(story, platformSignalState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_signal_receipt");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.conductor_cleared_platform).toBe(true);
+    expect(observation.state.flags.heard_conductor_clearance).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.state.flags.confirmed_conductor_signal_receipt).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "pull_release_after_conductor_signal_receipt"
+    ]);
+
+    platformSignalState = choose(
+      story,
+      platformSignalState,
+      "pull_release_after_conductor_signal_receipt"
+    );
+    observation = observe(story, platformSignalState);
+
+    expect(observation.scene.id).toBe("passenger_conductor_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("conductor's clear signal");
+    expectIdealScore(observation.score);
 
     platformState = choose(story, platformState, "confirm_platform_conductor_clearance");
     observation = observe(story, platformState);
@@ -12685,13 +12718,14 @@ describe("demo story critical paths", () => {
     expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(passengerPlatformChoiceIds.slice(0, 11)).toEqual([
+    expect(passengerPlatformChoiceIds.slice(0, 12)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "board_behind_lunch_tin_worker_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
+      "carry_platform_conductor_signal_to_release",
       "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
@@ -16420,13 +16454,14 @@ describe("demo story critical paths", () => {
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(manifestPlatformChoiceIds.slice(0, 11)).toEqual([
+    expect(manifestPlatformChoiceIds.slice(0, 12)).toEqual([
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "board_behind_lunch_tin_worker_pace",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
+      "carry_platform_conductor_signal_to_release",
       "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
