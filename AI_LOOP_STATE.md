@@ -7,6 +7,52 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 4 Transcript Route Audit
+
+- Date: 2026-06-10
+- Main objective: Improve transcript/report quality so agents and operators can
+  critique route pacing without rereading the whole save history.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence is green overall, and recent cycles have
+  already addressed several late passenger route-recovery gaps, so this targets
+  the standing high-value area around better transcript/report quality.
+- Why this matters: MCP and CLI transcripts now show a compact route audit
+  before the final-state block: steps taken, unique/total scene visits,
+  repeated scene hubs, current route importance, and ending type. That makes it
+  easier to spot short bad endings, hub churn, or long successful routes during
+  autonomous review.
+- Completed work:
+  - Added a `## Route Audit` section to `renderTranscript`.
+  - Derived audit facts from existing `GameState.history` and final
+    observation metadata, without changing gameplay, choices, scoring, or save
+    shape.
+  - Extended transcript tests to cover in-progress and ending transcripts.
+- Verification:
+  - Focused transcript suite passed:
+    `npx vitest run tests/transcript.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough reached `true_ending`, score 305. The rendered
+    transcript reported 21 steps, 15 unique / 22 total scene visits, repeated
+    `tunnel`, `service_room`, and `locker` hubs, route importance `main`, and
+    ending type `ideal`.
+- Playtest feedback:
+  - What felt better: the transcript immediately explains route length and hub
+    repetition, so an agent can critique pacing before reading the score and
+    choice list.
+  - What still feels risky: this improves evidence quality rather than
+    changing player-facing story content. If blind-play S0-S2 feedback appears,
+    it should override further reporting polish.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, use the
+    new route-audit facts to identify hub-churn or overly short non-ideal
+    endings in the next cycle.
+- Risks:
+  - Low. The change is read-only transcript rendering with focused regression
+    coverage and full health green.
+- Status: Complete.
+
 # Orchestrator Nested Loop Guard
 
 - Date: 2026-06-10

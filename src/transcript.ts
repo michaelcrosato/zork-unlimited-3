@@ -19,6 +19,18 @@ export function renderTranscript(story: Story, state: GameState): string {
 
   const observation = observe(story, state);
 
+  lines.push("## Route Audit");
+  lines.push(`Steps taken: ${choiceCount(state)}`);
+  lines.push(`Scenes visited: ${sceneAudit(state)}`);
+  lines.push(`Repeated scenes: ${repeatedSceneAudit(state)}`);
+  lines.push(`Current route importance: ${observation.scene.routeImportance}`);
+  lines.push(
+    `Ending type: ${
+      observation.scene.ending ? (observation.scene.endingType ?? "unclassified") : "in progress"
+    }`
+  );
+  lines.push("");
+
   lines.push("## Final State");
   lines.push(
     `Scene: ${observation.scene.id} (${observation.scene.ending ? "ending" : "in progress"})`
@@ -59,4 +71,32 @@ export function renderTranscript(story: Story, state: GameState): string {
   lines.push(`Inventory: ${state.inventory.length > 0 ? state.inventory.join(", ") : "empty"}`);
   lines.push(`Flags: ${Object.keys(state.flags).length > 0 ? JSON.stringify(state.flags) : "{}"}`);
   return `${lines.join("\n")}\n`;
+}
+
+function choiceCount(state: GameState): number {
+  return state.history.filter((entry) => entry.choice).length;
+}
+
+function sceneAudit(state: GameState): string {
+  const visits = sceneVisits(state);
+  const unique = new Set(visits);
+  return `${unique.size} unique / ${visits.length} total`;
+}
+
+function repeatedSceneAudit(state: GameState): string {
+  const counts = new Map<string, number>();
+
+  for (const sceneId of sceneVisits(state)) {
+    counts.set(sceneId, (counts.get(sceneId) ?? 0) + 1);
+  }
+
+  const repeated = [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([sceneId, count]) => `${sceneId} x${count}`);
+
+  return repeated.length > 0 ? repeated.join(", ") : "none";
+}
+
+function sceneVisits(state: GameState): string[] {
+  return state.history.filter((entry) => !entry.choice).map((entry) => entry.scene);
 }

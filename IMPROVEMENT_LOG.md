@@ -4,6 +4,37 @@ Persistent self-feedback for the autonomous maintainer loop. Each entry records
 what was tested, quantitative metrics, qualitative observations, and the next
 highest-leverage improvement target.
 
+## 2026-06-10 - Transcript Route Audit
+
+### Current Plan
+
+- Main objective: Make CLI/MCP transcripts easier to critique for pacing and
+  route quality.
+- Why this matters: The current evidence is green and recent cycles already
+  improved several late passenger route-recovery gaps. Transcript quality is a
+  standing high-value area because autonomous agents need compact route facts
+  before judging whether a playthrough was too short, too repetitive, or
+  healthy.
+
+### Work Completed
+
+- Added a `## Route Audit` block to rendered transcripts.
+- The audit reports steps taken, unique/total scene visits, repeated scenes,
+  current route importance, and ending type.
+- Added transcript regression coverage for both in-progress and completed
+  playthroughs.
+
+### Playtest Notes
+
+- Focused transcript tests passed.
+- `npm run health` passed with 346 tests, validation, and complete coverage
+  playtest.
+- CLI playthrough reached `true_ending`, score 305, and the transcript audit
+  reported 21 steps, 15 unique / 22 total scene visits, repeated hub scenes,
+  `main` route importance, and `ideal` ending type.
+- Next target if no blind-play issue appears: use route-audit data to spot
+  hub-churn or overly short non-ideal routes in the next cycle.
+
 ## 2026-06-09 - Gathered Boarding First
 
 ### Current Plan

@@ -28,6 +28,12 @@ describe("transcript rendering", () => {
 
     const transcript = renderTranscript(story, state);
 
+    expect(transcript).toContain("## Route Audit");
+    expect(transcript).toContain("Steps taken: 13");
+    expect(transcript).toMatch(/Scenes visited: \d+ unique \/ \d+ total/);
+    expect(transcript).toContain("Repeated scenes:");
+    expect(transcript).toContain("Current route importance: main");
+    expect(transcript).toContain("Ending type: in progress");
     expect(transcript).toContain("## Final State");
     expect(transcript).toContain("Scene: signal_booth (in progress)");
     expect(transcript).toMatch(/Score: \d+\n/);
@@ -76,6 +82,9 @@ describe("transcript rendering", () => {
 
     const transcript = renderTranscript(story, state);
 
+    expect(transcript).toContain("## Route Audit");
+    expect(transcript).toContain("Steps taken: 21");
+    expect(transcript).toContain("Ending type: ideal");
     expect(transcript).toContain("Scene: true_ending (ending)");
     expect(transcript).toMatch(/Score: \d+\n/);
     expect(transcript).not.toContain("Score: 100/100");
