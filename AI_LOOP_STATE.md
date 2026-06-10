@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 7 Platform Lunch-Tin Roster Roll Call
+
+- Date: 2026-06-10
+- Main objective: Make the lunch-tin worker's roster roll-call receipt route
+  easier to find from the opened-passenger platform.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence was green, but smaller normal random samples
+  under-sampled several late lunch-tin roster scenes, so this targets one
+  optional payoff without changing the main route.
+- Why this matters: A player who has opened every manifest door and crosses to
+  the passenger platform can now choose "Ask the lunch-tin worker to clock out
+  the roster by name" directly. That preserves the lunch-tin worker's strongest
+  thematic payoff and surfaces the receipt route where the player sees the
+  gathered crowd and its ordinary keepsakes.
+- Completed work:
+  - Added `clock_out_lunch_tin_roster_from_platform` to the plain passenger
+    platform branch.
+  - Gated it before answer, echo, reviewed-count, Mara handoff, or other
+    gathering routes take over.
+  - Reused the existing `passenger_lunch_tin_roll_call` and
+    `passenger_lunch_tin_roll_call_receipt` scenes, then added a regression
+    proving the new platform choice reaches the receipt and ideal lunch-tin
+    ending.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "lets platform explorers clock out the lunch-tin roster directly"`.
+  - Full story-path suite passed:
+    `npx vitest run tests/story-paths.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 347 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough followed the changed route:
+    opened manifest -> passenger platform -> lunch-tin roster roll call ->
+    roll-call receipt -> `passenger_lunch_tin_true_ending`, score 317,
+    objectives empty. The route audit reported 21 steps, 16 unique / 22 total
+    scene visits, route importance `optional`, and ending type `ideal`.
+- Playtest feedback:
+  - What felt better: the lunch-tin worker now gets a clear named action on the
+    platform, and the route moves cleanly from roster roll call to receipt to
+    release without requiring a detour through the generic boarding scene.
+  - What still feels risky: the passenger platform is choice-rich. Future work
+    should prefer consolidating or gating choices over simply adding more
+    breadth.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, inspect
+    remaining normal-play misses around Mara's manifest handoff intercom or
+    passenger manifest readiness and add only one similarly narrow recovery.
+- Risks:
+  - Low. The change is one gated story choice plus a regression, with full
+    health and a real CLI route green.
+- Status: Complete.
+
 # Cycle 6 Platform Conductor Signal Receipt
 
 - Date: 2026-06-10

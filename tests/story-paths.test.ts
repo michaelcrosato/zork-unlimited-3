@@ -10348,6 +10348,66 @@ describe("demo story critical paths", () => {
     expectIdealScore(observation.score);
   });
 
+  it("lets platform explorers clock out the lunch-tin roster directly", async () => {
+    const story = await loadStory("stories/demo.yaml");
+    let state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+    const platformChoiceIds = observation.choices.map((choice) => choice.id);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(platformChoiceIds).toContain("clock_out_lunch_tin_roster_from_platform");
+    expect(platformChoiceIds.indexOf("board_behind_lunch_tin_worker_pace")).toBeLessThan(
+      platformChoiceIds.indexOf("clock_out_lunch_tin_roster_from_platform")
+    );
+    expect(platformChoiceIds.indexOf("clock_out_lunch_tin_roster_from_platform")).toBeLessThan(
+      platformChoiceIds.indexOf("confirm_platform_lunch_tin_roster_proof")
+    );
+
+    state = choose(story, state, "clock_out_lunch_tin_roster_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_lunch_tin_roll_call");
+    expect(observation.scene.text).toContain("The worker reads the roster");
+    expect(observation.scene.text).toContain("counted him without keeping him");
+    expect(observation.state.flags.helped_passengers_gather).toBe(true);
+    expect(observation.state.flags.steadied_lunch_tin_worker).toBe(true);
+    expect(observation.state.flags.set_lunch_tin_pace).toBe(true);
+    expect(observation.state.flags.read_lunch_tin_roster).toBe(true);
+    expect(observation.state.flags.heard_final_roll_call).toBe(true);
+    expect(observation.objectives).toEqual([LUNCH_TIN_ROSTER_ROLL_CALL_OBJECTIVE]);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_lunch_tin_roster_proof_before_release",
+      "pull_release_after_lunch_tin_roll_call"
+    ]);
+
+    state = choose(story, state, "pull_release_after_lunch_tin_roll_call");
+    ({ state, observation } = releaseAfterLunchTinRollCallReceipt(story, state));
+  });
+
   it("lets manifest explorers follow the lunch-tin latch before crossing the platform", async () => {
     const story = await loadStory("stories/demo.yaml");
     let state = initialState(story);
@@ -12723,14 +12783,14 @@ describe("demo story critical paths", () => {
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "board_behind_lunch_tin_worker_pace",
+      "clock_out_lunch_tin_roster_from_platform",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
       "carry_platform_conductor_signal_to_release",
       "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "confirm_platform_keepsake_owners",
-      "help_passengers_gather"
+      "confirm_platform_keepsake_owners"
     ]);
 
     state = choose(story, state, "return_lost_mitten");
@@ -16459,14 +16519,14 @@ describe("demo story critical paths", () => {
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
       "board_behind_lunch_tin_worker_pace",
+      "clock_out_lunch_tin_roster_from_platform",
       "confirm_platform_lunch_tin_roster_proof",
       "confirm_platform_conductor_clearance",
       "carry_platform_conductor_signal_to_release",
       "confirm_platform_answered_handoff_thresholds",
       "return_lost_mitten",
       "match_manifest_keepsakes",
-      "confirm_platform_keepsake_owners",
-      "help_passengers_gather"
+      "confirm_platform_keepsake_owners"
     ]);
 
     let directGatheredReleaseState = choose(story, state, "check_gathered_release_from_platform");
