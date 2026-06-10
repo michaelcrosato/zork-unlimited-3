@@ -3949,6 +3949,19 @@ scenes:
             heard_answered_passengers: true
             heard_mara_goodbye: true
             confirmed_answered_handoff_thresholds: true
+      - id: board_answered_passengers_from_platform
+        label: Board with the answered passengers and let every name settle
+        choiceGroup: Counts / answers
+        to: passenger_answered_boarding
+        requires:
+          all:
+            - flag: heard_passenger_answers
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: helped_passengers_gather
+            - notFlag: heard_answered_passengers
+        effects:
+          set:
+            heard_answered_passengers: true
       - id: return_lost_mitten
         label: Return the lost mitten to the child
         to: passenger_mitten_memory

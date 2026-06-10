@@ -10909,12 +10909,31 @@ describe("demo story critical paths", () => {
       "confirm_platform_lunch_tin_roster_proof",
       "ask_conductor_to_call_platform_clear",
       "confirm_platform_conductor_clearance",
+      "board_answered_passengers_from_platform",
       "return_lost_mitten",
       "match_manifest_keepsakes",
       "confirm_platform_keepsake_owners",
       "help_passengers_gather",
       "board_third_car_with_passengers"
     ]);
+
+    state = choose(story, state, "board_answered_passengers_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_answered_boarding");
+    expect(observation.scene.text).toContain("board by repeating themselves");
+    expect(observation.state.flags.heard_passenger_answers).toBe(true);
+    expect(observation.state.flags.heard_answered_passengers).toBe(true);
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "check_answered_passengers_before_release",
+      "listen_to_answered_passengers_from_boarding",
+      "pull_release_after_answered_boarding"
+    ]);
+
+    state = choose(story, state, "pull_release_after_answered_boarding");
+    ({ state, observation } = releaseAfterAnsweredBoardingReceipt(story, state));
   });
 
   it("pays off the reviewed manifest count on the conductor route", async () => {

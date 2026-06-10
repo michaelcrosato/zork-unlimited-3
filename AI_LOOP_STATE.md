@@ -31,6 +31,55 @@
     with `unfinished: 0` and `unvisitedScenes: []`.
 - Status: Complete.
 
+# Cycle 2 Answered Platform Recovery
+
+- Date: 2026-06-10
+- Main objective: Let players who listen to answered passenger names, then
+  return to the passenger platform, recover the answered-boarding receipt route
+  without falling back to a generic train-car release.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence showed no hard failures and complete coverage,
+  so this targets a normal-play discoverability gap in a late passenger payoff
+  route.
+- Why this matters: The player can now trust the route they just learned. If
+  they hear the passengers answer and step back to the platform, a specific
+  choice carries those answered names into the third car and pays off with the
+  answered-boarding receipt before the ideal ending.
+- Completed work:
+  - Added `board_answered_passengers_from_platform` to `passenger_platform`.
+  - Gated it to appear only after `heard_passenger_answers` and before the
+    route has become a Mara handoff, gathered-passenger branch, or already
+    boarded answered-passenger branch.
+  - Updated the answer-listener regression to prove the platform recovery path
+    reaches `passenger_answered_boarding`, then
+    `passenger_answered_boarding_receipt`, then
+    `passenger_answered_boarding_true_ending`.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "answer listeners ask the conductor"`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough followed the changed route:
+    passenger answers -> return to platform -> board answered passengers from
+    platform -> answered boarding receipt ->
+    `passenger_answered_boarding_true_ending`, score 311, objectives empty.
+- Playtest feedback:
+  - What felt better: the platform now preserves the player's just-heard
+    answered-name clue with explicit wording instead of making the player infer
+    that generic boarding still belongs to that route.
+  - What still feels risky: this improves one recovered detour. Other late
+    passenger branches can still be rare in random play because there are many
+    optional proof and receipt variants.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists,
+    inspect another late passenger branch where returning to a hub hides the
+    most specific payoff behind a generic boarding or release choice.
+- Risks:
+  - Low. The change is one gated choice and one focused regression; health and
+    manual CLI play are green.
+- Status: Complete.
+
 # Cycle 1 Morning Chorus Platform Recovery
 
 - Date: 2026-06-10
