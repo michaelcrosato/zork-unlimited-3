@@ -13,6 +13,8 @@ const THRESHOLD_BOARDING_OBJECTIVE =
   "Let Mara talk you through the held threshold, or confirm it is clear.";
 const THRESHOLD_INTERCOM_OBJECTIVE =
   "Confirm the held threshold is clear, or pull while it stays open.";
+const THRESHOLD_OPEN_RECEIPT_OBJECTIVE =
+  "Pull after the held threshold stays open for every passenger.";
 const THRESHOLD_RELEASE_OBJECTIVE = "Pull after the third-car threshold is clear.";
 const MANIFEST_HANDOFF_OBJECTIVE =
   "Finish Mara's opened-door handoff: listen, confirm the doors, carry the darkened thumbprint oath, confirm its receipt, pull with the oath, or pull the release while the handoff is moving.";
@@ -249,6 +251,34 @@ function releaseAfterMorningStopCheck(
   expect(observation.scene.ending).toBe(true);
   expect(observation.scene.text).toContain("Bellweather Yard");
   expect(observation.scene.text).toContain("the remembered stops answer in full");
+  expectIdealScore(observation.score);
+
+  return { state, observation };
+}
+
+function releaseAfterThresholdOpenReceipt(
+  story: Story,
+  state: GameState
+): { state: GameState; observation: ReturnType<typeof observe> } {
+  let observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_threshold_open_receipt");
+  expect(observation.scene.text).toContain("first notch");
+  expect(observation.scene.text).toContain("no one is still bargaining with HOME");
+  expect(observation.state.flags.held_passenger_threshold).toBe(true);
+  expect(observation.state.flags.confirmed_threshold_open_receipt).toBe(true);
+  expect(observation.objectives).toEqual([THRESHOLD_OPEN_RECEIPT_OBJECTIVE]);
+  expect(observation.choices.map((choice) => choice.id)).toEqual([
+    "pull_release_after_threshold_open_receipt"
+  ]);
+
+  state = choose(story, state, "pull_release_after_threshold_open_receipt");
+  observation = observe(story, state);
+
+  expect(observation.scene.id).toBe("passenger_true_ending");
+  expect(observation.scene.ending).toBe(true);
+  expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
+  expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
   expectIdealScore(observation.score);
 
   return { state, observation };
@@ -4674,13 +4704,7 @@ describe("demo story critical paths", () => {
     ]);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterThresholdOpenReceipt(story, state));
 
     state = initialState(story);
     for (const choiceId of [
@@ -4870,13 +4894,7 @@ describe("demo story critical paths", () => {
     expect(observation.objectives).toEqual([THRESHOLD_INTERCOM_OBJECTIVE]);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expect(observation.scene.text).toContain("the crowd leaves by making room for itself");
-    expect(observation.scene.text).toContain("an empty aisle that finally belongs to no one");
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterThresholdOpenReceipt(story, state));
 
     state = initialState(story);
     for (const choiceId of [
@@ -6897,11 +6915,7 @@ describe("demo story critical paths", () => {
     expect(observation.state.flags.heard_mara_goodbye).toBe(true);
 
     state = choose(story, state, "pull_release_after_threshold_manifest");
-    observation = observe(story, state);
-
-    expect(observation.scene.id).toBe("passenger_true_ending");
-    expect(observation.scene.ending).toBe(true);
-    expectIdealScore(observation.score);
+    ({ state, observation } = releaseAfterThresholdOpenReceipt(story, state));
   });
 
   it("lets Mara's manifest handoff continue into answered passenger boarding", async () => {

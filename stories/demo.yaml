@@ -136,6 +136,14 @@ objectives:
         - flag: held_passenger_threshold
         - flag: heard_mara_goodbye
         - notFlag: confirmed_threshold_clearance
+        - notFlag: confirmed_threshold_open_receipt
+  - text: Pull after the held threshold stays open for every passenger.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: held_passenger_threshold
+        - flag: confirmed_threshold_open_receipt
   - text: Pull after the third-car threshold is clear.
     requires:
       all:
@@ -6208,6 +6216,25 @@ scenes:
             confirmed_threshold_clearance: true
       - id: pull_release_after_threshold_manifest
         label: Pull the release while the threshold stays open
+        to: passenger_threshold_open_receipt
+        effects:
+          set:
+            confirmed_threshold_open_receipt: true
+
+  passenger_threshold_open_receipt:
+    routeImportance: optional
+    text: >
+      You hook the emergency release at its first notch and hold it there long
+      enough for the threshold to prove it stayed open. The newspaper woman is
+      already past the line. The lunch-tin worker turns back only to steady the
+      child with both mittened hands on the rail. The conductor keeps the last
+      door from becoming a border again, and Mara lets the footsteps answer
+      through the speaker without turning them back into names. By the time
+      the handle is ready to fall, no one is still bargaining with HOME from
+      the wrong side of the door.
+    choices:
+      - id: pull_release_after_threshold_open_receipt
+        label: Pull after the held threshold stays open for every passenger
         to: passenger_true_ending
 
   passenger_threshold_clearance_check:

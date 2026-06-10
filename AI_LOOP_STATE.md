@@ -7,6 +7,58 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 67 Threshold Open Receipt Payoff
+
+- Date: 2026-06-10
+- Main objective: Give the direct held-threshold release a visible receipt beat
+  before the generic passenger ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 67 evidence showed complete coverage, no unfinished runs, and
+  remaining value in richer late passenger payoff scenes; the threshold direct
+  pull was still jumping from Mara's "threshold stays open" setup straight to
+  `passenger_true_ending`.
+- Why this matters: Players who hold the third-car threshold and then pull
+  immediately now see the threshold stay open long enough for the newspaper
+  woman, lunch-tin worker, child, conductor, and Mara's speaker to answer
+  before the final release. The branch now pays off the action the choice
+  promised instead of asking the generic ending to imply it.
+- Completed work:
+  - Added `passenger_threshold_open_receipt` as a non-ending receipt scene.
+  - Routed `pull_release_after_threshold_manifest` through that receipt before
+    `passenger_true_ending`.
+  - Added `confirmed_threshold_open_receipt` plus a receipt-specific objective
+    so the receipt scene has one clear final action.
+  - Updated threshold route regressions, including the opened-manifest and
+    Mara-manifest-handoff entry points.
+- Verification:
+  - Focused threshold tests passed:
+    `npx vitest run tests/story-paths.test.ts -t threshold`.
+  - Full story-path tests passed:
+    `npx vitest run tests/story-paths.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 197 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_threshold_open_receipt` visited.
+  - A 100-run random smoke sample ended every run with `unfinished: 0`; it did
+    not randomly hit the new receipt, which matches the known under-sampling
+    pressure for late optional branches.
+  - Actual CLI playthrough reached `passenger_threshold_open_receipt`, then
+    `passenger_true_ending`, score 295, with final objectives empty.
+- Playtest feedback:
+  - What felt better: the threshold route now shows the release held at its
+    first notch while the last passengers cross, making the final generic
+    passenger ending feel earned by visible action.
+  - What still feels risky: this deepens one late branch but does not solve
+    normal random discoverability for other under-sampled optional routes.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull route where the label promises concrete
+    passenger proof but the route still lands directly in an ending.
+- Risks:
+  - Low. The new scene is reachable, non-ending, covered by tests, manually
+    played, and all health gates remain green.
+- Status: Complete.
+
 # Cycle 66 Conductor Signal Receipt
 
 - Date: 2026-06-10
