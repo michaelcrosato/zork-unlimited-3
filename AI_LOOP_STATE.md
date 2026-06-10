@@ -31,6 +31,52 @@
     with `unfinished: 0` and `unvisitedScenes: []`.
 - Status: Complete.
 
+# Cycle 1 Morning Chorus Platform Recovery
+
+- Date: 2026-06-10
+- Main objective: Make the remembered-morning passenger route recoverable after
+  a player listens to the chorus, crosses to the passenger platform, and then
+  decides to carry those stops into the third car.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current loop evidence showed all routes validate, but normal random
+  play still under-samples several late passenger payoff paths, including the
+  morning-stops branch.
+- Why this matters: A player who follows the natural sequence "listen, cross
+  the platform, then act" now sees a direct morning-stops continuation instead
+  of having to infer that a generic boarding choice will recover the route.
+- Completed work:
+  - Added `carry_heard_morning_stops_from_platform` to `passenger_platform`.
+  - Gated it to appear only after the morning chorus has already been heard
+    and before the stops have been confirmed.
+  - Updated the morning chorus route regression to prove the new platform
+    recovery reaches `passenger_morning_intercom` and still pays off through
+    `passenger_morning_stop_checked_true_ending`.
+- Verification:
+  - Focused test passed:
+    `npx vitest run tests/story-paths.test.ts -t "morning chorus"`.
+  - Full `npm run health` passed: format check, TypeScript, 346 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_morning_stop_checked_true_ending` visited.
+  - Actual CLI playthrough followed the changed route:
+    platform morning chorus -> cross platform -> carry remembered stops to the
+    speaker -> confirm stops -> `passenger_morning_stop_checked_true_ending`,
+    score 306, objectives empty.
+- Playtest feedback:
+  - What felt better: the platform now preserves the player's just-learned
+    morning objective with explicit wording, so the route is easier to trust.
+  - What still feels risky: this is a single-route discoverability fix; other
+    late passenger branches remain broad and optional enough to be rare in
+    random play.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect the next late passenger branch where a player can leave a setup
+    scene and lose the most specific continuation.
+- Risks:
+  - Low. The change is route-only, reuses an existing ending path, and health
+    plus manual CLI play are green.
+- Status: Complete.
+
 # Cycle 69 Gathered Release Receipt Routing
 
 - Date: 2026-06-10

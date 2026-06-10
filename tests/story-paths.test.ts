@@ -18498,9 +18498,28 @@ describe("demo story critical paths", () => {
       "listen_for_platform_morning_chorus"
     );
     expect(observation.choices.map((choice) => choice.id)).toContain(
+      "carry_heard_morning_stops_from_platform"
+    );
+    expect(observation.choices.map((choice) => choice.id)).toContain(
       "board_third_car_with_passengers"
     );
 
+    const platformAfterChorusState = state;
+
+    state = choose(story, state, "carry_heard_morning_stops_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_morning_intercom");
+    expect(observation.scene.text).toContain("stops with real streets again");
+    expect(observation.state.flags.heard_passenger_morning_chorus).toBe(true);
+    expect(observation.state.flags.heard_passenger_morning_boarding).toBe(true);
+    expect(observation.objectives).toEqual([MORNING_BOARDING_OBJECTIVE]);
+    expect(observation.objectives).not.toContain(OPENED_MANIFEST_OBJECTIVE);
+
+    state = choose(story, state, "pull_release_after_morning_chorus_boarding");
+    ({ state, observation } = releaseAfterMorningStopCheck(story, state));
+
+    state = platformAfterChorusState;
     state = choose(story, state, "board_third_car_with_passengers");
     observation = observe(story, state);
 

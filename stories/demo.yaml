@@ -4136,6 +4136,20 @@ scenes:
         effects:
           set:
             heard_passenger_morning_chorus: true
+      - id: carry_heard_morning_stops_from_platform
+        label: Carry the remembered stops from the platform to the third-car speaker
+        choiceGroup: Morning stops
+        to: passenger_morning_intercom
+        requires:
+          all:
+            - flag: heard_passenger_morning_chorus
+            - notFlag: heard_passenger_morning_boarding
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: confirmed_morning_stops
+        effects:
+          set:
+            heard_passenger_morning_boarding: true
       - id: confirm_platform_morning_stops
         label: Carry the passengers' remembered stops into the third car
         to: passenger_morning_intercom
