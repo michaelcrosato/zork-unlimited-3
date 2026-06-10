@@ -7,6 +7,67 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 8 Platform Mara Manifest Handoff Recovery
+
+- Date: 2026-06-10
+- Main objective: Make Mara's opened-door handoff easier to recover after a
+  player opens the passenger manifest and crosses to the passenger platform.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Current cycle evidence was green, but normal random play continued
+  under-sampling Mara's manifest handoff/intercom payoff from the late passenger
+  platform state.
+- Why this matters: A player who has already done the larger passenger rescue
+  can now choose "Ask Mara to hand the opened doors forward from the platform"
+  before committing to the many passenger keepsake/count branches. This keeps
+  Mara's role visible at the moment the crowd looks from the platform to her
+  speaker and the third-car release.
+- Completed work:
+  - Added `call_mara_manifest_handoff_from_platform` to `passenger_platform`.
+  - Gated it to the plain passenger-platform state before answered, gathered,
+    reviewed-count, echo, threshold, room-making, thumbprint, or already-heard
+    Mara branches take over.
+  - Reused the existing `mara_manifest_handoff_intercom`,
+    `passenger_manifest_handoff_release`, and
+    `passenger_manifest_handoff_true_ending` scenes instead of adding another
+    ending variant.
+  - Extended the Mara manifest handoff regression and updated platform ordering
+    expectations to prove the new route and preserve the older watched-handoff
+    continuation.
+- Verification:
+  - Focused regression passed:
+    `npx vitest run tests/story-paths.test.ts -t "pays off Mara's manifest handoff"`.
+  - Full story-path suite passed:
+    `npx vitest run tests/story-paths.test.ts`.
+  - Full `npm run health` passed: format check, TypeScript, 347 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0` and `unvisitedScenes: []`.
+  - Actual CLI playthrough followed the changed route:
+    opened manifest -> passenger platform -> Mara opened-door handoff intercom
+    -> handoff release -> `passenger_manifest_handoff_true_ending`, score 304,
+    objectives empty. The route audit reported 21 steps, 16 unique / 22 total
+    scene visits, route importance `optional`, and ending type `ideal`.
+  - Extra random playtest passed with `ended: 100`, `unfinished: 0`; it visited
+    `mara_manifest_handoff_intercom`, while the full handoff release ending
+    remained rare in 100 random runs.
+- Playtest feedback:
+  - What felt better: the platform now offers a clear Mara-centered action
+    before the player gets pulled into many passenger-specific side payoffs.
+    The wording also makes the handoff feel like part of the crowd rescue, not
+    a separate checklist item.
+  - What still feels risky: the passenger platform is increasingly dense. New
+    work should avoid adding more raw platform choices unless it removes a
+    stronger confusion point or consolidates existing choices.
+- Next step:
+  - Prefer any new consolidated blind-play S0-S2 issue. If none exists, inspect
+    remaining normal-play misses around passenger manifest readiness or morning
+    stop confirmation, and favor consolidation/choice clarity over adding
+    another platform branch.
+- Risks:
+  - Low to moderate. The route is one gated story choice plus regression
+    coverage, but it does add one more visible choice to an already rich
+    platform menu.
+- Status: Complete.
+
 # Cycle 7 Platform Lunch-Tin Roster Roll Call
 
 - Date: 2026-06-10

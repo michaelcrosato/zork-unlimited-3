@@ -3846,6 +3846,25 @@ scenes:
       plain: get them aboard, reach under the first seat, and pull before the
       tunnel teaches the sign to say HOME again.
     choices:
+      - id: call_mara_manifest_handoff_from_platform
+        label: Ask Mara to hand the opened doors forward from the platform
+        choiceGroup: Finish Mara's handoff
+        to: mara_manifest_handoff_intercom
+        requires:
+          all:
+            - notFlag: saw_mara_manifest_handoff
+            - notFlag: heard_mara_goodbye
+            - notFlag: read_manifest_thumbprint
+            - notFlag: heard_passenger_answers
+            - notFlag: helped_passengers_gather
+            - notFlag: reviewed_open_manifest_count
+            - notFlag: heard_passenger_echoes
+            - notFlag: held_passenger_threshold
+            - notFlag: made_room_for_passengers
+        effects:
+          set:
+            saw_mara_manifest_handoff: true
+            heard_mara_goodbye: true
       - id: ask_newspaper_woman_about_stop
         label: Ask the newspaper woman which stop she was trying to reach
         to: passenger_newspaper_memory

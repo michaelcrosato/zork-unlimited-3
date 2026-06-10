@@ -2010,8 +2010,9 @@ describe("demo story critical paths", () => {
     let choiceIds = observation.choices.map((choice) => choice.id);
 
     expect(observation.scene.id).toBe("passenger_platform");
-    expect(choiceIds[0]).toBe("ask_newspaper_woman_about_stop");
-    expect(choiceIds[1]).toBe("ask_newspaper_woman_to_read_transfer_column");
+    expect(choiceIds[0]).toBe("call_mara_manifest_handoff_from_platform");
+    expect(choiceIds[1]).toBe("ask_newspaper_woman_about_stop");
+    expect(choiceIds[2]).toBe("ask_newspaper_woman_to_read_transfer_column");
     expect(choiceIds).toContain("match_manifest_keepsakes");
     expect(choiceIds).toContain("help_passengers_gather");
 
@@ -8761,6 +8762,64 @@ describe("demo story critical paths", () => {
       "read_manifest_from_ledger",
       "return_to_signal_ledger_from_manifest",
       "clear_manifest_and_mara_from_ledger",
+      "board_after_releasing_passengers"
+    ]) {
+      state = choose(story, state, choiceId);
+    }
+
+    let observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("passenger_platform");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBeUndefined();
+    expect(observation.state.flags.heard_mara_goodbye).toBeUndefined();
+    expect(observation.state.flags.heard_passenger_answers).toBeUndefined();
+    expect(observation.state.flags.helped_passengers_gather).toBeUndefined();
+    expect(observation.choices.map((choice) => choice.id)).toContain(
+      "call_mara_manifest_handoff_from_platform"
+    );
+
+    state = choose(story, state, "call_mara_manifest_handoff_from_platform");
+    observation = observe(story, state);
+
+    expect(observation.scene.id).toBe("mara_manifest_handoff_intercom");
+    expect(observation.scene.text).toContain("called every stamped door");
+    expect(observation.scene.text).toContain("they still sound like people");
+    expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
+    expect(observation.state.flags.heard_mara_goodbye).toBe(true);
+    expect(observation.choices.map((choice) => choice.id)).toEqual([
+      "confirm_manifest_handoff_doors",
+      "confirm_manifest_thumbprint_receipt_after_handoff",
+      "pull_release_after_manifest_handoff_goodbye"
+    ]);
+
+    state = choose(story, state, "pull_release_after_manifest_handoff_goodbye");
+    ({ state, observation } = releaseAfterManifestHandoffProof(story, state));
+
+    expect(observation.scene.id).toBe("passenger_manifest_handoff_true_ending");
+    expect(observation.scene.ending).toBe(true);
+    expect(observation.scene.text).toContain("Mara is still mid-handoff");
+    expectIdealScore(observation.score);
+
+    state = initialState(story);
+
+    for (const choiceId of [
+      "read_notice",
+      "take_lantern_after_notice",
+      "inspect_clock",
+      "take_token",
+      "open_service_door",
+      "take_map",
+      "search_locker",
+      "take_fuse",
+      "take_badge",
+      "close_locker",
+      "go_to_platform",
+      "install_fuse",
+      "use_token_slot",
+      "inspect_signal_ledger",
+      "read_manifest_from_ledger",
+      "return_to_signal_ledger_from_manifest",
+      "clear_manifest_and_mara_from_ledger",
       "watch_mara_open_manifest",
       "return_from_mara_manifest_handoff",
       "board_after_releasing_passengers"
@@ -8768,7 +8827,7 @@ describe("demo story critical paths", () => {
       state = choose(story, state, choiceId);
     }
 
-    let observation = observe(story, state);
+    observation = observe(story, state);
 
     expect(observation.scene.id).toBe("passenger_platform");
     expect(observation.state.flags.saw_mara_manifest_handoff).toBe(true);
@@ -12778,7 +12837,8 @@ describe("demo story critical paths", () => {
     expect(passengerPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       passengerPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(passengerPlatformChoiceIds.slice(0, 12)).toEqual([
+    expect(passengerPlatformChoiceIds.slice(0, 13)).toEqual([
+      "call_mara_manifest_handoff_from_platform",
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
@@ -16514,7 +16574,8 @@ describe("demo story critical paths", () => {
     expect(manifestPlatformChoiceIds.indexOf("board_third_car_with_passengers")).toBeLessThan(
       manifestPlatformChoiceIds.indexOf("hold_third_car_threshold")
     );
-    expect(manifestPlatformChoiceIds.slice(0, 12)).toEqual([
+    expect(manifestPlatformChoiceIds.slice(0, 13)).toEqual([
+      "call_mara_manifest_handoff_from_platform",
       "ask_newspaper_woman_about_stop",
       "ask_newspaper_woman_to_read_transfer_column",
       "ask_lunch_tin_worker_to_set_pace",
