@@ -7,6 +7,53 @@
 - Lead with what changed for the player or operator, what proof we have, and
   what the loop should trust next.
 
+# Cycle 68 Lunch-Tin Roll-Call Receipt
+
+- Date: 2026-06-10
+- Main objective: Give the completed lunch-tin roster roll call a visible
+  receipt beat before the lunch-tin ideal ending.
+- Digest cluster: none. `PLAYTEST_DIGEST.md` still has no consolidated blind
+  window. Cycle 68 evidence showed complete coverage, no unfinished runs, and
+  remaining value in richer late passenger payoff scenes; the lunch-tin roster
+  roll-call pull still jumped straight from the worker's completed count to
+  `passenger_lunch_tin_true_ending`.
+- Why this matters: Players who let the lunch-tin worker read the final roster
+  now see the completed count reach the child, newspaper woman, conductor, and
+  every open door before the release. The ending no longer has to imply that
+  the count landed everywhere.
+- Completed work:
+  - Added `passenger_lunch_tin_roll_call_receipt` as a non-ending receipt
+    scene.
+  - Routed `pull_release_after_lunch_tin_roll_call` through that receipt before
+    `passenger_lunch_tin_true_ending`.
+  - Added `confirmed_lunch_tin_roll_call_receipt` plus a receipt-specific
+    objective so the receipt scene presents one clear final action.
+  - Updated lunch-tin route regressions with a helper proving:
+    roster roll call -> receipt -> lunch-tin true ending.
+- Verification:
+  - Focused lunch-tin tests passed:
+    `npx vitest run tests/story-paths.test.ts -t "lunch-tin"`.
+  - CLI playthrough reached `passenger_lunch_tin_roll_call_receipt`, then
+    `passenger_lunch_tin_true_ending`, score 343, with final objectives empty.
+  - Full `npm run health` passed: format check, TypeScript, 344 tests, story
+    validation with 198 reachable scenes / 46 endings, and coverage playtest
+    with `unfinished: 0`, `unvisitedScenes: []`, and
+    `passenger_lunch_tin_roll_call_receipt` visited.
+- Playtest feedback:
+  - What felt better: the lunch-tin route now shows the roster count finishing
+    in the car before the doors open, making the final ending read as payoff
+    to a witnessed action instead of a direct jump.
+  - What still feels risky: this deepens one late branch but does not improve
+    normal random discovery for other under-sampled optional payoff scenes.
+- Next step:
+  - Prefer consolidated blind-play S0-S2 issues when available. Otherwise,
+    inspect another late direct-pull branch from the random-missed list where a
+    player-facing label promises proof but still resolves too abruptly.
+- Risks:
+  - Low. The new scene is reachable, covered by focused tests, manually played,
+    and all health gates remain green.
+- Status: Complete.
+
 # Cycle 67 Threshold Open Receipt Payoff
 
 - Date: 2026-06-10

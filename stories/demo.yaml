@@ -283,6 +283,18 @@ objectives:
         - flag: read_lunch_tin_roster
         - flag: heard_final_roll_call
         - notFlag: confirmed_lunch_tin_roster_proof
+        - notFlag: confirmed_lunch_tin_roll_call_receipt
+  - text: Pull after the completed lunch-tin roster count reaches every open door.
+    requires:
+      all:
+        - flag: freed_mara
+        - flag: read_passenger_manifest
+        - flag: helped_passengers_gather
+        - flag: set_lunch_tin_pace
+        - flag: read_lunch_tin_roster
+        - flag: heard_final_roll_call
+        - flag: confirmed_lunch_tin_roll_call_receipt
+        - notFlag: confirmed_lunch_tin_roster_proof
   - text: Pull after every lunch-tin roster proof is closed.
     requires:
       all:
@@ -7210,6 +7222,25 @@ scenes:
             confirmed_lunch_tin_roster_proof: true
       - id: pull_release_after_lunch_tin_roll_call
         label: Pull the release on the worker's completed count
+        to: passenger_lunch_tin_roll_call_receipt
+        effects:
+          set:
+            confirmed_lunch_tin_roll_call_receipt: true
+
+  passenger_lunch_tin_roll_call_receipt:
+    routeImportance: optional
+    text: >
+      You keep the release under your palm while the worker's completed count
+      reaches each open door. The child touches both mittens to the roster
+      beside his name, the newspaper woman folds her transfer over the line she
+      means to ride, and the old conductor raises one clear punch without
+      taking another ticket. The worker waits until the latch sound comes back
+      to him from every doorway, then rests the warm tin against the handle
+      with his own clock-out mark still visible. The count has finished moving,
+      and nobody has disappeared inside it.
+    choices:
+      - id: pull_release_after_lunch_tin_roll_call_receipt
+        label: Pull after the completed count reaches every door
         to: passenger_lunch_tin_true_ending
 
   passenger_lunch_tin_roster_proof:
